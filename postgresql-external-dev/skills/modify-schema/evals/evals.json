@@ -1,0 +1,30 @@
+{
+  "skill_name": "modify-schema",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have an existing products table in my NocoDB-connected PostgreSQL database. I need to: rename the 'name' column to 'title', change the 'price' column from int4 to decimal(10,2), and add a new 'description' text column. Show me the SQL.",
+      "expected_output": "Three ALTER TABLE statements: RENAME COLUMN, ALTER COLUMN TYPE with USING cast, ADD column. Correct PostgreSQL syntax with quoted identifiers.",
+      "files": [],
+      "expectations": [
+        {"assertion": "rename_syntax", "text": "Uses ALTER TABLE ... RENAME COLUMN \"name\" TO \"title\" syntax"},
+        {"assertion": "type_change_with_using", "text": "Uses ALTER COLUMN ... TYPE decimal(10,2) USING cast syntax"},
+        {"assertion": "drop_default_before_type_change", "text": "Drops default before changing type (ALTER COLUMN ... DROP DEFAULT)"},
+        {"assertion": "add_column_syntax", "text": "Uses ALTER TABLE ... ADD \"description\" text syntax"},
+        {"assertion": "quoted_identifiers", "text": "Uses double-quoted identifiers for table and column names"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need to completely remove a many-to-many relationship between products and tags in my PostgreSQL database. The junction table is nc_m2m_products_tags. What's the safe order of operations?",
+      "expected_output": "Drop FK constraints first (both fk_products_tags_1 and fk_products_tags_2), then DROP TABLE. Shows the correct teardown order.",
+      "files": [],
+      "expectations": [
+        {"assertion": "drops_constraints_first", "text": "Drops FK constraints before dropping the table"},
+        {"assertion": "drops_both_fks", "text": "Drops both FK constraints (two ALTER TABLE DROP CONSTRAINT statements)"},
+        {"assertion": "drops_table_last", "text": "DROP TABLE IF EXISTS comes after constraint removal"},
+        {"assertion": "correct_order", "text": "Shows operations in the correct safe order: constraints first, then table"}
+      ]
+    }
+  ]
+}

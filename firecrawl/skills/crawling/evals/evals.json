@@ -1,0 +1,28 @@
+{
+  "skill_name": "crawling",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to crawl the entire docs section of https://docs.example.com \u2014 only pages under /guide/ path, max 100 pages",
+      "expected_output": "map_site first, then crawl_site with include_patterns=['/guide/*'], max_pages=100",
+      "files": [],
+      "expectations": [
+        "Suggests map_site before crawling to understand structure",
+        "Uses crawl_site with include_patterns for /guide/*",
+        "Sets max_pages to 100",
+        "Mentions get_crawl_status for progress monitoring"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Show me all the URLs on https://bigsite.com so I can decide what to crawl",
+      "expected_output": "Uses map_site to discover URLs without downloading content",
+      "files": [],
+      "expectations": [
+        "Uses map_site tool (not crawl_site)",
+        "Explains that map_site discovers URLs without content download",
+        "Suggests using results to plan a targeted crawl"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "skill_name": "frontend-test",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a Next.js dashboard running on localhost:3000, can you test the frontend and check if everything works? Focus on the /settings and /users pages.",
+      "expected_output": "Should ask Step 0 execution mode (agent vs inline), acknowledge the URL localhost:3000, plan to focus on /settings and /users, outline the Playwright MCP tools it will use (browser_navigate, browser_snapshot, browser_console_messages, browser_network_requests), and describe the report it will generate at docs/codemap/FRONTEND.md.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Check my app's admin panel for UI issues, broken forms, and console errors. I think there might be some JavaScript bugs.",
+      "expected_output": "Should ask Step 0 execution mode, then attempt to detect the app URL from project config (package.json, docker-compose.yml, .env) or ask the user for the URL since none was provided. Should outline the testing plan covering forms, console errors, and UI issues.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I need a frontend health report for my app. The app requires login — it's running on localhost:8080. Test the main user flows after logging in.",
+      "expected_output": "Should ask Step 0 execution mode, acknowledge the URL localhost:8080, recognize that authentication is required and ask for credentials before proceeding, plan to test user flows after login, and describe the FRONTEND.md report structure.",
+      "files": []
+    }
+  ]
+}

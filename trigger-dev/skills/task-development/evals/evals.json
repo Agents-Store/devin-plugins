@@ -1,0 +1,18 @@
+{
+  "skill_name": "task-development",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a Trigger.dev task that processes image uploads. It should validate the input with Zod, retry up to 5 times on failure, use a queue with max 3 concurrent executions, and track progress via metadata.",
+      "expected_output": "Should produce working TypeScript with schemaTask or task+zod, retry config, queue(), metadata.set for progress, proper exports",
+      "files": [],
+      "expectations": [
+        "Uses @trigger.dev/sdk import', 'type': 'content_check",
+        "Includes retry configuration with maxAttempts', 'type': 'content_check",
+        "Uses queue with concurrencyLimit', 'type': 'content_check",
+        "Uses metadata.set for progress tracking', 'type': 'content_check",
+        "Task is exported', 'type': 'content_check"
+      ]
+    }
+  ]
+}

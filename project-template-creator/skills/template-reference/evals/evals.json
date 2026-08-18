@@ -1,0 +1,18 @@
+{
+  "skill_name": "template-reference",
+  "evals": [
+    {
+      "id": 9,
+      "prompt": "What's the difference between Level 0 and Level 1 templates? When I discover something while working on a client project, how do I know which template to push it to?",
+      "expected_output": "The template-reference skill provides a clear explanation of the 4-level hierarchy, the classification rules for deciding Level 0 vs Level 1, and examples of what belongs where.",
+      "files": [],
+      "expectations": [
+        "Explains the 4-level hierarchy (Level 0, 1, 1.5, 2) with their purposes",
+        "Describes the classification rule: universal improvements → Level 0, stack-specific → Level 1",
+        "Provides concrete examples of what goes to Level 0 (safety rules, process skills, core commands)",
+        "Provides concrete examples of what goes to Level 1 (stack-specific skills, gotchas, env vars)",
+        "Mentions that project-specific content (resource IDs, client logic) stays at Level 2"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "skill_name": "document-generator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create an invoice for client Acme Corp. Number INV-2026-042, my company is DevStudio, address 100 Main Street, San Francisco. Two items: Frontend development, 80 hours at $50, and UX Design, 20 hours at $75. Due by May 1, 2026. Save to the current folder.",
+      "expected_output": "PDF invoice with correct calculations ($5,500 total), two line items, due date May 1 2026",
+      "files": [],
+      "expectations": [
+        "A PDF file is generated in the outputs directory",
+        "Invoice total equals $5,500 (80×50 + 20×75)",
+        "Contains two line items: Frontend development and UX Design",
+        "Shows DevStudio with address 100 Main Street, San Francisco",
+        "Shows due date 2026-05-01"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate an act of completed works. Contractor: TechCo Solutions LLC, customer: Digital Service LLC, representative Sarah Chen Services: website development 1 unit at $3,000, technical support 10 hours at $80/hr. Date: April 3, 2026, city: San Francisco.",
+      "expected_output": "PDF act with services table totaling $3,800, both parties, signature blocks",
+      "files": [],
+      "expectations": [
+        "A PDF file is generated",
+        "Total equals $3,800 ($3,000 + $800)",
+        "Contains both parties: TechCo Solutions LLC and Digital Service LLC",
+        "Services table with two rows",
+        "Includes date April 3, 2026 and city San Francisco"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Create a proposal for migrating Acme Corp's infrastructure to AWS. We're CloudShift Solutions. Include an executive summary, the migration plan in 3 phases over 12 weeks, and pricing: assessment $15,000, migration $85,000, post-migration support $20,000.",
+      "expected_output": "DOCX proposal with cover page, executive summary, 3-phase timeline, pricing table totaling $120,000",
+      "files": [],
+      "expectations": [
+        "A DOCX file is generated",
+        "Contains a 3-phase migration timeline spanning 12 weeks",
+        "Includes pricing items totaling $120,000",
+        "Includes an executive summary section",
+        "Identifies CloudShift Solutions as author and Acme Corp as recipient"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Generate a Q1 2026 Performance Analysis report for NovaTech. Author: Data Analytics Team. Findings: revenue grew 23% to $4.2M, customer churn dropped to 3.1%, new product line contributed 18% of revenue. Recommendations: expand into EU market, increase R&D budget by 15%.",
+      "expected_output": "DOCX report with cover, findings section with metrics, conclusions, and recommendations",
+      "files": [],
+      "expectations": [
+        "A DOCX file is generated",
+        "Contains findings with revenue $4.2M and 23% growth",
+        "Contains recommendation to expand into EU market",
+        "Identifies NovaTech and Data Analytics Team",
+        "Has introduction, findings, and conclusions sections"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Make a presentation for our product launch — \"Nexus AI Platform\". Company: Synthex Labs. 6 slides: title, agenda, problem (enterprises waste 40% of time on manual data processing), solution (our AI platform), key features (3 bullet points), and a contact slide with hello@synthex.io.",
+      "expected_output": "PPTX presentation with 6 slides covering the product launch",
+      "files": [],
+      "expectations": [
+        "A PPTX file is generated",
+        "Contains approximately 6 slides",
+        "Title slide mentions Nexus AI Platform and Synthex Labs",
+        "Problem slide mentions 40% time wasted on manual data processing",
+        "Contact slide includes hello@synthex.io"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Draft a service agreement between TechForge LLC (provider) and BrightPath Inc (client). Scope: custom software development and maintenance. Payment: $25,000/month, net-30 terms. Duration: 12 months with auto-renewal. Include confidentiality and IP assignment clauses.",
+      "expected_output": "DOCX contract with parties, scope, payment, duration, confidentiality, and IP clauses",
+      "files": [],
+      "expectations": [
+        "A DOCX file is generated",
+        "Identifies TechForge LLC and BrightPath Inc as parties",
+        "Contains payment terms $25,000/month with net-30",
+        "Duration clause specifies 12 months with auto-renewal",
+        "Includes confidentiality and IP assignment clauses"
+      ]
+    }
+  ]
+}

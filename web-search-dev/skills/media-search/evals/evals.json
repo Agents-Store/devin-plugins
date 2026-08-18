@@ -1,0 +1,11 @@
+{
+  "skill_name": "media-search",
+  "evals": [
+    {
+      "id": 7,
+      "prompt": "I'm building a tech blog and need some high-quality landscape photos of modern office workspaces for my hero sections. Also need a few short background videos. Find me some options.",
+      "expected_output": "Should use searchPhotos (Pexels) for photos with orientation=landscape, searchVideos for videos. May also suggest get_search_photos (Unsplash) as alternative. Should mention image sizes (src.large for hero) and licensing info.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "skill_name": "task-decomposition",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Decompose epic 'Multi-tenant support' (currently 21 points) for TaskFlow. Must include data isolation, per-tenant billing, per-tenant branding, admin tenant switcher. Break into stories that fit in a 2-week sprint.",
+      "expected_output": "4-6 vertical stories each ≤8 points, created in Plane with parent set to the epic, total ≈21, each with user story format + acceptance criteria. Uses Split by Business Rule or Split by Workflow Step pattern.",
+      "files": [],
+      "expectations": [
+        "Uses Split by Business Rule or Split by Workflow Step, NOT horizontal slicing by layer",
+        "Creates 4-6 child stories, each ≤ 8 points",
+        "Each child is independently deliverable (a tenant admin could use one without the others)",
+        "Child points sum to ~21 (preservation rule)",
+        "Uses User Story template with Given/When/Then acceptance criteria in description_html",
+        "Calls create_work_item with parent field set to the epic ID"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Split this 13-point story: 'User can manage their profile' — covers viewing, editing name/bio, uploading picture, and deleting account.",
+      "expected_output": "Uses Split by Workflow Step pattern, produces 3-4 children summing to ~13 points, each a vertical slice.",
+      "files": [],
+      "expectations": [
+        "Recognizes this as Split by Workflow Step pattern",
+        "Creates 3-4 child stories (view / edit name+bio / upload picture / delete account)",
+        "Child points sum to ~13 (preservation rule)",
+        "Each child is a vertical slice (not split by FE/BE/DB layers)",
+        "Creates children in Plane with parent field pointing to the original"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Someone split 'Build signup flow' into: (1) Create users DB schema, (2) Build auth API endpoints, (3) Build signup UI. Review this decomposition.",
+      "expected_output": "Rejects — this is a horizontal (layer-based) slice. None of the three deliver value alone and all depend on each other. Recommend splitting by feature/behavior instead.",
+      "files": [],
+      "expectations": [
+        "Identifies this as the horizontal slicing anti-pattern",
+        "Explains that none of the 3 pieces deliver value independently",
+        "Fails INVEST 'Independent' and 'Valuable' criteria",
+        "Suggests vertical alternative: signup with happy path → validation errors → email verification"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Validate this user story against INVEST: 'As a support agent, I want to flag tickets, so that I can follow up later' — 21 points, no acceptance criteria, depends on a new tags system being built first.",
+      "expected_output": "Fails Small (21 pts), Testable (no AC), and Independent (blocked by tags system). Specific remediation for each.",
+      "files": [],
+      "expectations": [
+        "Checks each INVEST criterion individually",
+        "Reports Small: FAIL (21 pts > 8), split required",
+        "Reports Testable: FAIL (no acceptance criteria), write Given/When/Then",
+        "Reports Independent: FAIL (blocked by tags system), either wait or scope it in",
+        "Does NOT just say 'looks good'"
+      ]
+    }
+  ]
+}

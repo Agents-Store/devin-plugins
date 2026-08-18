@@ -1,0 +1,17 @@
+{
+  "skill_name": "encrypted-storage",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Where is my financial data stored and how is it encrypted?",
+      "expected_output": "Storage location, encryption method, passphrase management",
+      "files": [],
+      "expectations": [
+        "Documents storage file location",
+        "Explains encryption algorithm used",
+        "References encrypt.js/decrypt.js scripts",
+        "Covers passphrase management"
+      ]
+    }
+  ]
+}

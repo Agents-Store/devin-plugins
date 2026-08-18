@@ -1,0 +1,17 @@
+{
+  "skill_name": "data-operations",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Bulk create 10 sample products and then list them filtered by category='Electronics' sorted by price descending",
+      "expected_output": "Bulk create then list with filter and sort",
+      "files": [],
+      "expectations": [
+        "Documents record creation with field values",
+        "Shows bulk/batch create operation",
+        "Demonstrates filter syntax",
+        "Shows sort parameter (descending)"
+      ]
+    }
+  ]
+}

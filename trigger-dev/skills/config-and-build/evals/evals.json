@@ -1,0 +1,17 @@
+{
+  "skill_name": "config-and-build",
+  "evals": [
+    {
+      "id": 2,
+      "prompt": "I need to configure my Trigger.dev project to use Prisma for database access and FFmpeg for video processing. Show me the complete trigger.config.ts.",
+      "expected_output": "Should show defineConfig with both prismaExtension and ffmpeg in build.extensions array",
+      "files": [],
+      "expectations": [
+        "Imports prismaExtension from @trigger.dev/build/extensions/prisma', 'type': 'content_check",
+        "Imports ffmpeg from @trigger.dev/build/extensions', 'type': 'content_check",
+        "Uses defineConfig from @trigger.dev/sdk', 'type': 'content_check",
+        "Both extensions in build.extensions array', 'type': 'content_check"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "skill_name": "sprint-review-retro",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Sprint 15 for TaskFlow just ended. Generate a full sprint review report: goal status, completion metrics, delivered vs not-delivered tables, velocity trend vs last 3 sprints. Format it so I can demo it to stakeholders.",
+      "expected_output": "Stakeholder-ready review: sprint name + dates + goal, completion rate in points and item count, Delivered table (ID/title/points/owner), Not Delivered list with reasons, velocity comparison to previous 3 sprints, goal achievement verdict (Yes/Partial/No).",
+      "files": [],
+      "expectations": [
+        "Resolves 'Sprint 15' via list_cycles (not assumed)",
+        "Separates items into Delivered (completed group) and Not Delivered (everything else) explicitly",
+        "Reports BOTH points completion AND item count completion",
+        "Compares velocity to the last 3 archived cycles (trend context)",
+        "States goal achievement as a verdict, not just metrics",
+        "Output is structured like the SPRINT REVIEW template in the skill, not free prose"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Run a retrospective for Sprint 14. Use the DAKI format. Previous retro's action items were: (1) 'Review PRs within 4 hours' - done, (2) 'Set up staging deploy' - still open.",
+      "expected_output": "Starts with previous action review, shows DAKI prompts, creates 2-3 new action items with SMART criteria, saves as a page.",
+      "files": [],
+      "expectations": [
+        "Reviews previous action items FIRST before new retro",
+        "Acknowledges the completed one, asks why the staging deploy is still open",
+        "Uses DAKI format (Drop/Add/Keep/Improve), not Start-Stop-Continue",
+        "Limits new action items to 2-3",
+        "Each new action is SMART (specific, measurable, assignable, with a deadline)",
+        "Creates work items with retro-action label and saves a project page"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Sprint 14 is done. 3 items still in progress, 1 blocked, 1 not started. Walk me through closing the sprint.",
+      "expected_output": "Transfer in-progress items to next cycle, return blocked and not-started to backlog for reprioritization, archive the current cycle.",
+      "files": [],
+      "expectations": [
+        "Creates the next cycle first if it doesn't exist",
+        "Transfers the 3 in-progress items (nearly done) to the next cycle",
+        "Returns the blocked and not-started items to backlog (not transferred)",
+        "Archives the current cycle as the last step",
+        "Records completed points for velocity history"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Our last 4 sprints completed at 65%, 68%, 72%, 60%. Retro action items rarely get done. What should the retro facilitator focus on?",
+      "expected_output": "Diagnoses completion rate as WARNING (<70% consistently), action items as WARNING. Suggests reducing commitment by 20% and limiting retro to ONE action item to improve follow-through.",
+      "files": [],
+      "expectations": [
+        "Reads completion rates against the health metrics thresholds",
+        "Flags commitment as too aggressive (reduce by 20%)",
+        "Flags low action item follow-through as a process issue",
+        "Recommends limiting to 1 action item until follow-through improves",
+        "Suggests reviewing previous actions at the START of each retro for accountability"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "schema-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a CRM schema with Contacts, Companies, and Deals tables with proper relations",
+      "expected_output": "Entity model with relations, creation order, field specs",
+      "files": [],
+      "expectations": [
+        "Proposes table structure before building",
+        "Defines relations (Company hasMany Contacts, Deal belongsTo Company)",
+        "Specifies creation order (independent tables first)",
+        "Includes lookup/rollup suggestions"
+      ]
+    }
+  ]
+}

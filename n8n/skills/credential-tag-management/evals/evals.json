@@ -1,0 +1,17 @@
+{
+  "skill_name": "credential-tag-management",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "List all my n8n credentials and show which workflows use Slack credentials",
+      "expected_output": "Lists credentials, identifies Slack type, cross-references with workflows",
+      "files": [],
+      "expectations": [
+        "Documents credential listing tool",
+        "Shows how to filter by credential type",
+        "Explains credential-workflow relationship",
+        "Mentions security considerations"
+      ]
+    }
+  ]
+}

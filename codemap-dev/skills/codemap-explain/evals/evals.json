@@ -1,0 +1,94 @@
+{
+  "skill_name": "codemap-explain",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Explain this file to me: models/user.py",
+      "expected_output": "Asks clarification questions (depth, aspect, experience level), then delivers 4-layer explanation with output format template",
+      "files": [],
+      "expectations": [
+        "Asks user about desired depth (overview/moderate/deep dive) and aspect of interest",
+        "Reads the target file and its immediate dependencies (imports, callers)",
+        "Starts with Context layer — plain-language summary and architectural role",
+        "Includes Data Flow layer with concrete values, not abstract descriptions",
+        "Defines technical terms on first use (e.g., ORM, model, migration)",
+        "Uses output format: headers for Context, Data Flow, How It Works, Pitfalls",
+        "Ends with 2-3 specific next steps tailored to the user's interest",
+        "Uses real names from the code, not generic placeholders"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "How does the authentication system work in this project?",
+      "expected_output": "Module-level explanation covering auth components, data flow, and connections between files",
+      "files": [],
+      "expectations": [
+        "Asks about desired depth and experience with the auth stack before explaining",
+        "Identifies all auth-related files via reading strategy (list module, read key files, map dependencies)",
+        "Explains at module scope: purpose, file listing with roles, internal dependencies",
+        "Generates a mini-diagram if 3+ components interact",
+        "Uses concrete examples from actual code with real function/variable names",
+        "Includes a data flow trace with concrete values (e.g., email/password → hash check → session)",
+        "Suggests specific next steps (e.g., 'Want me to explain the middleware?' or 'Want an auth flow diagram?')"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Walk me through the create_deal function",
+      "expected_output": "Function-level explanation with signature, parameters, return value, side effects, and edge cases",
+      "files": [],
+      "expectations": [
+        "Greps to find the function definition and its callers",
+        "Reads surrounding file context to understand the function's role",
+        "Explains at function scope: signature, purpose, parameters, return value",
+        "Traces data flow through the function with concrete values",
+        "Notes pitfalls: edge cases, error paths, what inputs could break it",
+        "Verifies all claims against actual code — no hallucinated behavior",
+        "Suggests next steps: related functions, the module it belongs to, or how to extend it"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Explain the file src/nonexistent_module.py",
+      "expected_output": "Asks user to verify path instead of hallucinating",
+      "files": [],
+      "expectations": [
+        "Does not hallucinate file contents or code explanation",
+        "Asks user to check the path or provide the correct one",
+        "Suggests using Glob to find similar filenames",
+        "Does not skip to explaining something else without confirming"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I don't understand this codebase at all, give me a tour",
+      "expected_output": "Full project overview using reading strategy for projects, with clarification of depth preference",
+      "files": [],
+      "expectations": [
+        "Asks about desired depth and what aspect interests the user most",
+        "Follows project-level reading strategy: root files, directories, entry points, one request trace",
+        "Starts with Context: what the project does, who it's for, deployment model",
+        "Provides Data Flow: traces one complete request end-to-end",
+        "Identifies the stack: framework, database, key libraries",
+        "Ends with specific next steps: 'Want me to dive into [specific module]?' with 2-3 options",
+        "Offers to generate an architecture diagram if project has 3+ layers"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Explain this file in detail, I want a deep dive: routes/api.js",
+      "expected_output": "Deep dive explanation with all 4 layers expanded, line-by-line key logic annotation",
+      "files": [],
+      "expectations": [
+        "Skips depth question since user explicitly requested deep dive",
+        "Reads the file and all its dependencies thoroughly",
+        "Provides expanded Context with full architectural positioning",
+        "Includes detailed Data Flow trace for each route/endpoint",
+        "Details layer covers line-by-line key logic with annotations",
+        "Pitfalls section is comprehensive: edge cases, security, performance",
+        "Uses framework-specific terminology appropriate to the detected stack",
+        "Output uses the full format template with all headers"
+      ]
+    }
+  ]
+}

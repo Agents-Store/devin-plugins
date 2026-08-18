@@ -1,0 +1,23 @@
+{
+  "skill_name": "release-migration",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just updated OpenClaw to a new version — reconcile my config and tell me what new features to enable.",
+      "expected_output": "Reads the changelog between the old and new tags (git show NEW:CHANGELOG.md + git log) and release notes via docs-research, recommends new features as opt-in, flags deprecated/legacy settings, migrates openclaw.json with safeguards, then runs openclaw doctor --fix and reports what changed.",
+      "files": [],
+      "expectations": [
+        "Distinguishes new features (opt-in) from deprecated/legacy (migrate) and breaking (must fix)",
+        "Runs openclaw doctor --fix and captures its output",
+        "Applies openclaw.json edits with diff/confirm/backup/validate safeguards"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Are there any legacy model refs in my config I should migrate after upgrading?",
+      "expected_output": "Identifies legacy refs (openai-codex/*, codex-cli/* → openai/*; claude-cli/* → canonical anthropic/* + runtime) and notes doctor --fix rewrites known ones automatically.",
+      "files": [],
+      "expectations": []
+    }
+  ]
+}

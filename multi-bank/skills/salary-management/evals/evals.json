@@ -1,0 +1,17 @@
+{
+  "skill_name": "salary-management",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "List all salary contacts",
+      "expected_output": "List of salary contacts from Monobank",
+      "files": [],
+      "expectations": [
+        "Documents get-salary-contacts MCP tool",
+        "Shows pagination (limit/offset)",
+        "Returns contact details (name, IBAN, INN)",
+        "References privatbank-maspay.md for PrivatBank"
+      ]
+    }
+  ]
+}

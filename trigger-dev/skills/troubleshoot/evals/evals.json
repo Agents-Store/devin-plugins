@@ -1,0 +1,16 @@
+{
+  "skill_name": "troubleshoot",
+  "evals": [
+    {
+      "id": 8,
+      "prompt": "My self-hosted Trigger.dev v4 runs are stuck in QUEUED status and never start executing. The supervisor container is running but tasks just sit there.",
+      "expected_output": "Should check: worker token, supervisor logs, Docker memory, container health, suggest restart supervisor",
+      "files": [],
+      "expectations": [
+        "Mentions checking worker token (TRIGGER_WORKER_TOKEN)', 'type': 'content_check",
+        "Suggests checking supervisor logs', 'type': 'content_check",
+        "Mentions Docker or container health check', 'type': 'content_check"
+      ]
+    }
+  ]
+}

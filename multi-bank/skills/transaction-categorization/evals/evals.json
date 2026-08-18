@@ -1,0 +1,17 @@
+{
+  "skill_name": "transaction-categorization",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Categorize my recent transactions and show spending by category",
+      "expected_output": "Transactions mapped to categories via MCC codes",
+      "files": [],
+      "expectations": [
+        "Maps MCC codes to spending categories",
+        "Handles Ukrainian merchant names",
+        "Groups into standard categories (groceries, dining, transport, etc.)",
+        "Supports custom category rules"
+      ]
+    }
+  ]
+}

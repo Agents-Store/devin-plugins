@@ -1,0 +1,17 @@
+{
+  "skill_name": "node-configuration",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Configure an HTTP Request node to call a REST API with Bearer token auth and handle pagination",
+      "expected_output": "HTTP Request node with auth header, pagination setup",
+      "files": [],
+      "expectations": [
+        "Shows HTTP Request node parameter structure",
+        "Documents authentication options (Bearer token)",
+        "Explains pagination handling approach",
+        "Includes error handling for HTTP errors"
+      ]
+    }
+  ]
+}

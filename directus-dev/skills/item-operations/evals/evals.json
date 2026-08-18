@@ -1,0 +1,30 @@
+{
+  "skill_name": "item-operations",
+  "evals": [
+    {
+      "id": 3,
+      "prompt": "I need to read all published posts from my Directus with their author names, sorted by newest first, limit 10",
+      "expected_output": "Exact JSON for items tool with action:read, filter, dot notation fields, sort, limit",
+      "files": [],
+      "expectations": [
+        "Uses action: read",
+        "Uses dot notation for author name (e.g. author.first_name or author.name)",
+        "Includes filter for status _eq published",
+        "Sorts by -date_created (descending)",
+        "Sets limit to 10"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "How do I batch create 50 products in Directus? I have them in a list and want to insert them all",
+      "expected_output": "Data must be an array, batch in groups of 10-25, read schema first",
+      "files": [],
+      "expectations": [
+        "Emphasizes data must be an array",
+        "Recommends batching in groups of 10-25 items",
+        "Advises reading schema first to know required fields",
+        "Shows JSON example with data array containing multiple items"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+<!--
+  Rendering rules (see pages-publishing SKILL.md "List Rendering Gotchas"):
+  1. Empty list data: do NOT substitute empty string or <li></li> into a <ul>/<ol>.
+     Substitute a single <li><em>None</em></li> OR remove the whole list block.
+  2. No <li> may start with a nested <ul>/<ol>. Always leading text first.
+  3. No data-checked or custom data-* attributes. Use ✅/⏳/⬜ Unicode markers.
+  4. No mixed text + <p> inside a single <li>. Use <br> for multi-line bullets.
+-->
+<h1>Sprint {{SPRINT_NUMBER}} Report — {{SPRINT_NAME}}</h1>
+<p><strong>Dates:</strong> {{START_DATE}} → {{END_DATE}} &middot; <strong>Goal:</strong> {{SPRINT_GOAL}}</p>
+
+<h2>Summary</h2>
+<ul>
+  <li>Completed: <strong>{{COMPLETED_POINTS}} / {{TOTAL_POINTS}} points</strong> ({{COMPLETION_RATE}}%)</li>
+  <li>Velocity vs last 3 sprints avg: {{VELOCITY}} vs {{AVG_VELOCITY}} ({{VELOCITY_DELTA}})</li>
+  <li>Goal achieved: <strong>{{GOAL_ACHIEVED}}</strong></li>
+</ul>
+
+<h2>Delivered</h2>
+<table>
+  <thead><tr><th>ID</th><th>Title</th><th>Points</th><th>Owner</th></tr></thead>
+  <tbody>
+    {{DELIVERED_ROWS}}
+  </tbody>
+</table>
+
+<h2>Not Delivered</h2>
+<ul>
+  {{NOT_DELIVERED_ITEMS}}
+</ul>
+
+<h2>Metrics</h2>
+<ul>
+  <li>Cycle time: {{CYCLE_TIME}} days avg</li>
+  <li>WIP peak: {{WIP_PEAK}} (limit {{WIP_LIMIT}})</li>
+  <li>Blockers encountered: {{BLOCKERS_COUNT}}</li>
+</ul>
+
+<h2>Next Sprint</h2>
+<p>Goal: {{NEXT_SPRINT_GOAL}}</p>

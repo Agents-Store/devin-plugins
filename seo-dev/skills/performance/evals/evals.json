@@ -1,0 +1,20 @@
+{
+  "skill_name": "performance",
+  "evals": [
+    {
+      "id": 4,
+      "prompt": "Optimize my Next.js site for Core Web Vitals. LCP is 4.2s, CLS is 0.23",
+      "expected_output": "Identifies specific LCP and CLS issues and implements targeted fixes",
+      "files": [],
+      "expectations": [
+        "Checks if LCP image has priority prop and sizes attribute",
+        "Verifies next/image is used instead of native img tags",
+        "Checks for AVIF/WebP format configuration in next.config",
+        "Verifies next/font usage (no external font requests causing CLS)",
+        "Checks all images have explicit width/height or fill prop",
+        "Looks for dynamic content injection above fold causing CLS",
+        "Does NOT reference FID (replaced by INP in 2024)"
+      ]
+    }
+  ]
+}

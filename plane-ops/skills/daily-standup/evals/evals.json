@@ -1,0 +1,55 @@
+{
+  "skill_name": "daily-standup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Generate today's standup dashboard for TaskFlow Sprint 12. It's day 3 of 5. Show sprint-level burn, per-person status, and flag anything at risk.",
+      "expected_output": "Team-level dashboard: points done/total, items by state, WIP status, pace vs needed pace. Per-person section with DONE/DOING/NEXT/BLOCKED. Attention section listing stalled, blocked, and not-started items.",
+      "files": [],
+      "expectations": [
+        "Fetches active cycle via list_cycles and resolves day X of Y from its dates",
+        "Groups items by assignee AND separately by state group",
+        "Computes WIP and compares to a limit",
+        "Computes pace (points/day) and what's needed to finish",
+        "Has an explicit [!] Attention section flagging at-risk items",
+        "Renders the dashboard format from the skill, not free-form prose"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Give me a per-person standup breakdown for the Billing team's active sprint. Show each member's DONE, DOING, NEXT, and BLOCKED.",
+      "expected_output": "For each team member, a labeled list of items with state, points, and any blocker notes.",
+      "files": [],
+      "expectations": [
+        "Fetches project members and cycle work items",
+        "Groups items by assignee",
+        "Uses the [DONE]/[DOING]/[NEXT]/[BLOCKED] labels from the skill format",
+        "Flags items in 'In Progress' without activity for >2 days as stalled"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "MP-47 'OAuth setup' has been in progress for 3 days with no activity and is blocked by MP-45 which is still unstarted. Surface this as a standup issue.",
+      "expected_output": "Identifies MP-47 as both stalled AND blocked; names the blocker, the owner, and suggests action.",
+      "files": [],
+      "expectations": [
+        "Detects the stalled signal (>2 days no activity)",
+        "Detects the blocked_by relation to MP-45",
+        "Escalates because the blocker itself is unstarted — double risk",
+        "Suggests a concrete action (DM the owner, unblock MP-45, or reassign)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "We're an async remote team across 5 timezones. How should we run standup and where do we publish the update?",
+      "expected_output": "Recommends async cadence 3x/week, publish as a Plane project page per day.",
+      "files": [],
+      "expectations": [
+        "Recommends 3x/week async over daily sync",
+        "Suggests publishing to Plane via create_project_page",
+        "Uses 'Standup — YYYY-MM-DD' naming so history stays browsable",
+        "References the page-formatting gotchas from examples skill"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "skill_name": "doc-search",
+  "evals": [
+    {
+      "id": 6,
+      "prompt": "I'm getting a weird error in my Next.js 15 app — something about 'useSearchParams() should be wrapped in a suspense boundary'. I need to find the current docs that explain this. Can you search the latest Next.js documentation?",
+      "expected_output": "Should use Context7 (resolve-library-id for nextjs, then query-docs) as the primary approach for finding current docs. May also suggest perplexity_reason for debugging help. Should provide a clear workflow: resolve library → query docs → optionally search for community solutions.",
+      "files": []
+    }
+  ]
+}

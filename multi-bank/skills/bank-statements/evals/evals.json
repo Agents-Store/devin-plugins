@@ -1,0 +1,17 @@
+{
+  "skill_name": "bank-statements",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a statement for my main UAH account for March 2026",
+      "expected_output": "Statement with opening/closing balance and all transactions",
+      "files": [],
+      "expectations": [
+        "Identifies main UAH account (iban ending 6309, balance 265864.54)",
+        "Uses get-statement with correct date range",
+        "Calculates opening and closing balances",
+        "Formats as formal bank statement"
+      ]
+    }
+  ]
+}

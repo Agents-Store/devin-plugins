@@ -1,0 +1,17 @@
+{
+  "skill_name": "deployment",
+  "evals": [
+    {
+      "id": 5,
+      "prompt": "Set up GitHub Actions to deploy my Trigger.dev tasks. I have a self-hosted instance and want to deploy to staging on develop branch pushes and production on main branch pushes.",
+      "expected_output": "Should show GitHub Actions YAML with branch conditions, TRIGGER_ACCESS_TOKEN and TRIGGER_API_URL secrets, deploy --env staging/production",
+      "files": [],
+      "expectations": [
+        "Shows GitHub Actions YAML workflow', 'type': 'content_check",
+        "Uses TRIGGER_ACCESS_TOKEN secret', 'type': 'content_check",
+        "Uses TRIGGER_API_URL for self-hosted', 'type': 'content_check",
+        "Has branch conditions for staging and production', 'type': 'content_check"
+      ]
+    }
+  ]
+}

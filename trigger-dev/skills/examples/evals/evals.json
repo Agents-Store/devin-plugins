@@ -1,0 +1,17 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 9,
+      "prompt": "Show me a complete example of a Trigger.dev scheduled task that syncs data from an external API every hour with batch processing and error handling.",
+      "expected_output": "Should show schedules.task with cron, batch processing pattern, retry/error handling, complete working code",
+      "files": [],
+      "expectations": [
+        "Uses schedules.task or schedules from @trigger.dev/sdk', 'type': 'content_check",
+        "Includes cron expression', 'type': 'content_check",
+        "Shows batch or parallel processing', 'type': 'content_check",
+        "Includes error handling', 'type': 'content_check"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "cli-recipes",
+  "evals": [
+    {
+      "id": 6,
+      "prompt": "I manage two Trigger.dev instances - one on cloud and one self-hosted. How do I set up CLI profiles to switch between them easily?",
+      "expected_output": "Should cover: login with --profile, list-profiles, switch command, using profiles with dev and deploy",
+      "files": [],
+      "expectations": [
+        "Shows login --profile flag', 'type': 'content_check",
+        "Mentions list-profiles command', 'type': 'content_check",
+        "Shows switch command', 'type': 'content_check",
+        "Shows using profile with dev or deploy command', 'type': 'content_check"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "seo-dev",
+  "version": "1.0.0",
+  "description": "SEO development plugin for Agents Store. Technical SEO, structured data (JSON-LD), metadata API, Core Web Vitals, sitemaps, and content optimization patterns for Next.js App Router.",
+  "author": {
+    "name": "Agents Store",
+    "url": "https://github.com/agents-store"
+  },
+  "license": "MIT",
+  "keywords": [
+    "seo",
+    "structured-data",
+    "json-ld",
+    "schema-org",
+    "metadata",
+    "open-graph",
+    "core-web-vitals",
+    "sitemap",
+    "nextjs",
+    "dev",
+    "agents-store"
+  ]
+}

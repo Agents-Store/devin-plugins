@@ -1,0 +1,17 @@
+{
+  "skill_name": "workflow-editing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a new If node between the HTTP Request and Slack nodes in my existing workflow",
+      "expected_output": "Get workflow, modify nodes array, update connections, save",
+      "files": [],
+      "expectations": [
+        "Documents get-then-modify workflow",
+        "Shows how to insert a node between existing nodes",
+        "Updates connections array correctly",
+        "Suggests deactivating before editing"
+      ]
+    }
+  ]
+}

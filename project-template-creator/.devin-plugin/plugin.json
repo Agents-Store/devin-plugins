@@ -1,0 +1,24 @@
+{
+  "name": "project-template-creator",
+  "version": "1.3.0",
+  "description": "Manage project template hierarchy with unified improvement workflow. Route fixes to plugins or parent templates automatically, quick-capture ideas for later, and run unified end-of-session reviews covering both plugins and templates.",
+  "author": {
+    "name": "AGENTS.STORE"
+  },
+  "license": "MIT",
+  "keywords": [
+    "project-template",
+    "template-hierarchy",
+    "feedback",
+    "scaffold",
+    "stack",
+    "template-creator",
+    "CLAUDE.md",
+    "skills",
+    "agents",
+    "commands",
+    "improve",
+    "capture",
+    "unified-wrap-up"
+  ]
+}

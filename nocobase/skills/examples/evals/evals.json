@@ -1,0 +1,17 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me a complete CRM application setup in NocoBase",
+      "expected_output": "References crm-application.md scenario",
+      "files": [],
+      "expectations": [
+        "Points to references/scenarios/crm-application.md",
+        "Provides multi-collection setup",
+        "Includes UI page configuration",
+        "Shows end-to-end application design"
+      ]
+    }
+  ]
+}

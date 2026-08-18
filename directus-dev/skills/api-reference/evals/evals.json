@@ -1,0 +1,31 @@
+{
+  "skill_name": "api-reference",
+  "evals": [
+    {
+      "id": 13,
+      "prompt": "I need curl commands for Directus REST API — how do I list, create, and update items?",
+      "expected_output": "Curl examples for GET/POST/PATCH /items/{collection} with auth",
+      "files": [],
+      "expectations": [
+        "Shows GET /items/{collection} for listing",
+        "Shows POST /items/{collection} for creating",
+        "Shows PATCH /items/{collection}/{id} for updating",
+        "Includes Authorization Bearer header",
+        "Shows query parameters (fields, filter, sort, limit)"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "How do I do schema migrations between Directus environments?",
+      "expected_output": "3-step pipeline: snapshot, diff, apply with curl examples",
+      "files": [],
+      "expectations": [
+        "Describes 3-step pipeline: snapshot, diff, apply",
+        "Shows GET /schema/snapshot endpoint",
+        "Shows POST /schema/diff endpoint",
+        "Shows POST /schema/apply endpoint",
+        "Includes curl command examples with auth headers"
+      ]
+    }
+  ]
+}

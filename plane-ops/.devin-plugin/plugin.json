@@ -1,0 +1,23 @@
+{
+  "name": "plane-ops",
+  "version": "1.3.0",
+  "description": "Plane Agile Ops knowledge plugin. Full coverage of the Plane MCP surface: sprint planning, task decomposition, estimation, backlog management, velocity tracking, retrospectives, standups, intake triage, modules, epics, initiatives, milestones, roadmaps, dependencies, burndown, pages (sprint reports, retros, ADRs, runbooks, specs, meeting notes), labels, workflow states, work item types, custom properties, comments, links, work logs, relations, history, bulk edits, search, members, and assignment. Tool- and instance-agnostic: works with any Plane MCP server or connector via a bootstrap skill that discovers tools across naming conventions.",
+  "author": {
+    "name": "AGENTS.STORE"
+  },
+  "homepage": "https://agents.store",
+  "license": "MIT",
+  "keywords": [
+    "plane",
+    "agile",
+    "scrum",
+    "sprint",
+    "backlog",
+    "kanban",
+    "project-management",
+    "estimation",
+    "retrospective",
+    "roadmap",
+    "knowledge"
+  ]
+}

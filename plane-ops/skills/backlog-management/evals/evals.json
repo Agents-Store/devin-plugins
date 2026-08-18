@@ -1,0 +1,55 @@
+{
+  "skill_name": "backlog-management",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our TaskFlow project backlog has 67 items. Run a health check — I need concrete numbers on what's ready vs what needs work, and a prioritized list of what to fix first.",
+      "expected_output": "Full health report: total items, unestimated count, no-priority count, no-assignee count, oversized items, missing descriptions, health score %, status tier (Healthy/Good/Needs Work/Unhealthy), and a prioritized remediation plan.",
+      "files": [],
+      "expectations": [
+        "Fetches all work items via list_work_items",
+        "Calculates all 6 metrics: total, unestimated, unassigned, no_priority, no_description, large_items",
+        "Produces a health score using the (ready_items / total_items) × 100 formula",
+        "Maps the score to a tier (Healthy/Good/Needs Work/Unhealthy)",
+        "Gives a concrete remediation plan ordered by impact (estimate first, split oversized, set priorities)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Prioritize these three backlog items with WSJF: (a) 'Add SSO login' — big revenue unlock for enterprise deal due next month, 8 points; (b) 'Fix typo on pricing page' — 1 point, no deadline; (c) 'Migrate logging to new provider' — 5 points, reduces outage risk, no hard deadline.",
+      "expected_output": "Calculates WSJF for each item using BV + TC + RR / Job Size, ranks them, suggests Plane priority values.",
+      "files": [],
+      "expectations": [
+        "Uses the WSJF formula (Business Value + Time Criticality + Risk Reduction) / Job Size",
+        "Assigns higher Time Criticality to the SSO item (deadline) and higher Risk Reduction to the logging migration",
+        "Ranks SSO first or second (high WSJF despite size), typo fix near the top only if value justified by tiny size, logging middle",
+        "Maps top items to Plane priority values (urgent/high/medium/low)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Classify this backlog for Q2 release using MoSCoW: payment processing, user profile edit, dark mode, export to CSV, audit log, social login, keyboard shortcuts, welcome email. Release deadline is firm.",
+      "expected_output": "Each item classified as Must/Should/Could/Won't with rationale, target distribution ~60/20/20.",
+      "files": [],
+      "expectations": [
+        "Classifies payment processing and audit log as Must Have (critical)",
+        "Puts dark mode, keyboard shortcuts in Could Have",
+        "Explicitly considers the 60/20/20 distribution target",
+        "Explains rationale for each classification, not just the label"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Our backlog has 120 items, health score 42%. Help me groom it — I have 2 hours.",
+      "expected_output": "Full grooming workflow: top-down review, split oversized, estimate unestimated, archive stale, re-check health after.",
+      "files": [],
+      "expectations": [
+        "Classifies the backlog as Unhealthy (< 50%) and calls it urgent",
+        "Proposes a prioritized grooming sequence (estimation, splitting, priority setting)",
+        "Recommends archiving items untouched in 3+ sprints",
+        "Suggests a re-measure at the end to confirm health improved",
+        "References other skills (estimation, task-decomposition) for sub-tasks"
+      ]
+    }
+  ]
+}

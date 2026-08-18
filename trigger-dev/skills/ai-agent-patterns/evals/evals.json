@@ -1,0 +1,17 @@
+{
+  "skill_name": "ai-agent-patterns",
+  "evals": [
+    {
+      "id": 3,
+      "prompt": "Build a Trigger.dev pipeline that classifies incoming customer support emails, routes complex ones to GPT-4o and simple ones to GPT-4o-mini, processes them in parallel batches, and pauses for human review on flagged content.",
+      "expected_output": "Should combine routing pattern, parallelization with batch.triggerByTaskAndWait, and wait.forToken for human approval",
+      "files": [],
+      "expectations": [
+        "Uses routing pattern (classify then dispatch)', 'type': 'content_check",
+        "Uses batch or parallel execution pattern', 'type': 'content_check",
+        "Includes wait.forToken or human-in-the-loop', 'type': 'content_check",
+        "Checks result.ok before accessing output', 'type': 'content_check"
+      ]
+    }
+  ]
+}

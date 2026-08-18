@@ -1,0 +1,11 @@
+{
+  "skill_name": "troubleshoot",
+  "evals": [
+    {
+      "id": 8,
+      "prompt": "My Firecrawl scrapes keep timing out and Jina is returning empty content for some pages. Also getting 429 errors from Exa. Help me debug these issues.",
+      "expected_output": "Should provide service-specific troubleshooting: Firecrawl timeout → try waitFor or onlyMainContent, Jina empty → page uses heavy JS so try Firecrawl instead, Exa 429 → rate limited, add API key or add delays. Should reference the troubleshoot skill's error tables.",
+      "files": []
+    }
+  ]
+}

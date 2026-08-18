@@ -1,0 +1,17 @@
+{
+  "skill_name": "realtime",
+  "evals": [
+    {
+      "id": 4,
+      "prompt": "I want to show real-time progress of a long-running Trigger.dev task in my Next.js React app. The task processes a batch of items and I want a progress bar. How do I set this up?",
+      "expected_output": "Should cover: auth.createPublicToken, useRealtimeRun or useRealtimeTaskTrigger hook, metadata for progress, @trigger.dev/react-hooks",
+      "files": [],
+      "expectations": [
+        "Mentions @trigger.dev/react-hooks package', 'type': 'content_check",
+        "Shows useRealtimeRun or useRealtimeTaskTrigger hook', 'type': 'content_check",
+        "Includes auth token creation (createPublicToken or createTriggerPublicToken)', 'type': 'content_check",
+        "Uses metadata for progress tracking', 'type': 'content_check"
+      ]
+    }
+  ]
+}

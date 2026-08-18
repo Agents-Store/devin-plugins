@@ -1,0 +1,45 @@
+{
+  "skill_name": "app-router-patterns",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm building a Next.js 16 e-commerce app with App Router. I need a product detail page at /products/[slug] that:\n1. Uses ISR to revalidate every 60 seconds\n2. Pre-renders all product pages at build time using generateStaticParams\n3. Has dynamic OpenGraph metadata for each product (title, description, image)\n4. Shows the product image using next/image with proper optimization\n5. Has an \"Add to Cart\" button that uses client-side state\n\nPlease show me the complete implementation with all the files I need, including the correct Server/Client component split. Use TypeScript throughout.",
+      "expected_output": "Complete implementation with page.tsx as async Server Component, generateStaticParams, generateMetadata with OG, next/image with dimensions, separate AddToCartButton client component, ISR config, notFound() handling, server-only import in data layer, and shared types file",
+      "files": [],
+      "expectations": [
+        "The page component is an async Server Component (no 'use client' directive in the page file)",
+        "params is typed as Promise<{ slug: string }> and awaited before use (Next.js 15+ pattern)",
+        "generateStaticParams is exported and returns an array of slug objects",
+        "generateMetadata is exported as an async function with openGraph.images in the return",
+        "export const revalidate = 60 is present for ISR",
+        "next/image is used with either fill or explicit width/height, and includes sizes prop",
+        "The add-to-cart button is in a separate file marked with 'use client'",
+        "notFound() from next/navigation is called when the product doesn't exist",
+        "The product image uses the priority prop (it is the LCP element)",
+        "The data layer module uses import 'server-only' to prevent client bundle leakage",
+        "A loading.tsx file is provided for route-level Suspense fallback"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need to build an admin dashboard in Next.js 16 with App Router. Here's what I need:\n\n- A route group (dashboard) with its own layout that checks authentication\n- An auth proxy (proxy.ts) that redirects unauthenticated users to /login\n- A dashboard home page that streams in stats cards and recent activity using Suspense\n- A /users page with search (query in URL via searchParams) and a data table\n- A /users/new page with a create user form using Server Actions and useActionState for validation\n- The Server Action should validate with zod, revalidatePath after success, and redirect\n\nShow me all the files with the correct directory structure, Server/Client component boundaries, and TypeScript types.",
+      "expected_output": "Complete multi-file implementation with (dashboard) route group, proxy.ts at root, double-layer auth, streaming home with Suspense, users page with debounced search and Suspense key, Server Action with zod/revalidatePath/redirect outside try-catch, and client form with useActionState",
+      "files": [],
+      "expectations": [
+        "A route group directory named (dashboard) is used with parentheses in the path",
+        "proxy.ts is at the project root (not inside app/), exports a proxy function, and exports a config with matcher",
+        "The proxy checks for a session cookie and redirects to /login if missing",
+        "The dashboard layout performs a secondary server-side auth check (double-layer auth pattern)",
+        "The dashboard home page uses Suspense with fallback props for streaming content",
+        "searchParams is typed as Promise and awaited before destructuring (Next.js 15+ pattern)",
+        "The users page wraps the data table in Suspense with a key prop that includes the search query",
+        "The search input component uses debouncing to prevent navigation on every keystroke",
+        "Server Actions file has 'use server' directive at the top",
+        "The Server Action uses zod for validation with .trim() on string fields and returns field-level errors",
+        "revalidatePath is called after the mutation in the Server Action",
+        "The form component uses useActionState (not the deprecated useFormState)",
+        "redirect() is called outside of any try/catch block in the Server Action"
+      ]
+    }
+  ]
+}

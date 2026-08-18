@@ -1,0 +1,56 @@
+{
+  "skill_name": "project-setup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Describe the audit procedure for checking a Plane project's Agile readiness. What tool calls would you run, what would you compare against, and how would you structure the gap analysis report? I want a runbook, not the actual audit.",
+      "expected_output": "A step-by-step audit procedure listing the inspection tools, the reference template to compare against, the gap-table structure, and the remediation pattern for each gap type.",
+      "files": [],
+      "expectations": [
+        "Lists the 4 inspection tools: list_states, list_labels, get_project_features, list_work_item_types",
+        "Names the Standard Template as the comparison baseline (6 states, all label groups, cycles+modules+epics+pages+views, Story/Task/Bug/Spike types)",
+        "Describes output as a gap table with columns like 'what exists / what's missing / fix', not prose",
+        "For each gap type, shows the exact create_* tool call pattern with parameters from the skill",
+        "Explicitly mentions verifying state group membership (not just names) to catch burndown bugs"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Set up a brand new Plane project 'Mobile App' for a 3-person team. We want the minimal Agile setup, nothing fancy.",
+      "expected_output": "Applies the Lean Template: 4 states, minimal labels, Story + Bug types, cycles + pages features only.",
+      "files": [],
+      "expectations": [
+        "Uses the Lean Template (not Standard)",
+        "Creates exactly 4 states: Backlog → Todo → In Progress → Done",
+        "Creates minimal labels: bug, feature, tech-debt, ready, blocked",
+        "Enables only cycles and pages features",
+        "Does NOT create Task or Spike types"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We have 6 developers and want the full Agile setup with modules, epics, and custom properties for WSJF scoring.",
+      "expected_output": "Applies the Standard Template: 6 states, all label groups, Story/Task/Bug/Spike types, cycles + modules + epics + pages + views, Business Value and Risk Level properties.",
+      "files": [],
+      "expectations": [
+        "Uses the Standard Template",
+        "Creates 6 states including In Review and Cancelled",
+        "Creates all 4 work item types (Story, Task, Bug, Spike)",
+        "Enables modules, epics, views features in addition to cycles/pages",
+        "Creates Business Value (DECIMAL) and Risk Level (OPTION) custom properties on Story type"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Our project has 'WIP', 'Review', 'Merged' states but burndown looks wrong. What's the issue?",
+      "expected_output": "Identifies that state groups are likely misconfigured — 'Merged' (done) may be in 'started' group, breaking velocity counting.",
+      "files": [],
+      "expectations": [
+        "Identifies the root cause: velocity counts only items moved to 'completed' group states",
+        "Suggests running list_states to inspect group membership",
+        "Recommends reassigning 'Merged' to the 'completed' group via update_state",
+        "Warns about similar pitfalls (e.g., Done in 'started' group)"
+      ]
+    }
+  ]
+}

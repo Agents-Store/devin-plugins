@@ -1,0 +1,17 @@
+{
+  "skill_name": "broadcast-pattern",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How does the event broadcasting system work for balance updates?",
+      "expected_output": "Publisher-subscriber pattern explanation with balance_updated event",
+      "files": [],
+      "expectations": [
+        "Explains pub/sub architecture",
+        "Documents balance_updated event type",
+        "Shows subscriber registration pattern",
+        "References implementation.md for code"
+      ]
+    }
+  ]
+}

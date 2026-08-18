@@ -1,0 +1,17 @@
+{
+  "skill_name": "column-field-management",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a relation from Contacts to Companies table, then create a lookup to show company name on contacts",
+      "expected_output": "LinkToAnotherRecord + Lookup column creation",
+      "files": [],
+      "expectations": [
+        "Documents LinkToAnotherRecord column type",
+        "Shows Lookup column referencing related table",
+        "Explains relation direction (hasMany vs belongsTo)",
+        "Documents Rollup column as alternative"
+      ]
+    }
+  ]
+}

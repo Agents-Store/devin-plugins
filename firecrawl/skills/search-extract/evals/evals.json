@@ -1,0 +1,29 @@
+{
+  "skill_name": "search-extract",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Search the web for recent articles about EU AI Act regulations from the past month, get me 10 results",
+      "expected_output": "Uses search with query, limit=10, tbs='qdr:m'",
+      "files": [],
+      "expectations": [
+        "Uses search tool with relevant query",
+        "Sets limit to 10",
+        "Uses tbs='qdr:m' for past month filter",
+        "Returns results with full page content"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Extract structured pricing data from https://example.com/pricing \u2014 I need plan names, monthly prices, and feature lists as JSON",
+      "expected_output": "Uses extract_data with JSON schema",
+      "files": [],
+      "expectations": [
+        "Uses extract_data tool (not scrape_url)",
+        "Provides JSON schema with plan name, price, features",
+        "Includes prompt describing what to extract",
+        "Schema uses correct types (string, number, array)"
+      ]
+    }
+  ]
+}

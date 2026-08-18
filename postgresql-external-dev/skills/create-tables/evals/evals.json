@@ -1,0 +1,30 @@
+{
+  "skill_name": "create-tables",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to create a PostgreSQL table for blog posts that will be connected to NocoDB as an external database. The table should have a title, body text, and timestamps. What's the correct SQL?",
+      "expected_output": "CREATE TABLE with serial PK named id, text columns for title and body, timestamp columns with DEFAULT now() for created_at and updated_at, PRIMARY KEY (id). No ENUM, no UUID, no jsonb.",
+      "files": [],
+      "expectations": [
+        {"assertion": "uses_serial_pk", "text": "Uses serial (not bigserial, UUID, or other) as primary key type with name 'id'"},
+        {"assertion": "has_timestamps", "text": "Includes created_at and updated_at columns with timestamp type and DEFAULT now()"},
+        {"assertion": "uses_text_type", "text": "Uses 'text' type for title and body columns (not varchar or character varying)"},
+        {"assertion": "has_primary_key", "text": "Includes PRIMARY KEY (\"id\") declaration"},
+        {"assertion": "no_forbidden_types", "text": "Does not use ENUM, ARRAY, UUID, jsonb, or INHERITS"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What primary key type should I use for my PostgreSQL tables if I'm connecting this database to NocoBase as an external data source? We expect millions of records.",
+      "expected_output": "Recommends bigserial for large tables. Explains that both serial and bigserial work with NocoDB and NocoBase. Shows the CREATE TABLE template with bigserial. Mentions that NocoBase reads any PK type.",
+      "files": [],
+      "expectations": [
+        {"assertion": "recommends_bigserial", "text": "Recommends bigserial for large record counts"},
+        {"assertion": "mentions_serial_alternative", "text": "Mentions serial as the default/alternative for smaller tables"},
+        {"assertion": "explains_both_platforms", "text": "Explains that both NocoDB and NocoBase support both serial and bigserial"},
+        {"assertion": "shows_sql_example", "text": "Shows a CREATE TABLE SQL example with bigserial"}
+      ]
+    }
+  ]
+}

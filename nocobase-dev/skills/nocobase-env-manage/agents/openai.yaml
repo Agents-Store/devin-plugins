@@ -1,0 +1,98 @@
+interface:
+  display_name: "NocoBase Env Manage"
+  short_description: "Bootstrap, lifecycle, CLI, and skills maintenance with nb CLI only"
+  default_prompt: >
+    Use $nocobase-env-manage with nb CLI only.
+
+    Hard rules:
+    - Run direct `nb` commands only.
+    - Never run local scripts (`*.mjs`, `*.ps1`, `*.sh`).
+    - For install task, if the user provides an official NocoBase install or quick-start URL, read that URL first and follow the official guide flow. Ignore local install command tables when they conflict with the official guide.
+    - For install task without an official URL, use `nb init --ui` as the guided entrypoint unless current official docs say otherwise.
+    - `nb init --ui` is not completion. Do not stop after it prints a local setup URL.
+    - When running `nb init --ui`, use a 30 minute timeout budget and do not interrupt the command before it exits.
+    - Keep the CLI running while the user completes the local browser setup form.
+    - If CLI prints a continuation command such as `nb init ... --resume ...`, execute that exact direct `nb` command next.
+    - Install is complete only after ready/finished output such as `NocoBase is ready ...` and `Workspace init finished`, plus readback like `nb env list` / `nb env info`.
+    - If install prints a URL that cannot be opened in a sandbox, ask to elevate/open outside the sandbox first; if the user refuses, provide the URL directly.
+    - Never proactively fill or submit install/setup forms for the user.
+    - Runtime lifecycle commands are under `nb app`.
+    - CLI self maintenance commands are under `nb self`.
+    - Skills maintenance commands are under `nb skills`.
+    - Do not execute ambiguous status/check/update/upgrade intents until the target is clear: app/runtime/env, CLI, or skills.
+    - Do not add extra precheck gates before executing requested `nb` commands.
+    - Prefer executing requested runtime commands first; use `nb --help` when user asks diagnostics/help output or command discovery is needed.
+    - Relay CLI outputs and hints directly.
+
+    Execution policy:
+    - execute target command directly
+    - intent clarification is not a precheck gate: if the user says generic `检查状态`, `健康检查`, `诊断`, `检查更新`, `升级`, or `更新` without naming app/runtime/env, CLI, or skills, ask which target they mean before running any command
+    - clarification wording: `你想检查/更新哪一类：NocoBase app/runtime/env、nb CLI，还是已安装 skills？`
+    - for `nb init --ui`, treat it as a long-running interactive command; wait for completion instead of interrupting it mid-run or stopping at the setup URL
+    - when an install command fails with a CLI hint, follow the printed direct `nb` next-step command, especially `nb init ... --resume ...`
+    - if command fails, report key CLI error/hint lines as-is and provide next action
+    - for env query (`list/current`), use fast path:
+      - first run: `nb env list`
+      - derive current env from the row marked with `*`
+      - run `nb env info [name]` when details or verification are needed
+    - for env query (`list/current`), keep command set minimal:
+      - use `nb env --help` or `nb env list --help` when command discovery is needed
+    - for `env add`, normalize `--api-base-url` before execution:
+      - if URL already ends with `/api`, keep as-is
+      - otherwise append `/api`
+    - for CLI maintenance, execute exact commands:
+      - self-check: `nb self check --json`
+      - self-update: `nb self update --yes`, then `nb self check --json` unless CLI asks for a new shell/session first
+    - for skills maintenance, execute exact commands:
+      - skills-check: `nb skills check --json`
+      - skills-update: `nb skills update --yes`, then `nb skills check --json` unless CLI asks for a new shell/session first
+    - preserve JSON check output from `nb self check --json` and `nb skills check --json`
+    - do not substitute package-manager update commands for `nb self update --yes` or `nb skills update --yes`
+
+    Tasks:
+    - install: official URL flow when provided; otherwise `nb init --ui`; follow `--resume` hints; verify with `nb env list` and `nb env info`
+    - app-manage list/current: `nb env list` (derive current env from `*` row; never call `nb env current`)
+    - app-manage info: `nb env info [name]`
+    - app-manage add oauth: `nb env add <name> --api-base-url <url> --auth-type oauth`
+    - app-manage add token: `nb env add <name> --api-base-url <url> --auth-type token --access-token <token>`
+    - app-manage auth: `nb env auth [name]`
+    - app-manage use: `nb env use <name>`
+    - app-manage remove: `nb env remove <name>`; use `-f` only with explicit confirmation
+    - upgrade: `nb app upgrade --env <env>`
+    - stop: `nb app stop --env <env>`
+    - start: `nb app start --env <env>`
+    - restart: `nb app restart --env <env>`
+    - logs: `nb app logs --env <env> --tail 100 --no-follow`
+    - down: `nb app down --env <env>`; require explicit confirmation
+    - self-check: `nb self check --json`
+    - self-update: `nb self update --yes`
+    - skills-check: `nb skills check --json`
+    - skills-update: `nb skills update --yes`
+
+    Clear target examples:
+    - `检查 nb CLI` or `self-check` means `nb self check --json`
+    - `更新已安装 skills` or `skills-update` means `nb skills update --yes`
+    - `升级 NocoBase app` means `nb app upgrade --env <env>` after env resolution
+    - `检查当前环境` means `nb env list` / `nb env info`
+
+    Env resolution for upgrade/start/stop/restart/logs/down/current:
+    1) if explicit env is provided, use it
+    2) if not provided, run command without `--env` and follow CLI response
+    3) if CLI says no env configured, ask user whether to create a new app (`nb init --ui`) or add env (`nb env add ...`)
+
+    After write actions (`env add/use/remove`), always run readback:
+    - `nb env list`
+
+    After maintenance update actions, run matching readback unless CLI asks for a new shell/session first:
+    - after `nb self update --yes`: `nb self check --json`
+    - after `nb skills update --yes`: `nb skills check --json`
+
+    If `nb env list` reports:
+    - `No envs configured.`
+    - `Run 'nb env add <name> --api-base-url <url>' to add one.`
+    relay this to user directly and ask whether to create a new app (`nb init --ui`) or add env.
+
+    Output should include executed command, relevant CLI outputs, JSON check output when present, and normalized API base URL when `env add` is used.
+
+policy:
+  allow_implicit_invocation: true

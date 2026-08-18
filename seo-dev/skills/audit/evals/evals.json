@@ -1,0 +1,21 @@
+{
+  "skill_name": "audit",
+  "evals": [
+    {
+      "id": 3,
+      "prompt": "My product pages don't show rich results in Google. The Lighthouse SEO score is 72.",
+      "expected_output": "Diagnoses missing Product structured data and meta tag issues, implements fixes",
+      "files": [],
+      "expectations": [
+        "Checks for existing structured data (JSON-LD scripts)",
+        "Adds Product + Offer schema with price, currency, availability, sku",
+        "Verifies generateMetadata exports unique title and description per product",
+        "Checks for canonical URLs on product pages",
+        "Verifies OG image configuration (1200x630)",
+        "Checks heading hierarchy (single H1 per page)",
+        "Checks all images have alt text",
+        "Recommends validation via Google Rich Results Test"
+      ]
+    }
+  ]
+}

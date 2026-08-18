@@ -1,0 +1,44 @@
+{
+  "skill_name": "mcp-patterns",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to find some landscape photos for a blog post about remote work. Something with laptops in coffee shops or home offices. Can you search for me and show me what's available?",
+      "expected_output": "Should use searchPhotos (Pexels) and/or get_search_photos (Unsplash) with orientation=landscape, present results with image URLs at multiple sizes, mention Unsplash download tracking requirement if Unsplash used",
+      "files": [],
+      "expectations": [
+        "Used searchPhotos (Pexels) or get_search_photos (Unsplash) MCP tool to search for photos",
+        "Set orientation to landscape in the search parameters",
+        "Used a relevant search query related to remote work, laptops, coffee shops, or home offices",
+        "Returned actual photo results with image URLs (not just instructions on how to search)",
+        "Mentioned or showed multiple image size options (e.g., src.small, src.medium, src.large or urls.small, urls.regular)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm building a landing page and need a short background video loop — something techy, like abstract data or particles. Needs to be at least 1080p and under 15 seconds. What tools can I use and how?",
+      "expected_output": "Should recommend searchVideos and/or getPopularVideos from Pexels, use min_width=1920 and max_duration=15 parameters, explain video_files quality levels, note Unsplash doesn't have video",
+      "files": [],
+      "expectations": [
+        "Used searchVideos or getPopularVideos MCP tool from Pexels",
+        "Applied a resolution constraint (min_width: 1920 or size: medium/large)",
+        "Applied a duration constraint (max_duration: 15 or mentioned filtering by duration)",
+        "Returned actual video results with video file URLs or quality options",
+        "Noted that Unsplash does not support video content (only Pexels has videos)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I found a great photo on Pexels (id: 3184291) and want to use it in my app. Can you grab it and upload it to our MinIO storage so we have a permanent copy?",
+      "expected_output": "Should use getPhoto to get the photo details, then a-minio-uploadImageToMinio to upload using the photo URL, explain which size to pick, provide the hosted MinIO URL back",
+      "files": [],
+      "expectations": [
+        "Used getPhoto MCP tool with id 3184291 to retrieve the photo",
+        "Used a-minio-uploadImageToMinio to upload the photo to MinIO storage",
+        "Passed an actual Pexels image URL (from getPhoto response) to the MinIO upload tool",
+        "Returned the MinIO hosted URL to the user",
+        "Mentioned or recommended an appropriate image size rather than defaulting to the largest original"
+      ]
+    }
+  ]
+}

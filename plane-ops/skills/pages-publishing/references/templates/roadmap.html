@@ -1,0 +1,29 @@
+<!--
+  Rendering rules (see pages-publishing SKILL.md "List Rendering Gotchas"):
+  1. Empty list data: do NOT substitute empty string or <li></li> into a <ul>/<ol>.
+     Substitute a single <li><em>None</em></li> OR remove the whole list block.
+  2. No <li> may start with a nested <ul>/<ol>. Always leading text first.
+  3. No data-checked or custom data-* attributes. Use ✅/⏳/⬜ Unicode markers.
+  4. No mixed text + <p> inside a single <li>. Use <br> for multi-line bullets.
+-->
+<h1>Roadmap — {{PERIOD}}</h1>
+
+<h2>Now (this sprint)</h2>
+<ul>
+  {{NOW_ITEMS}}
+</ul>
+
+<h2>Next (next sprint)</h2>
+<ul>
+  {{NEXT_ITEMS}}
+</ul>
+
+<h2>Later (this quarter)</h2>
+<ul>
+  {{LATER_ITEMS}}
+</ul>
+
+<h2>Parked</h2>
+<ul>
+  {{PARKED_ITEMS}}
+</ul>

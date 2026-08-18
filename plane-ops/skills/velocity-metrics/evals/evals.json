@@ -1,0 +1,59 @@
+{
+  "skill_name": "velocity-metrics",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Give me a Sprint Health dashboard for TaskFlow's active sprint right now. I want burndown status, velocity context, WIP, blockers, and a completion forecast.",
+      "expected_output": "Combined dashboard: burndown (day X of Y, actual vs ideal), velocity trend across last 5 sprints with confidence tier, WIP current vs limit, blocker count, projected completion points. Concrete recommendations at the bottom.",
+      "files": [],
+      "expectations": [
+        "Calls list_cycles for active + list_archived_cycles for trend",
+        "Computes ideal_remaining = total × (remaining_days / sprint_days) correctly",
+        "Categorizes velocity confidence based on sample size (LOW/MODERATE/HIGH)",
+        "Calculates WIP limit from team size and compares to current",
+        "Produces a completion forecast (pts projected by end_date at current pace)",
+        "Outputs the SPRINT HEALTH dashboard layout from the skill, not prose",
+        "Gives 2-3 concrete recommendations, not vague advice"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze burndown for active Sprint 14. Sprint is day 3 of 5, 40 points total, 22 completed. Should we be worried?",
+      "expected_output": "Ideal remaining = 40 × (2/5) = 16 pts. Actual remaining = 18. That's 1.125× ideal → AT RISK (needs >1.2× to be fully AT RISK, but close). Recommend focus on in-progress, not starting new.",
+      "files": [],
+      "expectations": [
+        "Calculates ideal remaining correctly (16 pts)",
+        "Computes actual vs ideal ratio (18/16 = 1.125)",
+        "Categorizes as ON TRACK / AT RISK / BEHIND per the skill's thresholds",
+        "Gives concrete advice: focus on completing in-progress, don't start new items",
+        "Calculates required pace for the remaining days"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Our 5-person team has 9 items in progress right now. Is that a problem?",
+      "expected_output": "Yes — WIP limit for 5-person team is floor(5 × 1.5) = 7. Currently 9/7, OVER LIMIT. Suggest finishing items before starting new work.",
+      "files": [],
+      "expectations": [
+        "Calculates WIP limit correctly (7 for a 5-person team)",
+        "Flags 9/7 as OVER LIMIT",
+        "Explains the consequences (context switching, bottlenecks)",
+        "Recommends finishing in-progress items before pulling new ones",
+        "Does NOT just report the number — explains why it matters"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Last sprint: 'Upload avatar' was estimated 2 points, team logged 6 hours. 'Change email' was estimated 5 points, team logged 5 hours. Team baseline is 1.8 hrs/pt. Any issues?",
+      "expected_output": "Avatar is ratio 3.0 (> 1.8 × 1.5) → UNDERESTIMATED. Email is ratio 1.0 (< 1.8 × 0.5 = 0.9? No, 1.0 > 0.9) → borderline, not overestimated. Pattern: file-handling tasks underestimated.",
+      "files": [],
+      "expectations": [
+        "Calculates ratio for each item (3.0 and 1.0)",
+        "Applies the underestimated threshold (ratio > baseline × 1.5 = 2.7) — avatar qualifies",
+        "Correctly reports email is NOT overestimated (1.0 > 0.9 threshold)",
+        "Identifies the file-handling pattern and suggests raising estimates for file tasks",
+        "References this is input for the next estimation session"
+      ]
+    }
+  ]
+}

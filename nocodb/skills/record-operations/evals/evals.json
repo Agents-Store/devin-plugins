@@ -1,0 +1,17 @@
+{
+  "skill_name": "record-operations",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add 5 contacts to my Contacts table and then filter to show only those from Acme Corp",
+      "expected_output": "Bulk create records then list with filter",
+      "files": [],
+      "expectations": [
+        "Documents record creation with field values",
+        "Shows bulk/batch record creation",
+        "Demonstrates where filter syntax",
+        "Supports field-level filtering"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "skill_name": "file-management",
+  "evals": [
+    {
+      "id": 11,
+      "prompt": "I need to import a bunch of product images from URLs into Directus and organize them in a folder",
+      "expected_output": "Folders create, then files import with URL and metadata including folder UUID",
+      "files": [],
+      "expectations": [
+        "Uses folders tool with create action first",
+        "Uses files tool with import action",
+        "Shows data as array with url and file metadata",
+        "Includes folder UUID in file metadata",
+        "Mentions batch import (multiple items in data array)"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "How do I get the actual content of an image file from Directus for AI analysis?",
+      "expected_output": "Assets tool returns base64 content with mimeType",
+      "files": [],
+      "expectations": [
+        "Identifies the assets tool (not files tool) for content retrieval",
+        "Shows input with id parameter",
+        "Mentions base64 encoded response",
+        "Mentions mimeType in response"
+      ]
+    }
+  ]
+}

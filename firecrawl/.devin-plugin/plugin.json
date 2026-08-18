@@ -1,0 +1,19 @@
+{
+  "name": "firecrawl",
+  "version": "1.0.0",
+  "description": "Firecrawl web scraping and search plugin. Scrape URLs, crawl sites, search the web, map site structures, extract structured data, batch scraping, autonomous research agents, and cloud browser sessions via MCP tools.",
+  "author": {
+    "name": "AGENTS.STORE"
+  },
+  "license": "MIT",
+  "keywords": [
+    "firecrawl",
+    "web-scraping",
+    "crawling",
+    "search",
+    "data-extraction",
+    "sitemap",
+    "markdown",
+    "content"
+  ]
+}

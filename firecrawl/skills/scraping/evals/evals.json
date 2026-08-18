@@ -1,0 +1,29 @@
+{
+  "skill_name": "scraping",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Scrape https://example.com/pricing and get me the content in markdown format, skip the navigation and footer",
+      "expected_output": "Uses scrape_url with formats=['markdown'], excludeTags or onlyMainContent",
+      "files": [],
+      "expectations": [
+        "Uses scrape_url tool (not crawl or batch)",
+        "Sets formats to ['markdown']",
+        "Excludes nav/footer via excludeTags or onlyMainContent=true",
+        "Single URL, single tool call"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need to scrape a page that loads content dynamically with JavaScript. The product list appears after a few seconds at https://shop.example.com/products",
+      "expected_output": "Uses scrape_url with waitFor parameter for dynamic content",
+      "files": [],
+      "expectations": [
+        "Uses scrape_url tool",
+        "Includes waitFor parameter with a CSS selector",
+        "Mentions that dynamic/JS pages need wait strategies",
+        "May suggest mobile rendering as fallback"
+      ]
+    }
+  ]
+}

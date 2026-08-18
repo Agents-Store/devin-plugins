@@ -1,0 +1,33 @@
+<!--
+  Rendering rules (see pages-publishing SKILL.md "List Rendering Gotchas"):
+  1. Empty list data: do NOT substitute empty string or <li></li> into a <ul>/<ol>.
+     Substitute a single <li><em>None</em></li> OR remove the whole list block.
+  2. No <li> may start with a nested <ul>/<ol>. Always leading text first.
+  3. No data-checked or custom data-* attributes. Use ✅/⏳/⬜ Unicode markers.
+  4. No mixed text + <p> inside a single <li>. Use <br> for multi-line bullets.
+-->
+<h1>Sprint {{SPRINT_NUMBER}} Retrospective</h1>
+<p><strong>Date:</strong> {{DATE}} &middot; <strong>Attendees:</strong> {{ATTENDEES}}</p>
+
+<h2>Previous Action Items</h2>
+<ul>
+  {{PREVIOUS_ACTIONS}}
+</ul>
+
+<h2>What Went Well</h2>
+<ul>
+  {{WENT_WELL}}
+</ul>
+
+<h2>What Didn't</h2>
+<ul>
+  {{DIDNT_GO_WELL}}
+</ul>
+
+<h2>Action Items</h2>
+<table>
+  <thead><tr><th>Action</th><th>Owner</th><th>Due</th></tr></thead>
+  <tbody>
+    {{ACTION_ROWS}}
+  </tbody>
+</table>

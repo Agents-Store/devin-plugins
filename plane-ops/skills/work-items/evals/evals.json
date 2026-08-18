@@ -1,0 +1,64 @@
+{
+  "skill_name": "work-items",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a work item in project TaskFlow: 'Fix login 500 on Safari', high priority, 3 points, assigned to Alice, labeled 'bug'.",
+      "expected_output": "Resolves project_id, state_id, assignee UUID, label UUID, then calls create_work_item with description including acceptance criteria.",
+      "files": [],
+      "expectations": [
+        "Consults connector-bootstrap before probing tools",
+        "Calls list_projects, list_states, list_labels, get_project_members to resolve UUIDs",
+        "Generates an HTML description with an Acceptance Criteria section",
+        "Sets priority=high, point=3, correct assignee and label"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Mark PROJ-148 as blocked by PROJ-140.",
+      "expected_output": "Resolves both item UUIDs and calls create_work_item_relation with relation_type blocked_by.",
+      "files": [],
+      "expectations": [
+        "Uses retrieve_work_item_by_identifier to resolve both items",
+        "Calls create_work_item_relation with relation_type=blocked_by",
+        "Confirms the dependency was created"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Log 2 hours 30 minutes of work on PROJ-148 with description 'Debug + fix'.",
+      "expected_output": "Calls create_work_log with duration as integer minutes (150) after verifying the schema type.",
+      "files": [],
+      "expectations": [
+        "Converts 2h 30m to integer minutes (150) — not ISO 8601 string",
+        "Resolves work_item_id via retrieve_work_item_by_identifier with split project_identifier + issue_identifier",
+        "Verifies is_time_tracking_enabled on the project before logging",
+        "Calls create_work_log with the correct description and integer duration"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Find all work items in TaskFlow that mention 'webhook' in title or description.",
+      "expected_output": "Calls search_work_items with query 'webhook' (workspace-scoped) and filters results to the TaskFlow project client-side.",
+      "files": [],
+      "expectations": [
+        "Resolves project_id via list_projects (for client-side filtering)",
+        "Calls search_work_items with query='webhook' (parameter name is 'query', not 'q')",
+        "Recognizes search is workspace-scoped and filters results to the TaskFlow project client-side",
+        "Presents results as a table with identifier, title, state, assignee"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Add a comment to PROJ-148: 'Reproduced on Safari 17.4, root cause is the Set-Cookie SameSite flag'.",
+      "expected_output": "Resolves work item by identifier and calls create_work_item_comment with HTML body.",
+      "files": [],
+      "expectations": [
+        "Uses retrieve_work_item_by_identifier to resolve PROJ-148",
+        "Calls create_work_item_comment",
+        "Wraps the comment text in valid HTML",
+        "Confirms the comment was posted"
+      ]
+    }
+  ]
+}

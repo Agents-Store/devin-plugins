@@ -1,0 +1,1839 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/macstacks/macstack/main/schema/macstack.schema.json",
+  "title": "macstack.json",
+  "description": "MACSTACK stack file: meta-information for configuring a Claude project + the business and technical specification of the stack in one standardized JSON. Lives in the project root; CLAUDE.md references it; the macstack-dev Claude plugin (agents.store) parses the file and scaffolds the project structure (nextjs in software → Next.js skeleton). Inheritance: prototype points to a parent macstack.json (GitHub or absolute path); the current file extends/overrides the parent — merge by id (see the spec). Section order is result-first: goals → results → processes → triggers → workflows → software → entities → interfaces → connections → agents → context → resources.",
+  "type": "object",
+  "required": [
+    "macstack",
+    "name",
+    "version",
+    "description"
+  ],
+  "properties": {
+    "macstack": {
+      "type": "string",
+      "description": "File format version",
+      "enum": [
+        "1.0"
+      ]
+    },
+    "name": {
+      "$ref": "#/$defs/slug",
+      "description": "Project/stack slug"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semver of this specification"
+    },
+    "description": {
+      "type": "string"
+    },
+    "prototype": {
+      "$ref": "#/$defs/stackRef",
+      "description": "Reference to the parent macstack.json (the stack prototype) that this file inherits (extend/override, merge by id). GitHub OR a local folder (absolute path). Chains are allowed, cycles are an error"
+    },
+    "prototype_exclude": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z_]+\\.[a-z0-9]+([-.][a-z0-9]+)*$"
+      },
+      "description": "Prototype elements that are NOT inherited: '<section>.<id>' (e.g. 'software.qdrant', 'workflows.wf-x')"
+    },
+    "stacks": {
+      "type": "object",
+      "description": "This stack's place among the OTHER live macstack.json stacks of the organization. NO section = standalone stack outside any organization. NOT to be confused with prototype (template inheritance): prototype = \"what it is made from\", stacks = \"what it is connected to\". Organization model: one ROOT stack (the organization's core workspace — usually composable/Agents Workspace; from it a stack agent sees and orchestrates all stacks) + SUBSTACKS (sub-stacks: web apps, CRM, bots — usually application/agents by profile.type; service stacks: shared workflow backend). Cross-stack references in any ref field: '<stack-id>:<element-id>' (e.g. master: 'meg-root:postgresql', uses: 'workflows-hub:wf-enrich'), where stack-id is declared here",
+      "properties": {
+        "role": {
+          "enum": [
+            "root",
+            "substack"
+          ],
+          "description": "root = the organization's root stack (single; holds the substacks registry); substack = an organization sub-stack registered in root (web app, CRM, bot, service stack)"
+        },
+        "root": {
+          "type": "object",
+          "description": "For role=substack: reference to the organization's root stack",
+          "required": [
+            "id",
+            "ref"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/slug",
+              "description": "Local identifier of the root stack (namespace for cross-stack references)"
+            },
+            "ref": {
+              "$ref": "#/$defs/stackRef"
+            }
+          }
+        },
+        "substacks": {
+          "type": "array",
+          "description": "For role=root: registry of the organization's sub-stacks",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "ref"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/slug"
+              },
+              "ref": {
+                "$ref": "#/$defs/stackRef"
+              },
+              "note": {
+                "type": "string",
+                "description": "E.g.: company website, CRM, content stack"
+              }
+            }
+          }
+        },
+        "links": {
+          "type": "array",
+          "description": "Subject-matter links to specific stacks (in addition to root/substacks)",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "ref",
+              "relation"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/slug",
+                "description": "Local identifier (namespace for '<stack-id>:<element-id>')"
+              },
+              "ref": {
+                "$ref": "#/$defs/stackRef"
+              },
+              "relation": {
+                "enum": [
+                  "uses",
+                  "feeds",
+                  "peer"
+                ],
+                "description": "uses = we consume its workflows/data/MCP; feeds = we push data/results to it; peer = a neighboring stack with no dependency"
+              },
+              "what": {
+                "type": "string",
+                "description": "What exactly connects them (shared workflow backend, shared CRM database…)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "description": "Project identity",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "client": {
+          "type": "string"
+        },
+        "organization": {
+          "$ref": "#/$defs/slug",
+          "description": "Organization that owns the stack; the Manager groups stacks by it and builds the root/substacks map"
+        },
+        "kind": {
+          "enum": [
+            "template",
+            "project",
+            "workspace",
+            "demo"
+          ]
+        },
+        "business_domain": {
+          "type": "string",
+          "description": "Business domain (canonical 12: sales, marketing, hr, devops, finance, support, ecommerce, education, product, services, ops, engineering)"
+        },
+        "business_archetype": {
+          "type": "string"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sites": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "slug",
+              "domain"
+            ],
+            "properties": {
+              "slug": {
+                "$ref": "#/$defs/slug"
+              },
+              "domain": {
+                "type": "string"
+              },
+              "devPort": {
+                "type": "number"
+              },
+              "status": {
+                "enum": [
+                  "active",
+                  "planned",
+                  "paused"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "description": "Stack classification per Stack Architecture. stack_level L0–L3 is a complexity property of the stack (not a template hierarchy)",
+      "properties": {
+        "type": {
+          "enum": [
+            "composable",
+            "application",
+            "agents"
+          ]
+        },
+        "category": {
+          "enum": [
+            "web_application",
+            "crm",
+            "content",
+            "data_automation"
+          ],
+          "description": "Only for type=application"
+        },
+        "stack_level": {
+          "enum": [
+            "L0",
+            "L1",
+            "L2",
+            "L3"
+          ]
+        },
+        "stack_version": {
+          "type": "string",
+          "pattern": "^v[0-9]+$",
+          "description": "Only for type=composable (v1/v2/v3)"
+        },
+        "architecture_patterns": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "database-first",
+              "hub-and-spoke",
+              "event-bus",
+              "api-gateway",
+              "rag",
+              "multi-agent"
+            ]
+          }
+        },
+        "development_approach": {
+          "enum": [
+            "low-code",
+            "no-code",
+            "custom",
+            "hybrid"
+          ]
+        },
+        "purposes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "workflow_execution",
+              "code_development",
+              "artifact_generation",
+              "domain_knowledge"
+            ]
+          }
+        },
+        "operation_modes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ui",
+              "agent_os",
+              "api_mcp",
+              "hybrid"
+            ]
+          }
+        },
+        "upgrade_path": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "add": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/slug"
+                }
+              },
+              "gives": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "goals": {
+      "type": "array",
+      "description": "Top-level business goals (the business vector). Goal = a direction/ambition with a horizon; Results are the measurable assets that realize it. Link: results[].goal → goals[].id; a goal with no results is a linter warning (\"a goal with no path to it\")",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "name": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string",
+            "description": "Goal statement (e.g.: reach $20k MRR by Q2)"
+          },
+          "horizon": {
+            "type": "string",
+            "description": "Horizon/deadline (YYYY-MM-DD or Q2-2027)"
+          },
+          "metric": {
+            "type": "object",
+            "properties": {
+              "unit": {
+                "type": "string"
+              },
+              "target": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              }
+            }
+          },
+          "owner": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          }
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "description": "LENS 1: what results the stack produces. Result = an asset that exists and makes/saves money. Named, measured, dated. Each result may reference the goal it realizes",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "class"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "name": {
+            "type": "string"
+          },
+          "class": {
+            "enum": [
+              "revenue_asset",
+              "client_revenue",
+              "pipeline_asset",
+              "cost_saving"
+            ]
+          },
+          "metric": {
+            "type": "object",
+            "properties": {
+              "unit": {
+                "type": "string",
+                "description": "$/mo, leads/mo, hours saved/mo, posts/week…"
+              },
+              "target": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "cadence": {
+                "enum": [
+                  "recurring",
+                  "one_time"
+                ]
+              }
+            }
+          },
+          "value_usd_month": {
+            "type": "string",
+            "description": "Range/estimate; for pipeline — mark as indirect"
+          },
+          "business_domain": {
+            "type": "string"
+          },
+          "problem": {
+            "type": "string",
+            "description": "The client's original problem this result closes"
+          },
+          "description": {
+            "type": "string"
+          },
+          "example": {
+            "type": "string"
+          },
+          "goal": {
+            "type": "string",
+            "description": "→ goals[].id — which business goal the result realizes"
+          },
+          "produced_by": {
+            "$ref": "#/$defs/refList",
+            "description": "→ processes[].id"
+          },
+          "feeds": {
+            "$ref": "#/$defs/refList",
+            "description": "Result becomes a Resource: → results[].id | processes[].id"
+          },
+          "offer": {
+            "type": "string",
+            "description": "Reference to the offer (Offer Catalog)"
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          },
+          "review_date": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "processes": {
+      "type": "array",
+      "description": "LENS 2: business processes — the main unit of value. Described by skills; consist of tasks, each backed by a workflow or a human",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "development",
+              "operations",
+              "provisioning"
+            ]
+          },
+          "automation_mode": {
+            "enum": [
+              "workflow",
+              "agent",
+              "hybrid"
+            ]
+          },
+          "skill": {
+            "type": "string",
+            "description": "SKILL identifier (plugin:skill) implementing the process"
+          },
+          "description": {
+            "type": "string"
+          },
+          "lifecycle": {
+            "type": "string",
+            "description": "Textual state machine of the process"
+          },
+          "schedule": {
+            "type": "string",
+            "description": "Process cadence (cron / weekly / on-event)"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/slug"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "workflow": {
+                  "type": "string",
+                  "description": "→ workflows[].id"
+                },
+                "human": {
+                  "type": "object",
+                  "description": "Human-in-the-loop point",
+                  "properties": {
+                    "role": {
+                      "type": "string",
+                      "description": "→ roles[].id"
+                    },
+                    "gate": {
+                      "enum": [
+                        "approve",
+                        "input",
+                        "review",
+                        "execute"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "produces": {
+            "$ref": "#/$defs/refList",
+            "description": "→ results[].id"
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          }
+        }
+      }
+    },
+    "triggers": {
+      "type": "array",
+      "description": "A separate collection of the stack's triggers. Triggers live in DIFFERENT software (cron in trigger-dev, webhook in n8n, db-event in NocoBase/Directus). Workflows and agents reference triggers by id; all trigger settings live here, in config",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug",
+            "description": "Trigger code (trg-nightly-0300, trg-lead-created)"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "schedule",
+              "webhook",
+              "db_event",
+              "form",
+              "email",
+              "queue",
+              "manual"
+            ],
+            "description": "schedule = cron; webhook = incoming HTTP; db_event = data change; form = form submission; email/queue = incoming messages; manual = started by a human/agent"
+          },
+          "software": {
+            "type": "string",
+            "description": "→ software[].id — where the trigger lives/listens"
+          },
+          "instance": {
+            "type": "string",
+            "description": "→ software[].instances[].id"
+          },
+          "config": {
+            "type": "object",
+            "description": "Trigger settings: {schedule: '0 3 * * *'} | {path: '/hooks/x', method} | {entity, event: create|update|delete, condition} | {form: id} | {queue: name}…",
+            "additionalProperties": true
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          }
+        }
+      }
+    },
+    "workflows": {
+      "type": "array",
+      "description": "LENSES 2-3: deterministic software implementations, invoked via MCP/API/CLI or by triggers. Naming: [Domain] - [Action] - [Trigger]",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "engine"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "name": {
+            "type": "string"
+          },
+          "engine": {
+            "$ref": "#/$defs/slug",
+            "description": "n8n | trigger-dev | nocobase-workflows | directus-flows | script | custom…"
+          },
+          "software": {
+            "type": "string",
+            "description": "→ software[].id where the workflow lives"
+          },
+          "triggers": {
+            "$ref": "#/$defs/refList",
+            "description": "→ triggers[].id — codes of the triggers that start this workflow (settings live in the triggers collection)"
+          },
+          "execution": {
+            "enum": [
+              "instant",
+              "background"
+            ],
+            "description": "Execution character: instant response or durable background"
+          },
+          "invocation": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "mcp",
+                "api",
+                "cli",
+                "webhook",
+                "trigger",
+                "internal"
+              ]
+            },
+            "description": "Invocation channels: by an agent (mcp/api/cli), externally (webhook), by a trigger (trigger), inside the platform (internal)"
+          },
+          "implements": {
+            "type": "string",
+            "description": "→ processes[].id or a task id"
+          },
+          "uses": {
+            "$ref": "#/$defs/refList",
+            "description": "→ software[].id | entities[].id"
+          },
+          "location": {
+            "type": "string",
+            "description": "Where the code/config lives: repo path, instance, external backend"
+          },
+          "retry": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          }
+        }
+      }
+    },
+    "software": {
+      "type": "array",
+      "description": "LENSES 3, 5: all software of the stack (self-hosted, SaaS, and the client's external systems). category and type are mandatory — see the software taxonomy in the spec",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "type",
+          "layers"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug",
+            "description": "Canonical slug (postgresql, nocobase, trigger-dev)"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "$ref": "#/$defs/slug",
+            "description": "Category from the canonical registry registry/software-categories.json (20 base + extensions: accounting, custom-scripts…). The linter checks against the registry"
+          },
+          "type": {
+            "enum": [
+              "ready_made",
+              "constructor",
+              "framework",
+              "library",
+              "custom"
+            ],
+            "description": "Nature of the software: ready-made application / low-code constructor / framework / library / our custom software"
+          },
+          "form": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "web",
+                "cli",
+                "desktop",
+                "mobile",
+                "api_service",
+                "library"
+              ]
+            }
+          },
+          "license": {
+            "enum": [
+              "open_source",
+              "saas",
+              "proprietary"
+            ]
+          },
+          "layers": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "data",
+                "logic",
+                "interface",
+                "infrastructure"
+              ]
+            },
+            "description": "Strictly 4 typed layers: data | logic | interface | infrastructure. Software may occupy several layers (nextjs = logic+interface)"
+          },
+          "role": {
+            "type": "string",
+            "description": "Role in this stack: Headless CMS, BPMS platform…"
+          },
+          "value": {
+            "enum": [
+              "interface",
+              "workflows",
+              "data",
+              "storage"
+            ],
+            "description": "Why the software is in the stack (one of the 4 values)"
+          },
+          "hosting": {
+            "enum": [
+              "self_hosted",
+              "saas_cloud",
+              "external"
+            ]
+          },
+          "instances": {
+            "type": "array",
+            "description": "Instances of this software — one software may have SEVERAL deployments (prod/dev, per client, per group company), each with its own URLs. Referenced by entities.stores[].instance, connections.mcp[].instance, interfaces[].instances",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/slug",
+                  "description": "Instance identifier (nocobase-prod, nocobase-dev, pg-main)"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "environment": {
+                  "enum": [
+                    "prod",
+                    "dev",
+                    "staging",
+                    "demo"
+                  ]
+                },
+                "url": {
+                  "type": "string",
+                  "description": "Public URL, if not secret"
+                },
+                "url_env": {
+                  "type": "string",
+                  "description": "NAME of the env key holding the URL (never the value!)"
+                },
+                "server": {
+                  "type": "string",
+                  "description": "Host/server"
+                },
+                "deploy": {
+                  "type": "string",
+                  "description": "dokploy | docker-compose | vercel | cloudron…"
+                }
+              }
+            }
+          },
+          "agentic": {
+            "type": "object",
+            "description": "Agentic IT Ready passport: MCP + API + CLI. Each channel: true / false / \"partial\" (present with caveats — the ⚠️ of the Software Taxonomy). rating: full = 3×true, good = 2×true, basic = 1×true, partial = only partial channels, none = nothing",
+            "properties": {
+              "mcp": {
+                "$ref": "#/$defs/agenticChannel"
+              },
+              "api": {
+                "$ref": "#/$defs/agenticChannel"
+              },
+              "cli": {
+                "$ref": "#/$defs/agenticChannel"
+              },
+              "rating": {
+                "enum": [
+                  "full",
+                  "good",
+                  "basic",
+                  "partial",
+                  "none"
+                ]
+              }
+            }
+          },
+          "components": {
+            "type": "array",
+            "description": "Software Components inside the software",
+            "items": {
+              "type": "object",
+              "required": [
+                "type",
+                "name"
+              ],
+              "properties": {
+                "type": {
+                  "enum": [
+                    "table",
+                    "collection",
+                    "workflow",
+                    "view",
+                    "form",
+                    "function",
+                    "trigger",
+                    "webhook",
+                    "credential",
+                    "dashboard",
+                    "api",
+                    "mcp_server",
+                    "bot",
+                    "page",
+                    "campaign",
+                    "bucket",
+                    "other"
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                },
+                "ref": {
+                  "type": "string",
+                  "description": "ID/slug inside the software itself (volatile IDs belong in project-config)"
+                }
+              }
+            }
+          },
+          "plugins": {
+            "type": "object",
+            "description": "Plugin overrides (derived by default: {tool}-{dev|ops|provision})",
+            "properties": {
+              "dev": {
+                "type": "string"
+              },
+              "ops": {
+                "type": "string"
+              },
+              "provision": {
+                "type": "string"
+              }
+            }
+          },
+          "cost": {
+            "type": "object",
+            "properties": {
+              "model": {
+                "type": "string",
+                "description": "free | subscription | usage | one_time"
+              },
+              "usd_month": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "description": "LENS 4: business entities — structure, Data Sources and the MASTER source of each",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "master",
+          "stores"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "type"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "string | number | boolean | date | enum | relation | file | json"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "For enum"
+                },
+                "relation": {
+                  "type": "string",
+                  "description": "→ entities[].id for type=relation"
+                }
+              }
+            }
+          },
+          "stores": {
+            "type": "array",
+            "minItems": 1,
+            "description": "All Data Sources the entity lives in, and in what role",
+            "items": {
+              "type": "object",
+              "required": [
+                "software",
+                "role"
+              ],
+              "properties": {
+                "software": {
+                  "type": "string",
+                  "description": "→ software[].id"
+                },
+                "instance": {
+                  "type": "string",
+                  "description": "→ software[].instances[].id — the SPECIFIC instance the entity lives in (one entity may live in several instances: prod and dev, an instance per group company)"
+                },
+                "role": {
+                  "enum": [
+                    "master",
+                    "replica",
+                    "cache",
+                    "interface",
+                    "archive"
+                  ]
+                },
+                "collection": {
+                  "type": "string",
+                  "description": "Table/collection name in this source"
+                },
+                "sync": {
+                  "type": "string",
+                  "description": "How it syncs with the master (workflow id / shared-db / manual)"
+                }
+              }
+            }
+          },
+          "master": {
+            "type": "string",
+            "description": "→ software[].id — the single master source of the entity"
+          },
+          "state_fields": {
+            "type": "array",
+            "description": "Status fields that drive processes (statusVisa, statusOrd)",
+            "items": {
+              "type": "object",
+              "required": [
+                "field"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "states": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "drives": {
+                  "type": "string",
+                  "description": "→ processes[].id"
+                }
+              }
+            }
+          },
+          "relations": {
+            "$ref": "#/$defs/refList",
+            "description": "→ entities[].id"
+          },
+          "volume": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "description": "LENS 5: the stack's interfaces — human and agent-facing. Notifications = type: channel",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "audience"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "web",
+              "admin_ui",
+              "spreadsheet",
+              "dashboard",
+              "form",
+              "bot",
+              "channel",
+              "approval_center",
+              "report",
+              "api_portal",
+              "cli"
+            ]
+          },
+          "audience": {
+            "enum": [
+              "human",
+              "agent",
+              "both"
+            ]
+          },
+          "mode": {
+            "enum": [
+              "ui",
+              "agent_os",
+              "api_mcp",
+              "hybrid"
+            ]
+          },
+          "software": {
+            "type": "string",
+            "description": "→ software[].id"
+          },
+          "instances": {
+            "$ref": "#/$defs/refList",
+            "description": "→ software[].instances[].id — an interface may be deployed to SEVERAL instances (prod and dev)"
+          },
+          "path": {
+            "type": "string",
+            "description": "RELATIVE path of the interface ('/admin/approvals'). Full URL = instance url + path — hence an interface has no absolute url of its own"
+          },
+          "related": {
+            "$ref": "#/$defs/refList",
+            "description": "→ interfaces[].id — related interfaces (flow: form → approval center → report)"
+          },
+          "roles": {
+            "$ref": "#/$defs/refList",
+            "description": "→ roles[].id — who can access it"
+          },
+          "entities": {
+            "$ref": "#/$defs/refList"
+          },
+          "workflows": {
+            "$ref": "#/$defs/refList"
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "kanban | calendar | table | gallery…"
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          }
+        }
+      }
+    },
+    "connections": {
+      "type": "object",
+      "description": "LENSES 5-6: MCP/API/CLI wiring — how an agent physically reaches each component",
+      "properties": {
+        "mcp": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/slug"
+              },
+              "software": {
+                "type": "string",
+                "description": "→ software[].id"
+              },
+              "instance": {
+                "type": "string",
+                "description": "→ software[].instances[].id — which instance this MCP serves"
+              },
+              "transport": {
+                "enum": [
+                  "http",
+                  "stdio",
+                  "sse"
+                ]
+              },
+              "auth": {
+                "enum": [
+                  "oauth",
+                  "token_env",
+                  "none"
+                ]
+              },
+              "url_env": {
+                "type": "string",
+                "description": "NAME of the env key holding the URL"
+              },
+              "aggregator": {
+                "type": "string",
+                "description": "mcpware endpoint, if aggregated"
+              },
+              "capabilities": {
+                "type": "string",
+                "description": "What the agent can do through this MCP"
+              }
+            }
+          }
+        },
+        "apis": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "software": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "description": "rest | graphql | s3 | sql"
+              },
+              "url_env": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "clis": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "software": {
+                "type": "string"
+              },
+              "bin": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "agents": {
+      "type": "object",
+      "description": "Agent systematization — two types. STACK AGENTS: orchestrate the whole stack — read the entire stack including .claude/ (load skills, rules, commands) and MAY MODIFY the stack; runtime = an AI CLI (Claude Code, Codex, OpenClaw, Hermes); in the methodology this is the Super Agent / AI Client. MANAGED AGENTS: agents the stack manages as resources — invoked via API or used from an interface; defined by the triple: model (provider/model), instructions, and the list of MCP/API accesses (tools)",
+      "properties": {
+        "stack_agents": {
+          "type": "array",
+          "description": "Stack-level agents (outside the stack, with access to it). One agent may serve many stacks — it is declared in every macstack.json it has access to, with its own access list. hierarchy_role — position in the MACS hierarchy: orchestrator (level A: OpenClaw/Hermes — messenger frontend, receives the command, delegates, does NOT do the work), worker (level B: Claude Code/Codex in the stack directory — all the heavy work, reads .claude/, modifies the stack), control_plane (level C: governance, never runs LLM work). Delegation always goes downward",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "runtime"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/slug",
+                "description": "Agent identifier (openclaw-meg, claude-code-meg)"
+              },
+              "name": {
+                "type": "string"
+              },
+              "runtime": {
+                "enum": [
+                  "claude-code",
+                  "codex",
+                  "openclaw",
+                  "hermes",
+                  "perplexity-computer",
+                  "cursor",
+                  "windsurf",
+                  "gemini-cli",
+                  "other"
+                ],
+                "description": "The AI CLI / runtime that brings the agent to life (\"the project is static, the CLI is the runtime\")"
+              },
+              "hierarchy_role": {
+                "enum": [
+                  "orchestrator",
+                  "worker",
+                  "control_plane"
+                ]
+              },
+              "instance": {
+                "type": "string",
+                "description": "Deployment/instance name ({project}-{client}); where it lives — server, stack directory"
+              },
+              "tier": {
+                "enum": [
+                  1,
+                  2
+                ],
+                "description": "Tier 1 = Plugins+Skills+MCP; Tier 2 = Skills+MCP"
+              },
+              "reads_stack": {
+                "type": "boolean",
+                "description": "Reads the whole stack including .claude/ (skills, rules, commands). true for a worker in the stack directory"
+              },
+              "can_modify_stack": {
+                "type": "boolean",
+                "description": "Permission to modify the stack (code, schemas, configs)"
+              },
+              "channels": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "telegram",
+                    "slack",
+                    "discord",
+                    "whatsapp",
+                    "imessage",
+                    "web",
+                    "cli"
+                  ]
+                },
+                "description": "Human communication channels (for the orchestrator)"
+              },
+              "modes": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "manual",
+                    "remote_interactive",
+                    "remote_autonomous",
+                    "headless"
+                  ]
+                }
+              },
+              "access": {
+                "$ref": "#/$defs/refList",
+                "description": "What the agent can access in THIS stack: → connections.mcp[].id | software[].id | interfaces[].id (cross-stack: '<stack-id>:<element-id>')"
+              },
+              "context_packs": {
+                "$ref": "#/$defs/refList",
+                "description": "→ context.packs[].name"
+              },
+              "delegates_to": {
+                "$ref": "#/$defs/refList",
+                "description": "→ stack_agents[].id — who it delegates to (always downward)"
+              },
+              "model": {
+                "type": "string",
+                "description": "provider/model (orchestrator — cheap, worker — strong)"
+              },
+              "billing": {
+                "enum": [
+                  "subscription_oauth",
+                  "api_key"
+                ]
+              },
+              "state": {
+                "type": "string",
+                "description": "Session persistence (--resume / state.json / manager)"
+              },
+              "invocations": {
+                "type": "array",
+                "description": "How the agent is started: channel (Telegram), manually, by a trigger (routine/cron), from a workflow (subprocess)",
+                "items": {
+                  "$ref": "#/$defs/agentInvocation"
+                }
+              }
+            }
+          }
+        },
+        "managed_agents": {
+          "type": "array",
+          "description": "Managed agents = model + instructions + tools (MCP/API accesses). Invoked via API, embedded in an interface (an AI Lawyer inside NocoBase), or run as a workflow step",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "model"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/slug"
+              },
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "description": "What it does (contract analysis, lead scoring…)"
+              },
+              "model": {
+                "type": "string",
+                "description": "provider/model: anthropic/claude-sonnet-4.6, openai/chatgpt-5.5"
+              },
+              "instructions": {
+                "type": "string",
+                "description": "System instructions (short; long ones go to instructions_ref)"
+              },
+              "instructions_ref": {
+                "type": "string",
+                "description": "Path/link to the full instructions file (do not duplicate inside macstack.json)"
+              },
+              "tools": {
+                "type": "object",
+                "description": "What the agent can access as tools",
+                "properties": {
+                  "mcp": {
+                    "$ref": "#/$defs/refList",
+                    "description": "→ connections.mcp[].id"
+                  },
+                  "apis": {
+                    "$ref": "#/$defs/refList",
+                    "description": "→ connections.apis (software id) | external APIs"
+                  },
+                  "workflows": {
+                    "$ref": "#/$defs/refList",
+                    "description": "→ workflows[].id — which workflows it may run"
+                  },
+                  "native": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Platform-native tools (knowledge-base-retrieve, dataQuery…)"
+                  }
+                }
+              },
+              "invocations": {
+                "type": "array",
+                "description": "How the agent is STARTED (may be several ways): via an interface (a user chats with it), from a workflow, by a trigger, by a direct API call",
+                "items": {
+                  "$ref": "#/$defs/agentInvocation"
+                }
+              },
+              "knowledge_base": {
+                "type": "string"
+              },
+              "languages": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "available_to": {
+                "$ref": "#/$defs/refList",
+                "description": "→ roles[].id"
+              }
+            }
+          }
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "LENS 6: Claude plugins and Context Packs. technology = {tool}-{dev|ops|provision} (operations), stack = architecture descriptors, process = business workflows",
+      "properties": {
+        "plugins": {
+          "type": "object",
+          "description": "Plugins wired into this stack, grouped by plugin type. Each entry declares not only WHICH plugin, but WHAT IT COVERS in this stack (covers[]) — which sections of the stack file it is the reference for. That turns the plugin list from decoration into a routing table: given a task (add a workflow, add an entity), an agent knows which plugin to open instead of loading all of them or guessing.",
+          "properties": {
+            "technology": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/pluginRef"
+              }
+            },
+            "process": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/pluginRef"
+              }
+            },
+            "stack": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/pluginRef"
+              }
+            }
+          }
+        },
+        "packs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "type"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "development",
+                  "operations",
+                  "provisioning"
+                ]
+              },
+              "plugins": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/slug"
+                }
+              }
+            }
+          }
+        },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Target AI clients (claude-code, codex, openclaw…)"
+        },
+        "marketplaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "roles": {
+      "type": "array",
+      "description": "Roles and access (\"sees / can\" + isolation)",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sees": {
+            "type": "string"
+          },
+          "can": {
+            "type": "string"
+          },
+          "acl": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "entity": {
+                  "type": "string",
+                  "description": "→ entities[].id"
+                },
+                "fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "create",
+                      "read",
+                      "update",
+                      "delete",
+                      "approve"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "isolation": {
+            "type": "string",
+            "description": "Tenant isolation (e.g.: by the company field)"
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "description": "Input resources: accesses (env names + Infisical), external services, data, orchestration bindings",
+      "properties": {
+        "accesses": {
+          "type": "array",
+          "description": "Registry of the stack's env tokens — the codes of the required keys for .env. The macstack-dev scaffolder generates .env.example from this list; the linter checks that required keys exist in .env",
+          "items": {
+            "type": "object",
+            "required": [
+              "env"
+            ],
+            "properties": {
+              "env": {
+                "type": "string",
+                "description": "The key NAME in .env (never the value)"
+              },
+              "required": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether the token is required for the stack to work (false = only needed for an optional feature)"
+              },
+              "source": {
+                "type": "string",
+                "default": "infisical"
+              },
+              "project": {
+                "type": "string"
+              },
+              "environment": {
+                "type": "string"
+              },
+              "for": {
+                "type": "string",
+                "description": "→ software[].id | connections.mcp[].id"
+              },
+              "provided_by": {
+                "enum": [
+                  "client",
+                  "us"
+                ]
+              }
+            }
+          }
+        },
+        "external_services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data_assets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bindings": {
+          "type": "object",
+          "description": "Service bindings (infisical/dokploy/github/plane…)",
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "integrations": {
+      "type": "array",
+      "description": "External systems: status + approach + open questions",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "system"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "system": {
+            "type": "string"
+          },
+          "direction": {
+            "enum": [
+              "pull",
+              "push",
+              "bidirectional",
+              "tbd"
+            ]
+          },
+          "approach": {
+            "enum": [
+              "api",
+              "webhook",
+              "mcp",
+              "manual",
+              "tbd"
+            ]
+          },
+          "entities": {
+            "$ref": "#/$defs/refList"
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          },
+          "open_questions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "description": "Status along the 7 delivery stages of the Assembly Process",
+      "properties": {
+        "stage": {
+          "enum": [
+            "define",
+            "decompose",
+            "specify",
+            "compose",
+            "test",
+            "deploy",
+            "iterate"
+          ]
+        },
+        "coverage_target": {
+          "type": "string",
+          "description": "The 70% → 95% principle"
+        },
+        "open_questions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "needs_from_client": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updated": {
+          "type": "string",
+          "description": "Date of the last revision (YYYY-MM-DD)"
+        }
+      }
+    },
+    "commercial": {
+      "type": "object",
+      "description": "Commercial layer: the offer and the cost of ownership",
+      "properties": {
+        "offer": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Offer type from the Offer Catalog"
+            },
+            "price_range": {
+              "type": "string"
+            },
+            "model": {
+              "enum": [
+                "one_time",
+                "subscription",
+                "retainer",
+                "usage"
+              ]
+            }
+          }
+        },
+        "cost_of_ownership": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "usd_month": {
+                    "type": [
+                      "number",
+                      "string"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_usd_month": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+([-.][a-z0-9]+)*$"
+    },
+    "coverageArea": {
+      "$ref": "#/$defs/slug",
+      "description": "An area a plugin covers, from registry/coverage-areas.json. Two kinds: a SECTION of this stack file (results, processes, triggers, workflows, software, entities, interfaces, connections, agents, roles, resources, integrations) — meaning the plugin teaches you how to build that part of the stack; or a CROSS-CUTTING area not tied to one section (deployment, secrets-env, testing, observability, data-migration, security-access, conventions, documentation, cost-billing). Extension: a new area = a kebab-case slug + a PR to the registry."
+    },
+    "pluginRef": {
+      "description": "A plugin wired into the stack. The object form is canonical: it says what the plugin covers here. A bare slug is the legacy short form, equivalent to {\"id\": slug} with no coverage declared — valid, but the linter warns, because an agent cannot route to a plugin whose coverage is unknown.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/slug"
+        },
+        {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/slug",
+              "description": "Plugin slug as published in the marketplace"
+            },
+            "covers": {
+              "type": "array",
+              "description": "What this plugin is the reference for IN THIS STACK. Example: directus-dev covers [software, entities, interfaces]; trigger-dev covers [workflows, triggers]; a stack plugin usually covers most sections at once. Values from registry/coverage-areas.json. The linter cross-checks this against the stack itself: a non-empty section that no plugin covers is a gap.",
+              "items": {
+                "$ref": "#/$defs/coverageArea"
+              }
+            },
+            "scope": {
+              "type": "array",
+              "description": "Optional narrowing to the concrete elements this plugin owns — ids from software[], entities[], workflows[], interfaces[]. Needed when several plugins cover the same area: directus-dev covers `interfaces` with scope [directus], nextjs-dev covers `interfaces` with scope [nextjs]. Without scope an overlap is ambiguous and the linter warns.",
+              "items": {
+                "$ref": "#/$defs/slug"
+              }
+            },
+            "note": {
+              "type": "string",
+              "description": "Free-form clarification for a human reader"
+            }
+          }
+        }
+      ]
+    },
+    "agenticChannel": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "const": "partial"
+        }
+      ]
+    },
+    "stackRef": {
+      "type": "string",
+      "description": "Reference to another macstack.json: 'github:owner/repo[#ref][/path]' | https URL to a repo or file | LOCAL folder absolute path ('/Users/me/STACKS/crm') | absolute path to a file. Folder/repo → <root>/macstack.json is used"
+    },
+    "agentInvocation": {
+      "type": "object",
+      "required": [
+        "via"
+      ],
+      "description": "One way of starting an agent",
+      "properties": {
+        "via": {
+          "enum": [
+            "interface",
+            "workflow",
+            "trigger",
+            "api",
+            "channel",
+            "manual"
+          ],
+          "description": "interface = a user talks to the agent through an interface (chat); workflow = invoked inside a workflow; trigger = started by a trigger; api = direct API call; channel = messenger channel (stack agents); manual = started by a human"
+        },
+        "interface": {
+          "type": "string",
+          "description": "→ interfaces[].id (for via=interface)"
+        },
+        "workflow": {
+          "type": "string",
+          "description": "→ workflows[].id (for via=workflow)"
+        },
+        "trigger": {
+          "type": "string",
+          "description": "→ triggers[].id (for via=trigger)"
+        },
+        "channel": {
+          "type": "string",
+          "description": "telegram | slack | … (for via=channel)"
+        }
+      }
+    },
+    "refList": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "in_progress",
+        "implemented",
+        "partial",
+        "ready_to_connect",
+        "out_of_scope"
+      ]
+    }
+  }
+}

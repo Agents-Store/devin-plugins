@@ -1,0 +1,17 @@
+{
+  "skill_name": "mcp-patterns",
+  "evals": [
+    {
+      "id": 7,
+      "prompt": "I want to trigger a Trigger.dev task via MCP, wait for it to complete, and if it fails, get the error details. What MCP tools do I use?",
+      "expected_output": "Should show: get_current_worker to check schema, trigger_task, wait_for_run_to_complete, get_run_details for errors",
+      "files": [],
+      "expectations": [
+        "Mentions get_current_worker tool', 'type': 'content_check",
+        "Mentions trigger_task tool', 'type': 'content_check",
+        "Mentions wait_for_run_to_complete or get_run_details', 'type': 'content_check",
+        "Shows sequential workflow pattern', 'type': 'content_check"
+      ]
+    }
+  ]
+}

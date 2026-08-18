@@ -1,0 +1,19 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me a complete example of a PostgreSQL schema for an online store that works with NocoDB and NocoBase. I need users, products, orders, and categories at minimum.",
+      "expected_output": "Complete schema with CREATE TABLE statements, FK constraints, indexes, and a relation summary. Uses serial PK, text types, decimal for prices, timestamp for dates. All relations have ON DELETE NO ACTION.",
+      "files": [],
+      "expectations": [
+        {"assertion": "has_all_tables", "text": "Includes at minimum: users, products, orders, categories tables"},
+        {"assertion": "has_fk_constraints", "text": "Every relation has an explicit ALTER TABLE ADD CONSTRAINT with FOREIGN KEY"},
+        {"assertion": "has_indexes", "text": "Every FK column has a CREATE INDEX"},
+        {"assertion": "has_relation_summary", "text": "Includes a relation summary showing table→table: relation type"},
+        {"assertion": "serial_pks", "text": "All tables use serial or bigserial primary keys"},
+        {"assertion": "no_forbidden_types", "text": "No ENUM, ARRAY, jsonb, UUID, INHERITS used anywhere"}
+      ]
+    }
+  ]
+}

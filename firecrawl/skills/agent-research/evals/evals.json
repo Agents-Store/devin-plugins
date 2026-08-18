@@ -1,0 +1,17 @@
+{
+  "skill_name": "agent-research",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Research the top 5 project management tools, compare their pricing plans and key features. Start from Asana and Monday.com.",
+      "expected_output": "Uses agent tool with prompt, starting URLs, optionally schema",
+      "files": [],
+      "expectations": [
+        "Uses agent tool with descriptive research prompt",
+        "Provides starting URLs (asana.com, monday.com)",
+        "Optionally provides JSON schema for structured output",
+        "Mentions agent_status polling for results"
+      ]
+    }
+  ]
+}

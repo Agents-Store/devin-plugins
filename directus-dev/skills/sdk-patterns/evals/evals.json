@@ -1,0 +1,32 @@
+{
+  "skill_name": "sdk-patterns",
+  "evals": [
+    {
+      "id": 15,
+      "prompt": "Show me how to set up the Directus SDK with TypeScript types and do basic CRUD",
+      "expected_output": "Composable client, TypeScript schema, readItems/createItem/updateItem/deleteItem",
+      "files": [],
+      "expectations": [
+        "Uses createDirectus with composable pattern (rest, staticToken)",
+        "Shows TypeScript interface for schema",
+        "Shows readItems with fields and filter",
+        "Shows createItem example",
+        "Shows updateItem example",
+        "Uses correct imports from @directus/sdk"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "How do I subscribe to real-time changes on a collection with the Directus SDK?",
+      "expected_output": "realtime() composable, connect(), subscribe(), for-await loop",
+      "files": [],
+      "expectations": [
+        "Uses realtime() composable in client setup",
+        "Calls client.connect() before subscribing",
+        "Uses client.subscribe() with collection name and event type",
+        "Shows for-await-of loop for consuming events",
+        "Includes correct imports (createDirectus, realtime, staticToken)"
+      ]
+    }
+  ]
+}

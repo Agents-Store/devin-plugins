@@ -1,0 +1,17 @@
+{
+  "skill_name": "report-export",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Export my March transactions to CSV",
+      "expected_output": "CSV file with transaction data",
+      "files": [],
+      "expectations": [
+        "References export_csv.js script",
+        "Fetches transactions for date range",
+        "Generates CSV with proper columns",
+        "Saves to user-specified location"
+      ]
+    }
+  ]
+}

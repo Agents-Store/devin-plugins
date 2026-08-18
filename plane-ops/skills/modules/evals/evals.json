@@ -1,0 +1,51 @@
+{
+  "skill_name": "modules",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a module 'Billing v2' in project TaskFlow, led by Alice, targeting June 30 2026.",
+      "expected_output": "Resolves project and lead UUIDs, calls create_module with status='planned'.",
+      "files": [],
+      "expectations": [
+        "Consults connector-bootstrap",
+        "Resolves project_id and lead UUID",
+        "Calls create_module with name, lead, target_date, status=planned",
+        "Offers to populate the module with backlog items"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Should I use a module or a cycle for tracking the Stripe migration (spans 3 sprints)?",
+      "expected_output": "Recommends a module because scope is >1 sprint, cites the module-vs-cycle decision table.",
+      "files": [],
+      "expectations": [
+        "Chooses module (not cycle) for multi-sprint scope",
+        "Cites the decision criteria from the modules skill",
+        "Notes that items can live in both a module and a cycle simultaneously"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Show me the progress of the 'Billing v2' module.",
+      "expected_output": "Lists module items, groups by state, reports completion_rate and active blockers.",
+      "files": [],
+      "expectations": [
+        "Calls list_module_work_items",
+        "Groups items by state group and sums points",
+        "Reports completion_rate (completed_points / total_points)",
+        "Surfaces active blockers"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The 'Onboarding revamp' module hasn't moved in 2 sprints. What should I do?",
+      "expected_output": "Recommends explicitly pausing or archiving the module per the lifecycle rules; do not leave it 'in progress'.",
+      "files": [],
+      "expectations": [
+        "Cites the modules lifecycle rule (pause if stalled 2 sprints)",
+        "Recommends update_module to status=paused or archive_module",
+        "Suggests a retrospective to understand the stall before resuming"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "webhook-management",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up a webhook that fires when a new record is created in the Deals table",
+      "expected_output": "Create webhook with event type and URL",
+      "files": [],
+      "expectations": [
+        "Documents webhook creation with event type",
+        "Shows available events (after.insert, after.update, after.delete)",
+        "Includes webhook URL configuration",
+        "Mentions testing/verification"
+      ]
+    }
+  ]
+}

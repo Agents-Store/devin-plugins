@@ -1,0 +1,17 @@
+{
+  "skill_name": "e-documents",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show my electronic documents inbox",
+      "expected_output": "List of incoming EDO documents",
+      "files": [],
+      "expectations": [
+        "Documents EDO inbox API",
+        "Lists document types (acts, invoices, etc.)",
+        "Shows document status and signatures",
+        "Supports inbox/outbox filtering"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "skill_name": "sprint-planning",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Plan Sprint 16 for TaskFlow. 1-week sprint starting Monday. Team: 3 devs, one of them (Bob) is part-time 50%. Our last 3 sprints completed 18, 22, 20 points. Set a sprint goal, calculate capacity, pick items from backlog, create the cycle.",
+      "expected_output": "Full planning ceremony: velocity avg 20 × 0.85 ≈ 17 → adjusted for Bob's 50% (team has 2.5 FTE not 3, so ~14-15 capacity), sprint goal in the 'users can X so that Y' format, item selection honoring DoR, create_cycle call with owned_by, add_work_items_to_cycle with issue_ids.",
+      "files": [],
+      "expectations": [
+        "Prefers velocity-based capacity (has 3+ sprints history) over days-based",
+        "Calculates average velocity (20) and applies 15% buffer (×0.85)",
+        "Adjusts capacity for Bob's part-time status (not ignoring it)",
+        "Writes a sprint goal in the 'By end of sprint, [users] can [capability] so that [value]' format",
+        "Validates each selected item against DoR (estimated, ≤8 points, has AC, no unresolved blockers)",
+        "Creates the cycle via create_cycle with owned_by and description (the goal)",
+        "Adds items via add_work_items_to_cycle with issue_ids (plural array)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Calculate next sprint capacity for our team of 5 devs, 2-week sprint. Our last 4 sprints completed 32, 28, 35, 30 points. Alice is on PTO for 3 days.",
+      "expected_output": "Uses velocity-based capacity (avg 31.25 × 0.85 ≈ 26.5), then adjusts for PTO (3/50 person-days lost), resulting in ~25 points.",
+      "files": [],
+      "expectations": [
+        "Prefers velocity-based capacity (has history) over days-based",
+        "Calculates average velocity ~31 points",
+        "Applies 15% buffer (×0.85)",
+        "Subtracts proportional PTO (3 person-days out of 50)",
+        "Lands on ~24-26 points as the recommended capacity"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm planning Sprint 1 for a brand new team. Nobody has ever worked together. Help me set capacity.",
+      "expected_output": "No velocity history → uses days-based formula with focus factor, then applies first-sprint 60% reduction for learning curve.",
+      "files": [],
+      "expectations": [
+        "Detects no velocity history available",
+        "Uses days-based formula: team_size × sprint_days × 0.7 × 0.85",
+        "Applies the additional first-sprint reduction to 60% of calculated capacity",
+        "Warns that Sprint 1 commitment is low-confidence and should be re-calibrated after"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I want to add PROJ-148 'Complete checkout rewrite' — 13 story points — to next sprint. Our capacity is 30 points.",
+      "expected_output": "Rejects — 13 > 8, item must be decomposed first via task-decomposition skill before entering sprint.",
+      "files": [],
+      "expectations": [
+        "Blocks adding the item based on DoR (point must be ≤ 8)",
+        "Routes to the task-decomposition skill for splitting",
+        "Explains why: >8 points have high estimation error and don't fit burndown well",
+        "Does NOT just warn-and-proceed — refuses to add"
+      ]
+    }
+  ]
+}

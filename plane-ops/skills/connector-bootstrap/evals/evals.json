@@ -1,0 +1,64 @@
+{
+  "skill_name": "connector-bootstrap",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a new sprint for my Plane project. The Plane tools are not visible in my tool list yet.",
+      "expected_output": "Agent probes ToolSearch with multiple queries (plane, work_item, cycle, create_cycle) and discovers deferred Plane tools before asking for more info or refusing.",
+      "files": [],
+      "expectations": [
+        "Calls ToolSearch with at least 4 distinct queries before claiming tools are missing",
+        "Uses the select: form for specific action names (e.g., create_cycle, list_projects)",
+        "Does not assume a specific MCP prefix like mcp__<provider>__plane-i-",
+        "Matches tools by action suffix, not by prefix"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have two Plane workspaces connected: one self-hosted and one cloud. Show me the backlog.",
+      "expected_output": "Agent detects multiple Plane instances from ToolSearch results and asks which one to use before listing anything.",
+      "files": [],
+      "expectations": [
+        "Probes ToolSearch and finds list_work_items tool(s)",
+        "Detects multiple tools with the same action suffix but different prefixes",
+        "Asks the user which instance to operate on instead of guessing",
+        "Remembers the choice for subsequent calls in the session"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I don't have Plane set up. Tell me I don't have Plane tools.",
+      "expected_output": "Agent probes ToolSearch at least 4 times across relevant domains before concluding Plane is not connected, and reports which probes were run.",
+      "files": [],
+      "expectations": [
+        "Runs at least 4 distinct ToolSearch queries before refusing",
+        "Reports the exact probes that were run in the refusal message",
+        "Suggests how to connect Plane (MCP, connector, or cowork mode)",
+        "Does not silently refuse without probing"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Create a ticket for the login bug — users on Safari 17 get a 500 on submit.",
+      "expected_output": "Even though the user did not say 'Plane', the agent recognizes 'ticket' as a work-management trigger and bootstraps the connector before assuming tools are missing.",
+      "files": [],
+      "expectations": [
+        "Recognizes 'ticket' as a work-management trigger",
+        "Consults connector-bootstrap and probes ToolSearch for create_work_item",
+        "Does not refuse on the basis that the user didn't mention Plane explicitly",
+        "Proceeds to create the work item once tools are resolved"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "What's the weather in Berlin tomorrow?",
+      "expected_output": "Agent does NOT trigger connector-bootstrap — this is unrelated to work management.",
+      "files": [],
+      "expectations": [
+        "Does not invoke ToolSearch with Plane-related queries",
+        "Does not load the connector-bootstrap skill content",
+        "Answers the weather question normally or explains it lacks weather data"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "view-management",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a Kanban view grouped by status and a Form view for new contact submissions",
+      "expected_output": "Create kanban view with group field, create form view",
+      "files": [],
+      "expectations": [
+        "Documents Kanban view creation with grouping field",
+        "Shows Form view creation",
+        "Lists all view types (Grid, Kanban, Gallery, Form, Calendar)",
+        "Explains view-specific configuration"
+      ]
+    }
+  ]
+}

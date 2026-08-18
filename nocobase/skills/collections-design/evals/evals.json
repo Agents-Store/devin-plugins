@@ -1,0 +1,17 @@
+{
+  "skill_name": "collections-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a collection for tracking orders with order number, customer, items, total, and status",
+      "expected_output": "Collection schema with field types, system fields, naming convention",
+      "files": [],
+      "expectations": [
+        "Documents collection types (general, tree, inheritance)",
+        "Shows field type selection for each data type",
+        "Explains system fields (createdAt, updatedAt, id)",
+        "Mentions naming conventions"
+      ]
+    }
+  ]
+}

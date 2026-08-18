@@ -1,0 +1,17 @@
+{
+  "skill_name": "fields-relations",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up a many-to-many relation between Products and Categories with a through table",
+      "expected_output": "M2M relation with through table configuration",
+      "files": [],
+      "expectations": [
+        "Documents many-to-many relation type",
+        "Explains through table concept",
+        "Shows foreign key configuration",
+        "Covers hasMany, belongsTo, belongsToMany"
+      ]
+    }
+  ]
+}

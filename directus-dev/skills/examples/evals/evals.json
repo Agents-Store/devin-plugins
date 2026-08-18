@@ -1,0 +1,31 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 19,
+      "prompt": "Show me a complete example of building an e-commerce catalog in Directus from scratch",
+      "expected_output": "Full explore-build-populate workflow with MCP tool calls",
+      "files": [],
+      "expectations": [
+        "Starts with schema discovery",
+        "Creates collections in correct dependency order",
+        "Includes products, categories, and variants collections at minimum",
+        "Sets up relationships (M2O, M2M)",
+        "Shows MCP tool call JSON examples"
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "I need to see what a typical Directus MCP tool call looks like — give me concrete JSON examples",
+      "expected_output": "Concrete JSON for schema, items, collections/fields tools",
+      "files": [],
+      "expectations": [
+        "Shows schema tool JSON (discovery mode with empty input)",
+        "Shows items tool JSON with action and query",
+        "Shows collections or fields tool JSON with create action",
+        "All examples include Tool name and Input format",
+        "Includes at least 4 different tool examples"
+      ]
+    }
+  ]
+}

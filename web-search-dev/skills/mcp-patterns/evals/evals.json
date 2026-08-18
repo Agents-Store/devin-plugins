@@ -1,0 +1,11 @@
+{
+  "skill_name": "mcp-patterns",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to scrape some product data from a website and then find stock photos for my app. Which MCP tools should I use for each task? Give me the specific tool names and a quick overview of what's available.",
+      "expected_output": "Should reference the mcp-patterns skill routing table, recommend specific tools like firecrawl_scrape/firecrawl_extract for scraping and searchPhotos/get_search_photos for media, and show awareness of the full tool ecosystem across services.",
+      "files": []
+    }
+  ]
+}

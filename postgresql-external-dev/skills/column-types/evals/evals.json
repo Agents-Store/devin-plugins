@@ -1,0 +1,32 @@
+{
+  "skill_name": "column-types",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm building a product catalog in PostgreSQL that connects to NocoDB. I need columns for: product name, price, discount percentage, whether it's active, a rating (1-5 stars), and some JSON metadata. What SQL types should I use for each?",
+      "expected_output": "product name: text, price: decimal(10,2), discount: double precision, is_active: bool, rating: smallint, metadata: json. No jsonb, no ENUM.",
+      "files": [],
+      "expectations": [
+        {"assertion": "text_for_name", "text": "Uses 'text' for product name"},
+        {"assertion": "decimal_for_price", "text": "Uses 'decimal' with precision/scale (e.g. decimal(10,2)) for price"},
+        {"assertion": "double_for_percent", "text": "Uses 'double precision' for discount percentage"},
+        {"assertion": "bool_for_active", "text": "Uses 'bool' for is_active flag"},
+        {"assertion": "smallint_for_rating", "text": "Uses 'smallint' for rating"},
+        {"assertion": "json_not_jsonb", "text": "Uses 'json' (not 'jsonb') for metadata"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "My NocoBase external database needs a contacts table with email, phone, website URL, and a status field that should be a dropdown (active/inactive/pending). What PostgreSQL types are compatible?",
+      "expected_output": "email: character varying, phone: character varying, website: text, status: text (with SingleSelect in NocoDB UI). No PostgreSQL ENUM type.",
+      "files": [],
+      "expectations": [
+        {"assertion": "varchar_for_email", "text": "Uses 'character varying' for email"},
+        {"assertion": "varchar_for_phone", "text": "Uses 'character varying' for phone"},
+        {"assertion": "text_for_url", "text": "Uses 'text' for URL"},
+        {"assertion": "text_for_select", "text": "Uses 'text' for the status dropdown/select field, NOT PostgreSQL ENUM"},
+        {"assertion": "explains_select_pattern", "text": "Explains that NocoDB manages select options in UI, stored as text in PostgreSQL"}
+      ]
+    }
+  ]
+}

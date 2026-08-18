@@ -1,0 +1,31 @@
+{
+  "skill_name": "troubleshoot",
+  "evals": [
+    {
+      "id": 17,
+      "prompt": "I'm getting 403 Forbidden when trying to create items via MCP in Directus. How do I fix this?",
+      "expected_output": "Role permissions, system collection permissions, MCP user permission table",
+      "files": [],
+      "expectations": [
+        "Identifies insufficient role permissions as the cause",
+        "Points to Settings > Roles > Permissions",
+        "Lists system collections needing permissions (directus_collections, directus_fields, directus_relations)",
+        "Provides a permission table for MCP user minimum setup",
+        "Mentions checking both user collection and system collection permissions"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "My Directus flow operations aren't executing even though the flow is active",
+      "expected_output": "Check flow.operation, resolve/reject chains, condition syntax, request format",
+      "files": [],
+      "expectations": [
+        "Checks flow.operation field points to first operation UUID",
+        "Checks resolve/reject chains between operations",
+        "Warns about condition filter syntax (nested objects, not dot notation)",
+        "Mentions request body must be stringified JSON",
+        "Mentions request headers must be array of {header, value} objects"
+      ]
+    }
+  ]
+}

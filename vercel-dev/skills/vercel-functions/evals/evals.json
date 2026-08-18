@@ -1,0 +1,20 @@
+{
+  "skill_name": "vercel-functions",
+  "evals": [
+    {
+      "id": 2,
+      "prompt": "Create a webhook handler for my Next.js app on Vercel that receives Stripe webhook events. It should:\n1. Verify the webhook signature\n2. Process checkout.session.completed events\n3. Save the order data to a local JSON file\n4. Retry up to 3 times if processing fails\n5. Use Express for routing\n\nSave to outputs/app/api/webhooks/stripe/route.ts.",
+      "expected_output": "Route handler using named exports, Web API, no Express, no filesystem writes, no manual retry logic, no NextApiRequest",
+      "files": [],
+      "expectations": [
+        "route.ts does not contain 'express'",
+        "route.ts does not contain any of: writeFileSync, writeFile, createWriteStream",
+        "route.ts does not contain 'export default'",
+        "route.ts does not contain 'NextApiRequest'",
+        "route.ts contains 'export async function POST'",
+        "route.ts does not contain any of: maxRetries, retryCount",
+        "route.ts contains one of: new Response, Response.json, NextResponse"
+      ]
+    }
+  ]
+}

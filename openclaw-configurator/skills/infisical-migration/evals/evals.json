@@ -1,0 +1,23 @@
+{
+  "skill_name": "infisical-migration",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Move my OpenClaw instance's .env secrets into Infisical project abc123.",
+      "expected_output": "Enumerates the sensitive keys (openclaw.json SecretRef ids + .env keys), authenticates to Infisical via universal-auth, pushes with `infisical secrets set`, wires the Docker stack (.infisical.conf, wrapper, Dockerfile/compose), rebuilds, strips plaintext, and verifies with `openclaw secrets audit --check`.",
+      "files": [],
+      "expectations": [
+        "Excludes OAuth/CLI credentials (openai-codex, Claude CLI tokens) — they stay in OpenClaw's encrypted store",
+        "Verifies every SecretRef target exists in Infisical before stripping .env",
+        "Never prints secret values, only key names"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "After moving secrets to Infisical the gateway crash-loops with SecretRefResolutionError — what do I do?",
+      "expected_output": "Uses the troubleshooting matrix: the key is missing in Infisical — add the key, or disable the skill that needs it in openclaw.json with enabled:false.",
+      "files": [],
+      "expectations": []
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "batch-operations",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have these 15 product pages I need scraped: https://shop.example.com/product/1 through /product/15. Get markdown content from all of them.",
+      "expected_output": "Uses batch_scrape with 15 URLs, formats=['markdown']",
+      "files": [],
+      "expectations": [
+        "Uses batch_scrape (not individual scrape_url calls)",
+        "Passes all 15 URLs in the urls array",
+        "Sets formats to ['markdown']",
+        "Mentions check_batch_status for progress monitoring"
+      ]
+    }
+  ]
+}

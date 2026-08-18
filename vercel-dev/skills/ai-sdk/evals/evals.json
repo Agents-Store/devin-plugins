@@ -1,0 +1,20 @@
+{
+  "skill_name": "ai-sdk",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a chat interface to my Next.js app using the Vercel AI SDK. It should stream responses from Claude (Anthropic), support tool calling (a weather tool that takes a city name), and show the chat in a React component. Save the API route to outputs/app/api/chat/route.ts and the component to outputs/app/chat/page.tsx.",
+      "expected_output": "AI SDK v6 code using streamText, toUIMessageStreamResponse, useChat with transport, inputSchema, no handleSubmit, no isLoading",
+      "files": [],
+      "expectations": [
+        "route.ts does not contain 'generateObject'",
+        "route.ts does not contain 'toDataStreamResponse'",
+        "page.tsx does not contain 'handleSubmit'",
+        "route.ts does not contain 'parameters:'",
+        "route.ts contains 'streamText'",
+        "page.tsx does not contain 'isLoading'",
+        "route.ts contains 'toUIMessageStreamResponse'"
+      ]
+    }
+  ]
+}

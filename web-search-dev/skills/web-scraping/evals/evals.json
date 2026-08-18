@@ -1,0 +1,11 @@
+{
+  "skill_name": "web-scraping",
+  "evals": [
+    {
+      "id": 5,
+      "prompt": "I need to scrape all product listings from a competitor's e-commerce site and extract the product names, prices, and descriptions into structured JSON. The site uses React so pages are rendered client-side. Walk me through how to do this.",
+      "expected_output": "Should recommend firecrawl_map to discover URLs, then firecrawl_extract with a JSON schema for structured extraction. Should mention waitFor for JS-rendered pages. Should cover the full pipeline: discover URLs → filter → extract structured data → transform.",
+      "files": []
+    }
+  ]
+}

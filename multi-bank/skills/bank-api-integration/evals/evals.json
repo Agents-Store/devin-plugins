@@ -1,0 +1,17 @@
+{
+  "skill_name": "bank-api-integration",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me all my bank accounts and their balances",
+      "expected_output": "Lists 4 Monobank accounts with currencies and balances",
+      "files": [],
+      "expectations": [
+        "Calls get-all-accounts MCP tool",
+        "Returns 4 accounts with IBAN, currency, balance",
+        "Identifies currencies correctly (EUR=978, USD=840, UAH=980)",
+        "Shows balance in human-readable format"
+      ]
+    }
+  ]
+}

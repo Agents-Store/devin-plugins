@@ -1,0 +1,20 @@
+{
+  "skill_name": "structured-data",
+  "evals": [
+    {
+      "id": 2,
+      "prompt": "Add structured data to my blog posts with Article schema and breadcrumbs",
+      "expected_output": "Creates JSON-LD components with Article and BreadcrumbList schemas, type-safe with schema-dts",
+      "files": [],
+      "expectations": [
+        "Creates a reusable JsonLd component with XSS sanitization (.replace(/</g, '\\u003c'))",
+        "Creates schema factory functions using schema-dts types (WithContext<Article>)",
+        "Adds Article schema with headline, datePublished, dateModified, author, image",
+        "Adds BreadcrumbList schema with proper position numbering",
+        "Places sitewide schemas (Organization, WebSite) in root layout",
+        "Places page-specific schemas (Article, BreadcrumbList) in page component",
+        "Does NOT use FAQPage schema (restricted to gov/health since 2023)"
+      ]
+    }
+  ]
+}

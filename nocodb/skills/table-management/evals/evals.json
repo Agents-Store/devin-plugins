@@ -1,0 +1,17 @@
+{
+  "skill_name": "table-management",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a Contacts table with fields for name, email, phone, and company",
+      "expected_output": "Uses create_table then add columns",
+      "files": [],
+      "expectations": [
+        "Documents create_table tool with table_name",
+        "Shows column creation after table creation",
+        "Explains table naming conventions",
+        "Lists available column types"
+      ]
+    }
+  ]
+}

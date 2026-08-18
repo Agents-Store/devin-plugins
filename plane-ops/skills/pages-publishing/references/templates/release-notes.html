@@ -1,0 +1,37 @@
+<!--
+  Rendering rules (see pages-publishing SKILL.md "List Rendering Gotchas"):
+  1. Empty list data: do NOT substitute empty string or <li></li> into a <ul>/<ol>.
+     Substitute a single <li><em>None</em></li> OR remove the whole list block.
+  2. No <li> may start with a nested <ul>/<ol>. Always leading text first.
+  3. No data-checked or custom data-* attributes. Use ✅/⏳/⬜ Unicode markers.
+  4. No mixed text + <p> inside a single <li>. Use <br> for multi-line bullets.
+-->
+<h1>Release {{VERSION}} — {{RELEASE_DATE}}</h1>
+
+<h2>Highlights</h2>
+<ul>
+  {{HIGHLIGHTS}}
+</ul>
+
+<h2>New Features</h2>
+<ul>
+  {{NEW_FEATURES}}
+</ul>
+
+<h2>Improvements</h2>
+<ul>
+  {{IMPROVEMENTS}}
+</ul>
+
+<h2>Bug Fixes</h2>
+<ul>
+  {{BUG_FIXES}}
+</ul>
+
+<h2>Breaking Changes</h2>
+<ul>
+  {{BREAKING_CHANGES}}
+</ul>
+
+<h2>Upgrade Notes</h2>
+<p>{{UPGRADE_NOTES}}</p>

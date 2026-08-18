@@ -1,0 +1,54 @@
+{
+  "skill_name": "estimation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Estimate these 5 backlog items for TaskFlow using Fibonacci, compare each to our 3-point reference story 'Login with email': (1) Add CAPTCHA to signup, (2) Migrate the entire checkout flow to Stripe Elements, (3) Fix typo in footer, (4) Build admin export-to-CSV with filters, (5) Research: should we use Pusher or Ably for realtime?",
+      "expected_output": "Per-item estimate with Fibonacci value, rationale comparing to the 3-point reference, complexity factors named. Item (2) flagged for decomposition (>8). Item (5) suggested as a spike with timebox.",
+      "files": [],
+      "expectations": [
+        "Uses only the Fibonacci scale (1, 2, 3, 5, 8, 13)",
+        "Compares each item explicitly to the 'Login with email' = 3 reference",
+        "Flags item (2) Stripe Elements migration as >8 → route to task-decomposition",
+        "Recommends item (5) as a spike (not a regular story) because 'research needed'",
+        "Explains reasoning in terms of components touched / unknowns / dependencies"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Estimate this story: 'As a user I can reset my password via email link. Must work on mobile. Must rate-limit to prevent abuse. Must handle expired/already-used links gracefully.' Compare against our reference story 'Login with email' = 3 points.",
+      "expected_output": "Suggests 5 or 8 points with rationale referencing multiple components (FE + API + email service + security), compared to the reference.",
+      "files": [],
+      "expectations": [
+        "Uses the 'Password reset flow' reference pattern from the skill (5-8 pts)",
+        "Explicitly compares to the 3-point reference story",
+        "Names the complexity factors: email service, rate limiting, expiry handling, mobile",
+        "Flags the security-critical aspect as a risk that justifies the higher end"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Planning poker for 'Migrate auth middleware': Alice voted 3, Bob voted 5, Carol voted 13. How do I handle this?",
+      "expected_output": "Identifies divergent spread (>2 Fibonacci numbers), asks highest and lowest to explain, suggests re-vote after discussion, or split the item if Carol's concerns are structural.",
+      "files": [],
+      "expectations": [
+        "Detects that spread 3→13 is too divergent to just average",
+        "Asks Carol (highest) and Alice (lowest) to explain reasoning first",
+        "Recommends re-vote after discussion, not averaging",
+        "Flags that if the gap stays wide, the item should be split via task-decomposition skill"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Our team is new and doesn't have reference stories yet. Should we use Fibonacci or t-shirt sizes for our first sprint?",
+      "expected_output": "Recommends t-shirt sizing for initial backlog triage, Fibonacci once references are established.",
+      "files": [],
+      "expectations": [
+        "Recommends starting with t-shirt sizing (XS/S/M/L/XL/XXL)",
+        "Explains that relative sizing is easier without anchors",
+        "Suggests establishing 1-3 reference stories after the first sprint for Fibonacci calibration",
+        "Warns against estimating in hours (anti-pattern from skill)"
+      ]
+    }
+  ]
+}

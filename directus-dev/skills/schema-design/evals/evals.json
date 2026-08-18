@@ -1,0 +1,29 @@
+{
+  "skill_name": "schema-design",
+  "evals": [
+    {
+      "id": 5,
+      "prompt": "I want to build a blog CMS in Directus. What collections do I need and in what order should I create them?",
+      "expected_output": "Blog collections with creation order, system fields, display templates",
+      "files": [],
+      "expectations": [
+        "Lists core collections: authors, categories, tags, posts, junction tables",
+        "Specifies creation order: independent first, then dependent, then junction",
+        "Mentions system fields (status, user_created, date_created)",
+        "Mentions display_template for item presentation",
+        "Shows MCP tool call examples"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "What's the difference between schema: {} and schema: null when creating a Directus collection?",
+      "expected_output": "schema:{} = real table, schema:null = folder-only UI grouping",
+      "files": [],
+      "expectations": [
+        "Explains schema:{} creates a real database table",
+        "Explains schema:null creates a folder-only collection (UI grouping, no table)",
+        "Shows JSON example for both cases"
+      ]
+    }
+  ]
+}

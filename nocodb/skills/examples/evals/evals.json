@@ -1,0 +1,17 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me a complete example of setting up a CRM database in NocoDB",
+      "expected_output": "References crm-schema.md scenario",
+      "files": [],
+      "expectations": [
+        "Points to references/scenarios/crm-schema.md",
+        "Provides multi-table setup workflow",
+        "Includes relation and view configuration",
+        "Shows end-to-end from tables to views"
+      ]
+    }
+  ]
+}

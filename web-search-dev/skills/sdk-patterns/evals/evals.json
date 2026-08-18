@@ -1,0 +1,11 @@
+{
+  "skill_name": "sdk-patterns",
+  "evals": [
+    {
+      "id": 3,
+      "prompt": "I'm building a Next.js app and want to integrate Exa search and Jina reader into my TypeScript code. Show me how to install the SDKs and write the basic integration code.",
+      "expected_output": "Should provide npm install commands (exa-js), TypeScript code for Exa client initialization and search, and fetch-based patterns for Jina reader API. Should use process.env for API keys.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "skill_name": "intake-triage",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Triage the intake queue for TaskFlow. I want to see what's waiting.",
+      "expected_output": "Lists intake items sorted by age, proposes a decision (accept/defer/reject) for each using the routing rules.",
+      "files": [],
+      "expectations": [
+        "Consults connector-bootstrap",
+        "Calls list_intake_work_items and sorts by age",
+        "Classifies each item per the routing rules",
+        "Produces a triage session summary table"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The intake has a report 'App crashes on login for all users'. What's the decision?",
+      "expected_output": "Accept + escalate, create an urgent work item, assign on-call.",
+      "files": [],
+      "expectations": [
+        "Classifies as Accept+escalate (crash, all users)",
+        "Creates a work item with priority=urgent",
+        "Assigns to on-call",
+        "Links the original intake source in the description"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "The intake has 'Add dark mode please' from one customer. What's the decision?",
+      "expected_output": "Defer with rationale, revisit next grooming.",
+      "files": [],
+      "expectations": [
+        "Classifies as Defer (single customer, low signal)",
+        "Records a rationale and revisit date",
+        "Does not create a backlog item immediately"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Intake has 'Login returns 500 on Safari' but PROJ-148 already tracks this exact issue. What do I do?",
+      "expected_output": "Reject as duplicate, link the existing PROJ-148 in the rejection comment so the reporter feels heard.",
+      "files": [],
+      "expectations": [
+        "Classifies as Reject (duplicate)",
+        "Posts a comment or rejection note linking PROJ-148",
+        "Does not create a new work item",
+        "Confirms deletion/resolution of the intake entry"
+      ]
+    }
+  ]
+}

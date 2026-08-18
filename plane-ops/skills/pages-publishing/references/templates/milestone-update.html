@@ -1,0 +1,36 @@
+<!--
+  Rendering rules (see pages-publishing SKILL.md "List Rendering Gotchas"):
+  1. Empty list data: do NOT substitute empty string or <li></li> into a <ul>/<ol>.
+     Substitute a single <li><em>None</em></li> OR remove the whole list block.
+  2. No <li> may start with a nested <ul>/<ol>. Always leading text first.
+  3. No data-checked or custom data-* attributes. Use ✅/⏳/⬜ Unicode markers.
+  4. No mixed text + <p> inside a single <li>. Use <br> for multi-line bullets.
+-->
+<h1>Milestone Update — {{MILESTONE_NAME}}</h1>
+<p><strong>Target:</strong> {{TARGET_DATE}} &middot; <strong>Owner:</strong> {{OWNER}} &middot; <strong>Risk:</strong> {{RISK_LEVEL}}</p>
+
+<h2>Progress</h2>
+<ul>
+  <li>Completion: <strong>{{COMPLETED_POINTS}} / {{TOTAL_POINTS}} points</strong> ({{COMPLETION_RATE}}%)</li>
+  <li>Remaining: {{REMAINING_POINTS}} points</li>
+  <li>Weekly velocity: {{WEEKLY_VELOCITY}}</li>
+  <li>Projected ETA: {{ETA}}</li>
+</ul>
+
+<h2>On Track</h2>
+<ul>
+  {{ON_TRACK_ITEMS}}
+</ul>
+
+<h2>At Risk</h2>
+<ul>
+  {{AT_RISK_ITEMS}}
+</ul>
+
+<h2>Blocked</h2>
+<ul>
+  {{BLOCKED_ITEMS}}
+</ul>
+
+<h2>Next Steps</h2>
+<p>{{NEXT_STEPS}}</p>

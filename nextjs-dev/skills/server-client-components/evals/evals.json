@@ -1,0 +1,23 @@
+{
+  "skill_name": "server-client-components",
+  "evals": [
+    {
+      "id": 3,
+      "prompt": "I have a Next.js 16 page that has several issues. Here's my current code:\n\n```tsx\n// app/blog/[id]/page.tsx\n'use client'\n\nimport { useEffect, useState } from 'react'\n\nexport default function BlogPost({ params }: { params: { id: string } }) {\n  const [post, setPost] = useState(null)\n  \n  useEffect(() => {\n    fetch(`/api/posts/${params.id}`)\n      .then(r => r.json())\n      .then(setPost)\n  }, [params.id])\n\n  return (\n    <div>\n      <img src={post?.image} alt={post?.title} />\n      <h1>{post?.title}</h1>\n      <p>Published: {new Date(post?.date).toLocaleDateString()}</p>\n      <p>{post?.content}</p>\n      <LikeButton postId={params.id} onClick={() => handleLike(params.id)} />\n    </div>\n  )\n}\n```\n\nThis page:\n1. Has poor Lighthouse scores\n2. Causes layout shift from the image\n3. The date sometimes shows a hydration mismatch\n4. Uses useEffect for data fetching which is slow\n5. Makes the entire page a Client Component unnecessarily\n\nPlease rewrite this page following Next.js best practices. Explain what's wrong with each issue and show the corrected version with proper Server/Client component split.",
+      "expected_output": "Rewritten page as async Server Component with direct data fetching, next/image, separate LikeButton client component with optimistic UI, dedicated FormattedDate component, awaited params, tag-based revalidation, and detailed explanations",
+      "files": [],
+      "expectations": [
+        "The page component is converted to a Server Component (no 'use client' directive)",
+        "Data fetching is done directly in the async Server Component, not with useEffect",
+        "next/image is imported and used instead of raw img tag, with width/height or fill",
+        "params is awaited (typed as Promise<{ id: string }>) following Next.js 15+ convention",
+        "The LikeButton is moved to a separate Client Component file with 'use client'",
+        "No function/callback is passed as a prop from the Server Component to the Client Component",
+        "The LikeButton uses optimistic UI (updates state before server confirms, with rollback on failure)",
+        "The date hydration issue is addressed with a dedicated FormattedDate client component (not just suppressHydrationWarning)",
+        "Tag-based revalidation (revalidateTag) is used for the like mutation instead of broad ISR",
+        "Each problem from the original code is explicitly identified and explained"
+      ]
+    }
+  ]
+}

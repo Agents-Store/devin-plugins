@@ -1,0 +1,17 @@
+{
+  "skill_name": "bank-balances",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show balances across all connected banks",
+      "expected_output": "Unified balance table from all banks",
+      "files": [],
+      "expectations": [
+        "Documents BROADCAST pattern for querying all banks",
+        "Fetches balances from each connected MCP server",
+        "Merges results into unified table",
+        "Handles case when some banks are not connected (PrivatBank)"
+      ]
+    }
+  ]
+}

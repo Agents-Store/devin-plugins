@@ -1,0 +1,17 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me a complete example of a data pipeline workflow in n8n",
+      "expected_output": "References data-pipeline.md scenario with full workflow",
+      "files": [],
+      "expectations": [
+        "Points to references/scenarios/data-pipeline.md",
+        "Provides step-by-step workflow creation",
+        "Includes node configuration details",
+        "Shows complete connection patterns"
+      ]
+    }
+  ]
+}

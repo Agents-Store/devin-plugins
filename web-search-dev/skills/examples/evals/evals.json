@@ -1,0 +1,11 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 9,
+      "prompt": "Show me a complete example of building a content pipeline that discovers articles from tech blogs, extracts their content, classifies them by topic, and imports them into a CMS.",
+      "expected_output": "Should reference the content-pipeline scenario from examples/references/scenarios/. Should show the full multi-service pipeline: discover sources (Exa) → map URLs (Firecrawl) → batch read (Jina) → extract structured data (Firecrawl) → classify (Jina) → deduplicate (Jina) → import to CMS.",
+      "files": []
+    }
+  ]
+}

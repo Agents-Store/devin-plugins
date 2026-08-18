@@ -1,0 +1,17 @@
+{
+  "skill_name": "payments",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Prepare a payment of 5000 UAH to IBAN UA12345... for consulting services",
+      "expected_output": "Payment prepared and sent for mobile signing",
+      "files": [],
+      "expectations": [
+        "Documents prepare_payment MCP tool",
+        "Shows required fields (senderIban, receiverIban, amount in kopecks, destination)",
+        "Explains amount is in kopecks (5000 UAH = 500000)",
+        "Mentions mobile app confirmation step"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "skill_name": "setup",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I just installed the web-search-dev plugin but I'm not sure which of the search services are actually working. Can you check which ones are connected and give me a status report?",
+      "expected_output": "Should attempt to verify each service (Firecrawl, Exa, Perplexity, Jina, Context7) with a lightweight test call and produce a status summary table showing which are connected vs not available.",
+      "files": []
+    }
+  ]
+}

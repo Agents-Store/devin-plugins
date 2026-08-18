@@ -1,0 +1,52 @@
+{
+  "skill_name": "epics-initiatives-milestones",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to track the 'Multi-tenant support' work. It's 2 months of work, one tech lead, no fixed release date. Epic, module, milestone, or initiative?",
+      "expected_output": "Recommends an epic, cites the decision table.",
+      "files": [],
+      "expectations": [
+        "Chooses epic (1–3 months, single tech lead, no fixed date)",
+        "Explains why not a module, milestone, or initiative",
+        "References the canonical decision table"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Report the health of the 'v2.0 Public Beta' milestone. Remaining 18 points, weekly velocity 6, target date in 2 weeks.",
+      "expected_output": "Computes ETA=3 weeks, classifies as Red, recommends replanning.",
+      "files": [],
+      "expectations": [
+        "Computes ETA = remaining_points / weekly_velocity = 3 weeks",
+        "Classifies risk as Red (ETA > target_date)",
+        "Recommends replanning or descoping",
+        "Uses the canonical Red/Yellow/Green thresholds"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Create an initiative 'International expansion Q3' spanning projects Billing, Onboarding, and Compliance.",
+      "expected_output": "Calls create_initiative with name, lead, dates, and project_ids array.",
+      "files": [],
+      "expectations": [
+        "Consults connector-bootstrap for initiative tools",
+        "Resolves all three project_ids",
+        "Calls create_initiative with the correct project_ids",
+        "Drafts description_html with Why, Bets, and Out-of-scope sections"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The 'Multi-tenant support' epic has 90 remaining points and the team velocity is 30 per sprint. When will it likely finish?",
+      "expected_output": "Forecasts 3 sprints remaining based on velocity and flags any risk buffer.",
+      "files": [],
+      "expectations": [
+        "Computes remaining_sprints = 90 / 30 = 3",
+        "Reports an estimated completion date based on 3 sprint lengths from today",
+        "Notes that forecast assumes stable velocity and no new blockers",
+        "Suggests monitoring at each sprint review"
+      ]
+    }
+  ]
+}

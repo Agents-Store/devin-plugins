@@ -1,0 +1,17 @@
+{
+  "skill_name": "setup",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I have a self-hosted Trigger.dev v4 instance running at trigger.mycompany.com. How do I set up a new Node.js project to use it? I need to configure both dev and production environments.",
+      "expected_output": "Should cover: login -a with URL, profiles, npx trigger init, trigger.config.ts, TRIGGER_SECRET_KEY formats (tr_dev_xxx, tr_prod_xxx), TRIGGER_API_URL, .env setup",
+      "files": [],
+      "expectations": [
+        "Mentions login -a flag for self-hosted', 'type': 'content_check",
+        "Shows both tr_dev_xxx and tr_prod_xxx key formats', 'type': 'content_check",
+        "Mentions TRIGGER_API_URL env var', 'type': 'content_check",
+        "Includes npx trigger.dev@latest init command', 'type': 'content_check"
+      ]
+    }
+  ]
+}

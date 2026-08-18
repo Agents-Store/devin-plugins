@@ -1,0 +1,17 @@
+{
+  "skill_name": "plugin-development",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Scaffold a NocoBase plugin that adds a custom action button to the orders table",
+      "expected_output": "Plugin scaffold with server-side action and client-side button",
+      "files": [],
+      "expectations": [
+        "Documents plugin scaffold structure",
+        "Shows server-side action registration",
+        "Shows client-side component for button",
+        "Explains plugin lifecycle (load, install, enable)"
+      ]
+    }
+  ]
+}

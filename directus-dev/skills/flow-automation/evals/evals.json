@@ -1,0 +1,33 @@
+{
+  "skill_name": "flow-automation",
+  "evals": [
+    {
+      "id": 9,
+      "prompt": "Create a Directus flow that sends a Slack notification whenever a new post is published",
+      "expected_output": "Complete flow with event trigger, condition, request operation, correct syntax",
+      "files": [],
+      "expectations": [
+        "Creates flow with event trigger on items.create or items.update for posts",
+        "Creates condition operation checking status equals published",
+        "Uses nested object syntax for condition filter (not dot notation)",
+        "Creates request operation with POST to Slack webhook",
+        "Uses array format for request headers [{header, value}]",
+        "Uses stringified JSON for request body",
+        "Connects operations via resolve and sets flow entry point"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "How do I reference data from the trigger in a Directus flow operation?",
+      "expected_output": "Data chain variables: $trigger, payload, keys, operation_key references",
+      "files": [],
+      "expectations": [
+        "Lists $trigger variable and sub-paths (payload, keys, collection)",
+        "Explains operation key references ({{ operation_key }})",
+        "Warns against using $last",
+        "Shows nested object syntax for condition filters",
+        "Mentions stringified JSON for request body"
+      ]
+    }
+  ]
+}

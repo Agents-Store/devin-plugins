@@ -1,0 +1,17 @@
+{
+  "skill_name": "workflows-automations",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a workflow that sends a notification when an order status changes to 'shipped'",
+      "expected_output": "Workflow with collection event trigger and condition node",
+      "files": [],
+      "expectations": [
+        "Documents workflow triggers (collection events, schedule, manual)",
+        "Shows condition node for status check",
+        "Explains action nodes (notification, update, create)",
+        "Covers workflow variables"
+      ]
+    }
+  ]
+}

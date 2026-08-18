@@ -1,0 +1,101 @@
+{
+  "skill_name": "pages-publishing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Publish a sprint report for Sprint 14 of TaskFlow. 34/40 points completed, goal achieved, 2 items carried over.",
+      "expected_output": "Gathers cycle data, renders the sprint-report HTML template, calls create_project_page, returns the URL.",
+      "files": [],
+      "expectations": [
+        "Consults connector-bootstrap",
+        "Uses the sprint-report HTML template from references/templates/sprint-report.html",
+        "Populates Summary, Delivered, Not Delivered, Metrics, Next Sprint sections",
+        "Calls create_project_page with valid description_html"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create a retrospective page for the sprint we just closed. Include previous action items status.",
+      "expected_output": "Uses the retro template, fetches previous retro page, renders both previous action item statuses and new action items.",
+      "files": [],
+      "expectations": [
+        "Uses the retro HTML template",
+        "Checks for and loads a previous retro page if one exists",
+        "Renders Previous Action Items with status (done, in progress, carried over)",
+        "Includes What Went Well / What Didn't / Action Items sections with owners and due dates"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Publish customer-facing release notes for v2.0.",
+      "expected_output": "Uses release-notes template, curates items (omits internal work), groups by category.",
+      "files": [],
+      "expectations": [
+        "Uses the release-notes HTML template",
+        "Curates items for a customer audience (omits internal/dev items)",
+        "Groups by Highlights, New Features, Improvements, Bug Fixes, Breaking Changes",
+        "Does not include PII or secrets"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Publish a Q2 roadmap page showing Now / Next / Later / Parked.",
+      "expected_output": "Uses the roadmap template, aggregates cycles/modules/epics/milestones into the four buckets, calls create_project_page.",
+      "files": [],
+      "expectations": [
+        "Uses the roadmap HTML template from references/templates/roadmap.html",
+        "Classifies items into Now / Next / Later / Parked buckets correctly",
+        "Pulls data from list_cycles, list_modules, list_epics, list_milestones",
+        "Calls create_project_page with the rendered HTML"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Publish a milestone update for 'v2.0 Public Beta'. Target Apr 30, 34/52 points done, weekly velocity 8.",
+      "expected_output": "Uses the milestone-update template, computes ETA and risk, renders On Track / At Risk / Blocked sections.",
+      "files": [],
+      "expectations": [
+        "Uses the milestone-update HTML template",
+        "Computes remaining points, ETA, and risk level (Red/Yellow/Green)",
+        "Renders On Track, At Risk, Blocked sections",
+        "Calls create_project_page with the rendered HTML"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Publish a sprint report where the 'Not Delivered' section has zero items — everything shipped.",
+      "expected_output": "Does NOT emit empty <li></li> or empty <ul></ul> for the Not Delivered section. Either omits the section entirely or substitutes <li><em>None — all planned work shipped</em></li>.",
+      "files": [],
+      "expectations": [
+        "No empty <li></li> in the rendered HTML",
+        "No empty <ul></ul> block in the rendered HTML",
+        "When a list has no data, either omits the whole list block or uses a single <li><em>None</em></li> placeholder",
+        "Cites the Empty List rule from the pages-publishing List Rendering Gotchas"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Create a retro page with nested action items: under 'Process improvements' list 3 sub-items, under 'Tooling' list 2 sub-items.",
+      "expected_output": "Every parent <li> starts with leading text BEFORE the nested <ul>, never with a nested list as the first child.",
+      "files": [],
+      "expectations": [
+        "Every <li> that contains a nested <ul> starts with leading text (e.g., 'Process improvements' before the inner <ul>)",
+        "No <li><ul>...</ul></li> pattern (would tear the list into disjointed fragments)",
+        "Result is a single structured list, not multiple disjointed top-level lists",
+        "Cites the first-child rule from List Rendering Gotchas"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Render retro action items with three statuses: done, in progress, not started.",
+      "expected_output": "Uses Unicode status markers (✅ ⏳ ⬜) as leading characters in <li>, NOT data-checked attribute.",
+      "files": [],
+      "expectations": [
+        "Uses Unicode markers (✅, ⏳, ⬜ or similar) for status",
+        "Does NOT use data-checked='true|false' on <li>",
+        "Does NOT use any custom data-* attribute",
+        "Cites Gotcha 2 (task lists stripped) from List Rendering Gotchas"
+      ]
+    }
+  ]
+}

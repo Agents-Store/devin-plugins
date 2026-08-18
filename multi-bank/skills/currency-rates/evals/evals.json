@@ -1,0 +1,17 @@
+{
+  "skill_name": "currency-rates",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What's the current USD/UAH exchange rate?",
+      "expected_output": "Current rate from bank API",
+      "files": [],
+      "expectations": [
+        "Documents currency rate API call",
+        "Shows buy/sell rates",
+        "Identifies correct currency codes (840=USD, 980=UAH)",
+        "May compare rates across banks"
+      ]
+    }
+  ]
+}

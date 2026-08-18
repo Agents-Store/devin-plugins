@@ -1,0 +1,20 @@
+{
+  "skill_name": "setup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up SEO for my Next.js App Router project from scratch",
+      "expected_output": "Creates metadataBase in root layout, robots.ts, sitemap.ts, installs schema-dts, and configures title template",
+      "files": [],
+      "expectations": [
+        "Sets metadataBase with NEXT_PUBLIC_SITE_URL env var in root layout",
+        "Creates app/robots.ts with production/staging differentiation",
+        "Creates app/sitemap.ts with static and dynamic page patterns",
+        "Configures title template in root layout metadata",
+        "Adds default description to root layout",
+        "Installs schema-dts as dev dependency",
+        "Does NOT install next-seo (deprecated)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "skill_name": "api-reference",
+  "evals": [
+    {
+      "id": 2,
+      "prompt": "Show me the curl commands to scrape a page with Firecrawl and search with Exa. I need the actual REST API endpoints and authentication headers.",
+      "expected_output": "Should load the api-reference skill (disable-model-invocation means it only loads on explicit request) and provide curl examples with correct endpoints (api.firecrawl.dev/v2/scrape, api.exa.ai/search), proper auth headers, and ${VAR} placeholders for API keys.",
+      "files": []
+    }
+  ]
+}

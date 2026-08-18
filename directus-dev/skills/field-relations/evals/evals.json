@@ -1,0 +1,32 @@
+{
+  "skill_name": "field-relations",
+  "evals": [
+    {
+      "id": 7,
+      "prompt": "How do I set up a many-to-many relation between posts and tags in Directus? I need the full step-by-step",
+      "expected_output": "Complete M2M workflow with junction collection, fields, alias fields, relations",
+      "files": [],
+      "expectations": [
+        "Creates a junction collection (e.g. posts_tags) with hidden meta",
+        "Creates two uuid fields in junction (posts_id, tags_id)",
+        "Creates alias fields on both parent collections with list-m2m interface",
+        "Sets meta.special to m2m on alias fields",
+        "Creates relations with junction_field and one_field in meta",
+        "Uses CASCADE on_delete for junction relations"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "What field type should I use for a featured image on my posts collection?",
+      "expected_output": "UUID type, file-image interface, special:[file], relation to directus_files",
+      "files": [],
+      "expectations": [
+        "Specifies uuid type for the field",
+        "Uses file-image interface",
+        "Sets special to [file]",
+        "Creates relation to directus_files",
+        "Uses SET NULL on_delete"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "macstack-dev",
+  "version": "1.3.0",
+  "description": "MACSTACK dev plugin for Agents Store. Creates and maintains macstack.json — the standardized business + technical stack specification for Claude projects: init in existing projects, generate from scratch (result-first), discover context plugins and prototypes, scaffold project files in the prototype → stack plugins → dev plugins order, wire Infisical env, install best-practice rules and commands.",
+  "author": {
+    "name": "Agents Store",
+    "url": "https://github.com/agents-store"
+  },
+  "license": "MIT",
+  "keywords": [
+    "macstack",
+    "dev",
+    "agents-store",
+    "stack-spec",
+    "scaffolding",
+    "result-first",
+    "infisical"
+  ]
+}

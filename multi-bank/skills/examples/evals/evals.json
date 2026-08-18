@@ -1,0 +1,17 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me a complete multi-bank setup guide",
+      "expected_output": "References multi-bank-setup.md scenario",
+      "files": [],
+      "expectations": [
+        "Points to references/scenarios/multi-bank-setup.md",
+        "Covers MCP server connection setup",
+        "Includes first balance sync workflow",
+        "Shows architecture overview"
+      ]
+    }
+  ]
+}

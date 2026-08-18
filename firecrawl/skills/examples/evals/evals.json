@@ -1,0 +1,16 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me examples of how to use the Firecrawl extract_data tool with a JSON schema",
+      "expected_output": "References tool-patterns.md for exact parameter formats",
+      "files": [],
+      "expectations": [
+        "Points to tool-patterns.md reference file",
+        "Shows extract_data with schema example",
+        "Includes prompt and urls parameters"
+      ]
+    }
+  ]
+}

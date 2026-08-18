@@ -1,0 +1,56 @@
+{
+  "skill_name": "codemap-diagram",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Draw me the architecture of this application",
+      "expected_output": "C4 container diagram saved as .drawio file and rendered via drawio-mcp",
+      "files": [],
+      "expectations": [
+        "Analyzes root configs, entry points, and top-level directories",
+        "Generates mxGraph XML with real names from code",
+        "Applies color coding per layer (data=blue, logic=green, interface=yellow, external=red)",
+        "Saves to docs/codemap/diagrams/architecture.drawio",
+        "Calls create_diagram MCP tool for preview"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create an ERD for this project's database",
+      "expected_output": "ERD diagram with tables, columns, PK/FK markers, and relationship cardinality",
+      "files": [],
+      "expectations": [
+        "Auto-detects ORM and reads model definitions",
+        "Extracts tables, columns, types, foreign keys, relationships",
+        "Uses Data layer color (blue #dae8fc)",
+        "Includes cardinality labels on relationships (1, N, M)",
+        "Saves to docs/codemap/diagrams/erd.drawio"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Show me the login flow as a sequence diagram",
+      "expected_output": "Sequence diagram with lifelines for each component involved in the login flow",
+      "files": [],
+      "expectations": [
+        "Traces the login route handler through all called functions",
+        "Generates sequence diagram with lifelines and labeled arrows",
+        "Uses real function and file names from the code",
+        "No XML comments in generated mxGraph XML",
+        "Does not fall back to Mermaid or text diagrams"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Draw a diagram for an empty project with no source code",
+      "expected_output": "Gracefully handles missing code — informs user, does not generate empty or placeholder diagram",
+      "files": [],
+      "expectations": [
+        "Does NOT generate a Mermaid (.mmd) file",
+        "Does NOT create a placeholder diagram with generic labels",
+        "Informs user that no code was found to diagram",
+        "Suggests what the user can provide for a useful diagram"
+      ]
+    }
+  ]
+}

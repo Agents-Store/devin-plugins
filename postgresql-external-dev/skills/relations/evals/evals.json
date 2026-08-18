@@ -1,0 +1,30 @@
+{
+  "skill_name": "relations",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a many-to-many relation between 'articles' and 'categories' tables in my NocoDB PostgreSQL database. Both tables already exist with serial PKs. Show me the complete SQL for the junction table, constraints, and indexes.",
+      "expected_output": "Junction table nc_m2m_articles_categories with composite PK, two FK constraints with ON DELETE NO ACTION ON UPDATE NO ACTION, and indexes on both FK columns.",
+      "files": [],
+      "expectations": [
+        {"assertion": "composite_pk", "text": "Junction table uses composite PRIMARY KEY from both FK columns, no separate id column"},
+        {"assertion": "fk_constraints", "text": "Both FK constraints use ON DELETE NO ACTION ON UPDATE NO ACTION"},
+        {"assertion": "indexes_on_both_fks", "text": "CREATE INDEX on both FK columns in the junction table"},
+        {"assertion": "int4_fk_columns", "text": "FK columns use int4 type (matching serial PK of parent tables)"},
+        {"assertion": "not_null_fks", "text": "Both FK columns are NOT NULL"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm setting up a users table and a profiles table where each user has exactly one profile. This is for a NocoBase external database. How do I set up the one-to-one relationship correctly?",
+      "expected_output": "profiles table with user_id int4 UNIQUE, FK constraint with ON DELETE NO ACTION, index on user_id. Explains UNIQUE is what makes it one-to-one.",
+      "files": [],
+      "expectations": [
+        {"assertion": "unique_on_fk", "text": "FK column (user_id) has UNIQUE constraint — this is what makes it one-to-one"},
+        {"assertion": "fk_constraint", "text": "FK constraint with ON DELETE NO ACTION ON UPDATE NO ACTION"},
+        {"assertion": "index_on_fk", "text": "CREATE INDEX on the FK column"},
+        {"assertion": "explains_unique", "text": "Explains that UNIQUE on FK column is how NocoDB identifies one-to-one relations"}
+      ]
+    }
+  ]
+}

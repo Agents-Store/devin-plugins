@@ -1,0 +1,21 @@
+{
+  "skill_name": "validate",
+  "evals": [
+    {
+      "id": 6,
+      "prompt": "Can you validate the project-directus-nextjs template? I want to make sure it follows all our Level 1 conventions before I fork it for a new client.",
+      "expected_output": "The validate skill reads stack.json, confirms level=1, checks all required files (core skills, commands, agents, rules, docs), validates CLAUDE.md quality (under 100 lines, no placeholders, Tech Stack filled), checks consistency between stack.json and CLAUDE.md, runs security checks, and produces a detailed validation report.",
+      "files": [],
+      "expectations": [
+        "Reads stack.json and correctly identifies the template as Level 1",
+        "Checks for all core required files (brainstorming, planning, tdd, debugging, verification skills)",
+        "Checks for core commands (init-stack, commit, pr, plan, review, sync)",
+        "Verifies CLAUDE.md has filled Tech Stack section (not placeholder text)",
+        "Checks that CLAUDE.md Installed Plugins matches stack.json plugins",
+        "Verifies .env.example has stack-specific variables",
+        "Checks security (.env and .mcp.json are gitignored)",
+        "Produces a structured validation report with pass/fail per category"
+      ]
+    }
+  ]
+}

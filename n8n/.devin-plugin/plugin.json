@@ -1,0 +1,21 @@
+{
+  "name": "n8n",
+  "version": "1.0.0",
+  "description": "n8n workflow automation plugin. Manage workflows, execute automations, configure nodes, handle credentials, monitor executions, expression syntax, node configuration patterns, and code node best practices via MCP tools.",
+  "author": {
+    "name": "AGENTS.STORE"
+  },
+  "license": "MIT",
+  "keywords": [
+    "n8n",
+    "workflow",
+    "automation",
+    "nodes",
+    "triggers",
+    "executions",
+    "credentials",
+    "integrations",
+    "webhooks",
+    "scheduling"
+  ]
+}

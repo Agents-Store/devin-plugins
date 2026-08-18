@@ -1,0 +1,52 @@
+{
+  "skill_name": "codemap-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this file for me: routes/deals.py",
+      "expected_output": "Structured review with findings grouped by severity (Critical, Warning, Suggestion), each with location, issue, why-it-matters explanation, and suggested fix",
+      "files": [],
+      "expectations": [
+        "Reads the target file before reviewing",
+        "Applies 5 review dimensions: Security, Correctness, Readability, Patterns, Beginner Pitfalls",
+        "Each finding includes a why-it-matters explanation",
+        "Starts with positive observations before listing issues",
+        "Uses the severity format: CRITICAL, WARNING, SUGGESTION"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What's wrong with this code? Check my work please",
+      "expected_output": "Beginner-friendly review with educational tone, explaining issues as learning opportunities",
+      "files": [],
+      "expectations": [
+        "Asks which file or code to review if not specified",
+        "Uses patient, non-condescending tone",
+        "Explains why each issue matters with concrete examples",
+        "Keeps findings proportional to code size"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Review PR #42 and explain issues for a junior developer",
+      "expected_output": "PR diff review with beginner-friendly explanations for each finding",
+      "files": [],
+      "expectations": [
+        "Fetches PR diff via gh pr diff",
+        "Groups findings by file",
+        "Prioritizes Critical issues first",
+        "Includes learn-more explanations for each finding"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Review the file that_doesnt_exist.py",
+      "expected_output": "Asks user to verify the file path",
+      "files": [],
+      "expectations": [
+        "Does not hallucinate a code review",
+        "Asks user to check the file path or provide the correct one"
+      ]
+    }
+  ]
+}

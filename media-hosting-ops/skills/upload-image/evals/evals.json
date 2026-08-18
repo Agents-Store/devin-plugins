@@ -1,0 +1,38 @@
+{
+  "skill_name": "upload-image",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have this image https://images.unsplash.com/photo-1517694712202-14dd9538aa97 — can you upload it to our media hosting?",
+      "expected_output": "Calls uploadImageToMinio with correct body.file_url parameter format",
+      "files": [],
+      "expectations": [
+        "References the correct MCP tool name: mcp__mcpware-dev-tools__a-minio-uploadImageToMinio",
+        "Uses the correct parameter structure with body.file_url",
+        "Passes the exact URL provided by the user as file_url value"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need a permanent link for this picture so I can use it in my bot config: https://cdn.example.com/banner.png",
+      "expected_output": "Recognizes this as an upload request and calls uploadImageToMinio",
+      "files": [],
+      "expectations": [
+        "References the correct MCP tool name: mcp__mcpware-dev-tools__a-minio-uploadImageToMinio",
+        "Uses the correct parameter structure with body.file_url",
+        "Passes the user's URL https://cdn.example.com/banner.png as file_url"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Upload these two images to hosting: https://example.com/logo.png and https://example.com/hero.jpg",
+      "expected_output": "Calls uploadImageToMinio twice, once per image, with correct parameters",
+      "files": [],
+      "expectations": [
+        "References the correct MCP tool name: mcp__mcpware-dev-tools__a-minio-uploadImageToMinio",
+        "Calls or plans to call the tool twice — once for each image",
+        "Uses both URLs: https://example.com/logo.png and https://example.com/hero.jpg"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "vercel-dev",
+  "version": "0.25.4",
+  "description": "Vercel ecosystem plugin. Deployment, AI SDK, Edge Functions, storage, routing, performance optimization. Includes CLI deploy troubleshooting for non-Git projects, Hobby plan fixes, standalone output handling. Based on official vercel-plugin v0.25.0 by Vercel Labs.",
+  "author": {
+    "name": "AGENTS.STORE"
+  },
+  "license": "MIT",
+  "keywords": [
+    "vercel",
+    "nextjs",
+    "deployment",
+    "ai-sdk",
+    "edge-functions",
+    "serverless",
+    "turborepo",
+    "turbopack",
+    "dev",
+    "agents-store"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "skill_name": "troubleshoot",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I created a PostgreSQL schema with ENUM types for status fields, ARRAY columns for tags, and UUID primary keys. Now NocoDB can't properly read some of these. What did I do wrong and how do I fix it?",
+      "expected_output": "Identifies all three issues: ENUM→text, ARRAY→json, UUID→serial/bigserial. Provides ALTER TABLE migration SQL for each fix. References the verification checklist.",
+      "files": [],
+      "expectations": [
+        {"assertion": "identifies_enum_issue", "text": "Identifies ENUM as incompatible and recommends replacing with text"},
+        {"assertion": "identifies_array_issue", "text": "Identifies ARRAY as incompatible and recommends replacing with json"},
+        {"assertion": "identifies_uuid_issue", "text": "Identifies UUID PK as incompatible and recommends serial/bigserial"},
+        {"assertion": "provides_fix_sql", "text": "Provides ALTER TABLE SQL to fix at least one of the issues"},
+        {"assertion": "mentions_checklist", "text": "References or presents the verification checklist"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Before I connect my PostgreSQL database to NocoBase as an external source, what should I check? Give me a validation checklist.",
+      "expected_output": "The 10-item verification checklist covering: serial PK, FK type matching, ON DELETE NO ACTION, indexes on FKs, UNIQUE for 1:1, composite PK for M2M, no ARRAY/ENUM/POINT/INHERITS, json not jsonb, text for selects, snake_case naming.",
+      "files": [],
+      "expectations": [
+        {"assertion": "serial_pk_check", "text": "Check that PKs use serial or bigserial"},
+        {"assertion": "fk_type_match", "text": "Check that FK column types match parent PK types"},
+        {"assertion": "on_delete_check", "text": "Check FK constraints use ON DELETE NO ACTION"},
+        {"assertion": "index_check", "text": "Check indexes exist on all FK columns"},
+        {"assertion": "forbidden_types_check", "text": "Check for absence of ARRAY, ENUM, POINT, POLYGON, INHERITS"},
+        {"assertion": "json_not_jsonb", "text": "Check json is used instead of jsonb"},
+        {"assertion": "naming_check", "text": "Check snake_case naming, no reserved words"}
+      ]
+    }
+  ]
+}

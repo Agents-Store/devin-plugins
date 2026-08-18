@@ -1,0 +1,17 @@
+{
+  "skill_name": "ui-configuration",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a page with a table block for orders, a form for creating new orders, and a kanban board grouped by status",
+      "expected_output": "Page with 3 blocks: table, form, kanban",
+      "files": [],
+      "expectations": [
+        "Documents page creation with blocks",
+        "Shows table block bound to collection",
+        "Shows form block configuration",
+        "Shows kanban block with group field"
+      ]
+    }
+  ]
+}

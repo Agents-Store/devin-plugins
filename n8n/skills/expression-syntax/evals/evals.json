@@ -1,0 +1,17 @@
+{
+  "skill_name": "expression-syntax",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How do I reference the email field from the previous node's output in an n8n expression?",
+      "expected_output": "Shows $json.email, $input.item.json.email syntax",
+      "files": [],
+      "expectations": [
+        "Documents $json shorthand for current item",
+        "Shows $input.item.json for explicit reference",
+        "Explains difference between $json and $node references",
+        "Covers common gotchas (undefined fields, array access)"
+      ]
+    }
+  ]
+}

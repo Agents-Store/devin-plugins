@@ -1,0 +1,11 @@
+{
+  "skill_name": "cli-recipes",
+  "evals": [
+    {
+      "id": 4,
+      "prompt": "I want to use the command line to quickly scrape a few pages and search the web. What CLI tools are available and how do I install them? Show me some common commands.",
+      "expected_output": "Should reference both Firecrawl CLI (npm install -g firecrawl-cli) and Jina CLI (pip install jina-cli), with practical commands like 'firecrawl scrape URL', 'jina read URL', 'jina search QUERY'. Should show pipe composability.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "workflow-creation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a webhook workflow that receives order data, validates it, and sends a Slack notification",
+      "expected_output": "Workflow with Webhook trigger, Set/If node for validation, Slack node",
+      "files": [],
+      "expectations": [
+        "Documents Webhook trigger configuration",
+        "Shows node connection patterns",
+        "Includes error handling guidance",
+        "Provides node position layout"
+      ]
+    }
+  ]
+}

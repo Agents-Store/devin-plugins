@@ -1,0 +1,34 @@
+{
+  "$comment": "Canonical registry of software categories for macstack.json (field software[].category). A single shared vocabulary for all projects — the macstack-dev linter checks against this file. Extension: a new category = a kebab-case slug + a PR to this file (origin: extension). Later the registry gets published to the Software Directory on macstack.ai.",
+  "version": "1.0.0",
+  "categories": [
+    { "id": "databases", "name": "Databases", "examples": ["postgresql", "mysql", "mongodb", "redis", "qdrant"] },
+    { "id": "workflow-engines", "name": "Workflow Engines", "examples": ["n8n", "trigger-dev", "activepieces", "temporal"] },
+    { "id": "low-code-platforms", "name": "Low-Code Platforms", "examples": ["nocodb", "nocobase", "budibase", "appsmith"] },
+    { "id": "cms", "name": "CMS / Headless CMS", "examples": ["directus", "strapi", "ghost", "outline"] },
+    { "id": "analytics-bi", "name": "Analytics & BI", "examples": ["metabase", "grafana"] },
+    { "id": "monitoring", "name": "Monitoring", "examples": ["prometheus", "grafana", "beszel", "uptime-kuma"] },
+    { "id": "ai-llm-services", "name": "AI / LLM Services", "examples": ["claude", "openai", "dify", "flowiseai", "jina"] },
+    { "id": "file-storage", "name": "File Storage", "examples": ["minio", "nextcloud"] },
+    { "id": "communication", "name": "Communication", "examples": ["telegram", "slack", "mattermost", "mautic"] },
+    { "id": "project-management", "name": "Project Management", "examples": ["plane", "taiga"] },
+    { "id": "crm", "name": "CRM", "examples": ["twenty-crm", "erpnext", "sendpulse-crm"] },
+    { "id": "e-commerce", "name": "E-Commerce", "examples": ["medusa", "saleor", "teleshop"] },
+    { "id": "frontend-frameworks", "name": "Frontend Frameworks", "examples": ["nextjs", "astro", "nuxt"] },
+    { "id": "backend-frameworks", "name": "Backend Frameworks", "examples": ["flask", "django", "nestjs", "supabase", "appwrite"] },
+    { "id": "devops-ci-cd", "name": "DevOps & CI/CD", "examples": ["docker", "dokploy", "coolify", "cloudflare", "github-actions"] },
+    { "id": "security-auth", "name": "Security & Auth", "examples": ["better-auth", "authjs", "keycloak", "infisical"] },
+    { "id": "search-engines", "name": "Search Engines", "examples": ["elasticsearch", "meilisearch", "typesense"] },
+    { "id": "queue-message-brokers", "name": "Queue / Message Brokers", "examples": ["rabbitmq", "bullmq", "kafka"] },
+    { "id": "api-gateways", "name": "API Gateways", "examples": ["nginx", "traefik", "kong"] },
+    { "id": "documentation-tools", "name": "Documentation Tools", "examples": ["outline", "wiki-js"] },
+    { "id": "accounting", "name": "Accounting / ERP", "examples": ["bas", "1c", "odoo"], "origin": "extension", "added": "2026-08-08" },
+    { "id": "payments", "name": "Payments", "examples": ["stripe", "brocard"], "origin": "extension", "added": "2026-08-09" },
+    { "id": "custom-scripts", "name": "Custom Scripts & Services (our custom software)", "examples": [], "origin": "extension", "added": "2026-08-08" }
+  ],
+  "slug_rules": [
+    "kebab-case, official short name: trigger-dev (not trigger.dev), postgresql (not postgres), nextjs (not next.js)",
+    "database drivers collapse to the database name (pg → postgresql)",
+    "UI library groups collapse (@radix-ui/* → radix-ui)"
+  ]
+}

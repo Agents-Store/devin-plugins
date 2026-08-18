@@ -1,0 +1,17 @@
+{
+  "skill_name": "browser-sessions",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to log into https://app.example.com with my credentials and scrape the dashboard data. The login form has email and password fields.",
+      "expected_output": "browser_create + browser_execute for login + extraction + browser_delete cleanup",
+      "files": [],
+      "expectations": [
+        "Creates browser session with browser_create",
+        "Uses browser_execute with JavaScript to fill login form (page.fill, page.click)",
+        "Extracts dashboard data after authentication via browser_execute",
+        "Cleans up session with browser_delete"
+      ]
+    }
+  ]
+}

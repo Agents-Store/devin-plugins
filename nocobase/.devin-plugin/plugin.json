@@ -1,0 +1,19 @@
+{
+  "name": "nocobase",
+  "version": "1.1.0",
+  "description": "NocoBase platform development plugin. Expert guidance on collections, fields, relations, workflows, UI blocks, plugin development, MCP-powered page management, data operations, and collection inspection for NocoBase applications.",
+  "author": {
+    "name": "AGENTS.STORE"
+  },
+  "license": "MIT",
+  "keywords": [
+    "nocobase",
+    "low-code",
+    "collections",
+    "workflows",
+    "ui-blocks",
+    "plugin-development",
+    "no-code",
+    "application-builder"
+  ]
+}

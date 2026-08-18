@@ -1,0 +1,17 @@
+{
+  "skill_name": "code-patterns",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a Code node that transforms an array of orders into a summary with total revenue and order count",
+      "expected_output": "JavaScript code using $input.all() to aggregate data",
+      "files": [],
+      "expectations": [
+        "Uses $input.all() to access all items",
+        "Returns properly structured output [{json: {...}}]",
+        "Handles edge cases (empty input)",
+        "Uses JavaScript (default for Code nodes)"
+      ]
+    }
+  ]
+}

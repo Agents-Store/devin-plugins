@@ -1,0 +1,30 @@
+{
+  "skill_name": "mcp-tools",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What MCP tools does Directus expose? I just connected it and want to know what I can do with it",
+      "expected_output": "Lists all 12 MCP tools with their action patterns and the query system",
+      "files": [],
+      "expectations": [
+        "Lists all 12 MCP tools by name",
+        "Mentions system-prompt tool as first call",
+        "Explains the unified action-based CRUD pattern",
+        "Mentions schema tool for discovery",
+        "Includes trigger-flow as a tool"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm calling the Directus items tool but getting 'action is required' error. What am I doing wrong?",
+      "expected_output": "Explains the unified action pattern and that every Directus MCP tool requires an action parameter",
+      "files": [],
+      "expectations": [
+        "Identifies missing action parameter as the cause",
+        "Lists valid actions: create, read, update, delete",
+        "Shows correct JSON example with action parameter",
+        "Mentions data must be an array for create"
+      ]
+    }
+  ]
+}

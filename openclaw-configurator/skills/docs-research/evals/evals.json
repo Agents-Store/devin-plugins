@@ -1,0 +1,22 @@
+{
+  "skill_name": "docs-research",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Check the latest OpenClaw auth docs before we change anything.",
+      "expected_output": "Uses the tool-priority ladder (first available of Firecrawl/Exa/Perplexity/Jina/context7, else WebFetch) to fetch the canonical OpenClaw auth doc URLs and reports findings with source links.",
+      "files": [],
+      "expectations": [
+        "Selects an available MCP search/scrape tool, falling back to WebFetch/WebSearch only if none are connected",
+        "References the canonical OpenClaw documentation URL map rather than guessing URLs"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Is firecrawl required to look up OpenClaw documentation in this plugin?",
+      "expected_output": "Explains the fallback ladder: prefer an enabled MCP tool (Firecrawl first), but built-in WebFetch/WebSearch is the always-available fallback when no MCP search tool is connected.",
+      "files": [],
+      "expectations": []
+    }
+  ]
+}

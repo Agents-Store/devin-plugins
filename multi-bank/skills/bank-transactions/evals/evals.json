@@ -1,0 +1,17 @@
+{
+  "skill_name": "bank-transactions",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show my recent transactions for the last week",
+      "expected_output": "Transaction list from all accounts merged chronologically",
+      "files": [],
+      "expectations": [
+        "Calls get-statement for each account",
+        "Uses Unix timestamp format for from/to parameters",
+        "Merges transactions from multiple accounts",
+        "Sorts chronologically"
+      ]
+    }
+  ]
+}

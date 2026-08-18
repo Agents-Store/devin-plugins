@@ -1,0 +1,23 @@
+{
+  "skill_name": "provider-auth",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up Claude so I stop paying per-token for chat in OpenClaw.",
+      "expected_output": "Recommends the Claude CLI backend (reuse a local `claude` login, automatic token refresh) with canonical model ref anthropic/claude-opus-4-7 + runtime claude-cli, explains it bills against the subscription session instead of metered API tokens, and notes API keys are still needed for functions/skills that use the embedded API.",
+      "files": [],
+      "expectations": [
+        "Biases toward CLI backend / OAuth over API key for chat",
+        "Mentions the auth-profiles.json precedence gotcha when switching from an embedded-API token profile",
+        "Never asks to paste or print the token value"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "How do I add Codex (ChatGPT) auth to OpenClaw?",
+      "expected_output": "Describes `openclaw models auth login --provider openai-codex` (PKCE OAuth, callback 127.0.0.1:1455, paste-redirect fallback) and configuring openai/gpt-5.5 for the native Codex harness.",
+      "files": [],
+      "expectations": []
+    }
+  ]
+}

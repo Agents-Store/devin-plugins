@@ -1,0 +1,160 @@
+{
+  "$comment": "Canonical registry of coverage areas for macstack.json (field context.plugins.*[].covers). Answers 'which plugin do I open for this task?' — one shared vocabulary for all projects, checked by the macstack-dev linter. Two kinds: 'section' areas map 1:1 onto sections of the stack file (the plugin teaches you how to build that part of the stack); 'cross-cutting' areas are not tied to a single section. Extension: a new area = a kebab-case slug + a PR to this file (origin: extension).",
+  "version": "1.0.0",
+  "areas": [
+    {
+      "id": "results",
+      "kind": "section",
+      "name": "Results",
+      "description": "How to formulate a result in money and metrics for this stack",
+      "examples": ["macstack-dev"]
+    },
+    {
+      "id": "processes",
+      "kind": "section",
+      "name": "Processes",
+      "description": "Business processes, their steps and HITL points",
+      "examples": ["media-hosting-ops", "sales-ops"]
+    },
+    {
+      "id": "triggers",
+      "kind": "section",
+      "name": "Triggers",
+      "description": "What starts the work: schedule, webhook, db_event, form, queue",
+      "examples": ["trigger-dev", "n8n-dev", "directus-dev"]
+    },
+    {
+      "id": "workflows",
+      "kind": "section",
+      "name": "Workflows",
+      "description": "Automation bodies — how a process is actually executed in code or in an engine",
+      "examples": ["trigger-dev", "n8n-dev"]
+    },
+    {
+      "id": "software",
+      "kind": "section",
+      "name": "Software",
+      "description": "The tool itself: how to install, configure and operate this piece of software in the stack",
+      "examples": ["directus-dev", "nocodb-dev", "postgresql-external-dev"]
+    },
+    {
+      "id": "entities",
+      "kind": "section",
+      "name": "Entities",
+      "description": "Data model: collections, fields, relations, which store is master",
+      "examples": ["directus-dev", "nocodb-dev"]
+    },
+    {
+      "id": "interfaces",
+      "kind": "section",
+      "name": "Interfaces",
+      "description": "Everything a human or an external system touches: UI, admin panels, bots, notification channels",
+      "examples": ["nextjs-dev", "tg-client", "directus-dev"]
+    },
+    {
+      "id": "connections",
+      "kind": "section",
+      "name": "Connections",
+      "description": "The stack's sockets: MCP servers, direct APIs, CLI access",
+      "examples": ["mcpware", "directus-dev"]
+    },
+    {
+      "id": "agents",
+      "kind": "section",
+      "name": "Agents",
+      "description": "Stack agents and managed agents: hierarchy, delegation, tools",
+      "examples": ["macstack-dev", "agents-workspace"]
+    },
+    {
+      "id": "roles",
+      "kind": "section",
+      "name": "Roles",
+      "description": "Who sees and can do what — the role model of the stack",
+      "examples": ["directus-dev"]
+    },
+    {
+      "id": "resources",
+      "kind": "section",
+      "name": "Resources",
+      "description": "Registry of env keys, external services and data assets",
+      "examples": ["infisical-dev"]
+    },
+    {
+      "id": "integrations",
+      "kind": "section",
+      "name": "Integrations",
+      "description": "External client systems the stack talks to",
+      "examples": ["stripe", "google-workspace-dev"]
+    },
+    {
+      "id": "deployment",
+      "kind": "cross-cutting",
+      "name": "Deployment & hosting",
+      "description": "Build, deploy, domains, certificates, rollback",
+      "examples": ["dokploy-dev", "coolify-ops", "nextjs-provision"]
+    },
+    {
+      "id": "secrets-env",
+      "kind": "cross-cutting",
+      "name": "Secrets & environment",
+      "description": "Where secrets live and how they reach every target without drift",
+      "examples": ["infisical-dev"]
+    },
+    {
+      "id": "seo",
+      "kind": "cross-cutting",
+      "name": "SEO & discoverability",
+      "description": "How public interfaces get found: meta, structured data, sitemaps, Core Web Vitals. Distinct from `interfaces`, which is about building them",
+      "examples": ["seo-dev"]
+    },
+    {
+      "id": "testing",
+      "kind": "cross-cutting",
+      "name": "Testing",
+      "description": "How this stack is tested and what counts as green",
+      "examples": ["superpowers"]
+    },
+    {
+      "id": "observability",
+      "kind": "cross-cutting",
+      "name": "Observability",
+      "description": "Logs, metrics, traces, error monitoring, alerts",
+      "examples": ["sentry", "beszel-plugin"]
+    },
+    {
+      "id": "data-migration",
+      "kind": "cross-cutting",
+      "name": "Data migration",
+      "description": "Schema migrations, backfills, moving data between stands",
+      "examples": ["directus-dev"]
+    },
+    {
+      "id": "security-access",
+      "kind": "cross-cutting",
+      "name": "Security & access",
+      "description": "Authentication, authorization, network access, hardening, backups",
+      "examples": ["restic-dev", "cloudflare-ops"]
+    },
+    {
+      "id": "conventions",
+      "kind": "cross-cutting",
+      "name": "Conventions",
+      "description": "Naming, code style, commit and branch discipline for this stack",
+      "examples": ["stack-directus-nextjs-trigger-dev"]
+    },
+    {
+      "id": "documentation",
+      "kind": "cross-cutting",
+      "name": "Documentation",
+      "description": "How the stack documents itself: CLAUDE.md, docs, specs, reports",
+      "examples": ["macstack-dev", "document-generator"]
+    },
+    {
+      "id": "cost-billing",
+      "kind": "cross-cutting",
+      "name": "Cost & billing",
+      "description": "What the stack costs to run and how it charges its own clients",
+      "examples": ["stripe"]
+    }
+  ]
+}

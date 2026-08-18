@@ -1,0 +1,20 @@
+{
+  "skill_name": "next-upgrade",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I'm migrating my Next.js app from Pages Router to App Router. Here's my current page:\n\n```tsx\nimport { useRouter } from 'next/router'\nimport Head from 'next/head'\n\nexport async function getServerSideProps(context) {\n  const res = await fetch(`https://api.example.com/users/${context.params.id}`)\n  const user = await res.json()\n  return { props: { user } }\n}\n\nexport default function UserProfile({ user }) {\n  const router = useRouter()\n  return (\n    <>\n      <Head><title>{user.name}</title></Head>\n      <h1>{user.name}</h1>\n      <button onClick={() => router.push('/users')}>Back</button>\n    </>\n  )\n}\n```\n\nConvert this to App Router with proper patterns. Save the result to outputs/page.tsx and outputs/layout.tsx.",
+      "expected_output": "App Router page using server components, generateMetadata, next/navigation instead of next/router, no getServerSideProps",
+      "files": [],
+      "expectations": [
+        "page.tsx does not contain 'getServerSideProps'",
+        "page.tsx does not contain 'next/router'",
+        "page.tsx does not contain 'next/head'",
+        "page.tsx contains one of: generateMetadata, export const metadata",
+        "page.tsx contains 'next/navigation'",
+        "page.tsx does not contain 'use client'",
+        "page.tsx contains 'await'"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 10,
+      "prompt": "Show me a walkthrough of how the feedback flow works. I want to understand the complete process before I start using it on my project.",
+      "expected_output": "The examples skill presents the feedback-flow scenario walkthrough, showing the complete 8-step process from invoking feedback to noting child projects that should merge.",
+      "files": [],
+      "expectations": [
+        "References or presents the feedback-flow scenario from the examples skill",
+        "Shows the complete flow: invoke → identify → read stack.json → locate parent → apply fix → LEARNINGS.md → commit → note children",
+        "Includes concrete examples of what happens at each step",
+        "Mentions the $PROJECT_TEMPLATES_DIR environment variable requirement"
+      ]
+    }
+  ]
+}

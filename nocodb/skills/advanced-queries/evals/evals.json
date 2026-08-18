@@ -1,0 +1,17 @@
+{
+  "skill_name": "advanced-queries",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me total deal value grouped by company, only for deals with status 'Won'",
+      "expected_output": "Aggregation query with where filter and groupBy",
+      "files": [],
+      "expectations": [
+        "Documents aggregation functions (sum, count, avg)",
+        "Shows where filter for status='Won'",
+        "Demonstrates groupBy parameter",
+        "Returns structured aggregation results"
+      ]
+    }
+  ]
+}

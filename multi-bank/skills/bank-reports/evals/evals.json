@@ -1,0 +1,17 @@
+{
+  "skill_name": "bank-reports",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me spending breakdown by category for last month",
+      "expected_output": "Categorized spending report",
+      "files": [],
+      "expectations": [
+        "Fetches transactions for the period",
+        "Applies MCC/category mapping",
+        "Groups spending by category",
+        "Shows totals and percentages"
+      ]
+    }
+  ]
+}

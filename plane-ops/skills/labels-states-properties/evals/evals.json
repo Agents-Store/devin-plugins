@@ -1,0 +1,53 @@
+{
+  "skill_name": "labels-states-properties",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to track which environment a bug was found in. Should that be a label or a property?",
+      "expected_output": "Recommends a select-type custom property scoped to the Bug work item type, with options prod/staging/dev.",
+      "files": [],
+      "expectations": [
+        "Identifies this as structured queryable data → property",
+        "Recommends select type with fixed options",
+        "Scopes the property to the Bug work item type",
+        "Mentions filtering and reporting use cases"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our label list has 80 entries and nobody can find anything. Help.",
+      "expected_output": "Quarterly taxonomy audit: drop labels with <3 uses, introduce prefixed namespaces, merge near-duplicates.",
+      "files": [],
+      "expectations": [
+        "Recommends prefixed namespaces (type/, area/, priority/, status/)",
+        "Suggests dropping low-use labels",
+        "Mentions quarterly audit cadence",
+        "Provides concrete consolidation examples"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Design a state machine for our support team in Plane.",
+      "expected_output": "Recommends the support/triage state set: New → Triaged/Needs Info → In Progress/Waiting on Customer → Resolved | Closed.",
+      "files": [],
+      "expectations": [
+        "Maps states to the correct Plane state groups",
+        "Stays within 6 active states",
+        "Distinguishes Resolved (completed) from Closed (cancelled)",
+        "Mentions sequence ordering"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Should I create a custom work item type for Spikes or just use a label type/spike?",
+      "expected_output": "Use a work item type — Spikes have different fields (timebox), different velocity treatment (no points), and different default state.",
+      "files": [],
+      "expectations": [
+        "Identifies that workflow differs (timebox, no points)",
+        "Recommends a work item type, not a label",
+        "Suggests pairing with a timebox property",
+        "Warns about staying under 6 types total"
+      ]
+    }
+  ]
+}

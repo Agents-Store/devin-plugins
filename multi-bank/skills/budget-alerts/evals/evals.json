@@ -1,0 +1,17 @@
+{
+  "skill_name": "budget-alerts",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set a monthly budget of 15000 UAH for dining",
+      "expected_output": "Budget config with thresholds at 50/75/90/100%",
+      "files": [],
+      "expectations": [
+        "Creates budget configuration",
+        "Sets thresholds at standard levels (50/75/90/100%)",
+        "Documents alert broadcast events",
+        "Stores config locally (encrypted or JSON)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "teams-dev",
+  "version": "1.0.0",
+  "description": "Microsoft Teams SDK dev plugin for Agents Store. TypeScript-first guidance for building Teams bots, message extensions, tabs, dialogs, and AI agents using @microsoft/teams.* packages — covers the App framework, activity routing, Adaptive Cards, AI/MCP/A2A, Microsoft Graph, SSO, sovereign clouds, the Teams CLI, devtools, sideloading, and end-to-end scenarios.",
+  "author": {
+    "name": "AGENTS.STORE"
+  },
+  "license": "MIT",
+  "keywords": [
+    "microsoft-teams",
+    "teams",
+    "teams-sdk",
+    "teams-bot",
+    "bot",
+    "adaptive-cards",
+    "message-extensions",
+    "ai-agents",
+    "mcp",
+    "microsoft-graph",
+    "typescript",
+    "nodejs",
+    "dev",
+    "agents-store"
+  ]
+}

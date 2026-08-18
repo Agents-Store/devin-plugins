@@ -1,0 +1,17 @@
+{
+  "skill_name": "execution-monitoring",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "My workflow failed last night. Show me what happened and help me debug it.",
+      "expected_output": "List executions, find failed one, show error details",
+      "files": [],
+      "expectations": [
+        "Lists recent executions filtered by status",
+        "Shows error details from failed execution",
+        "Identifies the failing node",
+        "Suggests fix based on error type"
+      ]
+    }
+  ]
+}
