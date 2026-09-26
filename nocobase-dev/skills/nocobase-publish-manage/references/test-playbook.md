@@ -30,7 +30,7 @@ Tests default to `sourceEnv=dev` and `targetEnv=dev`.
 Downloaded files default to the CLI release workspace for the source environment:
 
 ```text
-C:/Users/Enzo/.nocobase/release/dev/<file>
+C:/Users/<user>/.nocobase/release/dev/<file>
 ```
 
 ## Scenario 1: Local Backup Restore In One Environment
@@ -90,8 +90,8 @@ Expected plan:
 ```bash
 nb api backup create -e dev --json-output
 nb api backup status --name <BACKUP_NAME> -e dev --json-output
-nb api backup download --name <BACKUP_NAME> --output C:/Users/Enzo/.nocobase/release/dev/<BACKUP_NAME> -e dev
-nb api backup restore-upload --file C:/Users/Enzo/.nocobase/release/dev/<BACKUP_NAME> -e dev --json-output --force
+nb api backup download --name <BACKUP_NAME> --output C:/Users/<user>/.nocobase/release/dev/<BACKUP_NAME> -e dev
+nb api backup restore-upload --file C:/Users/<user>/.nocobase/release/dev/<BACKUP_NAME> -e dev --json-output --force
 ```
 
 Checks:
@@ -136,9 +136,9 @@ Expected plan:
 nb api migration rules get --filter-by-tk rule_123 -e dev --json-output
 nb api migration create --rule-id rule_123 --title publish-dev-to-dev -e dev --json-output
 nb api migration get --name <MIGRATION_NAME> -e dev --json-output
-nb api migration download --name <MIGRATION_NAME> --output C:/Users/Enzo/.nocobase/release/dev/<MIGRATION_NAME> -e dev
-nb api migration check --file C:/Users/Enzo/.nocobase/release/dev/<MIGRATION_NAME> -e dev --json-output
-nb api migration execute --file C:/Users/Enzo/.nocobase/release/dev/<MIGRATION_NAME> -e dev --json-output
+nb api migration download --name <MIGRATION_NAME> --output C:/Users/<user>/.nocobase/release/dev/<MIGRATION_NAME> -e dev
+nb api migration check --file C:/Users/<user>/.nocobase/release/dev/<MIGRATION_NAME> -e dev --json-output
+nb api migration execute --file C:/Users/<user>/.nocobase/release/dev/<MIGRATION_NAME> -e dev --json-output
 ```
 
 Checks:

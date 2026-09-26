@@ -1,7 +1,7 @@
 {
   "name": "nocodb",
-  "version": "1.0.0",
-  "description": "NocoDB database development plugin. Manage tables, records, columns, views, relations, formulas, rollups, lookups, filtering, sorting, search, aggregation, webhooks, and filter/sort management via MCP tools.",
+  "version": "1.1.0",
+  "description": "DEPRECATED — superseded by nocodb-dev (schema, fields, views, Meta API) and nocodb-ops (records, search, views, reports), which teach the current NocoDB MCP tool names; this plugin teaches tool names the server no longer exposes. NocoDB database development plugin. Manage tables, records, columns, views, relations, formulas, rollups, lookups, filtering, sorting, search, aggregation, webhooks, and filter/sort management via MCP tools.",
   "author": {
     "name": "AGENTS.STORE"
   },

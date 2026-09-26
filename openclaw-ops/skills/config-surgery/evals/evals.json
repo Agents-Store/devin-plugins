@@ -1,0 +1,78 @@
+{
+  "skill_name": "config-surgery",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a session maintenance block to the config on instance alpha. Just load the JSON in python, add the key and write it back.",
+      "expected_output": "Refuses the load-and-rewrite: the file is JSON5, so a plain writer deletes every comment, and the gateway writes the same file, so a read-modify-write against a live process loses the race. Runs the sequence instead — read through the runtime, diff with a deletion count, snapshot outside the backup ring, patch with the base hash, validate, then verify with config get.",
+      "files": [],
+      "expectations": [
+        "States that the config is JSON5 and that a JSON writer destroys comments",
+        "Takes a snapshot outside the CLI backup ring before the first edit",
+        "Applies the change as a patch carrying the base hash rather than rewriting the file",
+        "Verifies from the runtime with config get, not by re-reading the file",
+        "Does not add --yes in the same turn the plan is first shown"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "This config has several blocks nobody on the team recognises. Strip them out while you are in there.",
+      "expected_output": "Declines. Under a strict schema an unrecognised block is far more likely to be load-bearing than leftover, removal fails at the next restart rather than at the edit, and a non-zero deletion count in a config diff is a finding of its own. Removal is a separate operation with its own justification.",
+      "files": [],
+      "expectations": [
+        "Names the strict schema and that removal surfaces as a refused start later",
+        "Raises fleet.config.deletions for the non-zero deletion count",
+        "Refuses deletion as a side effect of another edit",
+        "Offers to explain each block from the runtime schema instead"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I added a plugin load path an hour ago and the plugin still is not loading. Is the config broken?",
+      "expected_output": "Not broken — plugin load paths are walked at startup only, so the change needs a restart. Confirms the process's effective value first, then checks the reload mode, which is itself configurable per instance.",
+      "files": [],
+      "expectations": [
+        "Says plugin load path changes require a restart",
+        "Reads the effective value from the runtime rather than trusting the file",
+        "Checks the configured reload mode instead of assuming a default",
+        "Does not conclude the file is wrong before verifying what the process holds"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "There is an openclaw.json.rejected file next to the config now. Delete it and re-run the write so the warning goes away.",
+      "expected_output": "No. The sidecar is evidence that a write already lost the race against the gateway; it holds what was refused. It is read and moved aside, never removed, and the write is rebuilt on a freshly read base hash rather than repeated.",
+      "files": [],
+      "expectations": [
+        "Reads the sidecar instead of deleting it",
+        "Re-reads the current config and rebuilds the patch on the new base hash",
+        "Refuses to re-run the failed write to clear the warning",
+        "Moves any .bak, .rejected or .clobbered file aside rather than removing it"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Set the primary model on this instance to the newest one — you know which model id to use.",
+      "expected_output": "Will not type a model id from memory. Every id entering a diff is an echo from this instance's own catalogue, so it reads the catalogue first, writes the canonical provider reference plus runtime override, and hands the chain question to provider-auth.",
+      "files": [],
+      "expectations": [
+        "Reads the model catalogue on the instance before writing any id",
+        "Raises fleet.config.model-id-unverified for an id that is not in the catalogue",
+        "Writes the provider reference plus agentRuntime override form",
+        "Does not print a real model id as a recommendation"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "The channel settings come from an included file. Patch the value through the normal write path.",
+      "expected_output": "Explains that includes compose at read time only: a programmatic write lands in the root file and shadows the include, which then still says the old thing and misleads the next reader. Edits the file that defines the key, under the same sequence.",
+      "files": [],
+      "expectations": [
+        "States that composition is read-time and writes do not travel back into includes",
+        "Edits the defining file rather than producing a shadowing root-level copy",
+        "Applies the same snapshot, validate and verify sequence to the include",
+        "Checks the composed view from the runtime after the edit"
+      ]
+    }
+  ]
+}

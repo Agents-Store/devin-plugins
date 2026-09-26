@@ -147,7 +147,7 @@
       "kind": "cross-cutting",
       "name": "Documentation",
       "description": "How the stack documents itself: CLAUDE.md, docs, specs, reports",
-      "examples": ["macstack-dev", "document-generator"]
+      "examples": ["macstack-dev", "document-generator-ops"]
     },
     {
       "id": "cost-billing",

@@ -1,0 +1,89 @@
+{
+  "skill_name": "provider-auth",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Six of our seven instances report the same provider as logged out. Log them all back in.",
+      "expected_output": "Treats a fleet-wide logout as the token-sink signature rather than as six expiries: compares the account identifier fingerprint across the credential directories, and if one account appears in several directories, fixes ownership with a shared mount before any login. Logging in again would hold only until the next rotation.",
+      "files": [],
+      "expectations": [
+        "Compares account identifier fingerprints across credential directories",
+        "Raises fleet.auth.token-sink and calls it architectural, not expiry",
+        "Fixes ownership by mounting one directory rather than by logging in per instance",
+        "Does not run a login or refresh, and states that a retry burns a single-use token"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "One instance still authenticates fine. Copy its auth profile over to the broken ones as a quick fix.",
+      "expected_output": "Refuses: OAuth material is not portable, only key and static-token entries are. A copy authenticates for a while and then fails in a way that reads as expiry, and it creates one more racer on the same refresh chain.",
+      "files": [],
+      "expectations": [
+        "States that OAuth entries are not portable while key and static-token entries are",
+        "Raises fleet.auth.oauth-copied",
+        "Explains that the copy adds another racer to the same refresh chain",
+        "Proposes the shared owner directory as the actual fix"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Run the credential probe across the fleet so we can see exactly which providers really work.",
+      "expected_output": "Declines the probe form on running instances — it requires the gateway stopped, and the single exec door refuses it. Uses the check form instead, reading exit 1 as expired and 2 as expiring, plus a structure-only read of the stored credential.",
+      "files": [],
+      "expectations": [
+        "Says the probe form requires a stopped gateway and is refused on a live instance",
+        "Uses the check form and reads its exit codes",
+        "Reads credential files with structure_only rather than raw",
+        "Does not propose stopping production gateways to satisfy the request"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Inside the container the provider CLI says it is not logged in, but the credentials are mounted and the host copy is valid. Are the mounts wrong?",
+      "expected_output": "Most likely neither the mount nor the credential: the credential-directory variable is not inherited by the subprocess, so the CLI looks in the home directory instead. Re-asks the CLI with the directory passed explicitly, and only then checks the mount from inside the container.",
+      "files": [],
+      "expectations": [
+        "Names the config-directory variable not being inherited as the usual cause",
+        "Re-runs the CLI status with the directory passed explicitly",
+        "Verifies the mount from inside the container, not from the host",
+        "Does not re-run a login to test the theory"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Our bill moved from the subscription to metered tokens this month and nobody changed the config.",
+      "expected_output": "Looks for a shadowing static-token profile for the provider whose chain intends the CLI backend: the embedded path wins silently, no config changes, and billing moves. Removing the shadowing profile restores the intended route.",
+      "files": [],
+      "expectations": [
+        "Raises fleet.auth.shadowed",
+        "Explains that a static-token profile has no refresh, never expires, and therefore outlives the login it shadows",
+        "Lists the profiles for that provider before proposing a change",
+        "Verifies afterwards that the provider resolves through the CLI backend"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Just do the login yourself and get it over with — you have shell on the box.",
+      "expected_output": "Prints the login rather than running it: consent is interactive by design and the OAuth callback is served by the login process on a loopback port that nothing in a container can reach. Prints the host-side sequence, the ownership alignment, the per-instance registration and the headless fallback.",
+      "files": [],
+      "expectations": [
+        "Prints the commands instead of executing them",
+        "Says the login happens on the host, in the owner directory, not inside a container",
+        "Includes registering the backend on each instance afterwards",
+        "Never passes a capability-acceptance flag and explains why it cannot grant consent"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Chat works everywhere but every embedding call is unauthorized. Same account, so rotate the login?",
+      "expected_output": "Separates the lanes: a subscription session covers chat completions and does not satisfy embedding requests, so this is a credential class problem, not an expiry. Routes to the memory skill for the per-instance embedding key and the reindex it forces.",
+      "files": [],
+      "expectations": [
+        "States that subscription OAuth never satisfies embedding requests",
+        "Refuses to rotate or re-login as the fix",
+        "Routes the work to the memory skill for a per-instance embedding key",
+        "Mentions that changing the embedding key changes index identity and forces a reindex"
+      ]
+    }
+  ]
+}

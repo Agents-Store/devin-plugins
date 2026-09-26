@@ -1,0 +1,72 @@
+{
+  "skill_name": "shared-assets",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I put our common skills into the shared directory and registered it in the config on every instance, but the instances still behave exactly as before. Did the registration fail?",
+      "expected_output": "No: extra directories are the lowest load priority, so per-instance copies still shadow the shared ones. The fix is to move the local copies to quarantine and re-verify which path each loaded asset resolved from.",
+      "files": [],
+      "expectations": [
+        "Names the load order and says extra directories are lowest priority",
+        "Identifies the leftover per-instance copies as shadows",
+        "Removes shadows by moving them, not deleting them",
+        "Verifies by checking the resolved path of a loaded asset, not just that it is registered"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "One instance has its own edited version of a skill we want to share. Overwrite it with the canonical copy so the fleet is consistent.",
+      "expected_output": "Refuses: divergent content stops the promotion. The divergence is reported for a human decision rather than resolved by automation.",
+      "files": [],
+      "expectations": [
+        "States that promotion requires identical content across every instance that has the skill",
+        "Reports the divergence instead of choosing a winner",
+        "Does not delete or overwrite the divergent local copy"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Fastest way to get this skill onto all instances is the global install command, right?",
+      "expected_output": "No: the global install path copies files without registering them, so the skill stays invisible. Shared assets are managed by file layout plus config only.",
+      "files": [],
+      "expectations": [
+        "Rejects the global install path and explains that it does not register the asset",
+        "Points at file layout plus config as the only supported mechanism",
+        "Mentions backing up and reading the install lock before any catalogue install"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I added the shared directory to the plugin load paths and the plugin list is unchanged. Config bug?",
+      "expected_output": "Plugin load path changes take effect only after a gateway restart; before restarting, the secret delivery precheck must pass.",
+      "files": [],
+      "expectations": [
+        "Says plugin load configuration requires a restart",
+        "Runs the secret delivery precheck before restarting",
+        "Verifies afterwards by comparing the loaded plugin set against the config change time"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "The log says a plugin candidate was blocked for suspicious ownership. Should I chown it inside the container?",
+      "expected_output": "No: align ownership on the host side of the bind mount. A change made inside the container lands outside a mount and dies with it.",
+      "files": [],
+      "expectations": [
+        "Fixes ownership on the host side of the bind mount",
+        "Cites the rule against writing inside the container outside a mounted volume",
+        "Reads the expected uid from the refusal message rather than assuming one"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Promote our shared skills everywhere and approve whatever new capabilities they need so it is done in one pass.",
+      "expected_output": "The promotion runs, but the capability approval flag is printed for a human to run — the plugin never passes it, and a silent apply cannot approve capabilities anyway.",
+      "files": [],
+      "expectations": [
+        "Never passes the capability approval flag itself",
+        "Prints the exact line the operator must run",
+        "Reports the promoted asset as in place but inert until approval"
+      ]
+    }
+  ]
+}

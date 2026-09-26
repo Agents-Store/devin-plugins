@@ -1,0 +1,89 @@
+{
+  "skill_name": "fleet-model",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I run several OpenClaw instances as compose projects on one host and a couple of them are behaving oddly. Where do I start?",
+      "expected_output": "Starts from discovery rather than from paths: run the fleet discovery script, read the state column, and route by symptom.",
+      "files": [],
+      "expectations": [
+        "Runs fleet.py discover instead of guessing host paths",
+        "Distinguishes ok / degraded / down / alien",
+        "Routes an unknown-cause symptom to the fleet-diagnostics skill",
+        "Does not invent instance names, ports or directories"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Just run: docker exec openclaw-alpha-gateway-1 openclaw doctor --lint --json",
+      "expected_output": "Declines the hand-written docker exec and runs the same command through ocexec.py instead, explaining that the single door is what enforces redaction, the bans and the risk class, and that -T is required for --json to survive.",
+      "files": [],
+      "expectations": [
+        "Uses ${CLAUDE_PLUGIN_ROOT}/scripts/ocexec.py with -- before the openclaw arguments",
+        "Mentions that -T is always passed and why --json needs it",
+        "Does not hand-write docker exec or docker compose exec"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Upgrade all the instances to the newest version.",
+      "expected_output": "Refuses 'all' as a mutation selector, requires named targets, sends the work to the upgrade path with a canary first and a dry-run before any --yes.",
+      "files": [],
+      "expectations": [
+        "States that a mutation may not use an empty selector or all",
+        "Requires a dry-run with the eight blocks before applying",
+        "Applies the canary barrier before touching more than one instance",
+        "Does not add --yes in the same turn the command is first proposed"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Where does openclaw-ops keep its configuration, and what happens if I copy it to another server?",
+      "expected_output": "Describes the four-rung resolution ladder, mode 0600, and that a host_fingerprint mismatch forces read-only mode with no override switch.",
+      "files": [],
+      "expectations": [
+        "Lists the ladder in order, environment variable first",
+        "Says the file lives outside the plugin repository at mode 0600",
+        "Explains that a fingerprint mismatch makes every recorded path a guess and refuses mutations",
+        "Points at re-running init on the new host rather than editing the fingerprint"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "The container is running and the healthcheck is green, so instance beta is fine, right?",
+      "expected_output": "No: green means the HTTP server is alive, not that work is happening. Introduces the degraded state and hands off to diagnostics for the liveness split.",
+      "files": [],
+      "expectations": [
+        "Separates health from liveness",
+        "Names degraded as the state for a green container with a dead subsystem",
+        "Suggests log age, schedule fire times and the credential check rather than another HTTP probe"
+      ]
+    },
+    {
+      "prompt": "Six instances all have the same broken embedding configuration. Push the fix through them one after another, and stop the whole run if any single one fails.",
+      "expected_output": "The batch rule follows the direction of the transition, not the operator's preference. Broken to attempted-repair continues and reports, because stopping leaves the remaining five broken; good to changed fails fast, because a mixed fleet is described by no rollback. Either way the canary goes first and the run stops there for a separate confirmation.",
+      "files": [],
+      "expectations": [
+        "Classifies this as broken-to-repair and therefore continue-and-report, not fail-fast",
+        "Contrasts it with a good-to-changed batch, which fails fast on the first failure",
+        "Applies the canary barrier before the remaining instances and stops for a separate confirmation",
+        "Names the targets explicitly rather than accepting an empty or fleet-wide selector",
+        "Reports per-instance outcomes at the end instead of a single aggregate verdict"
+      ],
+      "id": 6
+    },
+    {
+      "prompt": "Print the contents of both instances' env files side by side so I can see which key values differ.",
+      "expected_output": "Never prints a secret value. The comparison that answers the question is key name, presence, class, size bucket, expiry and fingerprint — a matching fingerprint proves the values are identical without either of them entering the transcript, where nothing can be unprinted.",
+      "files": [],
+      "expectations": [
+        "Compares by fingerprint and key name and states that a fingerprint match answers the same-or-different question",
+        "Refuses to read any credential file whole into the context",
+        "Says the value would enter the session transcript and could not be removed afterwards",
+        "Notes that every stream from the exec door is already redacted and the replacement count is shown",
+        "Does not offer a masked or truncated value as a compromise"
+      ],
+      "id": 7
+    }
+  ]
+}

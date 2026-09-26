@@ -5,7 +5,7 @@ description: Comprehensive guide for openclaw.json — the central gateway confi
 
 # openclaw.json Configuration Guide
 
-`openclaw.json` is the central gateway configuration file. Standard location: `~/.openclaw/openclaw.json`. In Docker multi-instance deployments, each instance has its own config at `~/.openclaw-{name}/openclaw.json` (e.g., `~/.openclaw-team/openclaw.json`). It controls models, channels, tools, plugins, sessions, and agent routing. Separate from workspace files — this is infrastructure configuration.
+`openclaw.json` is the central gateway configuration file. Standard location: `~/.openclaw/openclaw.json`. In Docker multi-instance deployments, each instance has its own config at `~/.openclaw-{name}/openclaw.json` (e.g., `~/.openclaw-<name>/openclaw.json`). It controls models, channels, tools, plugins, sessions, and agent routing. Separate from workspace files — this is infrastructure configuration.
 
 The config uses JSON5 format and has **strict schema validation** — unknown keys cause the Gateway to refuse to start. Only `$schema` is allowed as a non-schema root key.
 

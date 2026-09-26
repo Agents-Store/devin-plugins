@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/macstacks/macstack/main/schema/macstack.schema.json",
   "title": "macstack.json",
+  "$comment": "rev 16 - 2026-08-29: two fields that were read where they were not declared. (1) `docs.freshness_days` - the folder-wide shelf life. It was defined only inside $defs/docRef, i.e. per document, while lint rule 12.17 and the session-start hook both read a single top-level `docs.freshness_days` that no property described: the documented per-document setting did nothing, and the one that worked was undocumented. Both now resolve per document -> folder -> 30, through one shared function so the linter and the hook cannot disagree about whether a document is stale. (2) `$defs/taskRef.status` and `$defs/milestoneRef.status` widened to the union of the two vocabularies that were in use. They allowed only `todo · doing · blocked · done · dropped`, while history/TASKS.md is checked by lint 12.14 against the document contract's `backlog · todo · in_progress · done · cancelled` - so a spec honestly mirroring a real TASKS.md status failed validation and nothing said why. Prefer the tracker five in new files; the old tokens stay valid, so collapsing the duplicate pairs remains a decision rather than a default. Additive both: format version stays 1.0, no $def removed, no existing file breaks. Mirrors: plugins/macstack-dev/skills/lint/references/ and VK-OPS/docs/macstack/ - canon macstacks/macstack pushed alongside.",
   "description": "MACSTACK stack file: meta-information for configuring a Claude project + the business and technical specification of the stack in one standardized JSON. Lives in the project root; CLAUDE.md references it; the macstack-dev Claude plugin (agents.store) parses the file and scaffolds the project structure (nextjs in software → Next.js skeleton). Inheritance: prototype points to a parent macstack.json (GitHub or absolute path); the current file extends/overrides the parent — merge by id (see the spec). Section order is result-first: goals → results → processes → triggers → workflows → software → entities → interfaces → connections → agents → context → resources.",
   "type": "object",
   "required": [
@@ -151,7 +152,11 @@
         },
         "business_domain": {
           "type": "string",
-          "description": "Business domain (canonical 12: sales, marketing, hr, devops, finance, support, ecommerce, education, product, services, ops, engineering)"
+          "description": "Functional domain — which business function the stack automates (canonical 12: sales, marketing, hr, devops, finance, support, ecommerce, education, product, services, ops, engineering). This is the FUNCTION axis. The client's market vertical is a separate axis — see `industry`."
+        },
+        "industry": {
+          "type": "string",
+          "description": "Market vertical of the client the stack serves, kebab-case slug (seeded from the agents.store catalogue: real-estate, legal, healthcare, logistics). Extensible: a new vertical is a new slug. This is the VERTICAL axis — do not put a business function here, that belongs in `business_domain`. Omit for internal workspaces with no external client. A `sales` stack built for a real-estate agency is business_domain=sales + industry=real-estate."
         },
         "business_archetype": {
           "type": "string"
@@ -632,6 +637,15 @@
           },
           "status": {
             "$ref": "#/$defs/status"
+          },
+          "technical": {
+            "type": "boolean",
+            "default": false,
+            "description": "True when this record is infrastructure: it exists in the system but has no place in the client documents. Everything without the flag is expected to be named there, and its absence is a finding."
+          },
+          "source": {
+            "type": "string",
+            "description": "Path from the project root to where this workflow lives in code, e.g. `src/workflows/attendance.ts`. Names alone do not connect the two sides: code names a workflow for its domain, the spec for its step. One file may hold more than one workflow."
           }
         }
       }
@@ -860,6 +874,11 @@
                 ]
               }
             }
+          },
+          "technical": {
+            "type": "boolean",
+            "default": false,
+            "description": "True when this record is infrastructure: it exists in the system but has no place in the client documents. Everything without the flag is expected to be named there, and its absence is a finding."
           }
         }
       }
@@ -992,6 +1011,11 @@
           },
           "volume": {
             "type": "string"
+          },
+          "technical": {
+            "type": "boolean",
+            "default": false,
+            "description": "True when this record is infrastructure: it exists in the system but has no place in the client documents. Everything without the flag is expected to be named there, and its absence is a finding."
           }
         }
       }
@@ -1190,7 +1214,7 @@
             "properties": {
               "id": {
                 "$ref": "#/$defs/slug",
-                "description": "Agent identifier (openclaw-meg, claude-code-meg)"
+                "description": "Agent identifier (openclaw-<name>, claude-code-<name>)"
               },
               "name": {
                 "type": "string"
@@ -1451,6 +1475,114 @@
         }
       }
     },
+    "docs": {
+      "type": "object",
+      "description": "The project's specification working set — the macstack/ folder. POINTERS ONLY: the markdown files own their text; this section owns where they live, which language their prose is written in, and which ID spaces they allocate. Section anchors (<!-- macstack:section=... -->) and ID tokens are NEVER translated; only headings and prose follow docs.language. docs/ stays the engineering folder — architecture, API conventions and runbooks do not move here.",
+      "properties": {
+        "root": {
+          "type": "string",
+          "default": "macstack",
+          "description": "Folder holding macstack.json and the working documents. The spec resolves as <root>/macstack.json first, then a legacy ./macstack.json; both present is an error."
+        },
+        "language": {
+          "type": "string",
+          "description": "ISO 639-1 / BCP-47 code the documents' PROSE is written in (ru, en, de, uk). Absent = en. Deliberately NOT identity.language: a product can be German while its documents are Russian, and conflating the two hides a real decision."
+        },
+        "files": {
+          "type": "object",
+          "properties": {
+            "overview": {
+              "$ref": "#/$defs/docRef",
+              "description": "What the product is, its goals, who it is for and the high-level processes - in plain words, plus the glossary that fixes the English terminology. Authored. Names the roles and points at automation, which owns their definition."
+            },
+            "user_cases": {
+              "$ref": "#/$defs/docRef",
+              "description": "Cases per role. Each carries a priority, its own UX requirements and an acceptance list whose bullets are individually addressable - the acceptance bar."
+            },
+            "ux_ui": {
+              "$ref": "#/$defs/docRef",
+              "description": "The interface bar: navigation, empty/loading/error states, responsive behaviour, accessibility and tone once for the whole product, then per screen what is on it, what can be done and what must NOT be visible there. Authored. Feeds interfaces[] id, name, path, roles."
+            },
+            "automation": {
+              "$ref": "#/$defs/docRef",
+              "description": "The trigger -> task -> workflow -> role model: who does what, what starts it, and what runs. Authored, read and corrected by the client. Writes the business half of this file: roles, processes[].tasks[], triggers[] and which workflow answers which trigger."
+            },
+            "handbook": {
+              "$ref": "#/$defs/docRef",
+              "description": "How to work with the platform, written for the people who will use it. Seeded from the cases and screens, then authored."
+            },
+            "open_questions": {
+              "$ref": "#/$defs/docRef",
+              "description": "SS A owed by the client - SS B deferred engineering, each with the trigger that ends the deferral."
+            },
+            "test_cases": {
+              "$ref": "#/$defs/docRef",
+              "description": "How each acceptance bullet is verified - one test per bullet, tagged auto or manual. Derived from user_cases, automation and ux_ui; its version names the versions it was derived from."
+            },
+            "architecture": {
+              "$ref": "#/$defs/docRef",
+              "description": "How the project is built, for the agent building in it - generated from software[], entities[], workflows[], connections and context.plugins."
+            },
+            "index": {
+              "$ref": "#/$defs/docRef",
+              "description": "Generated index of every case, screen and trigger plus the coverage count. The one index allowed to exist, because nobody maintains it by hand."
+            },
+            "readme": {
+              "$ref": "#/$defs/docRef",
+              "description": "The folder's own map, ownership table, ID spaces and loop - generated from the document contract, so the folder cannot describe itself differently from the way it is checked."
+            },
+            "tasks": {
+              "$ref": "#/$defs/docRef",
+              "description": "Milestones and tasks - the forward-looking half of the folder. Every task also lives in the team's own tracker, where the discussion happens; this file is the source of truth for what the work IS."
+            },
+            "decisions": {
+              "$ref": "#/$defs/docRef",
+              "description": "D-id registry grouped by the rulings file that holds the argument."
+            },
+            "changelog": {
+              "$ref": "#/$defs/docRef",
+              "description": "What reached the people who use the product, newest first. Curated from the work and release entries of the log - never a commit history in disguise."
+            },
+            "log": {
+              "$ref": "#/$defs/docRef",
+              "description": "Append-only journal of intakes, handoffs, merges, work and releases; the unprocessed signal and the development log are both read from it."
+            }
+          }
+        },
+        "freshness_days": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 30,
+          "description": "Folder-wide default shelf life, in days, for a document that does not set its own `freshness_days`. Resolution order is per-document → this → 30, and rule 12.17 plus the session-start hook both read it through one shared function, so the linter and the hook cannot disagree about whether a document is stale. Set the per-document value where a document genuinely ages differently; set this one to move the whole folder at once."
+        },
+        "dirs": {
+          "type": "object",
+          "description": "The four folders of the macstack/ layout, plus README.md and macstack.json at the root — six entries in all. The count is deliberate: a specification spread over many files becomes more tedious to review than the code it describes, which is the field's own criticism of spec-driven tooling. A fifth folder needs an argument that beats that.",
+          "properties": {
+            "client": {
+              "type": "string",
+              "default": "client",
+              "description": "What a human writes and a client reads — the source of truth for what the product must do. This is the folder you hand over."
+            },
+            "generated": {
+              "type": "string",
+              "default": "generated",
+              "description": "Built from a source, never edited by hand. A hand edit is lost on the next render and lint reports the difference."
+            },
+            "inbox": {
+              "type": "string",
+              "default": "inbox",
+              "description": "What the client sent, exactly as sent. Immutable."
+            },
+            "history": {
+              "type": "string",
+              "default": "history",
+              "description": "Journals and records: what happened, what was decided, what was checked, what we sent — plus the plan of work, which is the same working record read forwards."
+            }
+          }
+        }
+      }
+    },
     "roles": {
       "type": "array",
       "description": "Roles and access (\"sees / can\" + isolation)",
@@ -1468,10 +1600,19 @@
             "type": "string"
           },
           "sees": {
-            "type": "string"
+            "type": "string",
+            "description": "One sentence: the role's thesis, not its case list. The cases live in USER-CASES.md. Lint warns past a sentence."
           },
           "can": {
-            "type": "string"
+            "type": "string",
+            "description": "One sentence: what the role may do, in outline. Detail belongs to acl[] and to USER-CASES.md. Lint warns past a sentence."
+          },
+          "cases": {
+            "type": "array",
+            "description": "Case-ID prefixes or explicit ids this role owns in USER-CASES.md, e.g. ['C-*']. The join between the machine half of a role (id, acl, isolation) and its narrative half. Lint checks it in both directions.",
+            "items": {
+              "type": "string"
+            }
           },
           "acl": {
             "type": "array",
@@ -1496,9 +1637,16 @@
                       "read",
                       "update",
                       "delete",
-                      "approve"
+                      "approve",
+                      "download"
                     ]
-                  }
+                  },
+                  "description": "Generic verbs only. A domain-specific right is not a new verb: it is one of these plus a `condition`, plus `fields` when it touches only some of them. `approve_if_is_approver` was `approve` + a condition; `announce_payment_by_role` was `update` restricted to two fields the code already isolates."
+                },
+                "condition": {
+                  "type": "string",
+                  "maxLength": 200,
+                  "description": "The row-level restriction on these actions, in plain words: \"only the confirmation this contact is the named approver for\". Prose on purpose — a predicate language here would be a second, weaker copy of the access rules the code already enforces, and the two would drift. This says WHAT is restricted so a reader knows to go and check; the code says how."
                 }
               }
             }
@@ -1506,6 +1654,166 @@
           "isolation": {
             "type": "string",
             "description": "Tenant isolation (e.g.: by the company field)"
+          }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "description": "What a person must be able to get done, per role — the skeleton of client/USER-CASES.md. The PROSE stays in that document: this holds the ids, the links and the state, so that every check can ask \"does the code do this\" and \"has the client confirmed it\" without parsing a paragraph. acceptance[] holds the ids of the acceptance bullets, never their text — the bullet is the client's sentence and the id is its address.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^C?[A-Z]-[0-9]{2}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/$defs/slug",
+            "description": "roles[].id — absent for a cross-cutting case"
+          },
+          "priority": {
+            "enum": [
+              "critical",
+              "important",
+              "nice-to-have"
+            ]
+          },
+          "screens": {
+            "description": "interfaces[].id",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "triggers": {
+            "description": "triggers[].id",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "workflow": {
+            "description": "workflows[].id",
+            "type": "string"
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "acceptance": {
+            "description": "ids of the acceptance bullets, e.g. C-04.a3 — positional within the case, so inserting one above another moves every id below it",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          }
+        }
+      }
+    },
+    "prohibitions": {
+      "type": "array",
+      "description": "What the platform must REFUSE to do. A prohibition is not a case with a negative name: it has no acceptance list, because the refusal itself is the behaviour, and it belongs to no single role.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^Z-[0-9]{2}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "enforced_by": {
+            "description": "workflows[].id or interfaces[].id",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          }
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "description": "Rules that hold everywhere and are never negotiated away by a feature. They are stated once here and explained in client/OVERVIEW.md; a change to one is a decision, not an edit.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "name": {
+            "type": "string"
+          },
+          "enforced_by": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "$ref": "#/$defs/status"
+          }
+        }
+      }
+    },
+    "glossary": {
+      "type": "array",
+      "description": "Terms the project uses in one exact sense. A domain word that is already Latin stays as it is — translating a term out of a contract makes it less precise, not more.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "term"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "term": {
+            "type": "string"
+          },
+          "scope": {
+            "enum": [
+              "domain",
+              "platform",
+              "legal",
+              "technical"
+            ]
+          },
+          "see": {
+            "description": "entities[].id or workflows[].id this term names",
+            "type": "string"
           }
         }
       }
@@ -1569,7 +1877,7 @@
         },
         "bindings": {
           "type": "object",
-          "description": "Service bindings (infisical/dokploy/github/plane…)",
+          "description": "Service bindings, keyed by service (secrets manager, PaaS, git host, task tracker…). The task-tracker binding is what lets tooling reconcile TASKS.md with wherever the team actually discusses work — whichever tracker that is.",
           "additionalProperties": {
             "type": "object"
           }
@@ -1645,20 +1953,72 @@
         },
         "open_questions": {
           "type": "array",
+          "description": "Open questions as POINTERS into OPEN-QUESTIONS.md. Prose belongs in the markdown, not here — a question long enough to need a paragraph is a question the JSON cannot keep in sync.",
           "items": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "LEGACY free-text form. Still valid; lint warns and offers conversion to the pointer form."
+              },
+              {
+                "$ref": "#/$defs/openItemRef"
+              }
+            ]
           }
         },
         "needs_from_client": {
           "type": "array",
+          "description": "DERIVED VIEW of the live client-owed rows of OPEN-QUESTIONS.md §A — pointers only. Lint errors if it names a closed item or omits an open client input, so the two cannot disagree.",
           "items": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "LEGACY free-text form. Still valid; lint warns and offers conversion to the pointer form."
+              },
+              {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/openItemRef"
+                  },
+                  {
+                    "properties": {
+                      "id": {
+                        "pattern": "^A[0-9]+$"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "description": "Owner and session rulings, as pointers into macstack/decisions/. Prose elsewhere in this file may cite a decision by id only if it resolves here.",
+          "items": {
+            "$ref": "#/$defs/decisionRef"
           }
         },
         "next_steps": {
           "type": "array",
+          "description": "What happens next, as POINTERS into TASKS.md. Prose here rots the moment the plan moves; the task ids do not. Legacy free-text entries stay valid and lint offers the conversion.",
           "items": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "LEGACY free-text form."
+              },
+              {
+                "$ref": "#/$defs/taskRef"
+              }
+            ]
+          }
+        },
+        "milestones": {
+          "type": "array",
+          "description": "The milestone list, as pointers into TASKS.md. A milestone is a coherent increment someone could review or demo; its falsifiable done_when checks live in the markdown.",
+          "items": {
+            "$ref": "#/$defs/milestoneRef"
           }
         },
         "updated": {
@@ -1834,6 +2194,192 @@
         "ready_to_connect",
         "out_of_scope"
       ]
+    },
+    "docRef": {
+      "type": "object",
+      "description": "A pointer to one markdown document of the macstack/ folder. The document owns its text; this holds only where it is, who it is for, and which version the spec was reconciled against.",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path relative to docs.root"
+        },
+        "version": {
+          "type": "string",
+          "description": "CHECKED COPY: must equal the version in the document's own header and the last row of its journal table. Mismatch is a lint ERROR."
+        },
+        "updated": {
+          "type": "string",
+          "description": "Date of the last revision (YYYY-MM-DD)"
+        },
+        "audience": {
+          "enum": [
+            "client",
+            "internal",
+            "both"
+          ],
+          "description": "Who the document is written for. A client-facing document has its output language confirmed before writing."
+        },
+        "language": {
+          "type": "string",
+          "description": "Per-document override of docs.language (ISO 639-1)"
+        },
+        "reviewed": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Date this document was last CHECKED AGAINST THE CODE — not the date its text was edited. The two are different facts and conflating them is how a document stays confidently wrong: you can rewrite a sentence in USER-CASES today without ever asking whether the platform still behaves that way. A reviews/<date>-*-conformance.md newer than this date counts as the check and moves it forward."
+        },
+        "freshness_days": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 30,
+          "description": "How long THIS document's last check stays good. Lint warns past it and errors past twice it — the same shape the delta age budget already uses (14/30). Set it per document: a business-logic document may outlive a user-cases document, and pretending one number fits both produces either noise or false comfort. Omitted, it falls back to the folder-wide `docs.freshness_days`, then to 30."
+        }
+      }
+    },
+    "openItemRef": {
+      "type": "object",
+      "description": "POINTER to one item of OPEN-QUESTIONS.md — never prose. The markdown owns the text and allocates the id; this holds the machine-readable state. A = owed by the client, B = deferred engineering. Numbers are never reused after a strike-through.",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^Q?[AB][0-9]+$"
+        },
+        "ref": {
+          "type": "string",
+          "description": "Anchor into the document, e.g. 'OPEN-QUESTIONS.md#a5'"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "answered",
+            "closed",
+            "deferred"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "CHECKED COPY, optional: must equal the first sentence of the referenced markdown item after whitespace normalization. Mismatch is a lint ERROR — this is the one denormalization the standard allows, and it may not rot silently."
+        },
+        "blocks": {
+          "$ref": "#/$defs/refList",
+          "description": "Elements this item blocks, e.g. 'results.first-invoice'"
+        },
+        "closed_by": {
+          "type": "string",
+          "pattern": "^D[0-9]+$",
+          "description": "The decision that closed it → lifecycle.decisions[].id"
+        },
+        "closed_on": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        }
+      }
+    },
+    "decisionRef": {
+      "type": "object",
+      "description": "POINTER to one ruling in macstack/decisions/. Exists because prose across the spec cites decisions by id, and a citation that cannot be followed is the same class of defect as a rotted file:line pointer.",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^D[0-9]+$"
+        },
+        "ref": {
+          "type": "string",
+          "description": "Path to the rulings file, relative to docs.root"
+        },
+        "date": {
+          "type": "string",
+          "description": "YYYY-MM-DD"
+        },
+        "decided_by": {
+          "enum": [
+            "owner",
+            "session"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    },
+    "taskRef": {
+      "type": "object",
+      "description": "POINTER to one task in TASKS.md — never prose. The markdown owns the description, the acceptance and the tracker id; this holds only enough to cross-check.",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^M[0-9]+-T[0-9]+$",
+          "description": "Milestone-scoped and permanent, e.g. M11-T9"
+        },
+        "ref": {
+          "type": "string",
+          "description": "Anchor into TASKS.md"
+        },
+        "status": {
+          "enum": [
+            "backlog",
+            "todo",
+            "in_progress",
+            "doing",
+            "blocked",
+            "done",
+            "cancelled",
+            "dropped"
+          ],
+          "description": "State of the task. TASKS.md is the source of truth for it; this pointer mirrors it, and the two must agree. The vocabulary is the union of two that used to disagree: `history/TASKS.md` is checked by lint 12.14 against the document contract (`backlog · todo · in_progress · done · cancelled`), while this enum used to allow only `todo · doing · blocked · done · dropped` — so a spec mirroring a real TASKS.md status failed schema validation, and nothing said why. Prefer the tracker five for new files; `doing`, `blocked` and `dropped` remain valid so no existing spec breaks."
+        },
+        "blocked_by": {
+          "$ref": "#/$defs/refList",
+          "description": "Task ids or open-item ids. An A-id here is how a client question becomes visibly load-bearing."
+        }
+      }
+    },
+    "milestoneRef": {
+      "type": "object",
+      "description": "POINTER to one milestone in TASKS.md. The done_when checks live in the markdown; this holds the id and the state.",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^M[0-9]+$"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "status": {
+          "enum": [
+            "backlog",
+            "todo",
+            "in_progress",
+            "doing",
+            "blocked",
+            "done",
+            "cancelled",
+            "dropped"
+          ],
+          "description": "State of the task. TASKS.md is the source of truth for it; this pointer mirrors it, and the two must agree. The vocabulary is the union of two that used to disagree: `history/TASKS.md` is checked by lint 12.14 against the document contract (`backlog · todo · in_progress · done · cancelled`), while this enum used to allow only `todo · doing · blocked · done · dropped` — so a spec mirroring a real TASKS.md status failed schema validation, and nothing said why. Prefer the tracker five for new files; `doing`, `blocked` and `dropped` remain valid so no existing spec breaks."
+        },
+        "ref": {
+          "type": "string"
+        }
+      }
     }
   }
 }

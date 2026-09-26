@@ -42,25 +42,25 @@ restic restore latest --target /restore           # full restore to staging
 rsync -a /restore/docker/  /docker/
 rsync -a /restore/agents/  /agents/
 # named-volume data: recreate the volume, then restore its _data
-docker volume create bas_natsdata
-rsync -a /restore/var/lib/docker/volumes/bas_natsdata/_data/  /var/lib/docker/volumes/bas_natsdata/_data/
+docker volume create acme_natsdata
+rsync -a /restore/var/lib/docker/volumes/acme_natsdata/_data/  /var/lib/docker/volumes/acme_natsdata/_data/
 ```
 
 ## 4. Bring up databases and replay dumps
 
 ```bash
-cd /docker/bas && docker compose up -d postgres   # start just the DB first
+cd /docker/acme && docker compose up -d postgres   # start just the DB first
 # replay the logical dump straight from the repo
-restic dump latest /var/backups/restic-dumps/db-bas-pg.sql.gz \
-  | zcat | docker exec -i bas-postgres-1 psql -U bas -d bas
+restic dump latest /var/backups/restic-dumps/db-acme-pg.sql.gz \
+  | zcat | docker exec -i acme-postgres-1 psql -U acme -d acme
 ```
 
 ## 5. Start the rest and verify
 
 ```bash
-cd /docker/bas && docker compose up -d            # full stack
+cd /docker/acme && docker compose up -d            # full stack
 # verify
-docker exec -i bas-postgres-1 psql -U bas -d bas -c '\dt'   # tables present, rows there
+docker exec -i acme-postgres-1 psql -U acme -d acme -c '\dt'   # tables present, rows there
 curl -fsS localhost:<port>/health || true                  # app responds
 ```
 

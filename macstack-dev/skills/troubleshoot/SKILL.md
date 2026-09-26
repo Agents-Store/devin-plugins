@@ -15,14 +15,17 @@ description: This skill should be used when the user reports "macstack lint fail
 | `trigger unknown` | a workflow references a trigger code missing from `triggers[]` → triggers live ONLY in the collection, never inline |
 | `delegation not downward` | an orchestrator appears in a worker's delegates_to → the hierarchy is strictly control_plane → orchestrator → worker |
 | `cross-stack not declared` | the `foo:` prefix is not declared → add the stack to `stacks.root/substacks/links` |
+| `lint red on rule 12.24` | a table exceeds the format budget (>4 columns, a cell >80 chars, <3 rows, or `<br>`/bold/code/pipes in a cell) → convert it to a list, see `documents/references/format-rules.md` |
+| `lint red on rule 12.25` | prose is not in `docs.language` → translate the prose; identifiers (ids, YAML keys, anchors, statuses, file paths) always stay English, see `documents/references/format-rules.md` |
 
 ## Prototype resolution
 
 - `github:owner/repo` fails to clone → check `gh auth status` / repo visibility;
   private repos need a PAT. Fallback: ask the user for a local absolute path.
 - The repo has no `macstack.json` → it is a legacy prototype (only `stack.json`):
-  use its files for scaffolding, but there is nothing to inherit — record it in
-  open_questions.
+  use its files for scaffolding, but there is nothing to inherit — open a
+  `client/OPEN-QUESTIONS.md §B` row and point at it by id from `lifecycle.open_questions`
+  (prose in the markdown, pointer in the JSON).
 - A prototype cycle (A→B→A) → an error by design; break the chain.
 - A local path inside a cloud-synced folder (iCloud/Drive) may hang on first read
   (file materialization) — retry, or copy the prototype to a regular folder.
@@ -49,11 +52,24 @@ description: This skill should be used when the user reports "macstack lint fail
 - `${VAR}` from .mcp.json does not resolve → values must live in the env block of
   `.claude/settings.local.json` (filled by scripts/setup.sh), not inside .mcp.json.
 
+## The `macstack/` folder
+
+| Symptom | Cause → fix |
+|---|---|
+| Two `macstack.json` (root and folder) | lint errors on both → keep the folder copy, `git rm` the root one via `/macstack-dev:start` (migration mode) |
+| Lint red on a document that reads fine | anchors were stripped (client returned an edited copy, or someone pasted through a WYSIWYG) → re-insert anchors idempotently; never rewrite the document |
+| A cross-reference check reports a missing ID that is visibly present | a Cyrillic homoglyph in the ID token — Latin and Cyrillic A B E K M H O P C T Y X are indistinguishable on screen. Do not try to spot it; find it with `grep -RPn "[^\x00-\x7F]-[0-9]" macstack/`, which matches a non-ASCII letter directly before the hyphen-number of an ID, then retype the token in ASCII |
+| A client PDF reads as empty | not-yet-materialized iCloud file → size/first-bytes check before reading; refuse rather than guess |
+| `.xlsx` cannot be opened by any file tool | ask for a CSV export beside it and write NO log entry, so the file stays in the unprocessed set |
+| `D<n>` cited but nowhere to be found | the rulings file was written without allocating in `history/DECISIONS.md` first |
+| A script prints in the wrong language | it never wired in `documents/references/i18n.py` → report it via `/macstack-dev:feedback` |
+
 ## Discovery
 
 - `curl raw.githubusercontent.com/...marketplace.json` → 404: the branch is not
   `main` or the repo is private → use
   `gh api repos/agents-store/claude-plugins/contents/...`.
-- No plugin exists for a software → record the gap in open_questions + suggest
+- No plugin exists for a software → open a §B row (pointer from
+  `lifecycle.open_questions`, never prose in the JSON) + suggest
   creating it via plugin-creator; do NOT put a non-existent name into
   context.plugins.

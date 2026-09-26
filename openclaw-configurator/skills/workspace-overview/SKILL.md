@@ -11,7 +11,7 @@ This skill covers the structure, loading mechanics, and organization of an OpenC
 
 **Standard layout**: `~/.openclaw/` (single instance). Multi-profile via `OPENCLAW_PROFILE` env var creates `~/.openclaw/workspace-<profile>`.
 
-**Docker multi-instance layout**: Each instance lives at `~/.openclaw-{name}/` (e.g. `~/.openclaw-nova/`). This is a deployment convention for running multiple OpenClaw instances, each with its own config and workspace.
+**Docker multi-instance layout**: Each instance lives at `~/.openclaw-{name}/` (e.g. `~/.openclaw-<name>/`). This is a deployment convention for running multiple OpenClaw instances, each with its own config and workspace.
 
 ### Instance dir vs Project dir
 
@@ -20,7 +20,7 @@ For Docker deployments these are two **different** directories:
 | Concept | Env var | Typical path | Holds |
 |---------|---------|--------------|-------|
 | **Instance dir** (runtime) | `OPENCLAW_INSTANCE_DIR` | `~/.openclaw-{name}/` | `openclaw.json`, `workspace/`, `agents/`, `memory/`, `logs/` |
-| **Project dir** (source) | `OPENCLAW_PROJECT_DIR` | `/docker/openclaw-{name}/` | git checkout, `docker-compose.yaml`, migrations |
+| **Project dir** (source) | `OPENCLAW_PROJECT_DIR` | `<compose-root>/openclaw-{name}/` | git checkout, `docker-compose.yaml`, migrations |
 
 **Resolution priority used by workspace-aware commands** (`workspace-scan`, `config-validate`, `workspace-optimize`, the permissions hook):
 

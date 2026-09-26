@@ -32,17 +32,17 @@ for c in $(docker ps -aq); do
 done
 ```
 
-This reveals a stack **outside** `/docker` — e.g. `/projects/products/BAS` — and real state under `/agents/openclaw/<instance>/`. Inspect mounts:
+This reveals a stack **outside** `/docker` — e.g. `/projects/<group>/<stack>` — and real state under `<data-root>/<instance>/`. Inspect mounts:
 
 ```bash
-docker inspect bas-postgres-1 --format '{{range .Mounts}}{{.Type}} {{.Name}} {{.Source}} -> {{.Destination}}{{"\n"}}{{end}}'
+docker inspect acme-postgres-1 --format '{{range .Mounts}}{{.Type}} {{.Name}} {{.Source}} -> {{.Destination}}{{"\n"}}{{end}}'
 du -sh /var/lib/docker/volumes/*/_data | sort -rh
 ```
 
 Findings → the plan:
-- **paths:** `/docker`, `/agents`, `/projects`, the named volume `/var/lib/docker/volumes/bas_natsdata/_data`, plus `/var/backups/restic-dumps`.
+- **paths:** `/docker`, `/agents`, `/projects`, the named volume `/var/lib/docker/volumes/acme_natsdata/_data`, plus `/var/backups/restic-dumps`.
 - **excludes:** `node_modules`, `.cache`, `.npm`, `.venv`, `__pycache__`, `linuxbrew`, build caches, and `/var/lib/docker/{overlay2,image,containers,buildkit}`.
-- **database:** `bas-postgres-1` (Postgres) → logical dump, exclude its data dir.
+- **database:** `acme-postgres-1` (Postgres) → logical dump, exclude its data dir.
 
 Write `/etc/restic/backup-paths.txt`, `/etc/restic/excludes.txt`, `/etc/restic/databases.tsv`. **Confirm the plan + FLAGS with the user.**
 
@@ -75,9 +75,9 @@ If `AccessDenied`: R2 token needs Object Read & Write, scope must include the bu
 Adapt `backup-script/references/restic-backup.sh` to `/usr/local/sbin/restic-backup.sh` (700). Add the Postgres dump block:
 
 ```bash
-if docker ps --format '{{.Names}}' | grep -qx 'bas-postgres-1'; then
-  docker exec -i bas-postgres-1 pg_dump -U bas -d bas --clean --if-exists \
-    | gzip > "$DUMPDIR/db-bas-pg.sql.gz"
+if docker ps --format '{{.Names}}' | grep -qx 'acme-postgres-1'; then
+  docker exec -i acme-postgres-1 pg_dump -U acme -d acme --clean --if-exists \
+    | gzip > "$DUMPDIR/db-acme-pg.sql.gz"
 fi
 ```
 

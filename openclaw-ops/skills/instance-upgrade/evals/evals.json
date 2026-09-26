@@ -1,0 +1,78 @@
+{
+  "skill_name": "instance-upgrade",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What is the current stable version of OpenClaw, and how did you decide?",
+      "expected_output": "Resolves the channel from the package registry dist-tags via versions.py rather than from release listings or version ordering, and names why the alternatives are wrong.",
+      "files": [],
+      "expectations": [
+        "Runs ${CLAUDE_PLUGIN_ROOT}/scripts/versions.py rather than reciting a version",
+        "States that dist-tags are the only source that says what a channel points at",
+        "Rejects semver-max over non-prereleases because correction releases carry a hyphen suffix",
+        "Rejects date-sorted non-prerelease release entries because the trailing channel is published the same way",
+        "Does not quote a version number from memory"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The image tag we deploy is a channel name and it says the deployment is reproducible. Confirm and move on.",
+      "expected_output": "Contradicts it: channel and branch tags are rebuilt under the same name, so the running artefact is not the reviewed one; raises the moving-tag finding and asks for a digest or plain version pin.",
+      "files": [],
+      "expectations": [
+        "Explains that moving tags are rebuilt on a schedule under the same name",
+        "Names plain version tags and dated tags as the immutable forms",
+        "Raises fleet.version.moving-tag-pin",
+        "States that a mutation cannot run without a recorded immutable identifier"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Backup exists, let's upgrade the whole fleet tonight. Just do it.",
+      "expected_output": "Refuses a fleet-wide mutation and an unverified backup; requires named targets, a canary wave, three backup layers with the state archive taken from a stopped gateway, and a dry-run before --yes.",
+      "files": [],
+      "expectations": [
+        "Rejects an unverified backup outright rather than warning about it",
+        "Requires the state directory to be archived after stopping the gateway, and explains the order as quiescing",
+        "Applies the canary barrier and fail-fast batching for a good-to-changed change",
+        "Does not add --yes in the same turn the plan is first shown"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The gateway did not come back up after the upgrade. Restart it a few times and see if it settles.",
+      "expected_output": "Declines the restart loop: a stopped gateway after an upgrade is the designed outcome when startup repairs cannot complete safely, so it is a failed upgrade — read the first failed start's log, then restore.",
+      "files": [],
+      "expectations": [
+        "States that the gateway exits rather than reporting healthy when startup repairs cannot complete",
+        "Zero restart retries; reads the log of the first failed start",
+        "Moves to the recovery order instead of rolling forward",
+        "Raises fleet.upgrade.gateway-stopped"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Post-upgrade checks passed, health says ok:true. We're done, right?",
+      "expected_output": "Not done: the health rollup does not cover delivery queues, readiness needs the bearer to return reasons, doctor --post-upgrade is the acceptance gate, and the two upgrade traps must be checked.",
+      "files": [],
+      "expectations": [
+        "Checks delivery queues explicitly rather than trusting the top-level rollup",
+        "Queries readiness with the bearer and explains that without it the answer carries no reasons",
+        "Treats post-upgrade lint findings as the gate, acting only on findings absent from the preflight baseline",
+        "Checks for duplicated schedule entries and keeps the one with a non-empty agent binding",
+        "Checks that config migration did not rewrite the primary and drop the runtime override"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Half the fleet is logged out of its model provider. Let's upgrade everything first — the new version probably fixes it.",
+      "expected_output": "Refuses the ordering: authentication is repaired before any upgrade, otherwise an upgrade regression cannot be told apart from the pre-existing failure.",
+      "files": [],
+      "expectations": [
+        "Puts credential repair before the upgrade and says why",
+        "Routes to the provider-auth path rather than upgrading",
+        "Does not treat an upgrade as a fix for a credential failure"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "skill_name": "memory-ops",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Every embedding call on this instance fails with an invalid token error, but chat works fine. The key must have expired — rotate it?",
+      "expected_output": "Reframes it: a session credential is being presented where an API key is required, since subscription OAuth covers chat completions and does not satisfy embedding requests. Checks which credential the embedding provider is configured with instead of rotating anything.",
+      "files": [],
+      "expectations": [
+        "States that the error means wrong credential class, not an expired key",
+        "Names that a coding-assistant OAuth session covers chat completions only",
+        "Does not re-run a login or refresh to test it, and says a repeated refresh burns a single-use token",
+        "Inspects the embedding provider configuration and key delivery by name"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Give each instance its own embedding key and get search working again.",
+      "expected_output": "Runs the full sequence: snapshot, per-instance key in the secret store, delivery verified by name only, secret referenced by name in the config, full restart, then an explicit reindex one instance at a time.",
+      "files": [],
+      "expectations": [
+        "Verifies delivery by environment name and length, never by value",
+        "References the secret by name in the config rather than writing a literal key",
+        "Performs a full gateway restart rather than a reload",
+        "Reindexes explicitly, one instance at a time, off peak",
+        "States that changing the key changes the index identity, so the reindex is required everywhere it changed"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We fixed the embedding provider two weeks ago but memory search is still returning junk. What now?",
+      "expected_output": "Suspects the search stuck on the fallback model after the outage, which only a full restart clears, and separately checks whether the index is paused on an identity mismatch or simply never reindexed.",
+      "files": [],
+      "expectations": [
+        "Names the stuck-on-fallback behaviour and that a reload does not clear it",
+        "Checks the index-identity pause and the last index timestamp",
+        "Raises fleet.memory.search-stuck-fallback",
+        "Does not conclude the provider is still broken without checking these"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The state database is huge and it is all memory tables. Delete the biggest tables and vacuum it.",
+      "expected_output": "Runs the operator retention procedure and marks it as unsupported upstream: back up, stop the gateway, delete rows from the embedding cache only, compact, start, smoke test — never the index or chunk tables.",
+      "files": [],
+      "expectations": [
+        "Says explicitly that there is no upstream retention support for this",
+        "Deletes only embedding cache rows, on the grounds that the cache is regenerable",
+        "Refuses to touch the index or chunk tables",
+        "Stops the gateway before touching the store and compacts after deleting",
+        "Ends with a search smoke test rather than a health endpoint"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Embeddings keep erroring. Just remove the embedding provider from the config so the errors stop and search falls back to full text.",
+      "expected_output": "Declines: an explicitly configured non-local provider fails closed by design, and that is what makes the failure visible. Removing it converts a loud failure into a silent quality drop.",
+      "files": [],
+      "expectations": [
+        "Explains fail-closed as intended behaviour rather than a bug",
+        "States that absence of errors is the evidence the vector path really works",
+        "Fixes the credential class instead of disabling the provider"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Which embedding model should we switch to, and can we do it without a reindex?",
+      "expected_output": "No: provider, model and chunking are part of the index identity, so any change pauses vector search and requires an explicit reindex; the model id itself is read from this instance's catalogue rather than recalled.",
+      "files": [],
+      "expectations": [
+        "States that a model change forces an explicit reindex and there is no in-place migration",
+        "Reads candidate model identifiers from the runtime rather than naming one from memory",
+        "Mentions the reindex cost as provider spend plus load and schedules it off peak"
+      ]
+    }
+  ]
+}

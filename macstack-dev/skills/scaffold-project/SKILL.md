@@ -60,6 +60,7 @@ Backed by sources 1→3, create:
 | `.mcp.json` (`${VAR}`) | stack plugin / connections |
 | `.env.example`, **`.env.prod`, `.env.dev`** (always created), `.infisical.json` | the `infisical-env` skill (mandatory to invoke) — variables = union of macstack.json `resources.accesses` AND the `${VAR}` tokens required by the project's enabled Claude plugins (settings.json → stack plugin `.mcp.json`/`.env.example`); required-but-empty keys appear as `KEY=''` with a FILL ME comment |
 | `.claude/rules/`, `.claude/commands/`, `scripts/` | the `best-practices` skill (mandatory to invoke) |
+| `macstack/` (README.md, client/OVERVIEW.md, USER-CASES.md, UX-UI.md, AUTOMATION.md, HANDBOOK.md, OPEN-QUESTIONS.md, history/DECISIONS.md, ledger.jsonl) | the `documents` skill (mandatory to invoke) |
 | Workflow stubs (from `workflows[]` + `triggers[]`) and entity schemas/migrations | macstack.json + dev plugins |
 
 ## Rules
@@ -69,6 +70,9 @@ Backed by sources 1→3, create:
   so editors validate live.
 - **Idempotency**: a re-run only adds what is missing and NEVER overwrites user
   code (existing file with differences → show a diff and ask).
+- **`macstack/` is never overwritten by a prototype**: a prototype may seed
+  `macstack/README.md` and nothing else — a parent's cases and open questions
+  belong to the parent project, not this one.
 - **No secrets in files**: key names only; values arrive via `infisical-env`.
 - Every generated piece must trace to macstack.json (a software/workflow/entity id) —
   a file bound to nothing is "coding for coding's sake"; do not create it.
@@ -77,10 +81,10 @@ Backed by sources 1→3, create:
 
 <example>
 user: "Scaffold the project from macstack.json"
-→ prototype github:stackmakers-ai/project-directus-nextjs-trigger-dev → clone, copy
+→ prototype github:<owner>/project-directus-nextjs-trigger-dev → clone, copy
   compose/scripts/.claude/layout
 → stack plugin stack-directus-nextjs-trigger-dev → enabledPlugins + .mcp.json (${VAR}) + CLAUDE.md merge
 → dev plugins directus-dev, nextjs-dev, trigger-dev → enable, follow their conventions in stubs
 → files: src/trigger/<wf-id>.ts per workflows[], collection schemas per entities[]
-→ infisical-env → best-practices → lint → report
+→ infisical-env → best-practices → documents → lint → report
 </example>

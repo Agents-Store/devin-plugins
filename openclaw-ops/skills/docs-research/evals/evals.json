@@ -1,0 +1,65 @@
+{
+  "skill_name": "docs-research",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Which model should we set as the primary for the fleet? Just put the current best one in the config.",
+      "expected_output": "Declines to name a model id from memory. Writes the reference in provider/model-id form, then reads the instance's own catalogue to obtain the real id, and applies the rule that any id entering a diff must be an echo from that box.",
+      "files": [],
+      "expectations": [
+        "Does not state a real model id from memory in a recommendation position",
+        "Reads the instance catalogue through the exec door to obtain the id",
+        "Uses the provider/model-id reference form with the runtime override attached separately",
+        "States that ids are pinned rather than following a moving alias, because an automatic move changes price and behaviour with no config change"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What is the current stable version? Take the newest non-prerelease entry from the release list.",
+      "expected_output": "Rejects that method and names the correct authority for each of the three different questions: dist-tags for where the channel points, the release entry date for the promotion clock, the image digest for what is running. Explains why the proposed method returns the trailing channel.",
+      "files": [],
+      "expectations": [
+        "States that the channel resolves from registry dist-tags and nothing else",
+        "Explains that the trailing channel is also published as a non-prerelease and lags by about a month",
+        "Explains that correction releases carry a hyphen suffix that version ordering reads as a pre-release",
+        "Uses versions.py rather than re-deriving the answer by hand"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "This box has no outbound network and the runtime CLI is failing to start. What config changes do you recommend?",
+      "expected_output": "Enters unverified-knowledge mode: reports what was observed on the host, states that no live source could be reached, and makes no recommendation until one can be.",
+      "files": [],
+      "expectations": [
+        "Explicitly declares that no source could be reached",
+        "Still reports the observations gathered from the host",
+        "Withholds every recommendation rather than answering from memory",
+        "Names what would unblock a recommendation: the box's own help and docs, or the documentation site"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Does this version support that config key? You already know the flags for this tool.",
+      "expected_output": "Refuses the premise that memory qualifies. Asks the box what it supports through its own help and docs command, and reaches the documentation site for the current recommendation, quoting a URL for anything that becomes a recommendation.",
+      "files": [],
+      "expectations": [
+        "Reads the box first for what this build supports",
+        "Notes that the in-box docs command is not free because it loads config and plugins, and can fail for its own reasons on a degraded instance",
+        "Quotes a URL in the finding for anything recommended",
+        "Does not quote a flag spelling or config key from memory"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "The docs command on our oldest instance describes a flag that the documentation site does not mention any more. Which one is wrong?",
+      "expected_output": "Neither is wrong: they answer different questions, and the divergence is itself the finding. The in-box answer describes what that build supports; the site describes the current recommendation. Both go into the report, and the age of the instance is the explanation.",
+      "files": [],
+      "expectations": [
+        "States that the two sources answer different questions and are not interchangeable",
+        "Records the divergence as a finding rather than picking a winner",
+        "Attributes the difference to the instance running behind, and checks the version drift",
+        "Keeps both the observation and the citation in the report"
+      ]
+    }
+  ]
+}

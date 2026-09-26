@@ -73,7 +73,7 @@ Gemini also supports a CLI backend (runtime `google-gemini-cli`) analogous to `c
 
 ## auth-profiles.json — the token sink
 
-OpenClaw stores provider credentials in `~/.openclaw/agents/main/agent/auth-profiles.json` (Docker multi-instance: `/root/.openclaw-{name}/agents/main/agent/auth-profiles.json`). One entry per profile, e.g.:
+OpenClaw stores provider credentials in `~/.openclaw/agents/main/agent/auth-profiles.json` (Docker multi-instance: `<instance-dir>/agents/main/agent/auth-profiles.json`). One entry per profile, e.g.:
 
 ```json
 {

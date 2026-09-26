@@ -1,0 +1,67 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have just been given access to a server that runs a bunch of OpenClaw containers. I know nothing about them. Where do I start?",
+      "expected_output": "Follows the cold-start scenario: verify the host, discover before deciding, read the inventory including alien and legacy rows, write the fleet config with the decisions autodetect cannot make, then the health-versus-liveness table, versions, security, and a baseline snapshot — all read-only.",
+      "files": [],
+      "expectations": [
+        "Starts from discovery rather than from remembered paths",
+        "Explains that autodetect cannot choose the reference, the canary, or what is out of scope",
+        "Reads the health and liveness columns as two different questions",
+        "Changes nothing, and verifies afterwards that config mtimes and restart counts did not move"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Every instance is logged out and all the scheduled jobs are failing. Log them back in.",
+      "expected_output": "Follows the logged-out-fleet scenario: no retry on a login or refresh, diagnosis from metadata only, the account-fingerprint comparison that identifies a shared refresh chain, the single-owner design with its stated cost, canary-first application, printed logins, and verification that survives a rotation.",
+      "files": [],
+      "expectations": [
+        "States the zero-retry rule for OAuth login and refresh before doing anything",
+        "Diagnoses from metadata and fingerprints rather than by exercising the credential",
+        "Identifies the shared refresh chain as architectural rather than expiry",
+        "Prints the interactive logins instead of executing them",
+        "Verifies with a check that still passes after a rotation, and with fallback counters over a day"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Upgrade the whole fleet to latest today.",
+      "expected_output": "Refuses the shape of the request on three counts — fleet-wide selector, a moving tag as a target, and authentication not yet repaired — then follows the upgrade scenario: dist-tags, soak gate, digest pin, verified backup, canary wave, and the post-upgrade traps.",
+      "files": [],
+      "expectations": [
+        "Rejects an empty or fleet-wide mutation selector",
+        "Rejects a moving tag as a target and pins an immutable identifier",
+        "Requires a backup that passed verification, and rejects rather than warns when there is none",
+        "Names the schedule duplication and the silently rewritten primary as mandatory post-upgrade checks",
+        "Treats a gateway left stopped after the upgrade as a failure with zero retries"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Create a new instance from our reference and confirm it is properly isolated before we use it.",
+      "expected_output": "Follows the clone scenario: plan first with the isolation preflight, a port free by four measures, apply in a later turn, then the manual credential half, then the isolation proof and the health battery before any work.",
+      "files": [],
+      "expectations": [
+        "Runs the plan and reads the preflight rows before applying",
+        "Says credentials are never copied and the credential directories are created empty",
+        "Performs the isolation proof with mount tables, the rendered compose file, and the source's unchanged state",
+        "Adds the instance to the fleet config before giving it work"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Show me what a full run of this plugin actually looks like end to end.",
+      "expected_output": "Points at the four scenarios and the shape common to all of them: discover before deciding, split health from liveness, name the finding, fetch before recommending, plan then apply, and verify with an observation that changed.",
+      "files": [],
+      "expectations": [
+        "Names the four scenarios and what each one covers",
+        "States the six-step session shape",
+        "Says every name, port and version in the scenarios is invented and must be substituted from the box",
+        "Does not present the fictional fleet as if it were the user's"
+      ]
+    }
+  ]
+}

@@ -38,7 +38,7 @@ The tool downloads the image from the provided URL and uploads it to the MinIO b
   "success": true,
   "error": null,
   "data": {
-    "uploaded_file_url": "https://w.autohoster.website/web/a2b0ce3cb0813f3b5f9d885054c734d0893972df3b3b.jpg"
+    "uploaded_file_url": "https://media.example.com/web/<hash>.jpg"
   }
 }
 ```

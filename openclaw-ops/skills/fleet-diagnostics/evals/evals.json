@@ -1,0 +1,78 @@
+{
+  "skill_name": "fleet-diagnostics",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Instance beta looks completely healthy in docker, but nothing has happened on it for days. Restart it?",
+      "expected_output": "Identifies the zombie pattern, refuses the restart as a diagnostic step, and returns the finding id with the corroborating checks.",
+      "files": [],
+      "expectations": [
+        "Names fleet.liveness.zombie",
+        "Refuses to restart before reading the log, and says why a restart destroys evidence",
+        "Checks log age against the configured staleness threshold plus config presence and secret delivery",
+        "Ends with a /openclaw-ops:repair line rather than performing a fix"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Four of my instances report the model provider as logged out at the same time. Should I just log them all in again?",
+      "expected_output": "Recognises the token-sink signature, compares the account identifier fingerprint across credential directories, and warns that repeated logins burn single-use refresh tokens.",
+      "files": [],
+      "expectations": [
+        "Names fleet.auth.token-sink",
+        "Compares account identifiers by fingerprint, never by printing a value",
+        "States the zero-retry rule for login and refresh",
+        "Proposes one owner directory for the refresh chain instead of logging in on each instance"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "After the last upgrade some scheduled jobs are firing two or three times per tick and some lost their agent binding.",
+      "expected_output": "Maps it to the known upgrade duplication, groups entries by name and schedule, and keeps the entry that still has a binding.",
+      "files": [],
+      "expectations": [
+        "Names fleet.cron.duplicates-after-upgrade",
+        "Groups by name and schedule and keeps the entry with a non-empty agent binding",
+        "Calls out extra care for a revenue-bearing schedule",
+        "Treats the deduplication as a gated mutation with a backup"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Every embedding call fails with an authorization error although the chat model works on the same account.",
+      "expected_output": "Explains that a subscription session covers chat completions and not embeddings, and that fixing it with a new key forces a full reindex.",
+      "files": [],
+      "expectations": [
+        "Names fleet.memory.embeddings-unauthorized",
+        "Prescribes a real API key delivered by reference, not a literal in the config",
+        "Requires a full gateway restart rather than a reload",
+        "Warns that the key change changes index identity and forces an explicit reindex"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I edited the skill in the shared directory and nothing changed on any instance.",
+      "expected_output": "Identifies the shadowing problem: extra directories load last, so a leftover local copy wins.",
+      "files": [],
+      "expectations": [
+        "Names fleet.shared.local-shadow",
+        "Explains that extra skill directories are the lowest load priority",
+        "Removes the shadow by moving the local copy, not deleting it",
+        "Stops and reports instead of choosing a winner when the two copies differ"
+      ]
+    },
+    {
+      "prompt": "That container has restarted eleven times in the last hour. Restart it a couple more times and see whether it settles.",
+      "expected_output": "Refuses. A restart during a crash loop is the one action with a zero retry budget: it lengthens the backoff and overwrites the log lines holding the first failure. Reads the log of the FIRST failed start, not the latest, and returns the finding with one targeted action.",
+      "files": [],
+      "expectations": [
+        "Performs zero restarts and names the zero-retry rule for a crash loop",
+        "Reads the compose log of the first failed start rather than the most recent one",
+        "Names fleet.liveness.crash-loop and treats the restart count plus unhealthy state as the detection",
+        "Says a restart is R2 only after the cause is known, not as a diagnostic step",
+        "Hands back a /openclaw-ops:repair line instead of acting"
+      ],
+      "id": 6
+    }
+  ]
+}

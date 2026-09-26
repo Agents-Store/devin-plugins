@@ -20,6 +20,9 @@ severity (critical / major / minor). Then route by WHAT is wrong:
 | A skill/command/agent of this plugin behaved wrongly | **Plugin** | `claude-public-plugins/plugins/macstack-dev` (via `$PLUGINS_PUBLIC_SOURCE_DIR`) |
 | The schema: a missing/wrong property, enum value, required rule; a lint rule; an example | **Standard** | `github.com/macstacks/macstack` |
 | A software passport, category, entity/trigger/agent template | **Registry** | `github.com/macstacks/registry` |
+| A `macstack/` folder-convention problem (anchors, IDs, layout, the merge loop) | **Plugin** | this plugin's `documents` / `intake` skills |
+| A document-shape problem (a table where a list belongs, an undeclared bullet label, `docs.language` ratio) | **Plugin** | this plugin's `documents` skill and `doc-contracts.json` |
+| The `docs` schema section itself (fields, `docRef` shape) | **Standard** | `github.com/macstacks/macstack` |
 
 One report may touch several targets (a new schema field usually needs: schema +
 examples + the plugin's bundled copy + a skill mention) — fix all of them in one
@@ -79,7 +82,17 @@ affected skill's text (one line), so future runs don't repeat the mistake.
 - Plugin fix: re-read the edited skill; versions in plugin.json ⇄ marketplace.json
   match.
 - Schema fix: `scripts/lint.py` green on all examples; bundled copy byte-identical
-  to the hosted one (`curl -fsSL <raw-url> | diff - <bundled>`).
+  to the hosted one — one diff covers every section, since it is all one file:
+  ```
+  curl -fsSL <raw-url> | diff - <bundled>
+  ```
+  **Straight after a push this reports a false difference.** `raw.githubusercontent.com`
+  is CDN-cached for a few minutes, so it serves the previous revision while the commit
+  is already on `main`. Do not "fix" the mirror on that evidence — you would revert the
+  change you just made. Confirm against the API, which is not cached the same way:
+  ```
+  gh api "repos/<owner>/<repo>/contents/<path>?ref=main" --jq .content | base64 -d | diff - <bundled>
+  ```
 - Registry fix: `scripts/validate.py` green.
 
 <example>

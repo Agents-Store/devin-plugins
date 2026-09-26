@@ -99,7 +99,7 @@ Use explicit context values when building each later command.
 
 ## Local Release Workspace
 
-Resolve `cliHome` from the CLI home directory. In normal global mode this is the user's home plus `.nocobase`, for example `C:/Users/Enzo/.nocobase` on Windows. If the user or CLI environment uses another configured CLI root, use that root's `.nocobase` home.
+Resolve `cliHome` from the CLI home directory. In normal global mode this is the user's home plus `.nocobase`, for example `C:/Users/<user>/.nocobase` on Windows. If the user or CLI environment uses another configured CLI root, use that root's `.nocobase` home.
 
 For downloaded files, create and use this path shape:
 
@@ -110,8 +110,8 @@ For downloaded files, create and use this path shape:
 Examples:
 
 ```text
-C:/Users/Enzo/.nocobase/release/dev/backup_20260430_163137_3622.nbdata
-C:/Users/Enzo/.nocobase/release/dev/migration_1777538194680.nbdata
+C:/Users/<user>/.nocobase/release/dev/backup_20260430_163137_3622.nbdata
+C:/Users/<user>/.nocobase/release/dev/migration_1777538194680.nbdata
 ```
 
 Rules:

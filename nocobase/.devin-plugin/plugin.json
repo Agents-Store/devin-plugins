@@ -1,7 +1,7 @@
 {
   "name": "nocobase",
-  "version": "1.1.0",
-  "description": "NocoBase platform development plugin. Expert guidance on collections, fields, relations, workflows, UI blocks, plugin development, MCP-powered page management, data operations, and collection inspection for NocoBase applications.",
+  "version": "1.2.0",
+  "description": "DEPRECATED — superseded by nocobase-dev, which bundles the official nocobase/skills library and works through the nb CLI and REST API. The MCP server this plugin wires has no counterpart in nocobase-dev yet. NocoBase platform development plugin. Expert guidance on collections, fields, relations, workflows, UI blocks, plugin development, MCP-powered page management, data operations, and collection inspection for NocoBase applications.",
   "author": {
     "name": "AGENTS.STORE"
   },

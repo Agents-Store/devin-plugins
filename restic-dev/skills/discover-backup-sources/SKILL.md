@@ -33,7 +33,7 @@ ls -la /docker
 du -sh /docker/* 2>/dev/null | sort -rh
 ```
 
-**Union the `working_dir` labels with the folder listing.** Working-dir labels surface projects living outside `/docker` (e.g. `/agents/openclaw/…`, `/opt/…`, `/projects/…`). Group containers by compose project; keep non-compose containers individually.
+**Union the `working_dir` labels with the folder listing.** Working-dir labels surface projects living outside `/docker` (e.g. `<data-root>/<instance>`, `/opt/…`, `/projects/…`). Group containers by compose project; keep non-compose containers individually.
 
 ## Phase B — Map where the data really lives (mounts)
 

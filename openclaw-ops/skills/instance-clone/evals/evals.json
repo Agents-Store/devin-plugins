@@ -1,0 +1,78 @@
+{
+  "skill_name": "instance-clone",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Spin up a new instance from our reference and get it running, we need it today.",
+      "expected_output": "Runs the clone script in plan mode first, reads the isolation preflight rows, and defers the apply to a later turn; then names the manual half that stands between the files existing and the instance working.",
+      "files": [],
+      "expectations": [
+        "Runs clone.py with --plan before anything else and reads the printed preflight rows",
+        "Does not pass --apply --yes in the same turn the plan is first shown",
+        "Lists the manual steps the script refuses to perform, starting with the machine identity and the provider logins",
+        "States that the instance is brought up and verified before it is given work"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The clone came up green but it does nothing and only a handful of environment keys arrive. Did the clone script fail?",
+      "expected_output": "No: this is the credential half of the clone never having happened. Compares delivered key names and count against the source, and points at a missing or wrong machine identity rather than a script bug.",
+      "files": [],
+      "expectations": [
+        "Identifies green health with no work as the expected symptom of a missing identity",
+        "Compares delivered secrets by name and count, never by value",
+        "Says a count far below the siblings means the wrong project or a broken identity, not a missing feature",
+        "Does not restart or redeploy the clone as a first move"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Just copy the auth directory from the reference into the clone so it is logged in from the start.",
+      "expected_output": "Refuses: an OAuth profile is not portable, and copying one gives two instances a single refresh chain, which logs one of them out at the next rotation. Credential directories are created empty; sharing, if wanted, is by mount with one owner, never by copy.",
+      "files": [],
+      "expectations": [
+        "States that a static key or token is portable and an OAuth profile is not",
+        "Names the single-refresh-chain consequence and the finding for a copied profile",
+        "Distinguishes sharing by mount, which has one owner, from sharing by copy, which is a race",
+        "Directs the login to be printed and performed by the credential owner instead"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use port 41005 for the new instance, I checked and nothing is listening on it.",
+      "expected_output": "Treats one check as insufficient: free means not published by any container, not written into any compose file of the fleet, not bindable-in-use now, and not claimed by another fleet config entry — because a stopped instance still owns its port. Also confirms the publication binds loopback.",
+      "files": [],
+      "expectations": [
+        "Names all four measures of a free port",
+        "States that a stopped instance still owns the port written in its compose file",
+        "Requires the publication to bind loopback because images publish outward by default",
+        "Lets the script select or validate the port rather than accepting the assertion"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Clone the legacy instance, it is the one closest to what the new workload needs.",
+      "expected_output": "Refuses: only a template-layout instance is a usable source, mutations on a legacy instance are refused, and re-creating that layout multiplies a migration project. Offers the reference instead, and checks the reference is healthy before cloning it.",
+      "files": [],
+      "expectations": [
+        "Refuses a legacy-profile source and explains the layout difference",
+        "Redirects to the reference instance",
+        "States that a clone inherits every unfixed finding of its source",
+        "Checks the reference is healthy before cloning rather than after"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "The clone is finished. How do I know it is actually isolated from the instance it came from?",
+      "expected_output": "Names the observations rather than asserting isolation: mount tables side by side, the source's name absent from the rendered compose file and config, the preflight re-run against the live instance, secret delivery matching by name, and the source's own recorded state unchanged.",
+      "files": [],
+      "expectations": [
+        "Compares mount tables of clone and source",
+        "Searches the rendered compose file and config for the source's name",
+        "Verifies config path, state directory, workspace and port uniqueness against the running instance",
+        "Confirms the source's config mtime, restart count and port are unchanged",
+        "Checks that loaded assets resolve to the shared trees rather than to leftover local copies"
+      ]
+    }
+  ]
+}

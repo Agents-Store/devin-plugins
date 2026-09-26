@@ -7,7 +7,7 @@ description: Migrate an OpenClaw instance's secrets from plaintext .env into sel
 
 Move an OpenClaw instance off plaintext `.env` secrets onto self-hosted Infisical, and wire the Docker stack to inject them at runtime via a wrapper. Verify external CLI syntax with **docs-research** (Infisical CLI: `https://infisical.com/docs/cli/overview`).
 
-Replace `<name>` with the instance name (`team`, `kub`, `pitline`, …; empty for the default `openclaw`).
+Replace `<name>` with the instance name as it appears on this host (`acme`, `demo`, `sandbox`, … — read them from the live compose projects, never from this page; empty for the default `openclaw`).
 
 ## Scope
 
@@ -16,11 +16,11 @@ Replace `<name>` with the instance name (`team`, `kub`, `pitline`, …; empty fo
 
 ## Prerequisites
 
-- Machine identity `openclaw-server` exists in Infisical with at least `Viewer` on the target project (one identity serves all instances).
+- A machine identity (`<machine-identity>`) exists in Infisical with at least `Viewer` on the target project (one identity serves all instances).
 - Host creds at `/etc/openclaw/infisical.env` (mode 600): `INFISICAL_CLIENT_ID` + `INFISICAL_CLIENT_SECRET`. Never commit this file.
 - `infisical` CLI installed on the host.
-- Reference working instance to copy from: `/docker/openclaw-team/`.
-- Self-hosted domain default: `https://k.macstack.ai`.
+- Reference working instance to copy from: `<compose-root>/openclaw-<reference>/`.
+- Self-hosted domain default: `https://infisical.example.com`.
 
 ## Step 1 — Identify the keys to migrate
 
@@ -58,22 +58,22 @@ infisical secrets \
 Create `.infisical.conf` in the project dir:
 
 ```bash
-cat > /docker/openclaw-<name>/.infisical.conf <<EOF
-INFISICAL_DOMAIN=https://k.macstack.ai
+cat > <compose-root>/openclaw-<name>/.infisical.conf <<EOF
+INFISICAL_DOMAIN=https://infisical.example.com
 INFISICAL_PROJECT_ID=<PROJECT_ID>
 INFISICAL_ENV=prod
 INFISICAL_DISABLE_UPDATE_CHECK=true
 EOF
-chmod 600 /docker/openclaw-<name>/.infisical.conf
+chmod 600 <compose-root>/openclaw-<name>/.infisical.conf
 ```
 
 Copy the wrapper script from the reference instance:
 
 ```bash
-mkdir -p /docker/openclaw-<name>/scripts
-cp /docker/openclaw-team/scripts/openclaw-with-infisical \
-   /docker/openclaw-<name>/scripts/openclaw-with-infisical
-chmod +x /docker/openclaw-<name>/scripts/openclaw-with-infisical
+mkdir -p <compose-root>/openclaw-<name>/scripts
+cp <compose-root>/openclaw-<reference>/scripts/openclaw-with-infisical \
+   <compose-root>/openclaw-<name>/scripts/openclaw-with-infisical
+chmod +x <compose-root>/openclaw-<name>/scripts/openclaw-with-infisical
 ```
 
 ## Step 4 — Patch Dockerfile
@@ -112,8 +112,8 @@ entrypoint: ["tini", "-s", "--", "/usr/local/bin/openclaw-with-infisical", "node
 ## Step 6 — Build and start
 
 ```bash
-cp /docker/openclaw-<name>/.env /docker/openclaw-<name>/.env.bak-pre-infisical
-cd /docker/openclaw-<name>
+cp <compose-root>/openclaw-<name>/.env <compose-root>/openclaw-<name>/.env.bak-pre-infisical
+cd <compose-root>/openclaw-<name>
 docker compose build openclaw-gateway-<name>
 docker compose down && docker compose up -d
 docker compose logs openclaw-gateway-<name> --tail=50
@@ -129,8 +129,8 @@ Reduce `.env` to infrastructure-only vars:
 
 ```
 OPENCLAW_IMAGE=openclaw:<name>
-OPENCLAW_CONFIG_DIR=/root/.openclaw-<name>
-OPENCLAW_WORKSPACE_DIR=/root/.openclaw-<name>/workspace
+OPENCLAW_CONFIG_DIR=<instance-dir>
+OPENCLAW_WORKSPACE_DIR=<instance-dir>/workspace
 OPENCLAW_GATEWAY_PORT=<port>
 OPENCLAW_BRIDGE_PORT=<port>
 OPENCLAW_GATEWAY_BIND=lan
@@ -146,8 +146,8 @@ Migrate the Anthropic API key in `auth-profiles.json` from a literal to a Secret
 Validate JSON, remove an internal `.openclaw-<name>/.env` if it contains only secrets, then restart:
 
 ```bash
-python3 -c "import json; json.load(open('/root/.openclaw-<name>/agents/main/agent/auth-profiles.json')); print('OK')"
-cd /docker/openclaw-<name> && docker compose down && docker compose up -d
+python3 -c "import json; json.load(open('<instance-dir>/agents/main/agent/auth-profiles.json')); print('OK')"
+cd <compose-root>/openclaw-<name> && docker compose down && docker compose up -d
 ```
 
 ## Step 8 — Verify
@@ -156,7 +156,7 @@ cd /docker/openclaw-<name> && docker compose down && docker compose up -d
 docker compose exec openclaw-gateway-<name> openclaw secrets audit --check
 ```
 
-Expected: `plaintext=1, unresolved=0, shadowed=0, legacy=0`. The remaining `plaintext=1` is `models.json:providers.codex.apiKey` (sentinel `"codex-app-server"`, **not** a real secret — false positive, do not touch). Then send a message to the instance's bot and confirm it replies. When working, remove the backup: `rm /docker/openclaw-<name>/.env.bak-pre-infisical`.
+Expected: `plaintext=1, unresolved=0, shadowed=0, legacy=0`. The remaining `plaintext=1` is `models.json:providers.codex.apiKey` (sentinel `"codex-app-server"`, **not** a real secret — false positive, do not touch). Then send a message to the instance's bot and confirm it replies. When working, remove the backup: `rm <compose-root>/openclaw-<name>/.env.bak-pre-infisical`.
 
 ## Troubleshooting matrix
 
