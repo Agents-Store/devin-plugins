@@ -53,7 +53,7 @@ git clone --depth 1 git@github.com:macstacks/macstack.git "$TMP/macstack"   # ma
 4. **Sync the mirrors in the same session** — this is the step people forget:
    - the plugin's bundled copy `skills/lint/references/macstack.schema.json`
      (then bump the plugin patch version);
-   - any project mirrors the user maintains (e.g. vk-ops `docs/macstack/`).
+   - any project mirrors the user maintains (e.g. an ops repository's `docs/macstack/`).
 
 ### Registry feedback
 

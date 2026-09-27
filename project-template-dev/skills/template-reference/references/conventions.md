@@ -144,11 +144,11 @@ CLAUDE.md serves as the project memory for Claude Code. Keep it under 100 lines.
 
 ## GitHub Conventions
 
-All template repos live under the `stackmakers-ai` GitHub organization:
-- `git@github.com:stackmakers-ai/project-template.git`
-- `git@github.com:stackmakers-ai/project-directus-nextjs.git`
-- `git@github.com:stackmakers-ai/demo-directus-nextjs.git`
-- `git@github.com:stackmakers-ai/{client}-{project}.git` (private repos)
+All template repos live under one GitHub organization, `$PROJECT_TEMPLATES_GITHUB_ORG` (here the fictional `acme-templates`):
+- `git@github.com:acme-templates/project-template.git`
+- `git@github.com:acme-templates/project-directus-nextjs.git`
+- `git@github.com:acme-templates/demo-directus-nextjs.git`
+- `git@github.com:acme-templates/{client}-{project}.git` (private repos)
 
 ### Commit Convention for Templates
 

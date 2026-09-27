@@ -123,7 +123,7 @@ Create ONE grouped issue per parent template:
 
 ```bash
 gh issue create \
-  --repo "stackmakers-ai/$PARENT_NAME" \
+  --repo "$PROJECT_TEMPLATES_GITHUB_ORG/$PARENT_NAME" \
   --title "Template improvements from session $(date +%Y-%m-%d)" \
   --label "template-feedback" \
   --body "$GROUPED_FINDINGS_MARKDOWN"

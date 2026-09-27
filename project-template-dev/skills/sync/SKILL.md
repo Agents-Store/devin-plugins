@@ -41,7 +41,7 @@ Use the same fallback chain as the `feedback` skill:
 
 1. `$PROJECT_TEMPLATES_DIR/{parent}/`
 2. `../{parent}/`
-3. Offer to clone from `git@github.com:stackmakers-ai/{parent}.git`
+3. Offer to clone from `git@github.com:$PROJECT_TEMPLATES_GITHUB_ORG/{parent}.git`
 
 ## Step 3: Compare Files
 

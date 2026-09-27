@@ -4,7 +4,7 @@
 
 The universal base template. Created once by the core team. All other templates inherit from it.
 
-**Repository:** `git@github.com:stackmakers-ai/project-template.git`
+**Repository:** `git@github.com:acme-templates/project-template.git`
 
 **What it contains:**
 - Empty `stack.json` (level 0, no stack, no parent)
@@ -34,7 +34,7 @@ The universal base template. Created once by the core team. All other templates 
 
 Stack-specific template. Created per technology combination. Reused for multiple demos and clients.
 
-**Example:** `project-directus-nextjs` → `git@github.com:stackmakers-ai/project-directus-nextjs.git`
+**Example:** `project-directus-nextjs` → `git@github.com:acme-templates/project-directus-nextjs.git`
 
 **What it adds over Level 0:**
 - Filled `stack.json` (level 1, parent = project-template, layers and plugins populated)

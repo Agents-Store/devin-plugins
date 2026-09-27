@@ -329,7 +329,7 @@ grandTotal = totalAmount + vatAmount
 |-------|------------|---------|
 | estimateNumber | Reference number | "EST-2026-019" |
 | date | Estimate date | "April 7, 2026" |
-| companyInfo.name | Your company | "Stackmakers Studio" |
+| companyInfo.name | Your company | "Northwind Studio" |
 | recipient.name | Client company | "Acme Corporation" |
 | executiveSummary | 2-4 sentence overview | "This estimate covers..." |
 | scope.description | What the project is | "End-to-end redesign..." |

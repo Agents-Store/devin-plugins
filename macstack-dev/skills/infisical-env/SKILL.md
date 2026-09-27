@@ -116,7 +116,7 @@ settings.local.json.
 
 <example>
 user: "Wire Infisical into this project"
-→ .infisical.json (workspaceId of the new "nova-website" workspace)
+→ .infisical.json (workspaceId of the new "acme-website" workspace)
 → .env.example from 6 accesses (MAILGUN_* marked required:false, provided_by:client)
 → scripts/setup.sh + secrets-push.sh + env-audit.sh, 4 commands
 → /secrets-sync → .env.prod: 4/6 filled, MAILGUN_* empty → into needs_from_client

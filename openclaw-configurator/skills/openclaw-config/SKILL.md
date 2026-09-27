@@ -55,7 +55,7 @@ The plugin CAN edit `./openclaw.json` with these mandatory safeguards:
         "id": "main",
         "default": true,
         "name": "Main Agent",
-        "identity": { "name": "Nova", "emoji": "star" }
+        "identity": { "name": "Orion", "emoji": "star" }
       }
     ]
   }

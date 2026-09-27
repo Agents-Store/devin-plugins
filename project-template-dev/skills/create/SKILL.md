@@ -15,7 +15,7 @@ Interactive workflow for creating new project templates at Level 1, 1.5, or 2 by
 ## Prerequisites
 
 - **`$PROJECT_TEMPLATES_DIR`** — directory where template repos live
-- **Git access** to `git@github.com:stackmakers-ai/` for cloning parent templates
+- **Git access** to the GitHub org in `$PROJECT_TEMPLATES_GITHUB_ORG` for cloning parent templates
 - For plugin search: access to `$PLUGINS_PUBLIC_SOURCE_DIR` and `$PLUGINS_PRIVATE_SOURCE_DIR` (optional — set in `~/.claude/settings.json env`)
 
 ## Step 1: Gather Information
@@ -67,7 +67,7 @@ if [ -d "$PROJECT_TEMPLATES_DIR/$PARENT_NAME" ]; then
 else
   # Clone from GitHub
   echo "Cloning parent template from GitHub..."
-  git clone "git@github.com:stackmakers-ai/$PARENT_NAME.git" "$PROJECT_TEMPLATES_DIR/$PARENT_NAME"
+  git clone "git@github.com:$PROJECT_TEMPLATES_GITHUB_ORG/$PARENT_NAME.git" "$PROJECT_TEMPLATES_DIR/$PARENT_NAME"
   PARENT_DIR="$PROJECT_TEMPLATES_DIR/$PARENT_NAME"
 fi
 ```
@@ -90,7 +90,7 @@ git init
 ### 3c. Set up remote (optional)
 
 ```bash
-git remote add origin "git@github.com:stackmakers-ai/$NEW_NAME.git"
+git remote add origin "git@github.com:$PROJECT_TEMPLATES_GITHUB_ORG/$NEW_NAME.git"
 ```
 
 Ask the user if they want to create the GitHub repo now or later.
@@ -295,5 +295,5 @@ Template created: {new-name}
 Next steps:
   1. Review generated files
   2. Install listed plugins (if not already installed)
-  3. Push to GitHub: git remote add origin git@github.com:stackmakers-ai/{new-name}.git && git push -u origin main
+  3. Push to GitHub: git remote add origin git@github.com:$PROJECT_TEMPLATES_GITHUB_ORG/{new-name}.git && git push -u origin main
 ```

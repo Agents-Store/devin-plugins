@@ -251,14 +251,14 @@ it only has a legacy `stack.json`, it is a scaffold source and nothing more — 
 
 Full files live in `github.com/macstacks/macstack/tree/main/examples`:
 
-- **nova-root** — an organization's root workspace: the substacks registry, the
+- **an organization root** — the root workspace: the substacks registry, the
   openclaw → claude-code agent hierarchy, the organization's master `client` entity.
-- **nova-website** — an application substack: a cross-stack lead master
-  (`master: "nova-root:postgresql"`), five trigger types, a managed agent invoked via
+- **a website substack** — an application substack: a cross-stack lead master
+  (`master: "acme-root:postgresql"`), five trigger types, a managed agent invoked via
   workflow.
-- **nova-support-bot** — a headless agents stack: no prototype, RAG with a Postgres
+- **a support-bot stack** — a headless agents stack: no prototype, RAG with a Postgres
   master and a Qdrant cache.
-- **meg-bpms** — a client BPMS: field-level ACL, status fields driving processes, an
+- **a client BPMS** — a standalone stack: field-level ACL, status fields driving processes, an
   external master.
 
 ## Scenarios

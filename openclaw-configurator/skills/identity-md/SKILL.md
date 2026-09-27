@@ -25,7 +25,7 @@ The docs say: "This isn't just metadata. It's the start of figuring out who you 
 - Should fit the brand/context (professional for enterprise, playful for personal)
 - Must match `@bot_username` if used via Telegram
 - Short names work best in chat interfaces (1-2 words)
-- Examples: Nova, Atlas, Pixel, Kai, Echo, Onyx
+- Examples: Orion, Atlas, Pixel, Kai, Echo, Onyx
 
 ### Creature
 - Defines the agent's self-concept
@@ -63,10 +63,10 @@ Agent identity can also be set in `openclaw.json` per agent:
     "list": [{
       "id": "main",
       "identity": {
-        "name": "Nova",
+        "name": "Orion",
         "theme": "professional",
         "emoji": "star",
-        "avatar": "avatars/nova.png"
+        "avatar": "avatars/orion.png"
       }
     }]
   }

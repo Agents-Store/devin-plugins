@@ -35,7 +35,7 @@ User confirms.
 git clone "$PROJECT_TEMPLATES_DIR/project-template" "$PROJECT_TEMPLATES_DIR/project-supabase-nuxt"
 cd "$PROJECT_TEMPLATES_DIR/project-supabase-nuxt"
 rm -rf .git && git init
-git remote add origin git@github.com:stackmakers-ai/project-supabase-nuxt.git
+git remote add origin git@github.com:acme-templates/project-supabase-nuxt.git
 ```
 
 ### 5. Plugin customizes stack.json
