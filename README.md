@@ -11,7 +11,7 @@ git clone <this-repo>
 cp -r agents-store-devin-plugins/<plugin-name> ~/.devin/plugins/<plugin-name>
 ```
 
-## Плагины (52)
+## Плагины (49)
 
 | Плагин | Описание | Skills | Agents | Commands | MCP |
 |---|---|---|---|---|---|
@@ -19,8 +19,7 @@ cp -r agents-store-devin-plugins/<plugin-name> ~/.devin/plugins/<plugin-name>
 | [chatwoot-dev](./chatwoot-dev) | Chatwoot dev plugin for Agents Store. Full REST API coverage (Application, Platform, and Public/Client APIs) with bundled OpenAPI specs, official chatwoot CLI r | 6 | 1 | 2 | — |
 | [codemap-dev](./codemap-dev) | Code understanding plugin for developers. Helps onboard to unfamiliar projects through beginner-friendly code review, step-by-step explanations, visual diagrams | 5 | 4 | 7 | ✓ |
 | [dataforseo-dev](./dataforseo-dev) | DataForSEO data analysis plugin. Keyword research, competitor analysis, backlink auditing, SERP monitoring, on-page audits, content analysis, and AI optimizatio | 10 | 1 | 3 | ✓ |
-| [deep-research-ops](./deep-research-ops) | Deep Research plugin. Comprehensive web research using 4 providers (Exa, Firecrawl, Jina, Perplexity) with capability-based CONNECTORS pattern and automatic FAL | 5 | 0 | 6 | ✓ |
-| [dify-dev](./dify-dev) | Dify API dev plugin for Agents Store. Complete coverage of the Dify App Service API (chat, completion, workflows, conversations, files, audio, annotations) and  | 9 | 1 | 3 | — |
+| [deep-research-ops](./deep-research-ops) | Deep Research plugin. Comprehensive web research using 4 providers (Exa, Firecrawl, Jina, Perplexity) with capability-based CONNECTORS pattern and automatic FAL | 5 | 0 | 6 | — |
 | [dify-ops](./dify-ops) | Dify self-hosted update operations plugin. Pull upstream changes, merge into local dev branch, sync .env variables, detect Docker project names, and rebuild con | 4 | 1 | 2 | — |
 | [directus-dev](./directus-dev) | Directus development plugin. Knowledge base for working with Directus MCP tools (12 tools), REST API, and @directus/sdk. Covers collections, items, fields, rela | 10 | 2 | 10 | — |
 | [document-generator-ops](./document-generator-ops) | Professional document generator. Creates proposals, invoices, estimates/quotations, reports, presentations, contracts, NDAs, and certificates of completion in P | 6 | 1 | 10 | — |
@@ -34,8 +33,6 @@ cp -r agents-store-devin-plugins/<plugin-name> ~/.devin/plugins/<plugin-name>
 | [macstack-dev](./macstack-dev) | Turns what a client says into documents they can correct, a machine spec an agent can build from, and a work list somebody can pick up. Keeps the macstack/ fold | 18 | 1 | 8 | — |
 | [mattermost-ops](./mattermost-ops) | Mattermost collaboration ops plugin. Drive the full Mattermost REST API v4 by curl — users, teams, channels (public/private/DM/group), posts & threads, reaction | 5 | 1 | 0 | — |
 | [media-hosting-ops](./media-hosting-ops) | Media hosting operations plugin. Upload images by public URL to MinIO-based media hosting via the uploadImageToMinio MCP tool. | 2 | 1 | 0 | — |
-| [mem0-ops](./mem0-ops) | Mem0 memory management plugin. Store, search, update, and organize memories with semantic search, batch operations, file attachments, and change history trackin | 5 | 2 | 11 | ✓ |
-| [multi-bank-ops](./multi-bank-ops) | Multi-Bank Account Manager with broadcast architecture pattern. Aggregates financial data from Monobank and PrivatBank via MCP tools, broadcasts balance updates | 15 | 2 | 14 | ✓ |
 | [n8n](./n8n) | DEPRECATED — superseded by n8n-dev (building, validating and debugging workflows against both current n8n MCP servers) and n8n-provision (template discovery and | 8 | 2 | 9 | ✓ |
 | [n8n-dev](./n8n-dev) | n8n workflow automation dev plugin for Agents Store. MCP tools guide (external + native), workflow patterns, expression syntax, validation, node configuration,  | 13 | 1 | 0 | — |
 | [n8n-provision](./n8n-provision) | n8n instance provisioning plugin. Discover workflows from the official template library (9,166+ templates), GitHub repos, and community platforms, then analyze, | 9 | 1 | 5 | — |

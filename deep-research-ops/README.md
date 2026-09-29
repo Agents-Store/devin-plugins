@@ -17,7 +17,6 @@ Copy this directory's contents into your Devin plugin directory. The manifest (`
 ## Not carried over
 
 - 6 command(s) — Devin plugins do not support commands
-- MCP servers — Devin plugins do not support MCP server declarations
 
 ## Source
 
