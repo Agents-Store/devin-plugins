@@ -60,6 +60,7 @@ Required variables:
 | Variable | Service | Description |
 |----------|---------|-------------|
 | `TRIGGER_SECRET_KEY` | Trigger.dev | Dev environment secret key (`tr_dev_xxx`) |
+| `TRIGGER_ACCESS_TOKEN` | Trigger.dev | Personal Access Token (`tr_pat_xxx`) — MCP server auth |
 | `TRIGGER_API_URL` | Trigger.dev | Self-hosted instance URL |
 | `N8N_API_URL` | n8n | Instance base URL |
 | `N8N_API_KEY` | n8n | API authentication key |

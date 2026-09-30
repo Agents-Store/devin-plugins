@@ -1,6 +1,6 @@
 {
   "name": "stack-composable-stack-v1",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Composable Stack v1 dev plugin. Integrates PostgreSQL (direct MCP + PostgREST API), NocoDB, n8n, Trigger.dev, and NocoBase (prod + dev sandbox via nc-mcp) for building data-driven applications with low-code interfaces.",
   "author": {
     "name": "Agents Store",
