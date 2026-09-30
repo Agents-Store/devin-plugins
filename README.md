@@ -38,7 +38,7 @@ cp -r agents-store-devin-plugins/<plugin-name> ~/.devin/plugins/<plugin-name>
 | [n8n-provision](./n8n-provision) | n8n instance provisioning plugin. Discover workflows from the official template library (9,166+ templates), GitHub repos, and community platforms, then analyze, | 9 | 1 | 5 | — |
 | [nextjs-dev](./nextjs-dev) | Next.js development plugin. Knowledge base for building modern Next.js 16 applications with App Router, Server/Client Components, data fetching, Cache Component | 18 | 1 | 0 | — |
 | [nextjs-provision](./nextjs-provision) | Next.js provisioning plugin. Set up shadcn/ui and shadcn studio — component installation, theme configuration, MCP server setup, project scaffolding, and multi- | 8 | 1 | 3 | ✓ |
-| [nocobase](./nocobase) | DEPRECATED — superseded by nocobase-dev, which bundles the official nocobase/skills library and works through the nb CLI and REST API. The MCP server this plugi | 7 | 2 | 8 | ✓ |
+| [nocobase](./nocobase) | DEPRECATED — superseded by nocobase-dev, which bundles the official nocobase/skills library and works through the nb CLI and REST API. Its MCP server package (@ | 7 | 2 | 8 | — |
 | [nocobase-dev](./nocobase-dev) | NocoBase v2 development plugin. Build, manage, and operate NocoBase through the `nb` CLI (primary) or REST API (fallback). Bundles 11 official upstream skills f | 17 | 0 | 0 | — |
 | [nocodb](./nocodb) | DEPRECATED — superseded by nocodb-dev (schema, fields, views, Meta API) and nocodb-ops (records, search, views, reports), which teach the current NocoDB MCP too | 8 | 2 | 10 | ✓ |
 | [nocodb-dev](./nocodb-dev) | NocoDB schema development plugin. Full Meta API v3 coverage — tables, fields (30+ types), views, filters, sorts, hooks (HookV3), comments, scripts, dashboards & | 12 | 1 | 6 | ✓ |

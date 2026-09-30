@@ -5,6 +5,13 @@ description: Troubleshoot n8n workflow development issues. Use when encountering
 
 # n8n Troubleshooting Guide
 
+Every `curl` below builds its path from `N8N_BASE`, the instance root. `N8N_API_URL` may hold
+the root or already end in `/api/v1`, so derive it first:
+
+```bash
+N8N_BASE="${N8N_API_URL%/}"; N8N_BASE="${N8N_BASE%/api/v1}"
+```
+
 ## MCP Connection Issues
 
 ### External MCP Server (n8n-mcp-external)
@@ -13,7 +20,7 @@ description: Troubleshoot n8n workflow development issues. Use when encountering
 - Cause: n8n instance is not reachable at the configured URL
 - Fix:
   1. Verify `N8N_API_URL` is correct and includes the protocol (e.g., `https://n8n.example.com`)
-  2. Confirm n8n is running: `curl -s $N8N_API_URL/healthz`
+  2. Confirm n8n is running: `curl -s $N8N_BASE/healthz`
   3. Check firewall rules — the MCP server must be able to reach n8n's port
   4. If using Docker, ensure the container is on the correct network
 
@@ -23,14 +30,14 @@ description: Troubleshoot n8n workflow development issues. Use when encountering
   1. Verify `N8N_API_KEY` is set correctly
   2. Regenerate the API key in n8n: Settings → API → Create API Key
   3. Check that the key has not been revoked
-  4. Test directly: `curl -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_API_URL/api/v1/workflows?limit=1"`
+  4. Test directly: `curl -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_BASE/api/v1/workflows?limit=1"`
 
 **"Timeout" or hanging requests**
 - Cause: Network latency or n8n overloaded
 - Fix:
   1. Check n8n instance health and resource usage
   2. Verify there is no proxy or load balancer dropping connections
-  3. Try a simple health check: `curl -m 5 $N8N_API_URL/healthz`
+  3. Try a simple health check: `curl -m 5 $N8N_BASE/healthz`
 
 ### Native MCP Server (n8n-native-mcp)
 
@@ -81,7 +88,7 @@ This will test:
 # Test API key validity
 curl -s -o /dev/null -w "%{http_code}" \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/workflows?limit=1"
+  "$N8N_BASE/api/v1/workflows?limit=1"
 ```
 
 Expected output: `200`. Any other code indicates a problem.
@@ -89,7 +96,7 @@ Expected output: `200`. Any other code indicates a problem.
 ### Common Authentication Mistakes
 
 1. **Missing protocol in URL:** Use `https://n8n.example.com`, not `n8n.example.com`
-2. **Trailing slash:** `$N8N_API_URL/api/v1/workflows` not `$N8N_API_URL//api/v1/workflows`
+2. **Doubled path:** `$N8N_API_URL/api/v1/workflows` returns 404 when `N8N_API_URL` already ends in `/api/v1` (or `/`) — use `$N8N_BASE`, derived above
 3. **Wrong header name:** Must be `X-N8N-API-KEY`, not `Authorization` or `X-Api-Key`
 4. **Key from wrong instance:** Ensure the key was generated on the instance you are targeting
 
@@ -297,13 +304,13 @@ n8n license:info
 
 ```bash
 # Health check
-curl -s "$N8N_API_URL/healthz"
+curl -s "$N8N_BASE/healthz"
 
 # API access test
-curl -s -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_API_URL/api/v1/workflows?limit=1" | jq '.data | length'
+curl -s -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_BASE/api/v1/workflows?limit=1" | jq '.data | length'
 
 # Check execution queue
-curl -s -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_API_URL/api/v1/executions?status=running&limit=10" | jq '.data | length'
+curl -s -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_BASE/api/v1/executions?status=running&limit=10" | jq '.data | length'
 ```
 
 ---

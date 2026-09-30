@@ -62,14 +62,14 @@ Set these at the **project level** (not plugin level). The plugin references the
 
 | Variable | Description | How to Generate |
 |----------|-------------|-----------------|
-| `N8N_API_URL` | n8n instance URL (e.g., `https://your-n8n.example.com`) | Your n8n deployment URL |
+| `N8N_API_URL` | n8n instance URL — root (`https://your-n8n.example.com`) or ending in `/api/v1`; both work | Your n8n deployment URL |
 | `N8N_API_KEY` | API authentication key | n8n UI: Settings → API → Create API Key |
 
 ### For Native MCP
 
 | Variable | Description | How to Generate |
 |----------|-------------|-----------------|
-| `N8N_API_URL` | n8n instance URL (same as above) | Your n8n deployment URL |
+| `N8N_NATIVE_MCP_URL` | Full MCP endpoint URL (e.g., `https://your-n8n.example.com/mcp-server/http`) | n8n UI: Settings → Instance-level MCP |
 | `N8N_MCP_TOKEN` | MCP server authentication token | n8n UI: Settings → API → Create MCP Token |
 
 ### Setting Environment Variables
@@ -78,6 +78,7 @@ Store these in your shell profile or project-level `.env`:
 
 ```bash
 export N8N_API_URL="https://your-n8n.example.com"
+export N8N_NATIVE_MCP_URL="https://your-n8n.example.com/mcp-server/http"
 export N8N_API_KEY="your-api-key-here"
 export N8N_MCP_TOKEN="your-mcp-token-here"
 ```
@@ -121,7 +122,7 @@ Use when you need SDK-based workflow creation, execution, and publishing.
   "mcpServers": {
     "n8n-native-mcp": {
       "type": "http",
-      "url": "${N8N_API_URL}/mcp-server/http",
+      "url": "${N8N_NATIVE_MCP_URL}",
       "headers": {
         "Authorization": "Bearer ${N8N_MCP_TOKEN}"
       }
@@ -150,7 +151,7 @@ Use when you need the full capability set — development tools from external pl
     },
     "n8n-native-mcp": {
       "type": "http",
-      "url": "${N8N_API_URL}/mcp-server/http",
+      "url": "${N8N_NATIVE_MCP_URL}",
       "headers": {
         "Authorization": "Bearer ${N8N_MCP_TOKEN}"
       }
@@ -353,7 +354,7 @@ Use this checklist when setting up n8n MCP for a new project:
 1. [ ] n8n instance is running and accessible
 2. [ ] API key generated (for external MCP)
 3. [ ] MCP token generated (for native MCP)
-4. [ ] Environment variables set (`N8N_API_URL`, `N8N_API_KEY`, `N8N_MCP_TOKEN`)
+4. [ ] Environment variables set (`N8N_API_URL`, `N8N_API_KEY`, `N8N_NATIVE_MCP_URL`, `N8N_MCP_TOKEN`)
 5. [ ] `.mcp.json` created in project root with desired server(s)
 6. [ ] External MCP health check passes
 7. [ ] Native MCP search_workflows succeeds

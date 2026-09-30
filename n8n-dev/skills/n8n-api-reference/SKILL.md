@@ -29,9 +29,14 @@ All API requests require an API key passed via the `X-N8N-API-KEY` header.
 
 ### Base URL
 
+`N8N_API_URL` may hold the instance root or already end in `/api/v1` — `n8n-mcp` accepts both.
+Derive the root once per shell, then build every path from `N8N_BASE`:
+
+```bash
+N8N_BASE="${N8N_API_URL%/}"; N8N_BASE="${N8N_BASE%/api/v1}"
 ```
-${N8N_API_URL}/api/v1
-```
+
+Every endpoint below is `${N8N_BASE}/api/v1/...`.
 
 ### Header Format
 
@@ -42,7 +47,7 @@ X-N8N-API-KEY: <your-api-key>
 ### Quick Verification
 
 ```bash
-curl -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_API_URL/api/v1/workflows?limit=1"
+curl -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_BASE/api/v1/workflows?limit=1"
 ```
 
 If you get a 200 response with workflow data, authentication is working.
@@ -199,14 +204,14 @@ Projects support member management — add/remove users with specific roles per 
 
 ```bash
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/workflows"
+  "$N8N_BASE/api/v1/workflows"
 ```
 
 ### Get Workflow by ID
 
 ```bash
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/workflows/123"
+  "$N8N_BASE/api/v1/workflows/123"
 ```
 
 ### Create Workflow
@@ -216,7 +221,7 @@ curl -X POST \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name":"My Workflow","nodes":[],"connections":{},"settings":{}}' \
-  "$N8N_API_URL/api/v1/workflows"
+  "$N8N_BASE/api/v1/workflows"
 ```
 
 ### Activate Workflow
@@ -224,7 +229,7 @@ curl -X POST \
 ```bash
 curl -X POST \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/workflows/123/activate"
+  "$N8N_BASE/api/v1/workflows/123/activate"
 ```
 
 ### Deactivate Workflow
@@ -232,14 +237,14 @@ curl -X POST \
 ```bash
 curl -X POST \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/workflows/123/deactivate"
+  "$N8N_BASE/api/v1/workflows/123/deactivate"
 ```
 
 ### List Executions (filtered)
 
 ```bash
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/executions?workflowId=123&status=error&limit=10"
+  "$N8N_BASE/api/v1/executions?workflowId=123&status=error&limit=10"
 ```
 
 ### Retry Failed Execution
@@ -247,7 +252,7 @@ curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
 ```bash
 curl -X POST \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/executions/456/retry"
+  "$N8N_BASE/api/v1/executions/456/retry"
 ```
 
 ### Create Credential
@@ -257,14 +262,14 @@ curl -X POST \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name":"My API Key","type":"httpHeaderAuth","data":{"name":"Authorization","value":"Bearer xxx"}}' \
-  "$N8N_API_URL/api/v1/credentials"
+  "$N8N_BASE/api/v1/credentials"
 ```
 
 ### Get Credential Schema
 
 ```bash
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/credentials/schema/httpHeaderAuth"
+  "$N8N_BASE/api/v1/credentials/schema/httpHeaderAuth"
 ```
 
 ### Create Tag
@@ -274,7 +279,7 @@ curl -X POST \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name":"production"}' \
-  "$N8N_API_URL/api/v1/tags"
+  "$N8N_BASE/api/v1/tags"
 ```
 
 ### Tag a Workflow
@@ -284,14 +289,14 @@ curl -X PUT \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d '[{"id":"tag-id-here"}]' \
-  "$N8N_API_URL/api/v1/workflows/123/tags"
+  "$N8N_BASE/api/v1/workflows/123/tags"
 ```
 
 ### List Variables
 
 ```bash
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/variables"
+  "$N8N_BASE/api/v1/variables"
 ```
 
 ### Run Security Audit
@@ -301,14 +306,14 @@ curl -X POST \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"categories":["credentials","nodes","instance"]}' \
-  "$N8N_API_URL/api/v1/audit"
+  "$N8N_BASE/api/v1/audit"
 ```
 
 ### Get Data Table Rows
 
 ```bash
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "$N8N_API_URL/api/v1/data-tables/dt-abc123/rows?limit=50"
+  "$N8N_BASE/api/v1/data-tables/dt-abc123/rows?limit=50"
 ```
 
 ---
@@ -341,7 +346,7 @@ When `nextCursor` is `null` or absent, you have reached the last page.
 CURSOR=""
 while true; do
   RESPONSE=$(curl -s -H "X-N8N-API-KEY: $N8N_API_KEY" \
-    "$N8N_API_URL/api/v1/workflows?limit=50${CURSOR:+&cursor=$CURSOR}")
+    "$N8N_BASE/api/v1/workflows?limit=50${CURSOR:+&cursor=$CURSOR}")
   echo "$RESPONSE" | jq '.data[]'
   CURSOR=$(echo "$RESPONSE" | jq -r '.nextCursor // empty')
   [ -z "$CURSOR" ] && break
