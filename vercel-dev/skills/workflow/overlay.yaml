@@ -1,42 +1,23 @@
 name: workflow
-description: Vercel Workflow DevKit (WDK) expert guidance. Use when building durable workflows, long-running tasks, API routes or agents that need pause/resume, retries, step-based execution, or crash-safe orchestration with Vercel Workflow.
+description: Vercel Workflow SDK expert guidance. Use when building durable workflows, long-running tasks, API routes or agents that need pause/resume, retries, step-based execution, or crash-safe orchestration with Vercel Workflow.
 metadata:
   priority: 9
   docs:
-    - "https://vercel.com/docs/workflow"
-    - "https://useworkflow.dev"
-  sitemap: "https://vercel.com/sitemap/docs.xml"
+    - "https://vercel.com/docs/workflows"
+    - "https://workflow-sdk.dev"
+  sitemap: "https://vercel.com/sitemap.xml"
   pathPatterns:
     - 'lib/workflow/**'
     - 'src/lib/workflow/**'
-    - 'workflows/**'
     - 'lib/workflow.*'
     - 'src/lib/workflow.*'
     - 'workflow.*'
     - '*workflow*'
-    - '*workflow*/**'
-    # Chain / pipeline / orchestration engine files
-    - '**/chain-engine*'
-    - '**/chain_engine*'
-    - '**/chainEngine*'
-    - '**/pipeline-engine*'
-    - '**/pipeline_engine*'
-    - '**/pipelineEngine*'
-    - '**/state-machine*'
-    - '**/state_machine*'
-    - '**/stateMachine*'
-    - '**/orchestrat*'
-    - '**/escalation*'
   importPatterns:
-    - '@vercel/workflow'
     - 'workflow'
     - '@workflow/*'
     - '*workflow*'
   bashPatterns:
-    - '\bnpm\s+(install|i|add)\s+[^\n]*@vercel/workflow\b'
-    - '\bpnpm\s+(install|i|add)\s+[^\n]*@vercel/workflow\b'
-    - '\bbun\s+(install|i|add)\s+[^\n]*@vercel/workflow\b'
-    - '\byarn\s+add\s+[^\n]*@vercel/workflow\b'
     - '\bnpm\s+(install|i|add)\s+[^\n]*\bworkflow\b'
     - '\bpnpm\s+(install|i|add)\s+[^\n]*\bworkflow\b'
     - '\bbun\s+(install|i|add)\s+[^\n]*\bworkflow\b'
@@ -51,6 +32,8 @@ metadata:
     phrases:
       # Direct workflow mentions
       - "vercel workflow"
+      - "workflow sdk"
+      # Legacy product name retained only as an input matcher.
       - "workflow devkit"
       - "durable workflow"
       - "durable execution"
@@ -344,23 +327,13 @@ metadata:
     minScore: 4
 validate:
   -
-    pattern: experimental_createWorkflow
-    message: 'experimental_createWorkflow is now stable — use createWorkflow from @vercel/workflow. Run npx @ai-sdk/codemod v6 for automated migration.'
-    severity: error
-    upgradeToSkill: workflow
-    upgradeWhy: 'Guides migration from experimental_createWorkflow to the stable createWorkflow API and then to the "use workflow" directive.'
-  -
-    pattern: from\s+['"]@vercel/workflow['"]
-    message: 'Workflow DevKit requires AI Gateway OIDC setup — ensure vercel link + vercel env pull for VERCEL_OIDC_TOKEN'
-    severity: recommended
-  -
     pattern: setTimeout|setInterval
     message: 'setTimeout/setInterval are not available in workflow sandbox scope — use sleep() from "workflow" for delays'
     severity: error
     skipIfFileContains: "use step"
   -
     pattern: context\.run\s*\(
-    message: 'context.run() is not a WDK pattern — use "use step" directive for retryable, observable steps'
+    message: 'context.run() is not a Workflow SDK pattern — use "use step" directive for retryable, observable steps'
     severity: error
     upgradeToSkill: workflow
     upgradeWhy: 'Guides migration from context.run() to the "use step" directive for durable, retryable workflow steps.'
@@ -374,13 +347,6 @@ validate:
     message: 'getWritable() must only be called inside "use step" functions — workflow sandbox scope does not support it'
     severity: recommended
     skipIfFileContains: "use step"
-  -
-    pattern: createWorkflow\s*\(
-    message: 'createWorkflow() is the legacy API — use the "use workflow" directive on an async function instead'
-    severity: error
-    upgradeToSkill: workflow
-    upgradeWhy: 'Guides migration from createWorkflow() function API to the "use workflow" directive pattern.'
-    skipIfFileContains: experimental_createWorkflow
   -
     pattern: streamObject\s*\(
     message: 'streamObject() was removed in AI SDK v6 — use streamText() with output: Output.object() instead'
@@ -411,12 +377,12 @@ chainTo:
   -
     pattern: 'DurableAgent|@workflow/ai'
     targetSkill: ai-sdk
-    message: 'DurableAgent detected without AI SDK context — loading AI SDK guidance for tool calling, Agent class, and model configuration.'
+    message: 'Workflow 5 (workflow@beta) deprecates DurableAgent (@workflow/ai) in favor of WorkflowAgent from @ai-sdk/workflow 2.x, which requires Workflow 5; the Workflow 4 docs (workflow@latest) use DurableAgent. Loading AI SDK guidance for tool calling, the Agent class, and model configuration.'
     skipIfFileContains: 'from\s+[''"]ai[''"]|@ai-sdk/|streamText|generateText'
   -
     pattern: 'process\.env\.(OPENAI_API_KEY|ANTHROPIC_API_KEY)|from\s+[''"]@ai-sdk/(anthropic|openai)[''""]'
     targetSkill: ai-gateway
-    message: 'Direct provider API key in workflow — loading AI Gateway guidance for OIDC auth (required for WDK AI steps).'
+    message: 'Direct provider API key in workflow — loading AI Gateway guidance for OIDC auth (required for Workflow SDK AI steps).'
     skipIfFileContains: 'gateway\(|@ai-sdk/gateway|VERCEL_OIDC'
   -
     pattern: 'setTimeout\s*\(|setInterval\s*\('
@@ -435,9 +401,10 @@ retrieval:
     - create durable task
     - implement step function
   entities:
+    - Workflow SDK
+    # Legacy product names retained only as retrieval aliases.
     - Workflow DevKit
     - WDK
     - step
     - pause/resume
     - durable
-

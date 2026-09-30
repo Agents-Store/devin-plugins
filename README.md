@@ -62,5 +62,5 @@ cp -r agents-store-devin-plugins/<plugin-name> ~/.devin/plugins/<plugin-name>
 | [teams-dev](./teams-dev) | Microsoft Teams SDK dev plugin for Agents Store. TypeScript-first guidance for building Teams bots, message extensions, tabs, dialogs, and AI agents using @micr | 18 | 1 | 2 | — |
 | [teleshop-ops](./teleshop-ops) | Teleshop store management plugin. Manage products, orders, categories, attributes, customers, webhooks, and addons for your Telegram store via 50 MCP tools. | 9 | 2 | 13 | ✓ |
 | [trigger-dev](./trigger-dev) | Trigger.dev dev plugin for Agents Store. Comprehensive development knowledge for building background tasks, AI agent workflows, and durable execution on self-ho | 12 | 1 | 4 | — |
-| [vercel-dev](./vercel-dev) | Vercel ecosystem plugin. Deployment, AI SDK, Edge Functions, storage, routing, performance optimization. Includes CLI deploy troubleshooting for non-Git project | 25 | 3 | 6 | ✓ |
+| [vercel-dev](./vercel-dev) | Vercel ecosystem plugin. Deployment, AI SDK, Edge Functions, storage, routing, performance optimization. Includes CLI deploy troubleshooting for non-Git project | 38 | 3 | 5 | ✓ |
 | [web-search-dev](./web-search-dev) | Web search and scraping developer toolkit. MCP tool patterns, REST API reference (Firecrawl v2), SDK/CLI usage for Firecrawl, Exa, Perplexity, Jina, Pexels, Uns | 10 | 1 | 0 | ✓ |
