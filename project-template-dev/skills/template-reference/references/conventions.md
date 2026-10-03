@@ -21,6 +21,17 @@ The `{stack}` portion uses the primary technologies joined by hyphens: `{data}-{
 
 Examples: `directus-nextjs`, `nocodb-saas`, `supabase-nuxt`, `nocobase-crm`
 
+### Plugin Naming
+
+The names listed in `stack.json` `plugins` are Agents Store plugin names:
+
+| Plugin type | Pattern | Examples |
+|-------------|---------|----------|
+| Technology | `{tool}-{process}` (`dev`, `ops`, `provision`) | `directus-dev`, `vercel-dev`, `trigger-dev` |
+| Stack | `stack-{name}` — no process suffix | `stack-directus-nextjs` |
+
+Take names from the marketplace listing or the plugin's `plugin.json`, never from memory: renamed plugins keep working through the marketplace `renames` map, but new templates should use the current name.
+
 ---
 
 ## stack.json Schema
@@ -59,7 +70,7 @@ Examples: `directus-nextjs`, `nocodb-saas`, `supabase-nuxt`, `nocobase-crm`
 | `layers.interface` | string[] | Interface layer technologies (e.g., ["nextjs"]) |
 | `plugins.technology` | string[] | Required Technology plugins (e.g., ["directus-dev", "nextjs-dev"]) |
 | `plugins.process` | string[] | Required Process plugins |
-| `plugins.stack` | string[] | Required Stack plugins (e.g., ["stack-directus-nextjs-dev"]) |
+| `plugins.stack` | string[] | Required Stack plugins (e.g., ["stack-directus-nextjs"]; named `stack-{name}`, no process suffix) |
 
 ### Examples by Level
 
@@ -84,9 +95,9 @@ Examples: `directus-nextjs`, `nocodb-saas`, `supabase-nuxt`, `nocobase-crm`
   "parent": "project-template",
   "layers": { "data": ["directus"], "logic": ["nextjs"], "interface": ["nextjs"] },
   "plugins": {
-    "technology": ["directus-dev", "nextjs-dev", "nextjs-provision", "vercel"],
+    "technology": ["directus-dev", "nextjs-dev", "nextjs-provision", "vercel-dev"],
     "process": [],
-    "stack": ["stack-directus-nextjs-dev"]
+    "stack": ["stack-directus-nextjs"]
   }
 }
 ```
@@ -117,14 +128,22 @@ Examples: `directus-nextjs`, `nocodb-saas`, `supabase-nuxt`, `nocobase-crm`
 
 CLAUDE.md serves as the project memory for Claude Code. Keep it under 100 lines.
 
+The 100-line limit is this template system's own rule; Anthropic's guidance is under 200 lines per CLAUDE.md file. Count the content CLAUDE.md imports too (`@AGENTS.md`): imported files load at launch together with the importing file.
+
+### AGENTS.md and CLAUDE.md
+
+One source of truth. `AGENTS.md` holds the rules every coding tool reads (Cursor, Gemini, Codex, ...). `CLAUDE.md` starts with an `@AGENTS.md` import and adds the Claude-specific lines below it; a symlink (`ln -s AGENTS.md CLAUDE.md`) also works when there is nothing Claude-specific. Claude Code reads `AGENTS.md` directly only when no `CLAUDE.md` exists, so the import or symlink is what makes it load. Do not generate `AGENTS.md` from `CLAUDE.md`. `scripts/sync-context.sh` stays only to mirror the rules into `.cursor/`.
+
+The section table below applies to the combined content: `CLAUDE.md` plus the `AGENTS.md` it imports.
+
 ### Required Sections
 
 | Section | L0 | L1 | L1.5 | L2 |
 |---------|----|----|------|----|
 | Tech Stack | Placeholders | Filled | Inherited | Inherited |
-| Architecture | `@docs/architecture.md` | `@docs/architecture.md` | Same | Same |
-| Code Style | `@docs/code-style.md` | `@docs/code-style.md` | Same | Same |
-| API Conventions | `@docs/api-conventions.md` | `@docs/api-conventions.md` | Same | Same |
+| Architecture | `docs/architecture.md` (plain path) | `docs/architecture.md` (plain path) | Same | Same |
+| Code Style | `docs/code-style.md` (plain path) | `docs/code-style.md` (plain path) | Same | Same |
+| API Conventions | `docs/api-conventions.md` (plain path) | `docs/api-conventions.md` (plain path) | Same | Same |
 | Installed Plugins | Placeholders | Listed with descriptions | Inherited | Extended |
 | Quick Commands | Generic list | Stack-specific additions | Inherited | Custom additions |
 | Project Config | Reference to skill | Reference to skill | Same | Same |
@@ -133,12 +152,44 @@ CLAUDE.md serves as the project memory for Claude Code. Keep it under 100 lines.
 
 ### CLAUDE.md Quality Rules
 
-- Under 100 lines total
+- Under 100 lines total, imports included (internal rule; the official target is under 200)
 - No placeholder text remaining ("TBD", "TODO", "fill in", "[e.g.,")
 - Technologies in Tech Stack match stack.json `layers`
 - Plugins in Installed Plugins match stack.json `plugins`
-- Commands in Quick Commands exist as files in `.claude/commands/`
-- Reference `@docs/` files rather than inlining long content
+- Workflows in Quick Commands exist as `.claude/skills/<name>/SKILL.md` (older templates: `.claude/commands/<name>.md`)
+- Point to long content by plain path (`docs/architecture.md`, read on demand) rather than inlining it. An `@docs/...` import does not save context: imported files load at launch with CLAUDE.md
+- Rules that matter only for some files go in `.claude/rules/<name>.md` with a `paths:` frontmatter, which loads them only when Claude reads a matching file; CLAUDE.md and rules without `paths:` load every session
+
+---
+
+## .mcp.json and Claude Code Settings
+
+| File | Committed | Content |
+|------|-----------|---------|
+| `.mcp.json` | yes | MCP servers with `${VAR}` references only (`${VAR:-default}` is allowed); empty `mcpServers` at Level 0 |
+| `.claude/settings.json` | yes | `enabledPlugins` and `extraKnownMarketplaces`, derived from `stack.json` `plugins` |
+| `.env`, `.env.local` | no | Real values for every `${VAR}` — shell tooling reads them |
+| `.claude/settings.local.json` | no | `env` block with the same values for Claude Code; `settings.local.json.example` documents the keys |
+
+Claude Code expands `${VAR}` in `command`, `args`, `env`, `url` and `headers` of `.mcp.json`. A literal URL is acceptable only for a published product endpoint that is the same for every user; a deployment host, token or key is always a `${VAR}`.
+
+`.claude/settings.json` example (the marketplace entry is keyed by the marketplace's own name, plugins are `<plugin>@<marketplace>`):
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "agents-store-claude-plugins": {
+      "source": { "source": "github", "repo": "Agents-Store/claude-plugins" }
+    }
+  },
+  "enabledPlugins": {
+    "directus-dev@agents-store-claude-plugins": true,
+    "stack-directus-nextjs@agents-store-claude-plugins": true
+  }
+}
+```
+
+Committing `enabledPlugins` turns the plugins on for collaborators but does not download them: each collaborator runs `claude plugin install <name>@<marketplace> --scope project` once, and Claude Code asks to trust the repository before it registers the marketplace.
 
 ---
 

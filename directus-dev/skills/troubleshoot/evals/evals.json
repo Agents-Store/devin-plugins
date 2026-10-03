@@ -4,11 +4,12 @@
     {
       "id": 17,
       "prompt": "I'm getting 403 Forbidden when trying to create items via MCP in Directus. How do I fix this?",
-      "expected_output": "Role permissions, system collection permissions, MCP user permission table",
+      "expected_output": "Policy permissions, system collection permissions, MCP user permission table",
       "files": [],
       "expectations": [
-        "Identifies insufficient role permissions as the cause",
-        "Points to Settings > Roles > Permissions",
+        "Identifies insufficient permissions in the policies that reach the user as the cause",
+        "Points to Settings > Access Policies > Permissions (policies, not roles)",
+        "Mentions that effective permissions are the aggregate of policies attached to the user, the role and parent roles",
         "Lists system collections needing permissions (directus_collections, directus_fields, directus_relations)",
         "Provides a permission table for MCP user minimum setup",
         "Mentions checking both user collection and system collection permissions"

@@ -13,7 +13,7 @@ Products
 Orders
 ├── OrderNo     (SingleLineText, display field)
 ├── Customer    (LinkToAnotherRecord → Customers, bt)
-├── Products    (Links → Products, type: mm)
+├── Products    (LinkToAnotherRecord → Products, relation_type: mm)
 ├── Subtotal    (Rollup of Products.Price, sum)
 ├── Status      (SingleSelect: Pending / Paid / Shipped / Refunded)
 └── CreatedAt   (CreatedTime)
@@ -22,14 +22,30 @@ Customers (assumed pre-existing)
 └── (auto inverse "Orders" link)
 ```
 
+## Prereqs
+
+Same environment as the CRM scenario — `NOCODB_URL`, `NOCODB_TOKEN`, `BASE_ID`, plus the two helpers:
+
+```bash
+nocodb_api() {   # paths are under /api/v3
+  local m="$1" p="$2" b="${3:-}"
+  if [ -n "$b" ]; then
+    curl -sS -X "$m" -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" -d "$b" "${NOCODB_URL}/api/v3${p}"
+  else
+    curl -sS -X "$m" -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" "${NOCODB_URL}/api/v3${p}"
+  fi
+}
+field_id() { nocodb_api GET "/meta/bases/$BASE_ID/tables/$1" | jq -r --arg t "$2" '.fields[] | select(.title==$t) | .id'; }
+```
+
 ## Step 1 — Create Products
 
 ```bash
-nc table:create $BASE_ID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables '{
   "title": "Products",
   "fields": [
     { "title":"Name",  "type":"SingleLineText" },
-    { "title":"Price", "type":"Currency", "currency_code":"USD" }
+    { "title":"Price", "type":"Currency", "options": { "currency_code":"USD" } }
   ]
 }'
 # capture PRODUCTS_TID
@@ -38,12 +54,12 @@ nc table:create $BASE_ID '{
 ## Step 2 — Create Orders
 
 ```bash
-nc table:create $BASE_ID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables '{
   "title": "Orders",
   "fields": [
     { "title":"OrderNo",   "type":"SingleLineText" },
     { "title":"Status",    "type":"SingleSelect",
-      "colOptions": { "options":[
+      "options": { "choices":[
         {"title":"Pending"},{"title":"Paid"},{"title":"Shipped"},{"title":"Refunded"}
       ]}},
     { "title":"CreatedAt", "type":"CreatedTime" }
@@ -55,27 +71,25 @@ nc table:create $BASE_ID '{
 ## Step 3 — Customer link (belongs-to on Orders)
 
 ```bash
-nc field:create $BASE_ID $ORDERS_TID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$ORDERS_TID/fields '{
   "title": "Customer",
-  "type":  "Links",
-  "linked_table_id": "'"$CUSTOMERS_TID"'",
-  "type_of_relation": "bt"
+  "type":  "LinkToAnotherRecord",
+  "options": { "relation_type": "bt", "related_table_id": "'"$CUSTOMERS_TID"'" }
 }'
-# verify: nc field:list $BASE_ID $ORDERS_TID — capture LINK_CUST_ON_ORDERS
+LINK_CUST_ON_ORDERS=$(field_id $ORDERS_TID Customer)
 ```
 
 ## Step 4 — Products link (many-to-many)
 
 ```bash
-nc field:create $BASE_ID $ORDERS_TID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$ORDERS_TID/fields '{
   "title": "Products",
-  "type":  "Links",
-  "linked_table_id": "'"$PRODUCTS_TID"'",
-  "type_of_relation": "mm"
+  "type":  "LinkToAnotherRecord",
+  "options": { "relation_type": "mm", "related_table_id": "'"$PRODUCTS_TID"'" }
 }'
+LINK_PROD_ON_ORDERS=$(field_id $ORDERS_TID Products)
 # verify both sides:
-# nc field:list $BASE_ID $ORDERS_TID    → "Products"   (LINK_PROD_ON_ORDERS)
-# nc field:list $BASE_ID $PRODUCTS_TID  → "Orders"     (auto inverse)
+# nocodb_api GET /meta/bases/$BASE_ID/tables/$PRODUCTS_TID | jq '.fields[].title'   → "Orders" (auto inverse)
 ```
 
 NocoDB creates the m2m join table automatically and hides it.
@@ -83,38 +97,38 @@ NocoDB creates the m2m join table automatically and hides it.
 ## Step 5 — Subtotal rollup
 
 ```bash
-# Find Products.Price column ID
-nc field:list $BASE_ID $PRODUCTS_TID
-# capture PRICE_COL
+PRICE_COL=$(field_id $PRODUCTS_TID Price)
 
-nc field:create $BASE_ID $ORDERS_TID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$ORDERS_TID/fields '{
   "title": "Subtotal",
   "type":  "Rollup",
-  "fk_relation_column_id": "'"$LINK_PROD_ON_ORDERS"'",
-  "fk_rollup_column_id":   "'"$PRICE_COL"'",
-  "rollup_function":       "sum"
+  "options": {
+    "related_field_id": "'"$LINK_PROD_ON_ORDERS"'",
+    "related_table_rollup_field_id": "'"$PRICE_COL"'",
+    "rollup_function": "sum"
+  }
 }'
 ```
 
 ## Step 6 — Customer-name Lookup on Orders
 
 ```bash
-# Customers.Name column ID
-nc field:list $BASE_ID $CUSTOMERS_TID
-# capture NAME_COL
+NAME_COL=$(field_id $CUSTOMERS_TID Name)
 
-nc field:create $BASE_ID $ORDERS_TID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$ORDERS_TID/fields '{
   "title": "Customer Name",
   "type":  "Lookup",
-  "fk_relation_column_id": "'"$LINK_CUST_ON_ORDERS"'",
-  "fk_lookup_column_id":   "'"$NAME_COL"'"
+  "options": {
+    "related_field_id": "'"$LINK_CUST_ON_ORDERS"'",
+    "related_table_lookup_field_id": "'"$NAME_COL"'"
+  }
 }'
 ```
 
 ## Step 7 — Sanity check
 
 ```
-mcp__nocodb__getTableSchema  tableId: $ORDERS_TID
+mcp__plugin_nocodb-dev_nocodb__getTableSchema  tableId: $ORDERS_TID
 ```
 
 Expected fields on Orders: `OrderNo`, `Status`, `CreatedAt`, `Customer`, `Products`, `Subtotal`, `Customer Name`.
@@ -122,42 +136,42 @@ Expected fields on Orders: `OrderNo`, `Status`, `CreatedAt`, `Customer`, `Produc
 ## Step 8 — Insert and link sample data
 
 ```bash
-# Three products
-curl -sS -X POST -H "xc-token: $NOCODB_API_TOKEN" -H "Content-Type: application/json" \
-  -d '{"records":[
+# Three products. The request body is an array of { "fields": {...} } (DataInsertRequestV3);
+# the response is { "records": [ { "id", "fields" } ] } in the same order
+curl -sS -X POST -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" \
+  -d '[
         {"fields":{"Name":"Widget A","Price":29.99}},
         {"fields":{"Name":"Widget B","Price":49.99}},
         {"fields":{"Name":"Widget C","Price":19.99}}
-      ]}' \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$PRODUCTS_TID/records"
-# → capture three product record IDs PA, PB, PC
+      ]' \
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${PRODUCTS_TID}/records"
+# → capture three product record IDs PA, PB, PC from .records[].id
 
 # One order
-curl -sS -X POST -H "xc-token: $NOCODB_API_TOKEN" -H "Content-Type: application/json" \
-  -d '{"records":[{"fields":{"OrderNo":"ORD-1","Status":"Pending"}}]}' \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$ORDERS_TID/records"
-# → capture ORDER_ID
+ORDER_ID=$(curl -sS -X POST -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" \
+  -d '[{"fields":{"OrderNo":"ORD-1","Status":"Pending"}}]' \
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${ORDERS_TID}/records" | jq -r '.records[0].id')
 
 # Link order → customer
-curl -sS -X POST -H "xc-token: $NOCODB_API_TOKEN" -H "Content-Type: application/json" \
+curl -sS -X POST -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" \
   -d '[{"id":"'"$ACME_ID"'"}]' \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$ORDERS_TID/links/$LINK_CUST_ON_ORDERS/$ORDER_ID"
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${ORDERS_TID}/links/${LINK_CUST_ON_ORDERS}/${ORDER_ID}"
 
 # Link order → products (many-to-many)
-curl -sS -X POST -H "xc-token: $NOCODB_API_TOKEN" -H "Content-Type: application/json" \
+curl -sS -X POST -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" \
   -d '[{"id":"'"$PA"'"},{"id":"'"$PB"'"}]' \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$ORDERS_TID/links/$LINK_PROD_ON_ORDERS/$ORDER_ID"
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${ORDERS_TID}/links/${LINK_PROD_ON_ORDERS}/${ORDER_ID}"
 
 # Read Order back
-curl -sS -H "xc-token: $NOCODB_API_TOKEN" \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$ORDERS_TID/records/$ORDER_ID" | jq
+curl -sS -H "xc-token: ${NOCODB_TOKEN}" \
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${ORDERS_TID}/records/${ORDER_ID}" | jq
 # expect: Subtotal == 79.98 ; Customer Name == "Acme Corp"
 ```
 
 ## Common Mistakes
 
-- **m2m without specifying `type_of_relation`.** Defaults to `hm`, which is not what you want for tags / products / categories. Always set `type_of_relation` explicitly.
-- **Rollup on a non-numeric.** `sum` against `Name` returns 0. Make sure the rollup column is numeric.
+- **m2m without specifying `relation_type`.** `options` requires both `relation_type` and `related_table_id`; leaving the type off is rejected. Always set `relation_type` explicitly (`mm` for tags / products / categories).
+- **Rollup on a non-numeric.** `sum` against `Name` returns 0. Make sure the rollup field is numeric.
 - **Forgetting that the m2m join table is hidden.** If you need to attach metadata to the relationship (e.g. quantity, line price), don't use `mm` — make an explicit `OrderLines` table with `bt` links to both Orders and Products.
 
 ## When to Choose an Explicit Join Table
@@ -166,8 +180,8 @@ Many real e-commerce schemas need per-line-item attributes (quantity, unit price
 
 ```
 OrderLines
-├── Order      (Links → Orders, bt)
-├── Product    (Links → Products, bt)
+├── Order      (LinkToAnotherRecord → Orders, bt)
+├── Product    (LinkToAnotherRecord → Products, bt)
 ├── Quantity   (Number)
 ├── UnitPrice  (Currency)        ← snapshot at time of order
 └── LineTotal  (Formula: {Quantity} * {UnitPrice})

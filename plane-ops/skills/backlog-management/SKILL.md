@@ -9,20 +9,37 @@ This skill covers backlog prioritization, grooming, and health monitoring using 
 
 ## Tool Name Resolution
 
-Tools below are referenced by their **action name** only (e.g., `list_work_items`). Resolve the real tool names for your current Plane MCP server or connector through the `connector-bootstrap` skill. Match by action suffix — never assume a prefix.
+Plane MCP exposes one tool per resource and the operation goes into the `action` parameter: `workitem(action=list, ...)`. This skill writes calls in that form. Resolve the real tool names (`mcp__<server>__<resource>`) for your current Plane connection through the `connector-bootstrap` skill - never assume a server prefix.
 
 ## Available Tools
 
-| Tool | Description |
+| Call | Description |
 |------|-------------|
-| `list_work_items` | List all backlog items with pagination |
-| `update_work_item` | Update priority, labels, estimates |
-| `search_work_items` | Search items by text |
-| `list_labels` | Get existing labels |
-| `create_label` | Create prioritization labels |
-| `list_states` | Get state definitions |
-| `list_work_item_relations` | Check blocking dependencies |
-| `list_work_item_activities` | Check item freshness |
+| `workitem(action=list)` | List backlog items (paginated), filterable with `pql` |
+| `workitem(action=count)` | Count backlog items without listing them: `pql`, `group_by` |
+| `workitem(action=update)` | Update priority, labels, estimates |
+| `workitem(action=search)` | Search items by text (workspace-wide) |
+| `workitem(action=archive)` | Archive a stale completed or cancelled item |
+| `label(action=list)` / `label(action=create)` | Existing labels / prioritization labels |
+| `state(action=list)` | State definitions |
+| `workitem_relation(action=list)` | Check blocking dependencies |
+| `get_pql_reference` | Syntax of the `pql` filter |
+
+## Filtering the Backlog with PQL
+
+Server-side filters replace listing everything and filtering client-side. The `pql` parameter of `workitem(action=list)` and `workitem(action=count)` takes Plane Query Language; call `get_pql_reference` for the full syntax. Useful backlog filters (at most 5 conditions per query):
+
+| Question | `pql` |
+|----------|-------|
+| Backlog and planned items | `stateGroup IN ("backlog","unstarted")` |
+| Nobody owns it | `hasNoAssignee()` |
+| No priority set | `priority = "none"` |
+| No label | `hasNoLabel()` |
+| Untouched for 6 weeks | `updatedAt < daysAgo(42)` |
+| Overdue and still open | `isOverdue()` |
+| Mentions a keyword in the title | `title ~ "export"` |
+
+There is no PQL field for story points or description text: unestimated, oversized and no-description items are found from the listed `point` and `description_stripped` fields. `state__group` is a `group_by` key for counts, not a filter field - filter with `stateGroup`.
 
 ## MoSCoW Prioritization
 
@@ -38,8 +55,8 @@ Map MoSCoW categories directly to Plane priority values:
 ### MoSCoW Workflow
 
 ```
-1. list_work_items({ project_id })
-   → Get all backlog items
+1. workitem(action=list, project_id=<id>, pql='stateGroup IN ("backlog","unstarted")')
+   → Get all backlog items (follow next_cursor)
 
 2. For each item, classify:
    - Does the product fail without this? → Must Have (urgent/high)
@@ -48,11 +65,10 @@ Map MoSCoW categories directly to Plane priority values:
    - Is it out of scope for now? → Won't Have (none)
 
 3. Update priorities:
-   update_work_item({
-     project_id: "<id>",
-     work_item_id: "<item_id>",
-     priority: "high"
-   })
+   workitem(action=update,
+            project_id=<id>,
+            workitem_id=<item_id>,
+            priority="high")
 
 4. Target distribution for a healthy backlog:
    Must Have:   ~60% of sprint capacity
@@ -78,8 +94,9 @@ Higher WSJF = Higher priority (do first).
 ### WSJF Workflow
 
 ```
-1. list_work_items({ project_id })
-   → Get backlog items with estimates
+1. workitem(action=list, project_id=<id>, pql='stateGroup IN ("backlog","unstarted")')
+   → Get backlog items with estimates (follow next_cursor); skip items whose
+     `point` is null - they cannot be scored until estimated
 
 2. For each item, score (with user input):
    Business Value:    [1-10]
@@ -143,20 +160,38 @@ EFF │   Fill-ins        │   Money Pit       │  EFFORT
 ### Health Check Workflow
 
 ```
-1. list_work_items({ project_id, per_page: 100 })
-   → Get all backlog items
+1. Count what PQL can filter (one call each, read total_count):
+   workitem(action=count, project_id=<id>, pql='stateGroup IN ("backlog","unstarted")')
+   → total_items
+   workitem(action=count, project_id=<id>,
+            pql='stateGroup IN ("backlog","unstarted") AND hasNoAssignee()')
+   → unassigned
+   workitem(action=count, project_id=<id>,
+            pql='stateGroup IN ("backlog","unstarted") AND priority = "none"')
+   → no_priority
+   Or the whole priority distribution in one call:
+   workitem(action=count, project_id=<id>,
+            pql='stateGroup IN ("backlog","unstarted")', group_by=priority)
 
-2. Calculate metrics:
-   total_items         = count of all items in backlog/unstarted states
+2. List once for the metrics PQL cannot filter:
+   workitem(action=list, project_id=<id>,
+            pql='stateGroup IN ("backlog","unstarted")',
+            fields="id,name,point,estimate_point,priority,description_stripped", per_page=100)
+   → follow next_cursor, then calculate:
    unestimated         = count where point is null
-   unassigned          = count where assignees is empty
-   no_priority         = count where priority is "none" or null
-   no_description      = count where description_html is empty/minimal
+   no_description      = count where description_stripped is empty/minimal
    large_items         = count where point > 8
+   (total_items, unassigned and no_priority come from step 1; recompute them
+    from the list only if the counts and the list disagree)
 
 3. Health score:
    ready_items = items with: point set + priority set + description exists
    health_score = (ready_items / total_items) × 100
+
+   Stale items (candidates to archive or cancel):
+   workitem(action=list, project_id=<id>,
+            pql='stateGroup IN ("backlog","unstarted") AND updatedAt < daysAgo(42)')
+   → untouched for ~3 two-week sprints
 
 4. Present report:
    ┌─────────────────────────────────────┐
@@ -196,12 +231,13 @@ EFF │   Fill-ins        │   Money Pit       │  EFFORT
 1. Review from top of backlog (highest priority first)
 
 2. For each item:
-   a. Is this still relevant? → If not, move to cancelled state or delete
+   a. Is this still relevant? → If not, move to a cancelled state (an item in a
+      completed or cancelled state can then be archived with workitem(action=archive))
    b. Is it clear enough? → If not, add description/acceptance criteria
    c. Is it estimated? → If not, estimate (see estimation skill)
    d. Is it the right size? → If > 8 points, decompose
    e. Is priority correct? → Adjust if business context changed
-   f. Are dependencies identified? → Check/create relations
+   f. Are dependencies identified? → workitem_relation(action=list) / (action=create)
 
 3. After grooming, re-check health metrics
 ```
@@ -221,7 +257,7 @@ To create these labels, refer to the project-setup skill for full label definiti
 
 1. **Groom regularly** — mid-sprint for 30-60 minutes, not before sprint planning
 2. **Top-down review** — start with highest priority items
-3. **Keep backlog lean** — if an item hasn't moved in 3+ sprints, archive or delete it
+3. **Keep backlog lean** — if an item hasn't moved in 3+ sprints (`updatedAt < daysAgo(42)` for two-week sprints), cancel it, then archive it (`workitem(action=archive)` accepts only completed or cancelled items); delete only after confirmation
 4. **One prioritization method** — pick MoSCoW or WSJF, don't mix
 5. **Involve the team** — grooming is a team activity, not just PM
 6. **Limit backlog size** — aim for 2-3 sprints worth of refined items

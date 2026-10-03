@@ -222,13 +222,16 @@ import { azureStorage } from '@payloadcms/storage-azure'
 plugins: [
   azureStorage({
     collections: { media: true },
+    allowContainerCreate: false,   // required — true lets the plugin create a missing container
+    baseURL: process.env.AZURE_STORAGE_BASE_URL,   // required — the storage account's blob endpoint
     connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
     containerName: process.env.AZURE_STORAGE_CONTAINER,
+    // containerAccess: 'private',   // 3.90+ default for containers the plugin creates; 'blob' = anonymous reads
   }),
 ],
 ```
 
-Since 3.87.0, client uploads support `chunkLargeFiles` for files larger than 5GB.
+Since 3.87.0, client uploads support `chunkLargeFiles` for files larger than 5GB. `allowContainerCreate` and `baseURL` are required options — omitting them is a compile error. See "Upload hardening (3.90.0)" below for the private-container default.
 
 ### Google Cloud Storage
 
@@ -270,6 +273,52 @@ plugins: [
 ```
 
 On Node hosts (Vercel/Netlify/self-host), R2 via `s3Storage` with the S3-compatible config above remains the recommended approach.
+
+### Upload hardening (3.90.0)
+
+3.90.0 is a security release that tightened uploads end to end. Review each item when upgrading from 3.89 or older — they change defaults, not just options:
+
+| Change | Affected if you | Action |
+| --- | --- | --- |
+| Azure containers default to **private** | `@payloadcms/storage-azure` with `allowContainerCreate: true` | Only *newly created* containers change. To keep anonymous blob URLs set `containerAccess: 'blob'` (`'container'` also allows listing); existing containers keep their access level |
+| Client uploads hardened for all adapters | `clientUploads: true` on S3, GCS, Azure or a custom adapter | For GCS add `x-goog-if-generation-match` to the bucket's CORS allowed headers; custom upload clients must send the required metadata and return the headers the adapter expects |
+| Client uploads stored per upload | `clientUploads` and you build file paths outside Payload | New files live at `<prefix>/<_objectKey>/<filename>` (also for generated sizes); `_objectKey` is a new upload-collection field (SQL adapters: migration adds the column). Existing files are not moved. Prefix changes must come with a file replacement |
+| Multipart uploads are capped, and oversize requests are rejected with **413** | files larger than **20 MiB**, requests larger than **50 MiB**, or more than 3 files / 20 fields / 1 MiB per field in one request | The 3.90.2 defaults are `upload.requestSizeLimit: 50 * 1024 * 1024` (whole raw request) **and** `upload.limits: { fileSize: 20 * 1024 * 1024, files: 3, fields: 20, fieldSize: 1024 * 1024 }` (3.87.1 had no `limits` defaults and `abortOnLimit: false`, so oversize files were truncated instead of rejected). Raising only `requestSizeLimit` does **not** fix a single file over 20 MiB — raise `limits.fileSize` too (and keep `requestSizeLimit` above it plus metadata). `clientUploads: true` sends files straight to the bucket and bypasses these server caps |
+| Strict SVG / XHTML / XML validation | you accept SVG or other XML-family files | Verify the workflow; set `allowRestrictedFileTypes: true` in the collection's `upload` config only if the previous behaviour is explicitly required |
+| External files need a trusted origin | `upload.disableLocalStorage: true` with relative file URLs that need a session cookie; non-HTTP(S) URLs | Set `serverURL` or add the exact application origin to CORS/CSRF; replace non-HTTP(S) URLs with HTTP(S) |
+| `externalFileHeaderFilter(headers, context)` | you use it | It can run once per redirect hop and now receives `context.isSameOrigin` — strip `cookie`/`authorization` when it is false |
+| `disablePayloadAccessControl` no longer disables safe outbound fetch | you set `disablePayloadAccessControl: true` — the **storage-adapter collection option** (`collections: { media: { disablePayloadAccessControl: true } }` on `s3Storage`, `azureStorage`, …; not a root `buildConfig` option) | In 3.87.1 it forced `skipSafeFetch` to `true` for that collection; in 3.90.2 that coupling is gone and safe fetch stays on. Use a narrow `upload.skipSafeFetch` allowlist for trusted hosts; `skipSafeFetch: true` only when every URL the collection accepts is trusted |
+| Upload filename hardening | a custom top-level `prefix` field on an upload collection holds ordinary data | Rename that field, or update it only from trusted server code — `prefix` is now treated as a storage field |
+
+```ts
+// src/payload.config.ts — raise the multipart caps (both: a single file is limited by `limits.fileSize`,
+// the whole request by `requestSizeLimit`)
+export default buildConfig({
+  upload: {
+    requestSizeLimit: 120 * 1024 * 1024,   // whole raw multipart request, in bytes (default 50 MiB)
+    limits: {
+      fileSize: 100 * 1024 * 1024,         // one file (default 20 MiB) — over the limit => HTTP 413
+      // files: 3, fields: 20, fieldSize: 1024 * 1024,   // other defaults, raise only if needed
+    },
+  },
+  // …
+})
+
+// src/collections/Media.ts
+upload: {
+  allowRestrictedFileTypes: true,   // only if SVG/XML must keep working as before
+  skipSafeFetch: [{ hostname: 'cdn.example.com' }],   // narrow allowlist, never `true` for untrusted input
+  externalFileHeaderFilter: (headers, context) => {
+    if (!context?.isSameOrigin) {
+      delete headers.cookie
+      delete headers.authorization
+    }
+    return headers
+  },
+}
+```
+
+After upgrading run `pnpm payload generate:types`; on SQL adapters also `pnpm payload migrate:create` and `pnpm payload migrate`.
 
 **After enabling a storage adapter** — you'll usually drop `upload.staticDir` from the collection because the files live in the bucket, not on disk:
 

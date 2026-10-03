@@ -22,7 +22,7 @@ Paths are written in dotted form as `config get` accepts them.
 | Key | Holds |
 |---|---|
 | `$schema` | the only non-schema root key the strict validator accepts |
-| `agents` | agent defaults and the per-agent list |
+| `agents` | agent defaults and the per-agent entries (an object keyed by agent id) |
 | `channels` | where conversations arrive from |
 | `tools` | which tools an agent may call, and their execution limits |
 | `plugins` | plugin system, allow/deny, load paths, per-plugin config |
@@ -31,7 +31,7 @@ Paths are written in dotted form as `config get` accepts them.
 | `session` | session scoping, reset and maintenance |
 | `cron` | whether the scheduler runs — the jobs live in the state store, not here |
 | `gateway` | the HTTP surface: bind, port, auth, reload behaviour |
-| `memory` | embedding provider and search mode |
+| `memory` | search provider and model, and the query limits |
 | `env` | inline variables and whether shell env is imported |
 
 ## agents
@@ -46,15 +46,34 @@ Paths are written in dotted form as `config get` accepts them.
 | `agents.defaults.compaction` | object | when and how context is compacted |
 | `agents.defaults.sandbox` | object | `mode` (off / non-main / all), `scope` (session / agent / shared) |
 | `agents.defaults.bootstrapMaxChars`, `…TotalMaxChars` | number | per-file and total limits on workspace files loaded at bootstrap |
-| `agents.defaults.timeoutSeconds`, `maxConcurrent`, `contextTokens`, `thinkingDefault` | number/string | execution envelope |
-| `agents.defaults.userTimezone`, `timeFormat` | string | IANA zone, clock format |
-| `agents.defaults.cliBackends.<runtime-id>.command` | string | explicit binary path when the runtime is not resolvable on PATH |
-| `agents.list[]` | array | per-agent `id`, `default`, `name`, `workspace`, `model`, `identity`, `sandbox` |
+| `agents.defaults.timeoutSeconds`, `maxConcurrent`, `thinkingDefault` | number/string | execution envelope (documented with the model settings) |
+| `agents.defaults.userTimezone` | string | IANA zone |
+| `agents.defaults.skipBootstrap` | boolean | stops the **creation** of missing bootstrap files — a defaults-only key with no per-agent form |
+| `agents.entries.<id>.*` | object | per-agent overrides: `name`, `workspace`, `model`, `identity`, `sandbox`, `heartbeat`, `memory.search`, `models["<ref>"].agentRuntime` … The **object key is the stable agent id** |
 
 Traps: a per-agent `model` **without its own** `fallbacks` is strict — it silently cancels the fleet
 chain for that agent (`fleet.model.agent-override-strict`). A heartbeat pinned to a model that left the
-catalogue fails on a schedule nobody watches. `agent.skipBootstrap` (singular, at root) is a different
-key from anything under `agents.defaults`.
+catalogue fails on a schedule nobody watches.
+
+**`agents.entries` is an object, not a list.** The older `agents.list[]` array is retired and
+`doctor --fix` migrates it into `agents.entries`; `default` per agent is retired too (exactly one
+configured agent resolves implicitly, and multi-agent calls name the agent). Per-agent heartbeat and
+other overrides live under `agents.entries.<id>.*`.
+
+**Runtime selection is not an agent-defaults key.** Which harness runs a model is policy on the model or
+the provider — `agents.defaults.models["<provider>/<model-id>"].agentRuntime.id`, or
+`models.providers.<provider>.agentRuntime` — and CLI adapters are registered by plugins, not configured
+under `agents.defaults`. The whole-agent forms (`agents.defaults.agentRuntime`,
+`agents.entries.*.agentRuntime`, the session pin and the `OPENCLAW_AGENT_RUNTIME` variable) are legacy
+and **ignored**: a config that still sets one runs on something other than what it says, with no error
+(`doctor --fix` removes them). The `agents.defaults.cliBackends.<runtime-id>.command` form is gone with
+them.
+
+**Keys this page used to list that could not be confirmed** against the current upstream pages:
+`agents.defaults.timeFormat`, and `contextTokens` under `agents.defaults` (the documented
+`contextTokens` is per model, under `models.providers.<provider>.models[]`). Do **not** write either
+until `openclaw config schema` on a test instance shows the path — under a strict schema an unknown key
+is an outage, not a warning.
 
 ## channels
 
@@ -108,23 +127,33 @@ than the operator resets at a different real time than the one written down.
 ## gateway
 
 `gateway.port` (the container-side port is fixed at 18789; the host port is a publish mapping, not
-this key) · `gateway.host` · `gateway.auth.token` · `gateway.reload.mode` (hot / restart / hybrid /
-off).
+this key) · `gateway.host` · `gateway.auth.token` · `gateway.reload.mode` (`off` or `hybrid`; `hybrid` is
+the default).
 
-Traps: everything under `gateway.*` needs a restart. The bearer is **all-or-nothing operator access** —
+Traps: `hot` and `restart` are **retired** values of the reload mode — `doctor --fix` maps both to
+`hybrid`, and a config still carrying one is refused rather than warned about. Reload debounce and the
+in-flight deferral are no longer configurable (the old keys are removed by `doctor --fix`). Everything
+under `gateway.*` needs a restart. The bearer is **all-or-nothing operator access** —
 one gateway is one trust boundary, so the token is unique per instance and never appears in a
 plaintext file (`fleet.security.token-reuse`). `gateway.port` is part of the isolation set: unique per
 instance, together with the config path, the state directory and the workspace.
 
 ## memory
 
-`memory.embedding.provider` · `memory.embedding.model` · `memory.search.hybrid`.
+`memory.search.provider` · `memory.search.model` · `memory.search.fallback` ·
+`memory.search.query.maxResults` · `memory.search.query.minScore`; per-agent overrides sit at
+`agents.entries.<id>.memory.search`.
 
-Traps: index identity is derived from the provider configuration **including the key**, so changing
-any of the three — key included — pauses vector search until an explicit reindex
-(`fleet.memory.index-identity-changed`). An explicitly configured non-local provider fails closed
-rather than quietly falling back to full-text search: no errors is evidence the vector path works,
-not evidence that nothing is configured.
+Traps: the older `memory.embedding.*` / `memorySearch` names are retired and migrated into
+`memory.search` (a per-agent `memorySearch` into `agents.entries.<id>.memory.search`), `provider: "auto"`
+resolves to the OpenAI adapter, and a store-path key is gone because every index lives in its agent's
+database. Hybrid retrieval is **always on** — there is no switch for it, only the two query limits. An
+explicit `provider: "none"` is the deliberate full-text-only mode; leaving the provider unset is **not**
+that, it selects the default adapter. Index identity is derived from the provider configuration
+**including the key**, so changing the provider, model or key pauses vector search until an explicit
+reindex (`fleet.memory.index-identity-changed`). An explicitly configured non-local provider fails
+closed rather than quietly falling back to full-text search: no errors is evidence the vector path
+works, not evidence that nothing is configured.
 
 ## cron
 
@@ -139,6 +168,31 @@ changing at all (`fleet.cron.duplicates-after-upgrade`).
 
 Trap: inline vars are the easiest place for a literal secret to appear. Secrets arrive by reference,
 delivered by the injection wrapper; the config carries names.
+
+## Migrated keys — a retired name is a refusal
+
+The schema is strict, so a name upstream has retired stops the gateway rather than warning. `doctor
+--fix` (R4 here, planned) rewrites them; the table is the shape of what it does, not a command to run
+by hand. Confirm the current mapping on the instance (`config schema`, the upstream migration table)
+before writing any of them.
+
+| Retired | Current |
+|---|---|
+| `agents.list` (array) | `agents.entries` (object keyed by agent id) |
+| top-level `defaultModel` | `agents.defaults.model` |
+| `memorySearch`, `agents.defaults.memorySearch` | `memory.search` |
+| `agents.entries.*.memorySearch` | `agents.entries.*.memory.search` |
+| `gateway.reload.mode` of `hot` or `restart` | `hybrid` |
+| `tools.exec.security` + `tools.exec.ask` | `tools.exec.mode` |
+| `tools.exec.timeoutSec` | `tools.exec.timeoutSeconds` |
+| `session.idleMinutes` | `session.reset.idleMinutes` |
+| `session.maintenance.pruneDays` | `session.maintenance.pruneAfter` |
+| `session.resetByType.dm` | `session.resetByType.direct` |
+| `cron.failureDestination` | destination fields on `cron.failureAlert` |
+| whole-agent runtime keys | model- or provider-scoped `agentRuntime` (see `agents`) |
+
+Instances older than the cut-off `versions.py` reports cannot be migrated in one step: they cross the
+bridge release first (`instance-upgrade`).
 
 ## Secret references
 

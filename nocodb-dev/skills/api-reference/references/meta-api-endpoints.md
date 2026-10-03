@@ -1,13 +1,15 @@
 # NocoDB Meta API — Endpoint Reference (v3)
 
-Authoritative reference for the **Meta API** at `/api/v3/meta/...`. All paths are documented in `nocodb-meta-openapi.json` (bundled in this directory). The Data API (records / links / attachments) lives under `/api/v3/data/...` and is documented in `nocodb-openapi.json`.
+Authoritative reference for the **Meta API** at `/api/v3/meta/...` and the Documents API at `/api/v3/docs/...`. All paths are documented in `nocodb-meta-openapi.json` (bundled in this directory). The Data API (records / links / attachments) lives under `/api/v3/data/...` and is documented in `nocodb-openapi.json`.
+
+On Cloud / licensed self-hosted the MCP server exposes most of these write operations as tools (`listTools(category)` → `callTool`, see the **mcp-patterns** skill); the REST endpoints below are the path on Community Edition and the fallback elsewhere.
 
 All requests use:
 
 ```
-Header:  xc-token: $NOCODB_API_TOKEN          (or: Authorization: Bearer $NOCODB_API_TOKEN)
+Header:  xc-token: ${NOCODB_TOKEN}            (or: Authorization: Bearer ${NOCODB_TOKEN})
 Header:  Content-Type: application/json
-Base:    $NOCODB_URL
+Base:    ${NOCODB_URL}
 ```
 
 > Probe the spec for full per-operation details:
@@ -19,7 +21,7 @@ Base:    $NOCODB_URL
 
 ## Path Structure
 
-Almost every Meta endpoint nests under `/api/v3/meta/bases/{baseId}/...`. The exceptions are workspace-level (`/api/v3/meta/workspaces/...`) and global token-level (`/api/v3/meta/tokens`).
+Almost every Meta endpoint nests under `/api/v3/meta/bases/{baseId}/...`. The exceptions are workspace-level (`/api/v3/meta/workspaces/...`), organization-level (`/api/v3/meta/orgs/...`), global token-level (`/api/v3/meta/tokens`) and the Documents API (`/api/v3/docs/{baseId}/...`).
 
 Path parameters use snake_case (`{base_id}`, `{table_id}`) on the dashboards/scripts/workflows endpoints and camelCase (`{baseId}`, `{tableId}`) elsewhere — both refer to the same NocoDB ID.
 
@@ -47,6 +49,21 @@ Workspace create payload:
 { "title": "New Workspace", "description": "Optional" }
 ```
 
+Workspace member bodies are **arrays** — one object per user (`WorkspaceUserCreate` / `WorkspaceUserUpdate` / `WorkspaceUserDelete`). A new member is identified by `user_id` **or** `email` (not both); updates and deletes key on `user_id`:
+
+```json
+// POST   /workspaces/{workspaceId}/members
+[ { "email": "user@example.com", "workspace_role": "workspace-level-editor" } ]
+
+// PATCH  /workspaces/{workspaceId}/members
+[ { "user_id": "<userId>", "workspace_role": "workspace-level-viewer" } ]
+
+// DELETE /workspaces/{workspaceId}/members
+[ { "user_id": "<userId>" } ]
+```
+
+`workspace_role`: `workspace-level-owner`, `workspace-level-creator`, `workspace-level-editor`, `workspace-level-viewer`, `workspace-level-commenter`, `workspace-level-no-access`.
+
 ## Bases
 
 | Path | Method | Purpose |
@@ -65,13 +82,20 @@ Base update payload (`BaseUpdate`):
 { "title": "Renamed", "description": "New description" }
 ```
 
-Base member invite (`BaseMemberCreate`):
+Base member bodies are **arrays** too (`BaseMemberCreate` / `BaseMemberUpdate` / `BaseMemberDelete`). An invite carries `user_id` **or** `email` (not both), a `base_role`, and optionally `user_name`; updates and deletes key on `user_id`:
 
 ```json
-{ "email": "user@example.com", "roles": "base-editor" }
+// POST   /bases/{base_id}/members
+[ { "email": "user@example.com", "base_role": "editor" } ]
+
+// PATCH  /bases/{base_id}/members
+[ { "user_id": "<userId>", "base_role": "viewer" } ]
+
+// DELETE /bases/{base_id}/members
+[ { "user_id": "<userId>" } ]
 ```
 
-Roles: `base-creator`, `base-editor`, `base-commenter`, `base-viewer`.
+`base_role`: `owner`, `creator`, `editor`, `viewer`, `commenter`, `no-access`.
 
 ## Tables
 
@@ -115,10 +139,12 @@ Fields are addressed under the table for create, then by their own ID for read/u
 | `/api/v3/meta/bases/{baseId}/fields/{fieldId}` | `GET` | Get field |
 | `/api/v3/meta/bases/{baseId}/fields/{fieldId}` | `PATCH` | Update field |
 | `/api/v3/meta/bases/{baseId}/fields/{fieldId}` | `DELETE` | Delete field |
+| `/api/v3/meta/bases/{baseId}/fields/{fieldId}/options` | `POST` | Add choices to a SingleSelect / MultiSelect field |
+| `/api/v3/meta/bases/{baseId}/fields/{fieldId}/options` | `DELETE` | Remove choices (by title) from a select field |
 
 > List fields by reading the parent table's `GET /tables/{tableId}` — the response includes the `fields` array.
 
-Create-field payload (`CreateField` — discriminated by `type`, see `field-types.md` for all 30 variants):
+Create-field payload (`CreateField` — discriminated by `type`, see `field-types.md` for all 35 types). Type-specific settings go inside `options`; only `title`, `type`, `description`, `default_value` and `unique` sit at the top level:
 
 ```json
 { "title": "Phone", "type": "PhoneNumber" }
@@ -126,6 +152,8 @@ Create-field payload (`CreateField` — discriminated by `type`, see `field-type
 { "title": "Status", "type": "SingleSelect", "options": { "choices": [
   {"title":"New"}, {"title":"Active"}, {"title":"Archived"}
 ]}}
+{ "title": "Customer", "type": "LinkToAnotherRecord",
+  "options": { "relation_type": "bt", "related_table_id": "m_customers_id" } }
 ```
 
 Update-field payload (`FieldUpdate`):
@@ -137,9 +165,19 @@ Update-field payload (`FieldUpdate`):
 
 NocoDB validates type changes against existing data — incompatible changes return 422.
 
+Select choices (`FieldOptionsAddReq` / `FieldOptionsDeleteReq`) — the add call is idempotent (existing titles are skipped), the delete call ignores unknown titles, removing a choice clears it from existing records, and at least one choice must remain:
+
+```json
+// POST   .../fields/{fieldId}/options
+{ "choices": [ { "title": "Blocked", "color": "#fee2d5" } ] }
+
+// DELETE .../fields/{fieldId}/options
+{ "choices": [ { "title": "Archived" } ] }
+```
+
 ## Views
 
-> **One endpoint, six view types.** The `POST /views` endpoint accepts a `type` discriminator (`grid`, `gallery`, `kanban`, `calendar`, `map`, `form`) — there are no per-type endpoints.
+> **One endpoint, nine view types.** The `POST /views` endpoint accepts a `type` discriminator (`grid`, `gallery`, `kanban`, `calendar`, `map`, `form`, `gantt`, `timeline`, `list`) — there are no per-type endpoints. `lock_type` is `collaborative` (default), `locked` or `personal`.
 
 | Path | Method | Purpose |
 |------|--------|---------|
@@ -149,38 +187,52 @@ NocoDB validates type changes against existing data — incompatible changes ret
 | `/api/v3/meta/bases/{baseId}/views/{viewId}` | `PATCH` | Update view (rename, options, fields) |
 | `/api/v3/meta/bases/{baseId}/views/{viewId}` | `DELETE` | Delete view |
 
-Create-view payloads (`ViewCreate` — `oneOf` per view type, discriminator on `type`):
+Create-view payloads (`ViewCreate` — `oneOf` per view type, discriminator on `type`; per-type settings go inside `options`):
 
 ```json
 // Grid
-{ "title": "All", "type": "grid" }
+{ "title": "All", "type": "grid",
+  "options": { "row_height": "medium", "groups": [ { "field_id": "c_status_id", "direction": "asc" } ] } }
 
 // Form
 { "title": "Intake", "type": "form",
-  "options": { "subheading": "Tell us about your company" } }
+  "options": { "form_title": "Contact us", "form_description": "Tell us about your company",
+               "thank_you_message": "Thanks!", "reset_form_after_submit": true } }
 
 // Gallery — needs an Attachment cover
 { "title": "Catalog", "type": "gallery",
-  "options": { "fk_cover_image_col_id": "c_image_id" } }
+  "options": { "cover_field_id": "c_image_id" } }
 
-// Kanban — REQUIRES options.fk_grp_col_id (a SingleSelect)
+// Kanban — REQUIRES options.stack_by (a SingleSelect)
 { "title": "Pipeline", "type": "kanban",
-  "options": { "fk_grp_col_id": "c_status_id" } }
+  "options": { "stack_by": { "field_id": "c_status_id" }, "cover_field_id": "c_image_id" } }
 
-// Calendar — REQUIRES options with at least one Date / DateTime range
+// Calendar — REQUIRES options.date_ranges with at least one Date / DateTime range
 { "title": "Schedule", "type": "calendar",
   "options": {
-    "calendar_range": [
-      { "fk_from_column_id": "c_start_id", "fk_to_column_id": "c_end_id" }
+    "date_ranges": [
+      { "start_date_field_id": "c_start_id", "end_date_field_id": "c_end_id" }
     ]
   }}
 
-// Map — needs Geometry field
+// Timeline — REQUIRES options.date_ranges (several ranges allowed)
+{ "title": "Roadmap", "type": "timeline",
+  "options": { "date_ranges": [ { "start_date_field_id": "c_start_id", "end_date_field_id": "c_end_id" } ] } }
+
+// Gantt — REQUIRES options.date_dependency (null = table default); date_ranges is rejected
+{ "title": "Plan", "type": "gantt",
+  "options": { "date_dependency": null } }
+
+// List — hierarchy of linked tables
+{ "title": "Outline", "type": "list",
+  "options": { "levels": [ { "level": 1, "table_id": "m_parent_id" } ], "show_empty_parents": false } }
+
+// Map — needs a GeoData field
 { "title": "Locations", "type": "map",
-  "options": { "fk_geo_data_col_id": "c_geo_id" } }
+  "options": { "geo_data_field_id": "c_geo_id" } }
 ```
 
-Optional on create (and on `PATCH`): `sorts: []`, `filters: {...}`, `fields: [...]`, `row_coloring: {...}`.
+Optional on create (and on `PATCH`): `sorts: []`, `filters: {...}`, `fields: [...]` (the complete ordered field list with `show`, `width`, `aggregation` — every field you omit is hidden), `row_coloring: {...}`.
 
 ## Filters (per view)
 
@@ -198,11 +250,11 @@ Filter create payload (`FilterCreate`):
 { "field_id": "c_status_id", "operator": "eq", "value": "Active" }
 ```
 
-Filter group (`FilterGroup`, up to 3 levels deep):
+Filter group (`FilterGroup` — `group_operator` is `AND` or `OR`; groups nest up to 3 levels deep):
 
 ```json
 {
-  "logical_op": "and",
+  "group_operator": "AND",
   "filters": [
     { "field_id": "c_status_id",   "operator": "eq", "value": "Active" },
     { "field_id": "c_priority_id", "operator": "eq", "value": "High" }
@@ -210,7 +262,7 @@ Filter group (`FilterGroup`, up to 3 levels deep):
 }
 ```
 
-`PUT` replaces the entire view's filter set; `POST` appends.
+`PUT` replaces the entire view's filter set; `POST` appends. For Date / DateTime fields add a `sub_operator` (for example `"exactDate"` with `value: "2026-06-01"`, or `"today"` with no value).
 
 ## Sorts (per view)
 
@@ -224,10 +276,10 @@ Filter group (`FilterGroup`, up to 3 levels deep):
 Sort payload (`SortCreate`):
 
 ```json
-{ "field_id": "c_created_at_id", "order": "desc" }
+{ "field_id": "c_created_at_id", "direction": "desc" }
 ```
 
-`order`: `asc` | `desc`.
+`direction`: `asc` | `desc` (default `asc`).
 
 ## Hooks (Webhooks v3)
 
@@ -253,18 +305,18 @@ Create-hook payload (`HookV3Create`):
 }
 ```
 
-Required: `title`, `operation`, `notification`.
+Required: `title`, `operation`, `notification`. Hook APIs need a cloud Business plan or a licensed self-hosted deployment.
 
 | Key | Values | Notes |
 |-----|--------|-------|
 | `event` | `record` (default) \| `manual` | `record` fires on the chosen `operation`(s); `manual` fires only when explicitly invoked from a Button or Script |
 | `operation` | array of `insert`, `update`, `delete` | One hook can listen to multiple operations |
 | `trigger_fields` | array of column IDs | Optional — for `update`, only fire when one of these fields changed |
-| `notification` | `HookNotificationV3` (oneOf) | URL / Email / Messaging / Script |
+| `notification` | `HookNotificationV3` (oneOf) | URL / Email / Slack-style messaging / Script |
 
 > The v3 hook shape **changed** from earlier NocoDB versions. In v3 there is no `before`/`after` distinction (all hooks are async-after); no top-level `condition` field — use `trigger_fields` for change-based gating, or use a Script notification for richer logic.
 
-Notification subschemas (`HookNotificationV3*`):
+Notification subschemas (`HookNotificationV3*`, discriminated by `type`):
 
 ```json
 // URL
@@ -272,25 +324,21 @@ Notification subschemas (`HookNotificationV3*`):
   "method": "POST",
   "path":   "https://hooks.example.com/nocodb",
   "body":   "{\"id\": \"{{record.Id}}\"}",
-  "headers": [{"name":"Authorization","value":"Bearer ${KEY}"}]
+  "headers": [{"name":"Authorization","value":"Bearer ${KEY}","enabled":true}]
 }}
 
-// Email — requires SMTP plugin configured
+// Email — requires SMTP plugin configured; to, subject and body are all required
 { "type": "Email", "payload": {
   "to":      "ops@example.com",
   "subject": "{{record.Title}}",
   "body":    "<p>{{record.Description}}</p>"
 }}
 
-// Messaging — Slack / Microsoft Teams / Discord / Mattermost
-{ "type": "Messaging", "payload": {
-  "channel":     "Slack",
-  "webhook_url": "https://hooks.slack.com/services/...",
-  "body":        ":rocket: {{record.Title}}"
-}}
+// Messaging — type is the service: Slack | Discord | Telegram | Whatsapp | Twilio
+{ "type": "Slack", "payload": { "body": ":rocket: {{record.Title}}" } }
 
-// Script (Enterprise only) — requires an existing Script on the same base
-{ "type": "Script", "payload": { "script_id": "<scriptId>" } }
+// Script — requires an existing Script on the same base
+{ "type": "Script", "payload": { "scriptId": "<scriptId>" } }
 ```
 
 ## Comments
@@ -309,7 +357,7 @@ Create payload (`CommentCreateRequest`):
 { "comment": "Looks good — please verify the @customer field." }
 ```
 
-`comment` is markdown, max 3000 chars.
+`comment` is markdown, max 10000 chars.
 
 ## Scripts
 
@@ -335,8 +383,8 @@ Create payload (`ScriptCreateReq`):
 
 Scripts are referenced by:
 
-- The `Button` field type (`action.type: "script"`).
-- The `Script` hook notification (`{"type":"Script","payload":{"script_id":"..."}}`).
+- The `Button` field type (`options: { "type": "script", "script_id": "<scriptId>" }`).
+- The `Script` hook notification (`{"type":"Script","payload":{"scriptId":"..."}}`).
 
 ## Dashboards
 
@@ -370,21 +418,25 @@ Widget options schemas (`WidgetOptions*`):
 
 | Schema | Widget kind |
 |--------|-------------|
-| `WidgetOptionsBarChart` | Bar chart |
-| `WidgetOptionsLineChart` | Line chart |
-| `WidgetOptionsPieChart` | Pie chart |
-| `WidgetOptionsDonutChart` | Donut chart |
+| `WidgetOptionsBarChart` | Bar chart (`chart_type: "bar"`) |
+| `WidgetOptionsLineChart` | Line chart (`chart_type: "line"`) |
+| `WidgetOptionsPieChart` | Pie chart (`chart_type: "pie"`) |
+| `WidgetOptionsDonutChart` | Donut chart (`chart_type: "donut"`) |
+| `WidgetOptionsScatter` | Scatter chart (`chart_type: "scatter"`) |
 | `WidgetOptionsMetric` | Single metric (KPI tile) |
 | `WidgetOptionsText` | Markdown text block |
 | `WidgetOptionsIframe` | Embedded URL |
 
 Create payload (`WidgetCreateReq`):
 
+`type` is `chart`, `metric`, `text` or `iframe`; chart kinds are selected by `options.chart_type`. `table_id` / `view_id` and `position` (`x`, `y`, `w`, `h` on a 12-column grid) are top-level keys:
+
 ```json
 {
-  "title": "Active customers",
+  "title": "Customers",
   "type":  "metric",
-  "options": { "table_id": "<tableId>", "aggregation": "count", "filter": "(Status,eq,Active)" }
+  "table_id": "<tableId>",
+  "options": { "data_source": "table", "metric": { "type": "count", "aggregation": "count" } }
 }
 ```
 
@@ -404,12 +456,39 @@ Execute payload (`WorkflowExecuteReq`):
 
 ```json
 {
-  "input": { "<workflow input variables>": "..." },
-  "trigger": "manual"
+  "trigger_data": { "<data for the workflow trigger>": "..." }
 }
 ```
 
-> Workflow **creation/editing** APIs are not in this spec — author workflows in the NocoDB UI; this API surface is for listing, executing, and inspecting executions. The `WorkflowDraft*`, `WorkflowNode*`, `WorkflowEdge` schemas describe the node graph for read responses.
+The response is `{ "id": "<execution id>" }`. Executions list as `{ "list": [...] }` (`limit`, `offset`), and `status` is `running`, `waiting`, `completed`, `error`, `cancelled` or `skipped`.
+
+> Workflow **creation/editing** is not a REST operation in this spec — this API surface is for listing, executing, and inspecting executions. On Cloud / licensed self-hosted, drafts are authored through MCP (`createWorkflow`, `updateWorkflow`, node and edge tools, `validateWorkflowNode`, `publishWorkflow`; enabling and `run_as` stay in the UI). The `WorkflowDraft*`, `WorkflowNode*`, `WorkflowEdge` schemas describe the node graph for read responses.
+
+## Documents
+
+Document pages inside a base (Business plan and above, or licensed self-hosted).
+
+| Path | Method | Purpose |
+|------|--------|---------|
+| `/api/v3/docs/{baseId}` | `GET` | List documents (`parent_id` query parameter walks the hierarchy; content is omitted) |
+| `/api/v3/docs/{baseId}` | `POST` | Create a document (`title`, `content`, `parent_id`) |
+| `/api/v3/docs/{baseId}/{docId}` | `GET` | Get a document with its content |
+| `/api/v3/docs/{baseId}/{docId}` | `PATCH` | Update title / content |
+| `/api/v3/docs/{baseId}/{docId}` | `DELETE` | Delete a document |
+| `/api/v3/docs/{baseId}/{docId}/reorder` | `PATCH` | Move / reorder within the hierarchy |
+
+Probe `DocumentCreate` / `DocumentUpdate` in the spec for the exact body shape.
+
+## Environments
+
+| Path | Method | Purpose |
+|------|--------|---------|
+| `/api/v3/meta/workspaces/{workspaceId}/environments` | `GET` / `POST` | List / create environments |
+| `/api/v3/meta/workspaces/{workspaceId}/environments/{environmentId}` | `PATCH` / `DELETE` | Update / delete |
+| `/api/v3/meta/orgs/{orgId}/environments` | `GET` / `POST` | Org-level list / create (Org Owner to write) |
+| `/api/v3/meta/orgs/{orgId}/environments/{environmentId}` | `PATCH` / `DELETE` | Org-level update / delete |
+
+Bodies: `EnvironmentCreateV3Req` / `EnvironmentUpdateV3Req`. Available on self-hosted Enterprise and on cloud-hosted plans with organizations.
 
 ## API Tokens
 
@@ -442,12 +521,12 @@ Response (`ApiTokenWithTokenV3`) includes the raw token **once** — store it im
 
 ## Authentication & Errors
 
-Same as the Data API — `xc-token` or `Authorization: Bearer ...`. The four error response shapes (`0`, `1`, `2`, `3`) cover 400 / 401 / 403 / 404. 422 is returned for schema-validation failures (e.g. incompatible field type change, malformed view options).
+Same as the Data API — `xc-token` or `Authorization: Bearer ...`. Error bodies are `{ "error", "message" }` for 400 / 401 / 403 / 404; 422 is returned for schema-validation failures (e.g. incompatible field type change, malformed view options).
 
 ## Notes
 
 - All Meta endpoints accept either header scheme.
 - `PATCH` requests should include only the keys you're changing.
-- `DELETE` is destructive and unrecoverable — confirm before scripting.
+- `DELETE` is destructive — confirm before scripting. On Cloud / licensed, deleted tables, fields, views and (on NocoDB-managed sources) records land in the base trash and can be restored until the retention window ends (`listTrash` / `restoreFromTrash` over MCP); do not count on it for external sources.
 - Path-parameter casing is inconsistent in the spec: `{baseId}` vs `{base_id}`. Both refer to the same NocoDB ID format (prefix `p`); the casing is purely a quirk of this OpenAPI document.
 - v3 represents a clean break from older NocoDB Meta API versions (`/api/v1/db/meta/...`, `/api/v2/meta/...`) — older paths may still respond on legacy instances but are not documented here.

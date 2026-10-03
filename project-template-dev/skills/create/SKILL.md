@@ -142,9 +142,11 @@ This matters because plugins are searched per-layer. A framework in both `logic`
 
 See `references/stack-json-schema.md` for the complete field documentation.
 
-## Step 5: Customize CLAUDE.md
+## Step 5: Customize AGENTS.md and CLAUDE.md
 
-Update CLAUDE.md for the new template level:
+`AGENTS.md` holds the shared rules every coding tool reads; `CLAUDE.md` begins with `@AGENTS.md` and adds Claude-specific lines (see `template-reference/references/conventions.md`). Edit whichever file already holds a section and keep `@AGENTS.md` as the first line of `CLAUDE.md`. Never generate `AGENTS.md` from `CLAUDE.md`. If the parent is a template from the older layout (AGENTS.md generated from CLAUDE.md), migrate it now: move the shared sections into `AGENTS.md` and import it from `CLAUDE.md`.
+
+Update the project memory for the new template level:
 
 ### Level 1 Changes
 - Replace project name placeholder with stack name (e.g., "Directus + Next.js Stack Template")
@@ -154,7 +156,7 @@ Update CLAUDE.md for the new template level:
 - Add stack-specific Quick Commands (e.g., `docker compose up dev`, `pnpm dev`)
 - Add Gotchas section with known stack-specific pitfalls
 - Remove all remaining placeholder comments
-- Keep under 100 lines
+- Keep under 100 lines in total, imported `AGENTS.md` included (this system's own limit; Anthropic's guidance is under 200). Do not pull `@docs/...` imports in to save space — imports load at launch; point to `docs/architecture.md` by plain path instead
 
 ### Level 1.5 Changes
 - Same as Level 1, plus note that it's a demo
@@ -174,17 +176,19 @@ Update CLAUDE.md for the new template level:
 # Add stack-specific variables not in the L0 template
 ```
 
-**`.mcp.json.example`** — Update with stack-specific MCP server templates:
+**`.mcp.json`** — Add the stack's MCP servers. The file is committed, so it holds `${VAR}` references only; every variable goes into `.env.example` (and the `env` block of `.claude/settings.local.json.example`), the real values stay in the gitignored `.env` / `.claude/settings.local.json`:
 ```json
 {
   "mcpServers": {
     "{data-service}": {
+      "type": "http",
       "url": "${DATA_SERVICE_URL}/mcp",
       "headers": { "Authorization": "Bearer ${DATA_SERVICE_TOKEN}" }
     }
   }
 }
 ```
+A literal URL is acceptable only for a published product endpoint that is the same for every user.
 
 **`docs/architecture.md`** — Fill with stack-specific architecture:
 - Overview of the stack (what each layer does)
@@ -243,24 +247,39 @@ for TECH in {data-layer} {logic-layer} {interface-layer}; do
 done
 ```
 
-For each found plugin, read its `plugin.json` to get the name and classify by type (technology, process, stack).
+For each found plugin, read its `plugin.json` to get the name and classify by type (technology, process, stack). Note which directory it was found in: a plugin from `$PLUGINS_PUBLIC_SOURCE_DIR` is public (it is in the Agents Store marketplace), one found only in `$PLUGINS_PRIVATE_SOURCE_DIR` is private.
 
-Update `stack.json` `plugins` arrays with found plugins.
+Update `stack.json` `plugins` arrays with found plugins. Stack plugins are named `stack-{name}`; technology plugins `{tool}-{process}`. Use the `name` from each plugin's `plugin.json` (it can differ from the directory name); a retired or renamed name is not a plugin.
 
 Update `CLAUDE.md` Installed Plugins section with plugin names and descriptions.
+
+Write `.claude/settings.json` (committed) from the **public** plugins in that list, so they are offered to everyone who clones the template:
+```json
+{
+  "extraKnownMarketplaces": {
+    "agents-store-claude-plugins": {
+      "source": { "source": "github", "repo": "Agents-Store/claude-plugins" }
+    }
+  },
+  "enabledPlugins": {
+    "directus-dev@agents-store-claude-plugins": true
+  }
+}
+```
+Add one `"<name>@agents-store-claude-plugins": true` entry per public plugin from `stack.json`. Plugins found only in the private source stay in `stack.json` and in the CLAUDE.md Installed Plugins section, but are NOT written to `.claude/settings.json`: they do not exist in the public marketplace, and a committed file must never name a private marketplace. The owner installs them separately from their own marketplace. Keep any other keys the parent already has; never put `env` values or tokens in this file.
 
 Report:
 ```
 Plugins found:
-  technology: directus-dev, nextjs-dev, nextjs-provision, vercel
-  stack: stack-directus-nextjs-dev
+  technology: directus-dev, nextjs-dev, nextjs-provision, vercel-dev
+  stack: stack-directus-nextjs
 
 Plugins NOT found:
   (none — all technologies have matching plugins)
 
   OR:
 
-  nuxt — no plugin found. Create with: /plugin-creator:create
+  nuxt — no plugin found. Author one as a Claude Code plugin (for example with /plugin-dev:create-plugin from the official plugin-dev plugin)
 ```
 
 ## Step 8: Validate
@@ -294,6 +313,6 @@ Template created: {new-name}
 
 Next steps:
   1. Review generated files
-  2. Install listed plugins (if not already installed)
+  2. Install the public plugins: `.claude/settings.json` enables them, but each person still runs `claude plugin install <name>@agents-store-claude-plugins --scope project` once (add the marketplace first with `claude plugin marketplace add Agents-Store/claude-plugins`). Private plugins: install them yourself from their own marketplace
   3. Push to GitHub: git remote add origin git@github.com:$PROJECT_TEMPLATES_GITHUB_ORG/{new-name}.git && git push -u origin main
 ```

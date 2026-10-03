@@ -1,138 +1,175 @@
-# Views, Filters, Sorts — CLI Reference
+# Views, Filters, Sorts — curl Recipes
 
-Imported from the official NocoDB agent-skills CLI. View management requires Enterprise (self-hosted or cloud); filter and sort APIs are available on the Free plan.
+The view APIs are available on cloud-hosted Enterprise and licensed self-hosted deployments (Business plan and above); filter and sort reads work on every plan. The `nocodb_api METHOD /path ['body']` wrapper is defined in `../SKILL.md`. On Cloud / licensed the MCP tools `createView`, `createFilter`, `replaceFilters`, `addSort`, … take the same keys (see **mcp-patterns**).
 
 ## Views
 
 ```bash
-nc view:list pdef5678uvw mghi9012rst                                  # → vwmno7890abc
-nc view:get  vwmno7890abc
-nc view:update vwmno7890abc '{"title":"Renamed"}'
-nc view:delete vwmno7890abc
+nocodb_api GET    /meta/bases/$BASE_ID/tables/$TABLE_ID/views              # → vwmno7890abc
+nocodb_api GET    /meta/bases/$BASE_ID/views/$VIEW_ID
+nocodb_api PATCH  /meta/bases/$BASE_ID/views/$VIEW_ID '{"title":"Renamed"}'
+nocodb_api DELETE /meta/bases/$BASE_ID/views/$VIEW_ID
 ```
 
 ### Create per view type
 
+All types use `POST /meta/bases/$BASE_ID/tables/$TABLE_ID/views`; the type goes in the body and type-specific settings go inside `options`.
+
 Grid:
 
 ```bash
-nc view:create:grid pdef5678uvw mghi9012rst '{"title":"All Customers"}'
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/views '{"title":"All Customers","type":"grid"}'
 ```
 
 Form:
 
 ```bash
-nc view:create:form pdef5678uvw mghi9012rst '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/views '{
   "title": "Intake Form",
-  "subheading": "Tell us about your company"
+  "type": "form",
+  "options": { "form_title": "Contact us", "form_description": "Tell us about your company" }
 }'
 ```
 
 Gallery (needs an Attachment cover field):
 
 ```bash
-nc view:create:gallery pdef5678uvw mghi9012rst '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/views '{
   "title": "Catalog",
-  "fk_cover_image_col_id": "c_image_id"
+  "type": "gallery",
+  "options": { "cover_field_id": "c_image_id" }
 }'
 ```
 
-Kanban (needs a SingleSelect group field):
+Kanban (needs a SingleSelect stacking field):
 
 ```bash
-nc view:create:kanban pdef5678uvw mghi9012rst '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/views '{
   "title": "Pipeline",
-  "fk_grp_col_id": "c_status_id"
+  "type": "kanban",
+  "options": { "stack_by": { "field_id": "c_status_id" } }
 }'
 ```
 
-Calendar (needs a Date / DateTime range field):
+Calendar (needs a Date / DateTime range):
 
 ```bash
-nc view:create:calendar pdef5678uvw mghi9012rst '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/views '{
   "title": "Schedule",
-  "calendar_range": [
-    { "fk_from_column_id": "c_start_id", "fk_to_column_id": "c_end_id" }
+  "type": "calendar",
+  "options": { "date_ranges": [ { "start_date_field_id": "c_start_id", "end_date_field_id": "c_end_id" } ] }
+}'
+```
+
+Timeline (several ranges allowed):
+
+```bash
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/views '{
+  "title": "Roadmap",
+  "type": "timeline",
+  "options": { "date_ranges": [ { "start_date_field_id": "c_start_id", "end_date_field_id": "c_end_id" } ] }
+}'
+```
+
+Gantt (`date_dependency` is required; `null` takes the table default; `date_ranges` is rejected):
+
+```bash
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/views '{
+  "title": "Plan",
+  "type": "gantt",
+  "options": { "date_dependency": null }
+}'
+```
+
+Map (needs a geographic point field):
+
+```bash
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/views '{
+  "title": "Locations",
+  "type": "map",
+  "options": { "geo_data_field_id": "c_geo_id" }
+}'
+```
+
+List — see **view-management** for the `levels` shape. Every view also accepts `lock_type`: `collaborative` (default), `locked`, `personal`.
+
+### View field visibility & order
+
+Send the complete ordered list — every field you omit is hidden:
+
+```bash
+nocodb_api PATCH /meta/bases/$BASE_ID/views/$VIEW_ID '{
+  "fields": [
+    { "field_id": "c_title_id",  "show": true, "width": 240 },
+    { "field_id": "c_status_id", "show": true },
+    { "field_id": "c_notes_id",  "show": false }
   ]
 }'
-```
-
-Map (needs a Geometry field):
-
-```bash
-nc view:create:map pdef5678uvw mghi9012rst '{
-  "title": "Locations",
-  "fk_geo_data_col_id": "c_geo_id"
-}'
-```
-
-### View column visibility & order
-
-```bash
-nc view:column:list   vwmno7890abc
-nc view:column:update vwmno7890abc <viewColumnId> '{"show":true,"order":3}'
 ```
 
 ## Filters (per view)
 
 ```bash
-nc filter:list   vwmno7890abc
-nc filter:create vwmno7890abc '{
-  "fk_column_id": "c_status_id",
-  "comparison_op": "eq",
+nocodb_api GET    /meta/bases/$BASE_ID/views/$VIEW_ID/filters
+nocodb_api POST   /meta/bases/$BASE_ID/views/$VIEW_ID/filters '{
+  "field_id": "c_status_id",
+  "operator": "eq",
   "value": "Active"
 }'
-nc filter:update <filterId> '{"value":"Archived"}'
-nc filter:delete <filterId>
+nocodb_api PATCH  /meta/bases/$BASE_ID/filters/$FILTER_ID '{"value":"Archived"}'
+nocodb_api DELETE /meta/bases/$BASE_ID/filters/$FILTER_ID
 ```
 
-Logical groups — set `is_group: true` and nest children:
+Logical groups — `group_operator` is `AND` or `OR`; members may be conditions or nested groups:
 
 ```bash
-nc filter:create vwmno7890abc '{
-  "is_group": true,
-  "logical_op": "and",
-  "children": [
-    { "fk_column_id": "c_status_id",   "comparison_op": "eq", "value": "Active" },
-    { "fk_column_id": "c_priority_id", "comparison_op": "eq", "value": "High" }
+nocodb_api POST /meta/bases/$BASE_ID/views/$VIEW_ID/filters '{
+  "group_operator": "AND",
+  "filters": [
+    { "field_id": "c_status_id",   "operator": "eq", "value": "Active" },
+    { "field_id": "c_priority_id", "operator": "eq", "value": "High" }
   ]
 }'
 ```
 
-`logical_op`: `and` | `or` | `not`. NocoDB supports up to 3 levels of nesting (see `FilterGroupLevel*` schemas in `nocodb-openapi.json`).
+NocoDB supports up to 3 levels of nesting (see `FilterGroupLevel*` schemas in `nocodb-meta-openapi.json`). `PUT /meta/bases/$BASE_ID/views/$VIEW_ID/filters` replaces the whole filter set with the group you send.
+
+Date / DateTime fields need a `sub_operator` — `today`, `yesterday`, `daysAgo` (value = number), `exactDate` (value = `YYYY-MM-DD`), `isWithin` with `pastWeek`, … — for example:
+
+```bash
+nocodb_api POST /meta/bases/$BASE_ID/views/$VIEW_ID/filters '{
+  "field_id": "c_due_id", "operator": "lt", "sub_operator": "today"
+}'
+```
 
 ## Sorts (per view)
 
 ```bash
-nc sort:list   vwmno7890abc
-nc sort:create vwmno7890abc '{
-  "fk_column_id": "c_created_at_id",
+nocodb_api GET    /meta/bases/$BASE_ID/views/$VIEW_ID/sorts
+nocodb_api POST   /meta/bases/$BASE_ID/views/$VIEW_ID/sorts '{
+  "field_id": "c_created_at_id",
   "direction": "desc"
 }'
-nc sort:update <sortId> '{"direction":"asc"}'
-nc sort:delete <sortId>
+nocodb_api PATCH  /meta/bases/$BASE_ID/sorts/$SORT_ID '{"direction":"asc"}'
+nocodb_api DELETE /meta/bases/$BASE_ID/sorts/$SORT_ID
 ```
 
-`direction`: `asc` | `desc`.
+`direction`: `asc` | `desc` (default `asc`).
 
 ## View Sharing
 
-```bash
-nc view:share:create vwmno7890abc '{"meta":{"allowCSVDownload":true}}'
-nc view:share:list  pdef5678uvw mghi9012rst
-nc view:share:delete vwmno7890abc <sharedViewUuid>
-```
+Public share links are not part of the REST spec. On Cloud / licensed use the MCP `shareView` / `unshareView` tools (category `shared-views`); otherwise share from the NocoDB UI.
 
 ## Filter Operator Reference
 
 | Category | Operators |
 |----------|-----------|
 | Comparison | `eq`, `neq`, `gt`, `lt`, `gte`, `lte` |
-| Range | `btw`, `nbtw` |
+| Range | `btw`, `nbtw` (the MCP record tools reject them on numeric, rating, duration, date and checkbox fields — prefer two bounds with `gte` / `lte`) |
 | Text | `like`, `nlike` |
 | List | `in`, `allof`, `anyof`, `nallof`, `nanyof` |
 | Empty | `blank`, `notblank`, `null`, `notnull`, `empty`, `notempty` |
 | Checkbox | `checked`, `notchecked` |
-| Date keywords | `today`, `tomorrow`, `yesterday`, `oneWeekAgo`, `oneWeekFromNow`, `oneMonthAgo`, `oneMonthFromNow`, `daysAgo`, `daysFromNow`, `exactDate`, `isWithin` |
+| Date | `isWithin`, plus a `sub_operator` from `today`, `tomorrow`, `yesterday`, `oneWeekAgo`, `oneWeekFromNow`, `oneMonthAgo`, `oneMonthFromNow`, `daysAgo`, `daysFromNow`, `exactDate`, `pastWeek`, `pastMonth`, `pastYear`, `nextWeek`, `nextMonth`, `nextYear`, `pastNumberOfDays`, `nextNumberOfDays` |
 
-For a deeper filter syntax catalog, see `nocodb-ops/skills/cli-reference/references/filter-syntax.md`.
+For the `where` string grammar used by record queries, see `nocodb-ops/skills/cli-reference/references/filter-syntax.md`.

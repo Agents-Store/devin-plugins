@@ -123,7 +123,7 @@ Build `.doc_input.json`:
 ## Step 5: GENERATE
 
 ```bash
-cd <plugin_dir> && node scripts/generate_pdf.js /Users/user/Documents/.doc_input.json
+node "<plugin_dir>/scripts/generate_pdf.js" /Users/user/Documents/.doc_input.json
 ```
 
 Output:

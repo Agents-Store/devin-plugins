@@ -74,7 +74,7 @@ await ctx.replyWithMediaGroup([
 ]);
 ```
 
-`InputMediaBuilder` covers `photo`, `video`, `audio`, `document`.
+`InputMediaBuilder` covers `photo`, `video`, `animation`, `audio`, `document`. Albums are core grammY — no plugin is involved (and no official plugin waits for a whole incoming album; each photo arrives as its own update sharing a `media_group_id`).
 
 ## Receiving files
 
@@ -99,11 +99,11 @@ bot.on(":voice", async (ctx) => {
 });
 ```
 
-The filter `:file` matches *any* media attachment (photo, video, document, audio, voice, video_note, sticker, animation) so you can handle them uniformly.
+The filter `:file` matches *any* file attachment (photo, live_photo, video, animation, document, audio, voice, video_note, sticker) so you can handle them uniformly; `:media` narrows that to photo, live_photo and video.
 
 ## Download a received file
 
-`ctx.getFile()` only gives you the metadata. To download bytes, use `file.getUrl()` (Node) — or compute the URL by hand:
+`ctx.getFile()` only gives you metadata (`file_id`, `file_size`, `file_path`). The core `File` type has no `getUrl()` or `download()` — those appear only after you install `@grammyjs/files`. With the core package alone, build the URL by hand:
 
 ```typescript
 bot.on(":file", async (ctx) => {
@@ -116,17 +116,34 @@ bot.on(":file", async (ctx) => {
 });
 ```
 
-For the `@grammyjs/files` plugin convenience helper, see `plugins-catalog` — it adds `file.download()`.
+With the `@grammyjs/files` plugin (`npm i @grammyjs/files`) the same thing is one call:
+
+```typescript
+import { Bot, Context } from "grammy";
+import { type FileFlavor, hydrateFiles } from "@grammyjs/files";
+
+type MyContext = FileFlavor<Context>;
+const bot = new Bot<MyContext>(process.env.BOT_TOKEN!);
+bot.api.config.use(hydrateFiles(bot.token));
+
+bot.on(":file", async (ctx) => {
+  const file = await ctx.getFile();
+  const path = await file.download();          // temp file; file.download("./incoming.bin") picks the location
+  console.log("saved to", path, "from", file.getUrl());
+});
+```
 
 ### File size limits
 
 | Action | Bot API limit |
 |---|---|
-| Download `file_path` | 20 MB |
-| Send via URL or InputFile | 50 MB |
-| Send via local Bot API server (self-hosted) | 2 GB |
+| Send by `file_id` | none — the file already lives on Telegram |
+| Send by URL | 5 MB for photos, 20 MB for everything else |
+| Send by upload (`InputFile`, multipart) | 10 MB for photos, 50 MB for everything else |
+| Download with `getFile` | 20 MB |
+| Self-hosted Bot API server | upload up to 2000 MB, download without a limit |
 
-For files >20 MB you need a self-hosted Bot API server. For most bots, link to an external storage URL instead.
+For downloads over 20 MB you need a self-hosted Bot API server. For most bots, link to an external storage URL instead.
 
 ## Captions, parse mode, and formatting
 
@@ -135,11 +152,19 @@ await ctx.replyWithPhoto(photo, {
   caption: "*Bold* _italic_ [link](https://grammy.dev)",
   parse_mode: "MarkdownV2",   // or "HTML"
 });
-
-// Reuse the parse-mode plugin's `bot.api.config.use(hydrateReply)` to get ctx.replyWithMarkdown helpers
 ```
 
-In MarkdownV2 you must escape all `_*[]()~ ` `>#+-=|{}.!` characters that aren't part of formatting. Use the `@grammyjs/parse-mode` plugin's `bold("text")` / `italic("text")` builders to avoid manual escaping.
+In MarkdownV2 you must escape all `_*[]()~ ` `>#+-=|{}.!` characters that aren't part of formatting. To avoid escaping altogether, build the caption with `@grammyjs/parse-mode` (≥ 2.0) and send entities instead of a parse mode:
+
+```typescript
+import { b, fmt } from "@grammyjs/parse-mode";
+
+const cap = fmt`${b}Welcome${b} to the group!`;
+await ctx.replyWithPhoto(photo, {
+  caption: cap.caption,
+  caption_entities: cap.caption_entities,
+});
+```
 
 ## Streaming a generated file
 

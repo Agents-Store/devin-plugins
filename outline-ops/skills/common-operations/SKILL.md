@@ -27,7 +27,7 @@ H_AUTH="Authorization: Bearer ${OUTLINE_API_KEY}"
 1. **Everything is `POST ${OUT}/<method>` with a JSON body.** No GETs, no path params. An action with no inputs still needs `-d '{}'`.
 2. **Read `.data`.** The useful payload is always under `.data` in the response envelope.
 3. **Resolve titles to ids once.** Users say "the Welcome doc"; the API wants a UUID or `urlId`. Resolve with `documents.search` / `documents.search_titles` / `collections.list` and keep the id.
-4. **Confirm before destructive actions.** `documents.delete` (trash), `permanent: true`, `documents.empty_trash`, `collections.delete`, `users.delete/suspend`, and `shares.revoke` are high-impact — show the user what will change first.
+4. **Confirm before destructive actions.** `documents.delete` (trash), `permanent: true`, `documents.empty_trash`, `collections.delete`, `users.delete/suspend`, `shares.revoke`, `revisions.delete`, `apiKeys.delete`, `webhookSubscriptions.delete`, and `auth.delete` (sign out — ends the user's sessions and tokens) are high-impact — show the user what will change first.
 
 ## Workflow: find a document by title
 
@@ -58,6 +58,7 @@ curl -s -X POST "${OUT}/documents.update" -H "$H_AUTH" -H "Content-Type: applica
 ```
 - **Append / prepend** without resending the whole doc: add `"editMode":"append"` (or `prepend`) with `text`.
 - **Surgical edit**: `"editMode":"patch"` with `findText` (the existing text to replace) and `text` (the replacement). (→ `documents.md`)
+- **Safe concurrent edit**: read the doc, then send `"lastRevision": <.data.revision>` with the update; a `409` means someone saved in between — re-read, merge, retry.
 
 ## Workflow: organize — move, archive, trash, restore
 
@@ -71,6 +72,8 @@ curl -s -X POST "${OUT}/documents.update" -H "$H_AUTH" -H "Content-Type: applica
 1. **Create** — `collections.create` `{"name","description"?,"permission"?,"color"?,"icon"?}` (`permission` is `read` or `read_write` for the default workspace access). (→ `collections.md`)
 2. **Add docs** — create documents with that `collectionId`, or `documents.move` existing ones in.
 3. **See the tree** — `collections.documents` `{"id"}` returns the nested navigation structure.
+4. **Archive / restore / copy** — `collections.archive` `{"id","reason"?}` hides a collection and its documents (reversible with `collections.restore`); `collections.duplicate` `{"id","name"?}` copies it with its published documents. Prefer archive over `collections.delete`. (→ `collections.md`)
+5. **Send either `description` or `data`** to `collections.create`/`update`, never both.
 
 ## Workflow: share a document publicly
 
@@ -86,16 +89,24 @@ Revoke with `shares.revoke` `{"id"}`. (→ `sharing-access.md`)
 ## Workflow: manage people & permissions
 
 1. **Invite** — `users.invite` `{"invites":[{"email":"alice@acme.com","name":"Alice","role":"member"}]}`. (→ `users-groups.md`)
-2. **Find / list** — `users.list` `{"query":"alice"}` or `{"filter":"active"}`.
-3. **Change role** — `users.update_role` `{"id","role":"admin|member|viewer"}` (admin only).
+2. **Find / list** — `users.list` `{"query":"alice"}` or with the structured filter `{"filters":[{"field":"suspendedAt","operator":"isNull"}]}` (the older `{"filter":"active"}` still works but is deprecated). Re-send a pending invite with `users.resendInvite` `{"id"}`.
+3. **Change role** — `users.update_role` `{"id","role":"admin|member|viewer|guest"}` (admin only).
 4. **Suspend** (reversible, preferred over delete) — `users.suspend` `{"id"}`; reverse with `users.activate`. Confirm first.
 5. **Grant collection access** — `collections.add_user` `{"id":"<collectionId>","userId","permission":"read_write"}`, or by group with `collections.add_group`. Per-document access uses `documents.add_user` / `documents.add_group`.
 
 ## Workflow: engage — star, comment, view counts
 
 - **Star** a doc/collection for the sidebar: `stars.create` `{"documentId"}` or `{"collectionId"}`.
-- **Comment**: `comments.create` `{"documentId","text":"…"}`; reply with `parentCommentId`; anchor inline with `anchorText`. (→ `comments-stars-views.md`)
+- **Comment**: `comments.create` `{"documentId","text":"…"}`; reply with `parentCommentId`; anchor inline with `anchorText`. Edit with `comments.update` `{"id","text":"…"}` (markdown `text` or editor `data`). Close a thread with `comments.resolve` `{"id"}` (`comments.unresolve` re-opens), react with `comments.add_reaction` `{"id","emoji":"👍"}`. (→ `comments-stars-views.md`)
+- **Pin** a document to a collection top or the home screen (visible to everyone): `pins.create` `{"documentId","collectionId"?}`. **Follow** a document or collection: `subscriptions.create` `{"event":"documents","documentId"}`. **Clear notifications**: `notifications.update_all` `{"viewedAt":"<ISO date-time>"}`.
 - **View counts** for a doc: `views.list` `{"documentId"}`.
+
+## Workflow: files, webhooks & keys (admin-leaning)
+
+- **Pull an image into a document** without the two-step upload: `attachments.createFromUrl` `{"url","documentId"?}` — Outline fetches it; embed the returned attachment `url`. (→ `attachments-fileops.md`)
+- **Webhook** (workspace admin): `webhookSubscriptions.create` `{"name","url","events":["documents.publish"],"secret"?}` (`["*"]` = all events; cloud needs `https`). List/update/delete with the sibling methods. (→ `sharing-access.md`)
+- **API key**: `apiKeys.create` `{"name","expiresAt"?,"scope"?}` — the full key is returned **once**; store it without printing it. Revoke with `apiKeys.delete`. (→ `oauth-data-attributes.md`)
+- **Name a revision** `revisions.update` `{"id","name"}`; **export one** with `revisions.export` `{"id"}` and download via `fileOperations.redirect`. (→ `revisions-templates-events.md`)
 
 ## Workflow: report & audit
 

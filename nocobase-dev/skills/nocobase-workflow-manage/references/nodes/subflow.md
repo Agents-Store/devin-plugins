@@ -1,9 +1,13 @@
 ---
 title: "Call Workflow"
-description: "Explains how the sub-workflow call node handles the called workflow and context parameter passing."
+description: "Use when a workflow should reuse another workflow as a subroutine, pass it inputs, and consume its Workflow Output result."
 ---
 
 # Call Workflow
+
+## Commercial Plugin Prerequisite
+
+This node requires the commercial plugin `@nocobase/plugin-workflow-subflow` to be installed and activated in the target application. Apply the [Commercial Workflow Plugin Gate](../commercial-plugin-gate.md) before creating or updating a `subflow` node. If the plugin is missing or disabled, do not use this node and do not silently replace it by copying the target workflow's nodes into the caller.
 
 ## Node Type
 
@@ -43,5 +47,6 @@ Not supported. This node cannot use CLI `workflow flow-nodes test` or HTTP `flow
 This node exposes a single root result value, referenced directly as `{{$jobsMapByNodeKey.<nodeKey>}}`.
 
 - Exposed root: the called workflow's final output value.
-- No child field tree is provided. If the sub-workflow returns structured JSON and you need named child variables, follow this node with `json-query` or `json-variable-mapping`.
+- No child field tree is provided. If the sub-workflow returns an object/array and a later node needs any child field, you must follow this node with `json-variable-mapping` or `json-query`, model the required fields, and make later nodes use only the JSON node's outputs.
+- Do not manually append child paths to the Call Workflow node root. Only the JSON modeling node should consume the raw sub-workflow result.
 - Example reference: `{{$jobsMapByNodeKey.call_order_calc}}`.

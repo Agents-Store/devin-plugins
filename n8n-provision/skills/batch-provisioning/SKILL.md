@@ -14,9 +14,11 @@ Deploy multiple workflows to an n8n instance in one coordinated operation. Handl
 Run all pre-flight checks before deploying anything:
 
 ```
-1. ~~instance_audit
-   → Confirm instance is healthy, note version and resource usage
+1. ~~instance_health
+   → Confirm the instance is reachable and the API key works (status, responseTimeMs)
    → STOP if instance is unhealthy or unreachable
+   → The response has no version, uptime or queue fields — probe capabilities instead
+     (see instance-readiness)
 
 2. ~~workflow_list
    → Inventory all existing workflows
@@ -25,15 +27,20 @@ Run all pre-flight checks before deploying anything:
 3. ~~credential_manage (action: list)
    → Inventory all existing credentials
    → Map credential types already available
+
+4. Community nodes and Data Tables the plan needs
+   → Missing community packages: see instance-readiness, Step 4 (they can be installed
+     through the API or an environment variable, with warnings listed there)
+   → A template that uses a Data Table needs the table to exist first: ~~datatable_manage
 ```
 
 **Pre-flight pass/fail criteria:**
 
 | Check | Pass | Fail |
 |-------|------|------|
-| Instance reachable | Responds to audit | Timeout or error |
-| Version compatible | Meets minimum version for all planned workflows | Version too old for required nodes |
-| Resource headroom | Can handle N additional workflows | Memory or execution limits near capacity |
+| Instance reachable | `~~instance_health` returns `healthy` | Timeout or error |
+| Capabilities | The key can create (and, if publishing is planned, publish) and the node types of all planned workflows exist on the instance | `403`, unknown node type, `typeVersion` the instance rejects |
+| Resource headroom | Workflow and trigger counts leave room for N more (see instance-readiness) | Counts near the limits, or `/healthz` / metrics show pressure |
 | No name conflicts | No duplicate workflow names | Conflicts found — resolve before proceeding |
 
 ## Planning Phase
@@ -57,10 +64,11 @@ Group D: Multiple services  → [CRM Sync (Slack + HubSpot)]
 
 ### Assign Batch Identifier
 
-Tag every workflow in the batch for tracking:
+Mark every workflow in the batch for tracking:
 
 - **Naming convention:** `[Batch-001] Original Workflow Name`
-- **Tagging:** Apply a shared tag (e.g., `batch-001`, `provisioned-2026-04`)
+- **Tagging:** Apply a shared tag (e.g., `batch-001`, `provisioned-2026-10`) after each deployment. Neither `n8n_deploy_template` nor `n8n_create_workflow` accepts tags: call `~~workflow_update` (`n8n_update_partial_workflow`) with operation `addTag`. Look up existing tags with `n8n_list_catalog({kind: "tags"})`
+- **Folders and projects (optional):** a folder or project groups a batch better than tags alone. Create the folder with `n8n_manage_folders`, then place each workflow with `parentFolderId` on `n8n_create_workflow` or the `moveToFolder` operation (n8n 2.32+). Folders need n8n 2.19+ and a registered (free) Community licence plus `folder:*` scopes; placement is write-only, so verify it through the folder's counts, not by reading the workflow. `projectId` targets a project (Enterprise)
 - Increment batch number if the instance has previous batches
 
 ## Execution
@@ -74,11 +82,12 @@ FOR each workflow in ordered_plan:
      → If FAIL: log error, skip this workflow, continue to next
      → If PASS: proceed
 
-  2. Deploy:
-     → Official template: ~~template_deploy(templateId)
-     → Community JSON: ~~workflow_create(workflow_json)
-     → Set active: false
-     → Apply batch tag and naming convention
+  2. Deploy (the workflow is created unpublished):
+     → Official template in the n8n-mcp database: ~~template_deploy(templateId, name)
+     → Official template only on api.n8n.io ("not found" from get_template), or community JSON:
+       ~~workflow_create(name, nodes, connections, settings)  (see single-workflow-import)
+     → Apply batch tag (~~workflow_update, addTag) and naming convention
+     → ~~workflow_autofix in preview mode; apply after review
 
   3. ~~workflow_list → confirm deployment
      → Verify node count matches source
@@ -92,12 +101,14 @@ FOR each workflow in ordered_plan:
 
 ## Rollback Strategy
 
-If a workflow fails mid-batch, do NOT undo successful deployments — they are inactive and harmless. Instead:
+If a workflow fails mid-batch, do NOT undo successful deployments — they are unpublished drafts and harmless. Instead:
 
 1. **Document the failure** — record which workflow failed and why
 2. **List what was deployed** — provide the user a clear inventory of successful imports
 3. **Provide fix instructions** — for each failure, describe what the user must resolve
 4. Fix the issue and re-run only the failed items
+
+To undo a whole batch the user asked to remove, list it by tag (`n8n_list_workflows({tags: ["<batch-tag>"]})`), show the list, and archive or delete only on explicit confirmation.
 
 ## Post-Flight Verification
 
@@ -107,22 +118,26 @@ After all deployments complete:
 1. ~~workflow_list → verify all batch workflows present
    → Match expected count vs actual count
 
-2. Generate credential setup checklist:
+2. ~~instance_audit (security audit) as a post-flight check
+   → Hardcoded secrets and unauthenticated webhooks in the new workflows
+   → Findings are reported, not fixed — show them to the user
+
+3. Generate credential setup checklist:
    → List every unique credential type needed
    → Note which credentials already exist on the instance
    → Mark which workflows need each credential
 
-3. Summary report:
+4. Summary report:
    → Total deployed / skipped / failed
    → Credential setup tasks remaining
-   → Recommended activation order
+   → Recommended publish order (workflows stay drafts until the user publishes them)
 ```
 
 **Post-flight checklist template:**
 
 | # | Workflow | Status | Credentials Needed | Notes |
 |---|----------|--------|--------------------|-------|
-| 1 | Data Transform | Deployed | None | Ready to activate |
+| 1 | Data Transform | Deployed | None | Ready to publish |
 | 2 | Slack Alert | Deployed | Slack OAuth2 | Configure credential |
 | 3 | CRM Sync | Skipped | — | Missing community node |
 
@@ -135,9 +150,8 @@ Reference preset workflow suites from `references/BATCH_STRATEGIES.md`:
 | **startup-essentials** | New teams | Slack notifications, email alerts, data backups, uptime monitoring |
 | **devops** | Engineering teams | CI/CD notifications, error alerting, deployment tracking, log aggregation |
 | **marketing-automation** | Marketing teams | Lead capture, email sequences, social posting, analytics reports |
-| **customer-support** | Support teams | Ticket routing, SLA monitoring, satisfaction surveys, escalation alerts |
 
-Each suite defines a curated list of template IDs and community workflows with dependency ordering pre-calculated.
+Each suite defines search queries per workflow category (not template IDs), with dependency ordering pre-calculated. Run each query through `~~template_search` (n8n-mcp, then `api.n8n.io`) and pick the best match; the library changes, so IDs would go stale.
 
 ## Dry-Run Mode
 

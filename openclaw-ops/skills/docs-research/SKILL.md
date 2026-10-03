@@ -41,6 +41,12 @@ answers, **quote the URL** in the finding.
 When a page returns empty, it is usually client-rendered: retry with a longer wait, or move one step
 down the ladder. A tool returning nothing is not evidence that the page says nothing.
 
+**Two shortcuts that need no rendering at all** — every page of the project site is also served as
+Markdown: append `.md` to its URL, or send `Accept: text/markdown`. And the site publishes a flat
+index of every page at `https://docs.openclaw.ai/llms.txt` — fetch that to find the page, then fetch
+the page as Markdown, instead of guessing a path. On the box, `docs "<query>"` searches the same live
+index from the CLI and is the first thing to try when the network is the unreliable part.
+
 ## Documentation map
 
 Entry points; if a path 404s, search within the site rather than guessing a new path.
@@ -53,10 +59,15 @@ Entry points; if a path 404s, search within the site rather than guessing a new 
 | model providers, refs and runtimes | `https://docs.openclaw.ai/concepts/model-providers` |
 | CLI backends | `https://docs.openclaw.ai/gateway/cli-backends` |
 | the models subcommand | `https://docs.openclaw.ai/cli/models` |
-| memory and embeddings | `https://docs.openclaw.ai/` (search "embeddings", "memory index") |
+| every page, flat | `https://docs.openclaw.ai/llms.txt` (a page as Markdown: add `.md` to its URL) |
+| memory and embeddings | `https://docs.openclaw.ai/cli/memory`, `https://docs.openclaw.ai/reference/memory-config` |
 | skills and plugins loading | `https://docs.openclaw.ai/` (search "skills load", "plugins load paths") |
 | health endpoints and monitoring | `https://docs.openclaw.ai/` (search "healthz", "readyz") |
-| release channels and upgrades | `https://docs.openclaw.ai/` (search "release channels") |
+| doctor, lint and post-upgrade, exit codes | `https://docs.openclaw.ai/cli/doctor/lint` |
+| config keys that moved between releases | `https://docs.openclaw.ai/gateway/doctor/config-migrations` |
+| release channels | `https://docs.openclaw.ai/install/development-channels` |
+| upgrades, the bridge for old installations, rollback | `https://docs.openclaw.ai/install/updating` |
+| backups | `https://docs.openclaw.ai/cli/backup` |
 | releases and changelog | `https://github.com/openclaw/openclaw/releases` |
 
 ## Version truth — three sources, three questions

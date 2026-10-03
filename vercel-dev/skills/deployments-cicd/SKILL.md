@@ -82,7 +82,7 @@ vercel --prod --force
 ### Build Locally, Deploy Build Output
 
 ```bash
-# Build locally (uses development env vars by default)
+# Build locally (uses preview env vars by default)
 vercel build
 
 # Build with production env vars
@@ -185,9 +185,11 @@ jobs:
 
 | Task | Read |
 | --- | --- |
-| Post preview URLs on pull requests from GitHub Actions, or deploy from GitLab CI or Bitbucket Pipelines | [references/cli-pipelines.md](references/cli-pipelines.md) |
-| Let deployed functions reach AWS, GCP, or Vault without static secrets (OIDC federation) | [references/oidc-federation.md](references/oidc-federation.md) |
-| Deployment Checks, or testing protected deployments from CI | [references/deployment-checks.md](references/deployment-checks.md) |
+| Post PR preview URLs from GitHub Actions, or deploy from GitLab CI or Bitbucket Pipelines | [cli-pipelines](references/cli-pipelines.md) |
+| Let deployed functions reach AWS, GCP, or Vault without static secrets (OIDC federation) | [oidc-federation](references/oidc-federation.md) |
+| Deployment Checks, or testing protected deployments from CI | [deployment-checks](references/deployment-checks.md) |
+| Live status (MCP) | [live-status](references/live-status.md) |
+| CLI deploys without Git, CMS deploy hooks | [cli-deploys](references/cli-deploys.md) |
 
 ## Common CI Patterns
 
@@ -248,15 +250,13 @@ jobs:
 5. **Pin the Vercel CLI version in CI** — `npm install -g vercel@latest` can break unexpectedly
 6. **Add `--yes` flag in CI** — prevents interactive prompts from hanging pipelines
 
-[No-Git CLI deploys and CMS deploy hooks](references/cli-deploys.md)
-
 ## Deployment Strategy Matrix
 
 | Scenario | Strategy | Commands |
 |----------|----------|----------|
 | Standard team workflow | Git-push deploy | Push to main/feature branches |
 | Custom CI/CD (Actions, CircleCI) | Prebuilt deploy | `vercel build && vercel deploy --prebuilt` |
-| Monorepo with Turborepo | Affected + remote cache | `turbo run build --affected --remote-cache` |
+| Monorepo with Turborepo | Affected + remote cache | `turbo run build --affected` |
 | Preview for every PR | Default behavior | Auto-creates preview URL per branch |
 | Release a tested build | Deployment Checks (Git) or staged production (CLI) | Required checks, or `vercel deploy --prod --skip-domain` → test → `vercel promote <url>` |
 | Atomic deploys with DB migrations | Two-phase | Run migration → verify → `vercel promote` |

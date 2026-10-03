@@ -14,6 +14,8 @@ Start with the official n8n template library — it has the highest quality and 
 ~~template_search("notion google sheets sync database")
 ```
 
+(n8n-mcp searches its local database of about 2,350 templates. If it returned nothing, the same query would run against `api.n8n.io`, which covers the whole library.)
+
 **Results (hypothetical):**
 
 | # | Template | Views | Nodes | Match Quality |
@@ -27,7 +29,7 @@ Start with the official n8n template library — it has the highest quality and 
 Let's check template #1 in detail:
 
 ```
-~~template_get(id={template_1_id})
+~~template_get(templateId={template_1_id}, mode="full")
 ```
 
 **Analysis:**
@@ -56,10 +58,10 @@ Target the largest community repositories for a better match.
 ~~scrape("https://zie619.github.io/n8n-workflows/?id={workflow_id}")
 ```
 
-If the page contains the workflow JSON, extract it. If not, try the raw URL:
+If the page contains the workflow JSON, extract it. If not, find the file name by listing the integration folder (`https://api.github.com/repos/Zie619/n8n-workflows/contents/workflows/Notion`), then fetch the raw file — the repo keeps one folder per integration and no flat `{id}.json`:
 
 ```
-~~scrape("https://raw.githubusercontent.com/Zie619/n8n-workflows/main/workflows/{workflow_id}.json")
+~~scrape("https://raw.githubusercontent.com/Zie619/n8n-workflows/main/workflows/Notion/{file_name}.json")
 ```
 
 **Result:** Successfully fetched workflow JSON.
@@ -144,18 +146,19 @@ Parse the JSON and examine:
 
 ## Step 4: Validate the Chosen Workflow
 
+First build the payload from the fetched JSON: keep only `name`, `nodes`, `connections` and `settings`, and remove each node's `credentials` block (note the credential types for Step 7).
+
 ```
-~~workflow_validate({workflow_A_json})
+~~workflow_validate({workflow_A_payload})     # validate_workflow({workflow: {nodes, connections}})
 ```
 
 **Expected result:** Validation passes, or returns warnings about:
 - Node `typeVersion` — may need updating if workflow is from an older n8n version
-- Credential references — will be stripped during import (expected)
+- Nodes that n8n 2.0 switched off or n8n 3.0 removes (see `workflow-analysis`, Step 6)
 
 **If validation fails:** Check the error against the `troubleshoot` skill. Common fixes:
-- Update `typeVersion` for deprecated node versions
+- Update `typeVersion` for deprecated node versions (`~~workflow_autofix` in preview mode proposes them)
 - Fix connection references if node names changed
-- Add missing `meta` fields
 
 ## Step 5: Import the Workflow
 
@@ -164,12 +167,13 @@ Since this is community JSON (not from the official library), use `~~workflow_cr
 ```
 ~~workflow_create({
   name: "Notion to Google Sheets — Real-time Sync",
-  workflow_json: {workflow_A_json},
-  tags: ["community-import", "notion", "google-sheets"]
+  nodes: {workflow_A_payload.nodes},
+  connections: {workflow_A_payload.connections},
+  settings: {workflow_A_payload.settings}
 })
 ```
 
-The workflow is created in **inactive** state.
+The workflow is created as an **unpublished draft**. The create tool takes no tags; add them afterwards with `~~workflow_update` (`n8n_update_partial_workflow`) and the `addTag` operation (for example `community-import`). Then preview the fixes with `~~workflow_autofix` and apply them after review.
 
 ## Step 6: Verify Import
 
@@ -177,7 +181,7 @@ The workflow is created in **inactive** state.
 ~~workflow_list
 ```
 
-Confirm "Notion to Google Sheets — Real-time Sync" appears in the list with status: inactive.
+Confirm "Notion to Google Sheets — Real-time Sync" appears in the list, unpublished.
 
 ## Step 7: Set Up Credentials
 
@@ -230,10 +234,10 @@ Set up the Notion webhook:
    - Google Sheets receives the new row
 4. Verify the test row appears in Google Sheets
 
-## Step 10: Activate
+## Step 10: Publish
 
-Once the test passes:
-1. Activate the workflow in n8n UI
+Once the test passes and the user agrees:
+1. Publish the workflow (Publish button in the n8n UI, `publish_workflow` in the native MCP, or `~~workflow_publish`)
 2. Create another Notion entry to verify the live workflow
 3. Confirm the entry appears in Google Sheets within seconds
 

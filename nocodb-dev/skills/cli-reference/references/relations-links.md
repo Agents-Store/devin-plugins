@@ -1,78 +1,66 @@
-# Relations, Links, Lookups, Rollups — CLI Reference
+# Relations, Links, Lookups, Rollups — curl Recipes
 
-The hardest part of NocoDB schema work is relations between tables. This reference covers the canonical CLI patterns.
+The hardest part of NocoDB schema work is relations between tables. This reference covers the canonical REST patterns on the Meta API v3. The `nocodb_api METHOD /path ['body']` wrapper is defined in `../SKILL.md`. On Cloud / licensed the same objects can be sent as `field` to the MCP `createField` tool (`tableId` + `field`).
 
-## Three Relation Cardinalities
+## Relation Types
 
-| Code | Cardinality | Example |
-|------|-------------|---------|
+| `relation_type` | Cardinality | Example |
+|-----------------|-------------|---------|
 | `bt` | Belongs-to (many-to-one) | An Order belongs to one Customer |
 | `hm` | Has-many (one-to-many) | A Customer has many Orders |
 | `mm` | Many-to-many | A Tag is on many Articles; an Article has many Tags |
+| `oo` | One-to-one | A User has one Profile |
+| `om` / `mo` | One-to-many / many-to-one | Listed separately in the spec; this plugin uses `hm` / `bt` |
 
-A `hm` link automatically creates the inverse `bt` link on the other table. NocoDB names the inverse field after the source table by default — rename it to your taste.
+A link on one table automatically creates the inverse link on the other table. NocoDB names the inverse field after the source table by default — rename it to your taste.
 
-## Create a Link with `Links` (modern, v0.200+)
+## Create a Link
+
+`options` needs **both** `relation_type` and `related_table_id`:
 
 ```bash
-nc field:create <baseId> <tableId> '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/fields '{
   "title": "Orders",
-  "type": "Links",
-  "linked_table_id": "<otherTableId>",
-  "type_of_relation": "hm"
+  "type": "LinkToAnotherRecord",
+  "options": { "relation_type": "hm", "related_table_id": "<otherTableId>" }
 }'
 ```
 
 Many-to-many:
 
 ```bash
-nc field:create <baseId> <tableId> '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TABLE_ID/fields '{
   "title": "Tags",
-  "type": "Links",
-  "linked_table_id": "<tagsTableId>",
-  "type_of_relation": "mm"
-}'
-```
-
-NocoDB creates the join table automatically for `mm`.
-
-## Create a Link with `LinkToAnotherRecord` (classic)
-
-The classic field works on every NocoDB version. Slightly different option shape:
-
-```bash
-nc field:create <baseId> <ordersTableId> '{
-  "title": "Customer",
   "type": "LinkToAnotherRecord",
-  "parentId": "<customersTableId>",
-  "childId":  "<ordersTableId>",
-  "type_of_relation": "bt"
+  "options": { "relation_type": "mm", "related_table_id": "<tagsTableId>" }
 }'
 ```
 
-`parentId` is the "one" side; `childId` is the "many" side.
+NocoDB creates the join table automatically for `mm`. `Links` is accepted as an alias of `LinkToAnotherRecord` over REST (same `options`); the MCP tools accept `LinkToAnotherRecord` only.
 
-## Lookup — Show a Linked Column
+## Lookup — Show a Linked Field
 
-A Lookup field surfaces a column value from a linked record. It requires an existing link field on the same table.
+A Lookup field surfaces a field value from a linked record. It requires an existing link field on the same table.
 
 Setup sequence:
 
 ```bash
-# 1) The link field must already exist
-nc field:list <baseId> <ordersTableId>
-# → suppose: c_customer_link_id  (Links → Customers)
+# 1) The link field must already exist — read the table and find it
+nocodb_api GET /meta/bases/$BASE_ID/tables/$ORDERS_TABLE_ID | jq '.fields[] | {id, title, type}'
+# → suppose: c_customer_link_id  (LinkToAnotherRecord → Customers)
 
-# 2) Find the column to look up on the Customers side
-nc field:list <baseId> <customersTableId>
+# 2) Find the field to look up on the Customers side
+nocodb_api GET /meta/bases/$BASE_ID/tables/$CUSTOMERS_TABLE_ID | jq '.fields[] | {id, title, type}'
 # → suppose: c_customer_name_id  (SingleLineText "Name")
 
 # 3) Create the Lookup
-nc field:create <baseId> <ordersTableId> '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$ORDERS_TABLE_ID/fields '{
   "title": "Customer Name",
   "type":  "Lookup",
-  "fk_relation_column_id": "c_customer_link_id",
-  "fk_lookup_column_id":   "c_customer_name_id"
+  "options": {
+    "related_field_id": "c_customer_link_id",
+    "related_table_lookup_field_id": "c_customer_name_id"
+  }
 }'
 ```
 
@@ -80,15 +68,17 @@ Lookups are read-only; they update automatically when the linked record's value 
 
 ## Rollup — Aggregate Linked Records
 
-A Rollup aggregates a numeric column across all linked records.
+A Rollup aggregates a numeric field across all linked records.
 
 ```bash
-nc field:create <baseId> <customersTableId> '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$CUSTOMERS_TABLE_ID/fields '{
   "title": "Lifetime Value",
   "type":  "Rollup",
-  "fk_relation_column_id": "c_orders_link_id",
-  "fk_rollup_column_id":   "c_amount_id",
-  "rollup_function":       "sum"
+  "options": {
+    "related_field_id": "c_orders_link_id",
+    "related_table_rollup_field_id": "c_amount_id",
+    "rollup_function": "sum"
+  }
 }'
 ```
 
@@ -101,39 +91,39 @@ nc field:create <baseId> <customersTableId> '{
 | `avg` | Mean |
 | `count` | Number of linked records |
 | `countDistinct` | Distinct values |
-| `countEmpty` / `countNotEmpty` | Empty vs non-empty |
+| `sumDistinct` / `avgDistinct` | Sum / mean over distinct values |
 
 ## Verifying a Relation
 
 After creating a link, verify both ends:
 
 ```bash
-nc field:list <baseId> <ordersTableId>     # should include the new link field
-nc field:list <baseId> <customersTableId>  # should include the auto-created inverse
+nocodb_api GET /meta/bases/$BASE_ID/tables/$ORDERS_TABLE_ID    | jq '.fields[].title'   # includes the new link field
+nocodb_api GET /meta/bases/$BASE_ID/tables/$CUSTOMERS_TABLE_ID | jq '.fields[].title'   # includes the auto-created inverse
 ```
 
 Then test linking via the Data API:
 
 ```bash
 curl -sS -X POST \
-  -H "xc-token: $NOCODB_API_TOKEN" \
+  -H "xc-token: ${NOCODB_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '[ {"id": "<orderRecordId>"} ]' \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$CUSTOMERS_TABLE_ID/links/$LINK_FIELD_ID/$CUSTOMER_RECORD_ID"
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${CUSTOMERS_TABLE_ID}/links/${LINK_FIELD_ID}/${CUSTOMER_RECORD_ID}"
 ```
 
 Then re-read:
 
 ```bash
 curl -sS \
-  -H "xc-token: $NOCODB_API_TOKEN" \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$CUSTOMERS_TABLE_ID/links/$LINK_FIELD_ID/$CUSTOMER_RECORD_ID"
+  -H "xc-token: ${NOCODB_TOKEN}" \
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${CUSTOMERS_TABLE_ID}/links/${LINK_FIELD_ID}/${CUSTOMER_RECORD_ID}"
 ```
 
 ## Pitfalls
 
-- **Lookup before link.** A Lookup created before its link field exists fails with `fk_relation_column_id not found`. Create the link first.
-- **Rollup on non-numeric column.** Rollup with `sum` / `avg` against a text field returns an error. Use `count` / `countDistinct` / `countEmpty` for non-numeric aggregation.
-- **Cycles.** NocoDB allows circular links (A→B and B→A) but not on the *same* base columns. Renaming the inverse field is OK; deleting one side does not auto-delete the other — clean up explicitly.
-- **m2m join table is hidden by default.** It exists as a hidden table; access it via `nc table:list` with the unhide flag (`?includeHidden=1` on the API).
-- **Display field on the linked side.** Lookups and link-card displays render the linked table's `display_field` — set it via `nc table:update ... '{"display_field_id":"..."}'` if the default first-non-system column isn't useful.
+- **Lookup before link.** A Lookup created before its link field exists fails with `related_field_id not found`. Create the link first.
+- **Rollup on non-numeric field.** `sum` / `avg` against a text field returns an error. Use `count` / `countDistinct` for non-numeric aggregation.
+- **Cycles.** NocoDB allows circular links (A→B and B→A) but not on the *same* base fields. Renaming the inverse field is OK; deleting one side does not auto-delete the other — clean up explicitly.
+- **m2m join table is hidden by default.** It exists as a hidden table; it does not appear in the normal table list.
+- **Display field on the linked side.** Lookups and link-card displays render the linked table's display field — set it with `PATCH /meta/bases/$BASE_ID/tables/$TABLE_ID '{"display_field_id":"..."}'` if the default first-non-system field isn't useful.

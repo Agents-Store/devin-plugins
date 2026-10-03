@@ -12,12 +12,13 @@ Diagnostics and fixes for common restic problems. Start with the exit code and t
 | Code | Meaning | Action |
 |------|---------|--------|
 | 0 | success | — |
-| 1 | fatal error — **no snapshot created** | real failure; read stderr |
-| **3** | some files unreadable but **snapshot WAS created** | **not fatal** — tolerate in scripts (see `backup-script`) |
+| 1 | fatal error — **no snapshot created** (also: every `backup` source path is missing, or an invalid `RESTIC_*` env value on ≥0.19) | real failure; read stderr |
+| **3** from `backup` | some files unreadable **or a source path missing** (≥0.19.0), but the **snapshot WAS created** | **not fatal** — tolerate in scripts and log it (see `backup-script`) |
+| **3** from `forget` | one or more snapshots **could not be removed** (≥0.19.0; older versions returned 0) | **real failure** — let the script fail and fire the `/fail` ping; check repo permissions / object-store errors |
 | 10 | repository does not exist (≥0.17) | check `RESTIC_REPOSITORY`; was it ever `init`ed? |
 | 11 | repository is locked | another run in progress, or stale lock → `restic unlock` |
 | 12 | wrong password (≥0.17.1) | wrong `RESTIC_PASSWORD_FILE`/value |
-| 130 | cancelled (SIGINT/SIGTERM) | re-run |
+| 130 | cancelled (SIGINT/SIGTERM; ≥0.19.0 — SIGINT returned 1 before) | re-run |
 
 ## Quick diagnostics
 
@@ -63,8 +64,7 @@ echo "$RESTIC_REPOSITORY"   # pointing where you think?
 ```bash
 restic check                         # structural integrity
 restic check --read-data-subset=10%  # sample-verify pack data from R2
-restic repair index                  # rebuild a corrupt/missing index (newer restic)
-restic rebuild-index                 # older alias
+restic repair index                  # rebuild a corrupt/missing index (`rebuild-index` is its deprecated old name)
 restic repair snapshots              # drop unreadable trees from snapshots
 restic cache --cleanup               # clear stale local cache
 restic prune                         # repack / reclaim space (after forget)
@@ -93,6 +93,7 @@ restic migrate upgrade_repo_v2       # enables repo format v2 (then RESTIC_COMPR
 
 ## Gotchas
 
-- **Exit 3 is not a failure** — don't alert on it.
+- **Exit 3 from `backup` is not a failure** — don't alert on it, but log it (a missing source path now gives 3 too). **Exit 3 from `forget` is a failure** — snapshots were not removed.
+- **Invalid `RESTIC_COMPRESSION` / `RESTIC_PACK_SIZE` / `RESTIC_READ_CONCURRENCY` is fatal on ≥0.19** (`invalid value for RESTIC_COMPRESSION "…"`, exit 1) — fix the env file; older versions ignored it.
 - **Never `unlock` while a real backup runs** — you'd allow a concurrent run to corrupt state.
 - **Clock skew breaks S3 signatures** — keep the host time synced.

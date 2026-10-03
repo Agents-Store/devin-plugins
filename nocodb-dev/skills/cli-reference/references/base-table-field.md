@@ -1,54 +1,60 @@
-# Bases, Tables, Fields — CLI Reference
+# Bases, Tables, Fields — curl Recipes
 
-Imported from the official NocoDB agent-skills CLI. Schema-focused.
+Schema-focused recipes on the Meta API v3. Each block maps to a command of the official `nocodb.sh` script (see the parent skill's command map). The `nocodb_api METHOD /path ['body']` wrapper is defined in `../SKILL.md` — paths are under `${NOCODB_URL}/api/v3`.
 
-## Workspaces (Enterprise only)
+## Workspaces (plan-dependent)
 
 ```bash
-nc workspace:list                                        # → wabc1234xyz
-nc workspace:get wabc1234xyz
-nc workspace:create '{"title":"New Workspace"}'
-nc workspace:update wabc1234xyz '{"title":"Renamed"}'
-nc workspace:delete wabc1234xyz
-nc workspace:members wabc1234xyz
-nc workspace:members:add wabc1234xyz '{"email":"user@example.com","roles":"workspace-creator"}'
-nc workspace:members:update wabc1234xyz '{"email":"user@example.com","roles":"workspace-viewer"}'
-nc workspace:members:remove wabc1234xyz '{"email":"user@example.com"}'
+nocodb_api GET    /meta/workspaces                                  # → wabc1234xyz
+nocodb_api GET    /meta/workspaces/$WORKSPACE_ID
+nocodb_api POST   /meta/workspaces '{"title":"New Workspace"}'
+nocodb_api PATCH  /meta/workspaces/$WORKSPACE_ID '{"title":"Renamed"}'
+nocodb_api DELETE /meta/workspaces/$WORKSPACE_ID
+nocodb_api GET    "/meta/workspaces/$WORKSPACE_ID?include[]=members"
+nocodb_api POST   /meta/workspaces/$WORKSPACE_ID/members '[{"email":"user@example.com","workspace_role":"workspace-level-creator"}]'
+nocodb_api PATCH  /meta/workspaces/$WORKSPACE_ID/members '[{"user_id":"<userId>","workspace_role":"workspace-level-viewer"}]'
+nocodb_api DELETE /meta/workspaces/$WORKSPACE_ID/members '[{"user_id":"<userId>"}]'
 ```
+
+Member bodies are arrays; a new member is identified by `user_id` or `email` (not both), updates and deletes by `user_id`. `workspace_role`: `workspace-level-owner`, `-creator`, `-editor`, `-viewer`, `-commenter`, `-no-access`.
+
+Listing and creating workspaces is open on all plans; reading, updating and deleting a specific workspace needs cloud Business and above or a licensed self-hosted deployment.
 
 ## Bases
 
 ```bash
-nc base:list wabc1234xyz                                 # → pdef5678uvw
-nc base:get pdef5678uvw
-nc base:create wabc1234xyz '{"title":"New Base"}'
-nc base:update pdef5678uvw '{"title":"Renamed"}'
-nc base:delete pdef5678uvw
+nocodb_api GET    /meta/workspaces/$WORKSPACE_ID/bases              # → pdef5678uvw
+nocodb_api GET    /meta/bases/$BASE_ID
+nocodb_api POST   /meta/workspaces/$WORKSPACE_ID/bases '{"title":"New Base"}'
+nocodb_api PATCH  /meta/bases/$BASE_ID '{"title":"Renamed"}'
+nocodb_api DELETE /meta/bases/$BASE_ID
 ```
 
-Base Collaboration (Enterprise):
+Base collaboration (cloud Business and above / licensed self-hosted):
 
 ```bash
-nc base:members pdef5678uvw
-nc base:members:add pdef5678uvw '{"email":"user@example.com","roles":"base-editor"}'
-nc base:members:update pdef5678uvw '{"email":"user@example.com","roles":"base-viewer"}'
-nc base:members:remove pdef5678uvw '{"email":"user@example.com"}'
+nocodb_api GET    "/meta/bases/$BASE_ID?include[]=members"
+nocodb_api POST   /meta/bases/$BASE_ID/members   '[{"email":"user@example.com","base_role":"editor"}]'
+nocodb_api PATCH  /meta/bases/$BASE_ID/members   '[{"user_id":"<userId>","base_role":"viewer"}]'
+nocodb_api DELETE /meta/bases/$BASE_ID/members   '[{"user_id":"<userId>"}]'
 ```
+
+Bodies are arrays. `base_role`: `owner`, `creator`, `editor`, `viewer`, `commenter`, `no-access`; invites use `user_id` or `email` (not both), updates and deletes use `user_id`.
 
 ## Tables
 
 ```bash
-nc table:list pdef5678uvw                                # → mghi9012rst
-nc table:get pdef5678uvw mghi9012rst
-nc table:create pdef5678uvw '{"title":"NewTable"}'
-nc table:update pdef5678uvw mghi9012rst '{"title":"Customers"}'
-nc table:delete pdef5678uvw mghi9012rst
+nocodb_api GET    /meta/bases/$BASE_ID/tables                       # → mghi9012rst
+nocodb_api GET    /meta/bases/$BASE_ID/tables/$TABLE_ID             # fields + views
+nocodb_api POST   /meta/bases/$BASE_ID/tables '{"title":"NewTable"}'
+nocodb_api PATCH  /meta/bases/$BASE_ID/tables/$TABLE_ID '{"title":"Customers"}'
+nocodb_api DELETE /meta/bases/$BASE_ID/tables/$TABLE_ID
 ```
 
 Create with initial fields:
 
 ```bash
-nc table:create pdef5678uvw '{
+nocodb_api POST /meta/bases/$BASE_ID/tables '{
   "title": "Customers",
   "fields": [
     { "title": "Name",  "type": "SingleLineText" },
@@ -60,51 +66,49 @@ nc table:create pdef5678uvw '{
 Set the display field after creation:
 
 ```bash
-nc table:update pdef5678uvw mghi9012rst '{"display_field_id":"cabc111"}'
+nocodb_api PATCH /meta/bases/$BASE_ID/tables/$TABLE_ID '{"display_field_id":"cabc111"}'
 ```
 
 ## Fields
 
 ```bash
-nc field:list pdef5678uvw mghi9012rst                                            # → cjkl3456opq
-nc field:get pdef5678uvw mghi9012rst cjkl3456opq
-nc field:create pdef5678uvw mghi9012rst '{"title":"Phone","type":"PhoneNumber"}'
-nc field:update pdef5678uvw mghi9012rst cjkl3456opq '{"title":"Mobile"}'
-nc field:delete pdef5678uvw mghi9012rst cjkl3456opq
+nocodb_api GET    /meta/bases/$BASE_ID/tables/$TABLE_ID             # the `fields` array lists them        → cjkl3456opq
+nocodb_api GET    /meta/bases/$BASE_ID/fields/$FIELD_ID
+nocodb_api POST   /meta/bases/$BASE_ID/tables/$TABLE_ID/fields '{"title":"Phone","type":"PhoneNumber"}'
+nocodb_api PATCH  /meta/bases/$BASE_ID/fields/$FIELD_ID '{"title":"Mobile"}'
+nocodb_api DELETE /meta/bases/$BASE_ID/fields/$FIELD_ID
 ```
 
 ### Supported Field Types
 
-`SingleLineText`, `LongText`, `PhoneNumber`, `URL`, `Email`, `Number`, `Decimal`, `Currency`, `Percent`, `Duration`, `Date`, `DateTime`, `Time`, `Year`, `SingleSelect`, `MultiSelect`, `Rating`, `Checkbox`, `Attachment`, `JSON`, `Geometry`, `Links`, `LinkToAnotherRecord`, `Lookup`, `Rollup`, `Button`, `Formula`, `Barcode`, `QrCode`, `CreatedTime`, `LastModifiedTime`, `CreatedBy`, `LastModifiedBy`.
+`SingleLineText`, `LongText`, `PhoneNumber`, `URL`, `Email`, `Number`, `Decimal`, `Currency`, `Percent`, `Duration`, `Date`, `DateTime`, `Time`, `Year`, `SingleSelect`, `MultiSelect`, `Rating`, `Checkbox`, `Attachment`, `JSON`, `Geometry`, `Links`, `LinkToAnotherRecord`, `Lookup`, `Rollup`, `Button`, `Formula`, `Barcode`, `QrCode`, `User`, `AutoNumber`, `CreatedTime`, `LastModifiedTime`, `CreatedBy`, `LastModifiedBy`.
 
-Per-type payloads — see `../../api-reference/references/field-types.md`.
+Per-type payloads — see `../../api-reference/references/field-types.md`. Type-specific settings go inside `options`.
 
 ### Common Field Tweaks
 
 Rename:
 
 ```bash
-nc field:update <baseId> <tableId> <columnId> '{"title":"NewName"}'
+nocodb_api PATCH /meta/bases/$BASE_ID/fields/$FIELD_ID '{"title":"NewName"}'
 ```
 
 Convert type (allowed only when lossless):
 
 ```bash
-nc field:update <baseId> <tableId> <columnId> '{"type":"LongText"}'
+nocodb_api PATCH /meta/bases/$BASE_ID/fields/$FIELD_ID '{"type":"LongText"}'
 ```
 
-Add a SingleSelect option:
+Add select choices (existing choices keep their place; titles that already exist are skipped):
 
 ```bash
-nc field:update <baseId> <tableId> <columnId> '{
-  "colOptions": {
-    "options": [
-      {"title":"New"},
-      {"title":"Active"},
-      {"title":"Archived"}
-    ]
-  }
+nocodb_api POST /meta/bases/$BASE_ID/fields/$FIELD_ID/options '{
+  "choices": [ {"title":"Blocked","color":"#fee2d5"} ]
 }'
 ```
 
-(Existing options keep their IDs; new options appear at the end.)
+Remove select choices by title (clears them from existing records; at least one choice must remain):
+
+```bash
+nocodb_api DELETE /meta/bases/$BASE_ID/fields/$FIELD_ID/options '{ "choices": [ {"title":"Archived"} ] }'
+```

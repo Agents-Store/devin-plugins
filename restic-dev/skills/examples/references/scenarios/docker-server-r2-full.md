@@ -21,7 +21,7 @@ df -h /                  # enough room for the restic cache
 docker ps                # yes, Docker host
 ```
 
-Install the latest restic (arm64) per the `setup` skill → `restic version` ≥ 0.14.
+Install the latest restic (arm64) per the `setup` skill → `restic version` ≥ 0.14 (≥ 0.19.1 recommended).
 
 ## 2. Discover what to back up (`discover-backup-sources`)
 
@@ -81,7 +81,7 @@ if docker ps --format '{{.Names}}' | grep -qx 'acme-postgres-1'; then
 fi
 ```
 
-The template already tolerates exit code 3 and runs `forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune`.
+The template already tolerates (and logs) `backup` exit code 3, and runs `forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune` — a non-zero `forget` (exit 3 on restic ≥ 0.19: a snapshot could not be removed) fails the run on purpose.
 
 ## 5. Schedule (`scheduling`) — install, don't enable yet
 

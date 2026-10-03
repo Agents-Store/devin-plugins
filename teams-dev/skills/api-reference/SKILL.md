@@ -1,131 +1,114 @@
 ---
 name: api-reference
-description: Use this skill on explicit request when the user asks for "Teams SDK API reference", "@microsoft/teams.* packages", "Teams App class options", "TS activity types", or needs precise signatures for `App`, `ChatPrompt`, `AdaptiveCard`, or other SDK types. Reference-only — does not auto-load.
+description: Use this skill on explicit request when the user asks for the Teams SDK 2.1 API reference — the `@microsoft/teams.*` packages and what each exports, `App` options, the handler context, activity routes, the `app.api` clients. Reference-only — does not auto-load.
 disable-model-invocation: true
 ---
 
-# Microsoft Teams SDK — API Reference (TypeScript)
+# Microsoft Teams SDK 2.1 — API reference (TypeScript)
 
-Curated reference for the `@microsoft/teams.*` npm packages. Full documentation lives at `https://microsoft.github.io/teams-sdk/typescript/`. A trimmed copy of the SDK's LLM doc is at `references/llms-typescript-full.md` for offline grep.
+Curated reference for the `@microsoft/teams.*` packages at **2.1.0** (all need Node 22.12 or newer; the CLI is a separate 3.x line). The official LLM-optimised documentation is the authority when something here looks stale:
+
+- `https://microsoft.github.io/teams-sdk/llms_docs/llms_typescript.txt` — index
+- `https://microsoft.github.io/teams-sdk/llms_docs/llms_typescript_full.txt` — everything in one file
+
+This plugin does not cache a copy; the files change faster than the plugin does.
 
 ## Packages
 
 | Package | Purpose |
 |---|---|
-| `@microsoft/teams.apps` | Core `App` framework, plugin system, activity routing |
-| `@microsoft/teams.api` | Activity types, API contracts, REST clients |
-| `@microsoft/teams.cards` | Adaptive Card builders (`AdaptiveCard`, `TextBlock`, `TextInput`, `ActionSet`, …) |
-| `@microsoft/teams.ai` | `ChatPrompt`, function calling, streaming |
-| `@microsoft/teams.openai` | `OpenAIChatModel` for OpenAI + Azure OpenAI |
-| `@microsoft/teams.mcp` | MCP server plugin and MCP client plugin (`McpPlugin`, `A2AClientPlugin`) |
-| `@microsoft/teams.client` | Client-side SDK for static tabs |
-| `@microsoft/teams.dev` | `DevtoolsPlugin` — local activity inspector |
-| `@microsoft/teams.cli` | `teams` CLI binary (global install) |
+| `@microsoft/teams.apps` | `App`, routing, plugins, HTTP adapters, OAuth flows, turn state |
+| `@microsoft/teams.api` | Activity types and builders, `MessageActivityInput`, API clients, cloud presets, attachments |
+| `@microsoft/teams.cards` | Adaptive Card builders, `SubmitData`, `OpenDialogData` |
+| `@microsoft/teams.graph` | Graph client (`call(endpoint, params)`) |
+| `@microsoft/teams.graph-endpoints`, `-beta` | Typed Graph request builders, v1.0 and beta |
+| `@microsoft/teams.client` | Browser `App` for tabs: MSAL, Graph, `exec` of server functions |
+| `@microsoft/teams.common` | Logger, storage interface, HTTP client |
+| `@microsoft/teams.m365extensions` | Embed the Teams SDK in a Microsoft 365 Agents SDK `AgentApplication` |
+| `@microsoft/teams.botbuilder` | Bot Framework interoperability, for migrations |
+| `@microsoft/teams.cli` | The `teams` command (`cli-recipes`) |
 
-See `references/packages-overview.md` for what each one exports.
+There are no SDK packages for prompts, models, MCP or A2A: use `openai`, `@modelcontextprotocol/sdk` and `@a2a-js/sdk` directly (`ai-agents`, `mcp-a2a`). For local testing there is no plugin either: use the Agents Playground (`agents-playground`).
+
+See `references/packages-overview.md` for exports and the install matrix.
 
 ## Bootstrapping
 
 ```ts
-import { App, PUBLIC, US_GOV, US_GOV_DOD, CHINA } from '@microsoft/teams.apps';
+import { App } from '@microsoft/teams.apps';
 
-const app = new App({
-  plugins: [],            // DevtoolsPlugin, McpPlugin, ExpressAdapter, etc.
-  cloud: PUBLIC,          // default; override for sovereign clouds
-  clientId: '...',        // optional — derived from env if omitted
-  clientSecret: '...',    // optional — derived from env if omitted
+const app = new App();                       // CLIENT_ID, CLIENT_SECRET, TENANT_ID from the environment
+
+app.on('message', async ({ send, activity }) => {
+  await send(`you said "${activity.text}"`);
 });
 
-await app.start(3978);
+app.start(process.env.PORT || 3978).catch(console.error);
 ```
 
-See `references/app-class.md` for the full `AppOptions` shape.
+The options table and the lifecycle are in `references/app-class.md`.
 
 ## Activity routing
 
-```ts
-app.on('message', async (ctx) => { /* MessageActivity */ });
-app.on('install.add', async (ctx) => { /* InstallActivity */ });
-app.on('config.open', async (ctx) => { /* ConfigOpenActivity */ });
-app.on('dialog.open.<id>', async (ctx) => { /* DialogOpenActivity */ });
-app.on('dialog.submit.<id>', async (ctx) => { /* DialogSubmitActivity */ });
-app.on('card.action.<id>', async (ctx) => { /* CardActionActivity */ });
-app.on('message.ext.query', async (ctx) => { /* MessageExtQueryActivity */ });
-app.on('message.ext.submit', async (ctx) => { /* MessageExtSubmitActivity */ });
-app.on('message.ext.select-item', async (ctx) => { /* MessageExtSelectItemActivity */ });
-app.on('message.ext.query-link', async (ctx) => { /* MessageExtQueryLinkActivity */ });
-app.on('signin.token-exchange', async (ctx) => { /* token exchange for SSO */ });
-app.on('signin.verify-state', async (ctx) => { /* verify state after sign-in */ });
-```
-
-Route-name string drives the activity-type inference. See `references/activity-types.md`.
+`app.on(route, handler)`; the route string selects the activity type and the handler's return type. The authoritative name list is the `IRoutes` type of `@microsoft/teams.apps`; `references/activity-types.md` has the table. `app.message(pattern, handler)` matches message text, `app.event(name, handler)` observes app events (`start`, `signin`, `error`, `activity`, `activity.response`, `activity.sent`), `app.use(handler)` is middleware.
 
 ## Handler context
 
-Every handler receives an object with:
+| Key | Purpose |
+|---|---|
+| `activity` | The typed inbound activity |
+| `send(x)`, `reply(x)`, `quote(id, x)` | Reply in the conversation; `reply` and `quote` add a visual quote |
+| `stream` | `emit(text \| activity)`, `update(text)`, `clearText()`, `close()`, `canceled`, `closed` |
+| `state` | Conversation and user scopes when `new App({ state })` is on |
+| `files` | Uploaded files on the inbound activity: `list()`, `first()`, `download()` |
+| `api` | Teams REST clients: `conversations`, `users` (incl. `users.token`), `teams`, `meetings`, `reactions`, `bots` |
+| `appGraph` | Graph client for the app's identity (same as `app.graph`) |
+| `log` | Scoped logger |
+| `next()` | Pass control to the next handler |
+| `getConnectionStatus()` | Token status of every registered OAuth connection |
+| `ref`, `appId` | Conversation reference and the bot's id |
 
-| Key | Type | Purpose |
-|---|---|---|
-| `send` | `(text \| Activity) => Promise<SendResponse>` | Reactive reply to the originating conversation |
-| `activity` | typed activity (per route) | Incoming request payload |
-| `log` | logger | Structured logging — visible in DevTools |
-| `stream` | streaming emitter | `stream.emit(chunk)` — 1:1 chats only |
-| `api` | api proxy | `api.graph.*`, `api.users.*`, etc. |
-| `next` | `() => Promise<void>` | Pass to the next middleware in the chain |
+Deprecated and kept for compatibility: `userGraph`, `isSignedIn`, `userToken`, `signin()`, `signout()`, `storage`. Their replacements are an OAuth flow (`authentication`) and turn state.
 
-## Sending messages
+## Sending
 
 ```ts
-await send('Hello');                                   // text
-await send(new MessageActivity('Hello'));              // explicit activity
-await send({ type: 'typing' });                        // typing indicator
-await app.send(conversationId, 'Hello');               // proactive send
-await app.reply(conversationId, threadId, 'Hello');    // thread reply
+import { MessageActivityInput } from '@microsoft/teams.api';
+
+app.on('message', async ({ send, reply, quote, activity }) => {
+  await send('text');
+  await send(new MessageActivityInput('hello').addMention(activity.from));
+  await send({ type: 'typing' });
+  await reply('quoted reply');
+  await quote('1772050244572', 'quote an earlier message');
+});
+
+async function proactive(conversationId: string) {
+  await app.send(conversationId, new MessageActivityInput('hello'));
+  await app.reply(conversationId, '1772050244572', new MessageActivityInput('thread reply'));
+}
+void proactive;
 ```
+
+`MessageActivityInput` builders: `addCard`, `addAttachments`, `withAttachmentLayout('list' | 'carousel')`, `addMention`, `withTextFormat`, `withRecipient(account, isTargeted)`, `addQuote`, `addTargetedMessageInfo`, `withId`, `addAiGenerated`, `addFeedback`, `addCitation`, `withSuggestedActions`, `addStreamFinal`. See `messaging`.
 
 ## Adaptive Cards
 
 ```ts
-import { AdaptiveCard, TextBlock, TextInput, ActionSet, ExecuteAction } from '@microsoft/teams.cards';
-import { cardAttachment } from '@microsoft/teams.api';
+import { AdaptiveCard, TextBlock, TextInput, ActionSet, ExecuteAction, SubmitData } from '@microsoft/teams.cards';
 
-const card = new AdaptiveCard()
-  .addBody(new TextBlock('Hi').withWeight('Bolder'))
-  .addBody(new TextInput('email').withPlaceholder('you@example.com'))
-  .addActions(new ExecuteAction('save').withTitle('Save'));
-
-await send(new MessageActivity().addAttachment(cardAttachment('adaptive', card)));
+const card = new AdaptiveCard(
+  new TextBlock('Hi', { weight: 'Bolder' }),
+  new TextInput().withId('email').withPlaceholder('you@example.com'),
+  new ActionSet(new ExecuteAction({ title: 'Save' }).withData(new SubmitData('save')).withAssociatedInputs('auto')),
+);
+void card;
 ```
 
-See `adaptive-cards` skill for the full builder catalogue.
-
-## AI
-
-```ts
-import { ChatPrompt } from '@microsoft/teams.ai';
-import { OpenAIChatModel } from '@microsoft/teams.openai';
-
-const prompt = new ChatPrompt({
-  instructions: 'You are a helpful assistant.',
-  model: new OpenAIChatModel({ model: 'gpt-4o' }),
-});
-
-const { content } = await prompt.send('Quote me Marcus Aurelius');
-```
-
-See `ai-agents` skill + `references/prompts-and-models.md`.
-
-## Plugins
-
-```ts
-new App({ plugins: [new DevtoolsPlugin(), new McpPlugin(), new A2AClientPlugin(...)] });
-```
-
-Plugins intercept the activity pipeline. See `mcp-plugin` for MCP-specific patterns.
+The builder catalogue is in `adaptive-cards` → `references/card-builders.md`.
 
 ## Reference files
 
-- `references/packages-overview.md` — what each `@microsoft/teams.*` package exports
-- `references/app-class.md` — `AppOptions`, `cloud` enum, lifecycle hooks
-- `references/activity-types.md` — exhaustive activity-name → type table
-- `references/llms-typescript-full.md` — trimmed offline copy of the SDK's own LLM reference
+- `references/packages-overview.md` — exports of each package and the install matrix
+- `references/app-class.md` — `AppOptions`, methods, events
+- `references/activity-types.md` — route names with their payloads

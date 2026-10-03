@@ -21,10 +21,10 @@ Walkthrough: Deploy a coordinated "Slack + GitHub DevOps" suite of 5 related wor
 ### Check instance health
 
 ```
-~~instance_audit
+~~instance_health
 ```
 
-Verify: instance is reachable, n8n version is current, no health issues.
+Verify: instance is reachable (`status: healthy`), the API key is accepted, response time is normal. (The response carries no n8n version; probe capabilities with `GET /api/v1/discover` if a template needs a specific feature.)
 
 ### List existing workflows
 
@@ -134,12 +134,14 @@ Pick the best match. Note template ID.
 Fetch full details for all selected templates:
 
 ```
-~~template_get(id={pr_notifications_id})
-~~template_get(id={issue_tracker_id})
-~~template_get(id={deploy_alerts_id})
-~~template_get(id={error_reporting_id})
-~~template_get(id={standup_bot_id})
+~~template_get(templateId={pr_notifications_id}, mode="full")
+~~template_get(templateId={issue_tracker_id}, mode="full")
+~~template_get(templateId={deploy_alerts_id}, mode="full")
+~~template_get(templateId={error_reporting_id}, mode="full")
+~~template_get(templateId={standup_bot_id}, mode="full")
 ```
+
+Any ID that `get_template` answers with `Template <id> not found` is fetched from `api.n8n.io` instead (see `template-discovery`).
 
 ### Compatibility check for each
 
@@ -183,24 +185,30 @@ The standup bot is last because it aggregates data that the other workflows help
 
 ## Step 6: Batch Deploy
 
-Deploy all 5 workflows with a consistent batch tag.
+Deploy all 5 workflows, then give each a consistent batch tag.
 
 ```
-~~template_deploy(id={error_reporting_id}, name="DevOps: Error Reporting", tags=["suite-devops-slack-github-2026-04-07"])
-~~template_deploy(id={pr_notifications_id}, name="DevOps: PR Notifications", tags=["suite-devops-slack-github-2026-04-07"])
-~~template_deploy(id={issue_tracker_id}, name="DevOps: Issue Tracker", tags=["suite-devops-slack-github-2026-04-07"])
-~~template_deploy(id={deploy_alerts_id}, name="DevOps: Deployment Alerts", tags=["suite-devops-slack-github-2026-04-07"])
-~~template_deploy(id={standup_bot_id}, name="DevOps: Daily Standup Bot", tags=["suite-devops-slack-github-2026-04-07"])
+~~template_deploy(templateId={error_reporting_id}, name="DevOps: Error Reporting")
+~~template_deploy(templateId={pr_notifications_id}, name="DevOps: PR Notifications")
+~~template_deploy(templateId={issue_tracker_id}, name="DevOps: Issue Tracker")
+~~template_deploy(templateId={deploy_alerts_id}, name="DevOps: Deployment Alerts")
+~~template_deploy(templateId={standup_bot_id}, name="DevOps: Daily Standup Bot")
 ```
 
-**If any template was sourced from community (not official library):**
+The deploy tools take no tags. Tag each returned `workflowId` with `~~workflow_update` and the `addTag` operation:
 
 ```
-~~workflow_validate({community_json})
-~~workflow_create({name: "DevOps: ...", workflow_json: {...}, tags: [...]})
+~~workflow_update(id={workflowId}, operations: [{type: "addTag", tag: "suite-devops-slack-github-2026-10-05"}])
 ```
 
-All workflows are created in **inactive** state.
+**If any template was sourced from `api.n8n.io` (not found in the n8n-mcp database) or from community JSON:**
+
+```
+~~workflow_validate({payload})    # payload = name, nodes, connections, settings only
+~~workflow_create({name: "DevOps: ...", nodes: [...], connections: {...}, settings: {...}})
+```
+
+then add the same tag. All workflows are created as **unpublished drafts**.
 
 ## Step 7: Verify Batch Deployment
 
@@ -212,11 +220,11 @@ All workflows are created in **inactive** state.
 
 | Workflow | Status | Tags |
 |----------|--------|------|
-| DevOps: Error Reporting | inactive | suite-devops-slack-github-2026-04-07 |
-| DevOps: PR Notifications | inactive | suite-devops-slack-github-2026-04-07 |
-| DevOps: Issue Tracker | inactive | suite-devops-slack-github-2026-04-07 |
-| DevOps: Deployment Alerts | inactive | suite-devops-slack-github-2026-04-07 |
-| DevOps: Daily Standup Bot | inactive | suite-devops-slack-github-2026-04-07 |
+| DevOps: Error Reporting | unpublished | suite-devops-slack-github-2026-10-05 |
+| DevOps: PR Notifications | unpublished | suite-devops-slack-github-2026-10-05 |
+| DevOps: Issue Tracker | unpublished | suite-devops-slack-github-2026-10-05 |
+| DevOps: Deployment Alerts | unpublished | suite-devops-slack-github-2026-10-05 |
+| DevOps: Daily Standup Bot | unpublished | suite-devops-slack-github-2026-10-05 |
 
 **Check webhook paths:** Ensure no two workflows claim the same webhook URL.
 
@@ -299,13 +307,13 @@ Each workflow posts to a specific Slack channel. Configure in each workflow:
 
 **Create channels first** if they don't exist. Then update each workflow's Slack node with the correct channel ID.
 
-## Step 11: Activate One-by-One with Testing
+## Step 11: Publish One-by-One with Testing
 
-Activate in order of simplicity and risk:
+In n8n 2.x a workflow is published, not activated. Publish in order of simplicity and risk, and only with the user's go-ahead (Publish button, `~~workflow_publish`, or `publish_workflow` in the native MCP). Publishing needs the `workflow:activate` scope and the `workflow:publish` permission:
 
 ### 11a: Error Reporting (simplest — generic webhook)
 
-1. Activate the workflow
+1. Publish the workflow
 2. Send a test webhook:
    ```
    curl -X POST https://n8n.example.com/webhook/error-reporting \
@@ -317,7 +325,7 @@ Activate in order of simplicity and risk:
 
 ### 11b: PR Notifications
 
-1. Activate the workflow
+1. Publish the workflow
 2. Create a test PR in a repository (or use an existing one)
 3. Verify notification appears in #pull-requests
 4. Test: approve the PR, verify updated notification
@@ -325,7 +333,7 @@ Activate in order of simplicity and risk:
 
 ### 11c: Issue Tracker
 
-1. Activate the workflow
+1. Publish the workflow
 2. Create a test issue in a repository
 3. Verify notification appears in #issues
 4. Test: assign the issue, verify update
@@ -333,14 +341,14 @@ Activate in order of simplicity and risk:
 
 ### 11d: Deployment Alerts
 
-1. Activate the workflow
+1. Publish the workflow
 2. Trigger a deployment (or create a test deployment via GitHub API)
 3. Verify alert appears in #deployments
 4. Check both success and failure formatting if possible
 
 ### 11e: Standup Bot (last — schedule-based)
 
-1. Activate the workflow
+1. Publish the workflow
 2. Execute manually first to verify output
 3. Check that the summary accurately reflects yesterday's GitHub activity
 4. Verify it posts to #standup
@@ -350,7 +358,7 @@ Activate in order of simplicity and risk:
 
 ```
 Suite: Slack + GitHub DevOps (5 workflows)
-Tag: suite-devops-slack-github-2026-04-07
+Tag: suite-devops-slack-github-2026-10-05
 
 Credentials:
   - Slack OAuth2 → shared by all 5 workflows
@@ -362,7 +370,7 @@ GitHub Webhooks:
 Slack Channels:
   - #pull-requests, #issues, #deployments, #errors, #standup
 
-Status: All 5 workflows active and tested
+Status: All 5 workflows published and tested
 ```
 
 ## Maintenance Notes
@@ -371,4 +379,4 @@ Status: All 5 workflows active and tested
 - **New repos:** If new repositories are added to the org, the org-level webhooks automatically cover them
 - **Channel changes:** If Slack channels are renamed, update channel IDs in the workflows
 - **Credential rotation:** When GitHub PAT expires, update the single credential — all 4 workflows inherit the change
-- **Rollback:** Deactivate all workflows by tag, remove GitHub webhooks
+- **Rollback:** Unpublish all workflows by tag (`n8n_list_workflows({tags: [...]})`), remove GitHub webhooks, and archive or delete the workflows only on explicit confirmation

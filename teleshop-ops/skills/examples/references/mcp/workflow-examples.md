@@ -153,7 +153,7 @@ Step 5: Configure addons
 ```
 Step 1: Discover available events
   get_webhook_events()
-  -> ["order.created", "order.updated", "payment.completed", ...]
+  -> ["order.created", "order.updated", "order.completed", "order.cancelled", "cart.updated", ...]
 
 Step 2: Create webhook
   create_webhook(url="https://api.example.com/hooks", events=["order.created"])

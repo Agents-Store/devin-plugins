@@ -4,12 +4,12 @@
     {
       "id": 1,
       "prompt": "Create a module 'Billing v2' in project TaskFlow, led by Alice, targeting June 30 2026.",
-      "expected_output": "Resolves project and lead UUIDs, calls create_module with status='planned'.",
+      "expected_output": "Resolves project and lead UUIDs, calls module(action=create) with status='planned'.",
       "files": [],
       "expectations": [
         "Consults connector-bootstrap",
         "Resolves project_id and lead UUID",
-        "Calls create_module with name, lead, target_date, status=planned",
+        "Calls module(action=create) with name, lead, target_date, status=planned",
         "Offers to populate the module with backlog items"
       ]
     },
@@ -30,7 +30,7 @@
       "expected_output": "Lists module items, groups by state, reports completion_rate and active blockers.",
       "files": [],
       "expectations": [
-        "Calls list_module_work_items",
+        "Calls module(action=list_workitems), or workitem(action=count, pql='module = \"<id>\"', group_by=state__group) for the state-group totals",
         "Groups items by state group and sums points",
         "Reports completion_rate (completed_points / total_points)",
         "Surfaces active blockers"
@@ -43,7 +43,7 @@
       "files": [],
       "expectations": [
         "Cites the modules lifecycle rule (pause if stalled 2 sprints)",
-        "Recommends update_module to status=paused or archive_module",
+        "Recommends module(action=update, status=paused) or module(action=archive)",
         "Suggests a retrospective to understand the stall before resuming"
       ]
     }

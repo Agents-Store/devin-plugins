@@ -116,6 +116,10 @@ curl -s -X POST https://api.firecrawl.dev/v2/map \
 
 ## Extract Structured Data
 
+For one known URL, use `/v2/scrape` with a `json` format (see "Scrape a Page" above). For several unknown URLs or data spread across sites, use the research agent below — it is the successor of the legacy extract endpoint.
+
+The legacy `POST /v2/extract` endpoint (`urls`, `prompt`, `schema`, `enableWebSearch`) still exists but is in maintenance mode and its use is discouraged:
+
 ```bash
 curl -s -X POST https://api.firecrawl.dev/v2/extract \
   -H "Authorization: Bearer ${FIRECRAWL_API_KEY}" \
@@ -123,21 +127,13 @@ curl -s -X POST https://api.firecrawl.dev/v2/extract \
   -d '{
     "urls": ["https://example.com/pricing"],
     "prompt": "Extract pricing plans",
-    "schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "plan": { "type": "string" },
-          "price": { "type": "string" },
-          "features": { "type": "array", "items": { "type": "string" } }
-        }
-      }
-    }
+    "schema": { "type": "object", "properties": { "plans": { "type": "array", "items": { "type": "object" } } } }
   }' | jq .
 ```
 
 ## Start Research Agent
+
+`model` defaults to `spark-2` and every run executes on it (`spark-1-mini` / `spark-1-pro` are still accepted but deprecated and route to `spark-2`). Control depth with `effort` (`low`, `medium`, `high`) and spend with `maxCredits`.
 
 ```bash
 curl -s -X POST https://api.firecrawl.dev/v2/agent \
@@ -145,8 +141,50 @@ curl -s -X POST https://api.firecrawl.dev/v2/agent \
   -H "Content-Type: application/json" \
   -d '{
     "prompt": "Find the top 5 headless CMS platforms and compare their pricing",
-    "model": "spark-1-mini"
+    "effort": "medium",
+    "maxCredits": 500
   }' | jq .
+```
+
+Returns a job id; poll `GET /v2/agent/{jobId}` until it completes (`DELETE` cancels). Optional fields: `urls`, `schema`, `strictConstrainToURLs`, `webhook`.
+
+## Interact With a Scraped Page
+
+Scrape the page first (the response carries a scrape job id), then run code in its live browser session and stop it when done:
+
+```bash
+curl -s -X POST https://api.firecrawl.dev/v2/scrape/${SCRAPE_ID}/interact \
+  -H "Authorization: Bearer ${FIRECRAWL_API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{ "code": "await page.title()", "language": "node", "timeout": 30 }' | jq .
+
+curl -s -X DELETE https://api.firecrawl.dev/v2/scrape/${SCRAPE_ID}/interact \
+  -H "Authorization: Bearer ${FIRECRAWL_API_KEY}"
+```
+
+`POST /v2/interact` creates a standalone session instead (`ttl`, `activityTtl`, `profile`).
+
+## Developer Index and Research Papers
+
+```bash
+# GitHub issues, merged PRs, READMEs, docs
+curl -s -G https://api.firecrawl.dev/v2/search/developer \
+  -H "Authorization: Bearer ${FIRECRAWL_API_KEY}" \
+  --data-urlencode "query=nextjs hydration mismatch date formatting" -d "k=5" | jq .
+
+# Papers (also /{id} and /{id}/similar)
+curl -s -G https://api.firecrawl.dev/v2/search/research/papers \
+  -H "Authorization: Bearer ${FIRECRAWL_API_KEY}" \
+  --data-urlencode "query=retrieval augmented generation" -d "k=10" | jq .
+```
+
+The developer endpoint also filters by `types`, `repos`, `language`, `topic`, `license`, `min_stars`, `max_stars`, `archived`, `fork`.
+
+## Credit Usage
+
+```bash
+curl -s https://api.firecrawl.dev/v2/team/credit-usage \
+  -H "Authorization: Bearer ${FIRECRAWL_API_KEY}" | jq .
 ```
 
 ## Batch Scrape

@@ -202,7 +202,7 @@ curl -s https://raw.githubusercontent.com/agents-store/claude-plugins/main/.clau
 ```
 
 Derive names from `software[]`: `{tool}-dev` · `{tool}-ops` · `{tool}-provision`, plus a
-`stack-{name}-{process}` bundle for the layer combination — that one carries `.mcp.json`,
+`stack-{name}` bundle (no process suffix) for the layer combination — that one carries `.mcp.json`,
 `.env.example` and the integration skills.
 
 Declare what each plugin **covers**, not just that it exists. A bare slug makes the

@@ -1,7 +1,7 @@
 {
   "name": "dokploy-dev",
-  "version": "1.6.1",
-  "description": "Dokploy self-hosted PaaS development plugin (aligned with Dokploy v0.29.14). Deploy applications, provision 6 database types (Postgres, MySQL, MariaDB, MongoDB, Redis, LibSQL), manage domains and Docker Compose stacks, AND debug failed deployments end-to-end — reads runtime logs of every container (including each container in a Docker Compose stack) over the API/MCP with tail/since/search, plus AI-powered log analysis (ai-analyzeLogs), Docker container introspection, Traefik diagnosis, and a guided recovery chain. Complete MCP/REST coverage: all 546 v0.29.14 operations across 50 categories indexed with params — covers forward-auth SSO domain protection, SCIM provisioning, build concurrency, and the rewritten @dokploy/cli (546 auto-generated commands incl. read-logs). Uses the official @dokploy/mcp server plus debugging-focused slash commands including /compose-logs.",
+  "version": "1.7.0",
+  "description": "Dokploy self-hosted PaaS development plugin (aligned with Dokploy v0.30.x). Deploy applications, provision 6 database types (Postgres, MySQL, MariaDB, MongoDB, Redis, LibSQL), manage domains and Docker Compose stacks, AND debug failed deployments end-to-end — reads runtime logs of every container (including each container in a Docker Compose stack) over the API/MCP with tail/since/search, plus AI-powered log analysis (ai-analyzeLogs), Docker container and host introspection (server health, events, disk usage, images, volumes), Traefik diagnosis, and a guided recovery chain. Complete MCP/REST coverage: all 604 operations across 57 categories indexed with params — covers per-service Docker network management, vault (external secrets) providers, DNS providers, forward-auth SSO domain protection, SCIM provisioning, build concurrency, and the auto-generated @dokploy/cli (604 commands incl. read-logs). Uses the official @dokploy/mcp server (secret fields are redacted by default since 0.30.0) plus debugging-focused slash commands including /compose-logs.",
   "author": {
     "name": "AGENTS.STORE"
   },
@@ -24,7 +24,7 @@
     "log-analysis",
     "runtime-logs",
     "compose-logs",
-    "dokploy-v0.29",
+    "dokploy-v0.30",
     "dev",
     "agents-store"
   ]

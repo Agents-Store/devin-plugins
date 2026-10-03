@@ -4,16 +4,16 @@
     {
       "id": 1,
       "prompt": "Plan Sprint 16 for TaskFlow. 1-week sprint starting Monday. Team: 3 devs, one of them (Bob) is part-time 50%. Our last 3 sprints completed 18, 22, 20 points. Set a sprint goal, calculate capacity, pick items from backlog, create the cycle.",
-      "expected_output": "Full planning ceremony: velocity avg 20 × 0.85 ≈ 17 → adjusted for Bob's 50% (team has 2.5 FTE not 3, so ~14-15 capacity), sprint goal in the 'users can X so that Y' format, item selection honoring DoR, create_cycle call with owned_by, add_work_items_to_cycle with issue_ids.",
+      "expected_output": "Full planning ceremony: velocity avg 20 × 0.85 ≈ 17 → adjusted for Bob's 50% (team has 2.5 FTE not 3, so ~14-15 capacity), sprint goal in the 'users can X so that Y' format, item selection honoring DoR, cycle(action=create) call with owned_by, cycle(action=manage_workitems) with add_ids.",
       "files": [],
       "expectations": [
-        "Prefers velocity-based capacity (has 3+ sprints history) over days-based",
+        "Prefers velocity-based capacity (has 3+ sprints history, given by the user) over days-based, and does not re-derive it from the tracker",
         "Calculates average velocity (20) and applies 15% buffer (×0.85)",
         "Adjusts capacity for Bob's part-time status (not ignoring it)",
         "Writes a sprint goal in the 'By end of sprint, [users] can [capability] so that [value]' format",
         "Validates each selected item against DoR (estimated, ≤8 points, has AC, no unresolved blockers)",
-        "Creates the cycle via create_cycle with owned_by and description (the goal)",
-        "Adds items via add_work_items_to_cycle with issue_ids (plural array)"
+        "Creates the cycle via cycle(action=create) with owned_by and description (the goal)",
+        "Adds items via cycle(action=manage_workitems) with add_ids (an array of work item UUIDs), then reads them back with cycle(action=list_workitems)"
       ]
     },
     {

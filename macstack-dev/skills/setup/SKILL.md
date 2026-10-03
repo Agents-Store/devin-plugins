@@ -156,7 +156,7 @@ together is what makes "keep the docs current" an instruction instead of a wish.
 | macstack.json for an existing project, or a new stack from scratch — incl. finding plugins/prototypes and worked examples | `spec-authoring` |
 | Create the project's working files | `scaffold-project` |
 | .infisical.json + .env.prod/.env.dev | `infisical-env` |
-| Project rules and commands | `best-practices` |
+| Project rules and slash-command skills | `best-practices` |
 | Validation, and "where are we and what next" | `lint` |
 | Create/seed the `macstack/` folder, or relocate an existing `docs/` into the new layout | `documents` |
 | The heading + bullet-label shape, the pointer bindings and the table budget | `documents` |

@@ -1,6 +1,6 @@
 ---
 title: Workflow Nodes
-description: Directory of workflow node types, explanation of chain structure, and variable production rules.
+description: "Use this directory when choosing workflow node types, branch-capable nodes, and the variable expressions nodes expose downstream."
 ---
 
 # Workflow Nodes
@@ -33,9 +33,14 @@ Each node document with an `Output Variables` section that describes whether the
 
 Subsequent nodes can reference these variables in their configuration to implement dynamic workflow logic as required by business needs.
 
+Some nodes return JSON while exposing only a root value or a shallow tree. Do not treat the runtime JSON shape as a frontend variable model. Before a later node uses any unmodeled child field, insert `json-variable-mapping` or `json-query`, define the output fields, and reference only that JSON node's modeled variables. This is mandatory for raw SQL results, nested HTTP response bodies, and any other output whose child paths are absent from the variable selector. See [Common Conventions - Modeling Raw JSON](../conventions/index.md#modeling-raw-json-before-downstream-use).
+
 ## Usage Notes
 
 * **Only the type values specified in the documentation can be used**; other values will not be recognized by the workflow.
+* Before authoring any node configuration that contains a persisted `filter` or user/assignee query, load the `nocobase-utils` skill with topic `filter`, then read [Filter Condition Format](../../../nocobase-utils/references/filter/index.md), resolve each terminal field's live frontend interface/type, and use only that group's operator allowlist. This is mandatory for `query`, `update`, `destroy`, `aggregate`, and recipient/assignee query objects. Never derive `$lt`, `$lte`, `$gt`, or `$gte` from date wording; date fields use the date-specific operators.
+* `approval`, `response`, and `subflow` are commercial capabilities. Their matching plugins must be installed and activated before these node types are used. Apply the [Commercial Workflow Plugin Gate](../commercial-plugin-gate.md); if a required plugin is inactive, do not use the node type.
+* When approval is explicitly requested, never use `manual` as a substitute for an unavailable `approval` node.
 
 ## Node Document Directory
 
@@ -71,8 +76,8 @@ Subsequent nodes can reference these variables in their configuration to impleme
 | `script` | JavaScript | plugin-workflow-javascript | [script.md](script.md) |
 | `manual` | Manual Process | plugin-workflow-manual | [manual.md](manual.md) |
 | `response-message` | Response Message | plugin-workflow-response-message | [response-message.md](response-message.md) |
-| `subflow` | Call Workflow | plugin-workflow-subflow | [subflow.md](subflow.md) |
-| `response` | Response (for webhook) | plugin-workflow-webhook | [response.md](response.md) |
-| `approval` | Approval | plugin-workflow-approval | [approval.md](approval.md) |
+| `subflow` | Call Workflow | `@nocobase/plugin-workflow-subflow` (commercial; activation required) | [subflow.md](subflow.md) |
+| `response` | Response (for webhook) | `@nocobase/plugin-workflow-webhook` (commercial; activation required) | [response.md](response.md) |
+| `approval` | Approval | `@nocobase/plugin-workflow-approval` (commercial; activation required) | [approval.md](approval.md) |
 | `llm` | LLM | plugin-ai | [llm.md](llm.md) |
 | `ai-employee` | AI Employee | plugin-ai | [ai-employee.md](ai-employee.md) |

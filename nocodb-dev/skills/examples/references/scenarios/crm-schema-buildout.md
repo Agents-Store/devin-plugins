@@ -16,7 +16,7 @@ Customers
 
 Orders
 ├── OrderNo           (SingleLineText, display field)
-├── Customer          (Links → Customers, type: bt)
+├── Customer          (LinkToAnotherRecord → Customers, relation_type: bt)
 ├── Customer Name     (Lookup of Customers.Name through Customer link)
 ├── Amount            (Currency)
 ├── Status            (SingleSelect: Pending / Paid / Refunded)
@@ -28,22 +28,36 @@ Plus one Kanban view on Orders grouped by Status.
 ## Prereqs
 
 ```bash
-export NOCODB_URL=...
-export NOCODB_API_TOKEN=...
-export NOCODB_VERBOSE=1
+export NOCODB_URL=...        # instance URL, no trailing slash
+export NOCODB_TOKEN=...      # API token
 BASE_ID=<your base id>
+
+# tiny wrapper — paths are under /api/v3
+nocodb_api() {
+  local m="$1" p="$2" b="${3:-}"
+  if [ -n "$b" ]; then
+    curl -sS -X "$m" -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" -d "$b" "${NOCODB_URL}/api/v3${p}"
+  else
+    curl -sS -X "$m" -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" "${NOCODB_URL}/api/v3${p}"
+  fi
+}
+
+# field id by title:  field_id <tableId> <title>
+field_id() { nocodb_api GET "/meta/bases/$BASE_ID/tables/$1" | jq -r --arg t "$2" '.fields[] | select(.title==$t) | .id'; }
 ```
+
+On Cloud / licensed every `POST …/tables` and `POST …/fields` below can instead be one MCP `callTool` (`createTable { title, fields }`, `createField { tableId, field }`) — the objects are the same.
 
 ## Step 1 — Create Customers
 
 ```bash
-nc table:create $BASE_ID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables '{
   "title": "Customers",
   "fields": [
     { "title":"Name",   "type":"SingleLineText" },
     { "title":"Email",  "type":"Email" },
     { "title":"Status", "type":"SingleSelect",
-      "colOptions": { "options":[
+      "options": { "choices":[
         {"title":"Lead"}, {"title":"Active"}, {"title":"Churned"}
       ]}}
   ]
@@ -55,13 +69,13 @@ Capture the new `tableId` (prefix `m`) — call it `CUSTOMERS_TID`.
 ## Step 2 — Create Orders
 
 ```bash
-nc table:create $BASE_ID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables '{
   "title": "Orders",
   "fields": [
     { "title":"OrderNo",   "type":"SingleLineText" },
-    { "title":"Amount",    "type":"Currency", "currency_code":"USD" },
+    { "title":"Amount",    "type":"Currency", "options": { "currency_code":"USD" } },
     { "title":"Status",    "type":"SingleSelect",
-      "colOptions": { "options":[
+      "options": { "choices":[
         {"title":"Pending"}, {"title":"Paid"}, {"title":"Refunded"}
       ]}},
     { "title":"CreatedAt", "type":"CreatedTime" }
@@ -76,49 +90,54 @@ Capture as `ORDERS_TID`.
 On Orders, add a belongs-to link to Customers:
 
 ```bash
-nc field:create $BASE_ID $ORDERS_TID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$ORDERS_TID/fields '{
   "title": "Customer",
-  "type":  "Links",
-  "linked_table_id": "'"$CUSTOMERS_TID"'",
-  "type_of_relation": "bt"
+  "type":  "LinkToAnotherRecord",
+  "options": { "relation_type": "bt", "related_table_id": "'"$CUSTOMERS_TID"'" }
 }'
 ```
 
 Verify both sides:
 
 ```bash
-nc field:list $BASE_ID $ORDERS_TID    # should show "Customer"
-nc field:list $BASE_ID $CUSTOMERS_TID # should show auto-inverse "Orders"
+nocodb_api GET /meta/bases/$BASE_ID/tables/$ORDERS_TID    | jq '.fields[].title'   # should show "Customer"
+nocodb_api GET /meta/bases/$BASE_ID/tables/$CUSTOMERS_TID | jq '.fields[].title'   # should show auto-inverse "Orders"
 ```
 
-Capture column IDs:
+Capture field IDs:
 
-- `ORDERS.Customer` link → `LINK_ON_ORDERS`
-- `ORDERS.OrderNo` → `ORDERNO_COL`
-- `CUSTOMERS.Name` → `NAME_COL`
-- `CUSTOMERS.Orders` (auto inverse) → `LINK_ON_CUSTOMERS`
-- `ORDERS.Amount` → `AMOUNT_COL`
+```bash
+LINK_ON_ORDERS=$(field_id $ORDERS_TID Customer)
+ORDERNO_COL=$(field_id $ORDERS_TID OrderNo)
+NAME_COL=$(field_id $CUSTOMERS_TID Name)
+LINK_ON_CUSTOMERS=$(field_id $CUSTOMERS_TID Orders)     # auto inverse
+AMOUNT_COL=$(field_id $ORDERS_TID Amount)
+```
 
 ## Step 4 — Lookup customer name on Order
 
 ```bash
-nc field:create $BASE_ID $ORDERS_TID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$ORDERS_TID/fields '{
   "title": "Customer Name",
   "type":  "Lookup",
-  "fk_relation_column_id": "'"$LINK_ON_ORDERS"'",
-  "fk_lookup_column_id":   "'"$NAME_COL"'"
+  "options": {
+    "related_field_id": "'"$LINK_ON_ORDERS"'",
+    "related_table_lookup_field_id": "'"$NAME_COL"'"
+  }
 }'
 ```
 
 ## Step 5 — Rollup lifetime value on Customer
 
 ```bash
-nc field:create $BASE_ID $CUSTOMERS_TID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$CUSTOMERS_TID/fields '{
   "title": "Lifetime Value",
   "type":  "Rollup",
-  "fk_relation_column_id": "'"$LINK_ON_CUSTOMERS"'",
-  "fk_rollup_column_id":   "'"$AMOUNT_COL"'",
-  "rollup_function":       "sum"
+  "options": {
+    "related_field_id": "'"$LINK_ON_CUSTOMERS"'",
+    "related_table_rollup_field_id": "'"$AMOUNT_COL"'",
+    "rollup_function": "sum"
+  }
 }'
 ```
 
@@ -127,33 +146,35 @@ nc field:create $BASE_ID $CUSTOMERS_TID '{
 OrderNo on Orders, Name on Customers (Name is auto-picked, but make it explicit):
 
 ```bash
-nc table:update $BASE_ID $ORDERS_TID    '{"display_field_id":"'"$ORDERNO_COL"'"}'
-nc table:update $BASE_ID $CUSTOMERS_TID '{"display_field_id":"'"$NAME_COL"'"}'
+nocodb_api PATCH /meta/bases/$BASE_ID/tables/$ORDERS_TID    '{"display_field_id":"'"$ORDERNO_COL"'"}'
+nocodb_api PATCH /meta/bases/$BASE_ID/tables/$CUSTOMERS_TID '{"display_field_id":"'"$NAME_COL"'"}'
 ```
 
 ## Step 7 — Kanban view on Orders
 
-Find Orders.Status column ID:
+Find Orders.Status field ID:
 
 ```bash
-nc field:list $BASE_ID $ORDERS_TID
-# capture STATUS_COL
+STATUS_COL=$(field_id $ORDERS_TID Status)
 ```
 
 ```bash
-nc view:create:kanban $BASE_ID $ORDERS_TID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$ORDERS_TID/views '{
   "title": "Board",
-  "fk_grp_col_id": "'"$STATUS_COL"'"
+  "type": "kanban",
+  "options": { "stack_by": { "field_id": "'"$STATUS_COL"'" } }
 }'
 ```
+
+(Views need cloud Enterprise or a licensed self-hosted deployment.)
 
 ## Step 8 — Verify end-to-end
 
 ```
-mcp__nocodb__getTablesList                        # both tables visible
-mcp__nocodb__getTableSchema  tableId: $ORDERS_TID
-# expected: OrderNo, Customer (Links), Customer Name (Lookup), Amount, Status, CreatedAt
-mcp__nocodb__getTableSchema  tableId: $CUSTOMERS_TID
+mcp__plugin_nocodb-dev_nocodb__getTablesList                        # both tables visible
+mcp__plugin_nocodb-dev_nocodb__getTableSchema  tableId: $ORDERS_TID
+# expected: OrderNo, Customer (link), Customer Name (Lookup), Amount, Status, CreatedAt
+mcp__plugin_nocodb-dev_nocodb__getTableSchema  tableId: $CUSTOMERS_TID
 # expected: Name, Email, Status, Orders (auto inverse), Lifetime Value (Rollup)
 ```
 
@@ -163,39 +184,38 @@ Insert one Customer + one Order, link them, and confirm:
 - Customer.`Lifetime Value` shows the order's Amount.
 
 ```bash
-# Create a customer
-curl -sS -X POST -H "xc-token: $NOCODB_API_TOKEN" -H "Content-Type: application/json" \
-  -d '{"records":[{"fields":{"Name":"Acme Corp","Email":"info@acme.com","Status":"Active"}}]}' \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$CUSTOMERS_TID/records"
-# capture acme record id → ACME_ID
+# Create a customer. The request body is { "fields": {...} } or an array of those (DataInsertRequestV3);
+# the response is { "records": [ { "id", "fields" } ] }
+ACME_ID=$(curl -sS -X POST -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" \
+  -d '[{"fields":{"Name":"Acme Corp","Email":"info@example.com","Status":"Active"}}]' \
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${CUSTOMERS_TID}/records" | jq -r '.records[0].id')
 
 # Create an order
-curl -sS -X POST -H "xc-token: $NOCODB_API_TOKEN" -H "Content-Type: application/json" \
-  -d '{"records":[{"fields":{"OrderNo":"ACM-1001","Amount":1500,"Status":"Paid"}}]}' \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$ORDERS_TID/records"
-# capture order record id → ORDER_ID
+ORDER_ID=$(curl -sS -X POST -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" \
+  -d '[{"fields":{"OrderNo":"ACM-1001","Amount":1500,"Status":"Paid"}}]' \
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${ORDERS_TID}/records" | jq -r '.records[0].id')
 
 # Link order → customer
-curl -sS -X POST -H "xc-token: $NOCODB_API_TOKEN" -H "Content-Type: application/json" \
+curl -sS -X POST -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" \
   -d '[{"id":"'"$ACME_ID"'"}]' \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$ORDERS_TID/links/$LINK_ON_ORDERS/$ORDER_ID"
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${ORDERS_TID}/links/${LINK_ON_ORDERS}/${ORDER_ID}"
 
 # Read the order back
-curl -sS -H "xc-token: $NOCODB_API_TOKEN" \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$ORDERS_TID/records/$ORDER_ID" | jq
+curl -sS -H "xc-token: ${NOCODB_TOKEN}" \
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${ORDERS_TID}/records/${ORDER_ID}" | jq
 # expect: Customer Name == "Acme Corp"
 
 # Read the customer back
-curl -sS -H "xc-token: $NOCODB_API_TOKEN" \
-  "$NOCODB_URL/api/v3/data/$BASE_ID/$CUSTOMERS_TID/records/$ACME_ID" | jq
+curl -sS -H "xc-token: ${NOCODB_TOKEN}" \
+  "${NOCODB_URL}/api/v3/data/${BASE_ID}/${CUSTOMERS_TID}/records/${ACME_ID}" | jq
 # expect: Lifetime Value == 1500
 ```
 
 ## Cleanup (if you were rehearsing)
 
 ```bash
-nc table:delete $BASE_ID $ORDERS_TID
-nc table:delete $BASE_ID $CUSTOMERS_TID
+nocodb_api DELETE /meta/bases/$BASE_ID/tables/$ORDERS_TID
+nocodb_api DELETE /meta/bases/$BASE_ID/tables/$CUSTOMERS_TID
 ```
 
-(Delete Orders first; the link on Customers is auto-removed when its source link is gone.)
+(Delete Orders first; the link on Customers is auto-removed when its source link is gone.) On Cloud / licensed the deleted tables sit in the base trash until the retention window ends (`listTrash`, `restoreFromTrash`).

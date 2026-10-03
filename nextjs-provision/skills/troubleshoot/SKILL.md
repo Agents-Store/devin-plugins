@@ -29,8 +29,9 @@ cat components.json
 #    to @tailwindcss/cli, so `npx tailwindcss --help` fails on v4)
 node -e "console.log(require('tailwindcss/package.json').version)"
 
-# 5. cn() helper exists
+# 5. cn() helper exists — CLI 4.21+ writes: export { cn } from "cn"
 cat src/lib/utils.ts 2>/dev/null || cat lib/utils.ts 2>/dev/null || echo "NOT FOUND"
+npm ls cn                                                  # the `cn` package must be installed
 
 # 6. CSS variables defined
 grep -c "\-\-background:" src/app/globals.css 2>/dev/null || grep -c "\-\-background:" app/globals.css 2>/dev/null
@@ -48,7 +49,10 @@ npx tsc --noEmit
 | `Could not find tsconfig.json` | Not a TypeScript project | Add `tsconfig.json` or run `npx tsc --init` |
 | `Cannot resolve @/components` | Path aliases not configured | Add `paths` to `tsconfig.json` |
 | `EACCES permission denied` | npm permissions issue | Use `npx` prefix or fix npm permissions |
-| `Module not found: clsx` | Dependencies not installed | Run `npm install` after shadcn init |
+| `Module not found: cn` / `Cannot find module 'cn'` | `lib/utils.ts` re-exports from the `cn` package (CLI 4.21+) but it is not installed | `npm install` after shadcn init, or `npm install cn` |
+| `Module not found: clsx` / `tailwind-merge` | A `lib/utils.ts` from before 4.21 imports them but they are not installed | `npm install`; or move to the `cn` package with `npx shadcn@latest migrate cn` (Tailwind v4) |
+| `The item at ... was not found` for `date-picker` | There is no such item | Date Picker is a composition: `npx shadcn@latest add popover calendar` (recipe in the `component-registry` skill) |
+| Installing `form` writes nothing | The `form` item carries no files | Build forms from `field` + React Hook Form (`component-registry` skill, "Forms") |
 
 ## Registry Errors
 
@@ -57,7 +61,11 @@ npx tsc --noEmit
 | `Registry not found: @ss-components` | Studio registries not configured | Add the `@`-prefixed studio registries to `components.json`, e.g. `"@ss-components": "https://shadcnstudio.com/r/components/{style}/{name}.json"` (see `setup` skill) |
 | `401 Unauthorized` | Invalid or missing premium credentials | Credentials are injected via `params` in the registry entry (`${EMAIL}`, `${LICENSE_KEY}` expanded from env/`.env.local`) — check both the params config and the values |
 | `403 Forbidden` | License expired or wrong tier | Verify license at shadcnstudio.com account; confirm `params` auth is configured for the registry |
-| `Network timeout` | Registry unreachable | Check internet connection, try again |
+| `Network timeout` | Registry unreachable | Check internet connection, try again. Behind a SOCKS5 proxy set `ALL_PROXY=socks5://<proxy-host>:<port>` (CLI 4.17+) |
+| `Unknown registry "@name"` | Registry not declared | Add it to `components.json` or `package.json#registries` (CLI 4.18+), or `npx shadcn registry add @name=<url>` |
+| Private GitHub registry fails | Not authenticated | `gh auth login`, or set `GH_TOKEN` / `GITHUB_TOKEN` (CLI 4.19+) |
+| Studio `add @ss-components/...` installs the wrong (Radix, old) variant or 404s | `components.json` still has `style: "new-york"` (legacy) | Use `base-nova` / `radix-nova` — see the `setup` skill |
+| Community registry item fails to install | Registry is `degraded` / `unavailable` in the directory | Check `health.status` at https://ui.shadcn.com/r/registries.json (`component-search` skill) |
 | `Component not found in registry` | Typo or wrong registry | Check component name at shadcnstudio.com/components |
 | CLI v2/v3 syntax with v4 | Using `--registry` flag or URL-based format | Use namespaced addresses: `npx shadcn@latest add @ss-components/button-01` |
 
@@ -88,11 +96,14 @@ export default {
 
 ### v4 Specific
 
-**Components unstyled (Tailwind v4):**
+**Components unstyled or animations / `data-open:` variants not working (Tailwind v4):**
 ```css
-/* globals.css — verify import syntax */
+/* globals.css — CLI 4.21 init writes these three imports */
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 ```
+`shadcn/tailwind.css` provides the shared utilities — the `data-open:` / `data-closed:` variants and the accordion animations; `tw-animate-css` must be in `dependencies`. `npx shadcn@latest eject` inlines `shadcn/tailwind.css` and removes the `shadcn` dependency (irreversible).
 
 **postcss.config not using v4 plugin:**
 ```javascript
@@ -136,13 +147,13 @@ Note: Base UI projects (the default since July 2026) depend on a single `@base-u
 | Conflicting Radix versions | Type errors, runtime crashes | `npm ls @radix-ui/react-*` to find conflicts, then `npm dedupe` |
 | Mixed radix packages | `@radix-ui/react-*` and unified `radix-ui` both installed | Run `npx shadcn@latest migrate radix` (Feb 2026 unified package replaces per-component installs) |
 | CVA version mismatch | `cva is not a function` | `npm install class-variance-authority@latest` |
-| Multiple tailwind-merge | Inconsistent class merging | `npm dedupe tailwind-merge` |
+| `clsx` + `tailwind-merge` next to `cn` | Two class-merge stacks; inconsistent merging | Tailwind v4: `npx shadcn@latest migrate cn` (see "Upgrading" below). Tailwind v3 stays on `tailwind-merge` v2 — the `cn` merge engine supports Tailwind v4 only |
 
 ### Diagnosing Dependency Issues
 
 ```bash
 # Check for duplicate packages
-npm ls --all | grep -E "(radix|tailwind-merge|clsx|cva)"
+npm ls --all | grep -E "(radix|base-ui|tailwind-merge|clsx|cva|/cn@)"
 
 # Deduplicate
 npm dedupe
@@ -151,6 +162,20 @@ npm dedupe
 rm -rf node_modules package-lock.json
 npm install
 ```
+
+## Upgrading an Existing Project
+
+`npx shadcn@latest migrate --list` prints the available migrations:
+
+| Migration | What it does |
+|-----------|--------------|
+| `migrate cn` | Replaces `clsx` + `tailwind-merge` with the `cn` package: rewrites imports, turns `lib/utils.ts` into `export { cn } from "cn"`, installs `cn`, removes the old packages when nothing references them. Needs Tailwind v4; no `components.json` required. Scope it with a path or glob (`migrate cn src/lib/utils.ts`) — scoped runs keep the old packages installed |
+| `migrate icons` | Moves components to another icon library (`--from` / `--to`) |
+| `migrate base-color` | Moves the theme to another base color (neutral, zinc, stone, mauve, olive, mist, taupe) |
+| `migrate radix` | Moves per-component `@radix-ui/react-*` imports to the unified `radix-ui` package |
+| `migrate rtl` | Makes components RTL (right-to-left) aware |
+
+Run migrations on a clean git tree and review the diff. `npx shadcn@latest add <item> --diff` shows how an installed component differs from the registry (the old `shadcn diff` command is deprecated).
 
 ## Component Rendering Issues
 
@@ -252,13 +277,14 @@ Ensure `components.json` aliases match `tsconfig.json` paths.
 
 ## MCP Server Issues
 
+The plugin's MCP server is the official shadcn one (`npx shadcn@latest mcp`); see the `mcp-tools` skill.
+
 | Issue | Fix |
 |-------|-----|
-| MCP server not connecting | Check `claude mcp list` output, verify server is installed |
-| Rate limit exceeded (60/hour) | Add GitHub token via `--github-api-key` flag |
-| Stale component data | MCP server caches GitHub API responses; restart the server |
-| Wrong framework components | Pass `--framework react` explicitly (also: svelte, vue, react-native) |
-| Wrong transport | Pass `--mode stdio|sse|dual` (and `--port` for SSE) explicitly |
+| MCP server not connecting | Check `/mcp` or `claude mcp list`, run `npx shadcn@latest mcp` once by hand to see the error |
+| `NOT_CONFIGURED` for a registry | The registry is not in `components.json` — add it (`/add-registries`, `npx shadcn registry add`) |
+| `Add command: [object Promise]` in search results | Known shadcn 4.21.1 output bug — use `get_add_command_for_items` or write `npx shadcn@latest add @registry/item` |
+| No registries listed | `components.json` is missing or has an empty `registries` — run `npx shadcn@latest init` |
 
 ## When to Escalate
 

@@ -9,7 +9,7 @@ This is the **canonical workflow** when a Dokploy deployment fails, gets stuck, 
 
 Companion command: **`/dokploy-dev:debug [applicationId|composeId]`** runs this entire chain.
 
-> **Reading logs (Dokploy v0.29.0+; current v0.29.14):** Runtime **and** build logs are available directly over the REST API / MCP — no SSH or Beszel needed (the old [issue #3719](https://github.com/Dokploy/dokploy/issues/3719) gap is closed). There are two distinct artifacts: the **build log** (`deployment-readLogs { deploymentId, tail }`) explains why an image failed to build; the **runtime log** (`application-readLogs` / per-container `compose-readLogs` / `{db}-readLogs`, all with `tail`/`since`/`search`) explains why a running container is crashing. For a multi-container Compose stack you must enumerate the containers and read **each** one — see the [`read-logs`](../read-logs/SKILL.md) skill, which this workflow uses for every log read below.
+> **Reading logs (Dokploy v0.29.0+; current v0.30.7, stable latest v0.30.8):** Runtime **and** build logs are available directly over the REST API / MCP — no SSH or Beszel needed (the old [issue #3719](https://github.com/Dokploy/dokploy/issues/3719) gap is closed). There are two distinct artifacts: the **build log** (`deployment-readLogs { deploymentId, tail }`) explains why an image failed to build; the **runtime log** (`application-readLogs` / per-container `compose-readLogs` / `{db}-readLogs`, all with `tail`/`since`/`search`) explains why a running container is crashing. For a multi-container Compose stack you must enumerate the containers and read **each** one — see the [`read-logs`](../read-logs/SKILL.md) skill, which this workflow uses for every log read below.
 
 ---
 
@@ -17,10 +17,11 @@ Companion command: **`/dokploy-dev:debug [applicationId|composeId]`** runs this 
 
 Before blaming the deploy, rule out the server.
 
-1. `mcp__dokploy__settings-health` — must return ok.
-2. `mcp__dokploy__settings-checkInfrastructureHealth` — checks Docker daemon, Traefik, network, disk.
-3. `mcp__dokploy__settings-getDockerDiskUsage` — if the disk is >90% full, builds silently fail with "no space left on device". Run `/dokploy-dev:cleanup` to recover.
-4. `mcp__dokploy__settings-getDokployVersion` — note the version; some bugs are version-specific.
+1. `mcp__plugin_dokploy-dev_dokploy__settings-health` — must return ok.
+2. `mcp__plugin_dokploy-dev_dokploy__settings-checkInfrastructureHealth` — core services: returns `{ postgres: { status }, traefik: { status } }` (no Redis since v0.30.0).
+3. `mcp__plugin_dokploy-dev_dokploy__settings-getDockerDiskUsage` — if the disk is >90% full, builds silently fail with "no space left on device". Run `/dokploy-dev:cleanup` to recover. (v0.30+: `dockerDiskUsage-getDiskUsage { serverId }` does the same for a remote server.)
+4. `mcp__plugin_dokploy-dev_dokploy__settings-getDokployVersion` — note the version; some bugs are version-specific.
+5. **v0.30+ host diagnostics (read-only):** `mcp__plugin_dokploy-dev_dokploy__docker-getServerHealth { serverId?, sinceHours? }` — disk, memory/CPU, inotify limits, Docker network IP-pool usage, recent daemon errors, memory/CPU reservations; and `docker-getEvents { serverId?, minutes? }` — what the daemon did recently (OOM kills, restarts, image pulls, network connects). These checks target the usual causes of a deploy that stalls without a clear error: a full disk, exhausted inotify watches, an exhausted Docker network address pool, or memory/CPU reservations the host cannot satisfy.
 
 If any of these fail, fix the server first. Do not proceed.
 
@@ -33,9 +34,9 @@ Find the most recent deployment for the resource and confirm its status.
 **For a single resource (you know the ID):**
 
 ```
-mcp__dokploy__deployment-all          → { applicationId: "<id>" }   # applications ONLY
-mcp__dokploy__deployment-allByCompose → { composeId: "<id>" }       # compose stacks
-mcp__dokploy__deployment-allByServer  → { serverId: "<id>" }        # server-level deploys
+mcp__plugin_dokploy-dev_dokploy__deployment-all          → { applicationId: "<id>" }   # applications ONLY
+mcp__plugin_dokploy-dev_dokploy__deployment-allByCompose → { composeId: "<id>" }       # compose stacks
+mcp__plugin_dokploy-dev_dokploy__deployment-allByServer  → { serverId: "<id>" }        # server-level deploys
 ```
 
 (`deployment-all` takes only `applicationId` — compose and server deploys have their own list tools.)
@@ -43,8 +44,8 @@ mcp__dokploy__deployment-allByServer  → { serverId: "<id>" }        # server-l
 **For "I don't know which app failed":**
 
 ```
-mcp__dokploy__deployment-allCentralized   # all deployments across the instance
-mcp__dokploy__deployment-queueList        # what's currently queued / in-flight
+mcp__plugin_dokploy-dev_dokploy__deployment-allCentralized   # all deployments across the instance
+mcp__plugin_dokploy-dev_dokploy__deployment-queueList        # what's currently queued / in-flight
 ```
 
 In both responses, look at `status`. Values you care about:
@@ -66,7 +67,7 @@ Logs are the single most informative artifact. Pick the **right** log for the fa
 
 - **Build failed** (`status: error`, image never started) → read the **build log** for that deployment:
   ```
-  mcp__dokploy__deployment-readLogs { deploymentId: "<from Step 1>", tail: 500 }
+  mcp__plugin_dokploy-dev_dokploy__deployment-readLogs { deploymentId: "<from Step 1>", tail: 500 }
   ```
   **If `deployment-readLogs` isn't a registered tool in your session** (some MCP builds expose a reduced tool set — `ToolSearch` won't find it), read the identical artifact over REST instead of giving up on the log:
   ```bash
@@ -76,7 +77,7 @@ Logs are the single most informative artifact. Pick the **right** log for the fa
   CLI alternative: `dokploy deployment read-logs --deploymentId <id> --tail 500`.
   Always read the actual build log before forming a root cause — a ~15s "instant" failure looks the same for a dozen different causes (corepack, lockfile, frozen-install policy, OOM), and only the log distinguishes them. See the [`read-logs`](../read-logs/SKILL.md) §3 fallback for details.
 - **Build succeeded but the container is crashing / erroring at runtime** → read the **runtime log**:
-  - App: `mcp__dokploy__application-readLogs { applicationId, tail: 300, since: "1h", search?: "error" }`
+  - App: `mcp__plugin_dokploy-dev_dokploy__application-readLogs { applicationId, tail: 300, since: "1h", search?: "error" }`
   - **Compose stack: read every container.** First enumerate (`compose-one { composeId }` → `appName`/`composeType`; then `docker-getContainersByAppNameMatch { appName, appType: "docker-compose" }` for compose, or `docker-getStackContainersByAppName { appName }` for swarm). Then loop `compose-readLogs { composeId, containerId, tail, since, search }` for **each** container — or just run `/dokploy-dev:compose-logs <compose>`.
   - Database: `{type}-readLogs { {type}Id, tail, since, search }`.
 
@@ -93,7 +94,7 @@ Logs are the single most informative artifact. Pick the **right** log for the fa
 | `nixpacks` cannot detect language | Wrong build type | Switch to `dockerfile` via `application-saveBuildType` |
 | `MODULE_NOT_FOUND` / `ImportError` | Missing dep or wrong working dir | Check `dockerContextPath` and Dockerfile `WORKDIR` |
 | Build times out | Heavy image or slow network | Increase timeout, use multi-stage builds, or pre-build & push image |
-| App exits 0/1 immediately after start | Missing runtime env var | Step 4 (check env), then `saveEnvironment` + `redeploy` |
+| App exits 0/1 immediately after start | Missing runtime env var | Step 3 (check env — names only, values are redacted by default), then `saveEnvironment` + `redeploy` |
 
 ---
 
@@ -102,7 +103,7 @@ Logs are the single most informative artifact. Pick the **right** log for the fa
 If the *build* succeeded but the *runtime* is broken, switch from build logs to container introspection.
 
 ```
-mcp__dokploy__docker-getContainersByAppLabel
+mcp__plugin_dokploy-dev_dokploy__docker-getContainersByAppLabel
   → { appName: "<appName>", type: "standalone" }    # type is REQUIRED: "standalone" | "swarm"
 ```
 
@@ -117,17 +118,27 @@ Drill down with these as needed:
 
 | Tool | When to use |
 |---|---|
-| `mcp__dokploy__docker-getConfig` | Inspect full container config: env, command, mounts, network, restart policy. Catches misconfigured `command:` overrides and missing mounts |
-| `mcp__dokploy__docker-getServiceContainersByAppName` | For Swarm-deployed apps — finds containers across nodes |
-| `mcp__dokploy__docker-getStackContainersByAppName` | For compose-deployed apps — lists every service container in the stack |
-| `mcp__dokploy__docker-getContainersByAppNameMatch` | Loose match by app-name substring — useful when `appName` is not exact |
-| `mcp__dokploy__docker-killContainer` | Force-stop a wedged container |
-| `mcp__dokploy__docker-restartContainer` | Restart in place (no rebuild) — first try after a transient runtime failure |
-| `mcp__dokploy__docker-stopContainer` / `startContainer` | Graceful stop/start |
-| `mcp__dokploy__docker-removeContainer` | Hard-delete; Dokploy will recreate on next `deploy` |
-| `mcp__dokploy__docker-uploadFileToContainer` | Push a one-off config or credential without rebuilding (use sparingly — does not survive redeploy) |
+| `mcp__plugin_dokploy-dev_dokploy__docker-getConfig` | Inspect full container config: command, mounts, network, restart policy. Catches misconfigured `command:` overrides and missing mounts. **`Env` comes back as `[REDACTED]`** unless `DOKPLOY_REDACT_ENV=false` — see "Env and credentials" below |
+| `mcp__plugin_dokploy-dev_dokploy__docker-getServiceContainersByAppName` | For Swarm-deployed apps — finds containers across nodes |
+| `mcp__plugin_dokploy-dev_dokploy__docker-getStackContainersByAppName` | For compose-deployed apps — lists every service container in the stack |
+| `mcp__plugin_dokploy-dev_dokploy__docker-getContainersByAppNameMatch` | Loose match by app-name substring — useful when `appName` is not exact |
+| `mcp__plugin_dokploy-dev_dokploy__docker-killContainer` | Force-stop a wedged container |
+| `mcp__plugin_dokploy-dev_dokploy__docker-restartContainer` | Restart in place (no rebuild) — first try after a transient runtime failure |
+| `mcp__plugin_dokploy-dev_dokploy__docker-stopContainer` / `startContainer` | Graceful stop/start |
+| `mcp__plugin_dokploy-dev_dokploy__docker-removeContainer` | Hard-delete; Dokploy will recreate on next `deploy` |
+| `mcp__plugin_dokploy-dev_dokploy__docker-uploadFileToContainer` | Push a one-off config or credential without rebuilding (use sparingly — does not survive redeploy). Empty MCP schema: send it with REST `curl -F` (see `mcp-patterns`, "Multipart operations") |
 
 > **Crash loop pattern:** state oscillates between `restarting` and `exited`. Always read `docker-getConfig` and check the `RestartPolicy` and the container's exit code before chasing the wrong issue.
+
+### Env and credentials (redaction)
+
+Since `@dokploy/mcp` 0.30.0 the MCP responses of `application-one`, `compose-one`, `{db}-one` and `docker-getConfig` show `env`, `Env`, `buildArgs`, passwords and tokens as `[REDACTED]` — not even the variable names. Do not conclude "the variable is empty/missing" from that. Diagnose in this order:
+
+1. **The log names the culprit.** `getaddrinfo ENOTFOUND db`, `ECONNREFUSED postgres:5432`, `Missing required env DATABASE_URL`, a stack trace through a config loader — Step 2 usually already shows the host or variable name without any value.
+2. **List variable names without values** (REST is not redacted, so keep the values out of your output): `curl -s -G "$DOKPLOY_URL/api/application.one" -H "x-api-key: $DOKPLOY_API_KEY" --data-urlencode "applicationId=<id>" | jq -r '(.env // "") | split("\n")[] | select(test("^[A-Za-z_][A-Za-z0-9_]*=")) | split("=")[0]'`.
+3. **Need the values?** Ask the user, or set `DOKPLOY_REDACT_ENV=false` in the MCP `env` block and reconnect — a conscious choice, because everything returned then enters the model context.
+
+Never write `[REDACTED]` back through `application-saveEnvironment`: it replaces the whole `env` string. The "change one variable, keep the rest" recipe is in the `mcp-patterns` skill ("Redaction").
 
 ---
 
@@ -136,7 +147,7 @@ Drill down with these as needed:
 If the container is running but HTTPS clients see 502 / 504 / wrong response, the failure is between Traefik and the container.
 
 ```
-mcp__dokploy__application-readTraefikConfig
+mcp__plugin_dokploy-dev_dokploy__application-readTraefikConfig
   → { applicationId }
 ```
 
@@ -148,7 +159,7 @@ Look for:
 | `Bad Gateway` from Traefik logs | App bound to `127.0.0.1` instead of `0.0.0.0` | Fix env / startup args in the app code; redeploy |
 | No router for this host | Domain not attached, or attached to wrong resource (app vs compose) | `domain-byApplicationId` / `domain-byComposeId`; re-create with `domain-create` |
 | TLS cert error | Domain added before DNS propagation, or DNS not pointing at server | `domain-validateDomain`; fix DNS; delete and re-add with `https: true, certificateType: "letsencrypt"` |
-| App not on `dokploy-network` | Container isn't routable from Traefik | Inspect via `docker-getConfig`; for compose, every public-facing service needs `networks: [dokploy-network]` |
+| App not on `dokploy-network` | Container isn't routable from Traefik | Inspect via `docker-getConfig`; for compose, every public-facing service needs `networks: [dokploy-network]`. v0.30+: check the service's `networkIds` / `detachDokployNetwork` (compose: `serviceNetworks`) — a detached `dokploy-network` makes a service unreachable from Traefik; `network-inspect` shows who is attached |
 
 If the resource is exposing ports directly (`ports: ["80:80"]` in compose), there will be a **port collision** with Traefik (80/443/8080). Either remove the explicit port mapping (let Traefik handle it via labels) or change the host port.
 
@@ -163,10 +174,10 @@ Pick the smallest action that unblocks the user. Always confirm destructive oper
 | Stop the failing build immediately | `application-killBuild` / `compose-killBuild` | Aborts the in-progress builder process |
 | Cancel a queued/in-flight deploy | `application-cancelDeployment` / `compose-cancelDeployment` | Marks the deploy as cancelled, releases the queue slot |
 | Clear a stuck queue | `application-cleanQueues` / `compose-cleanQueues` / `settings-cleanAllDeploymentQueue` | Use when multiple deploys are wedged |
-| Forget a specific bad deployment record | `application-dropDeployment` / `deployment-removeDeployment` | Removes one row from history without affecting others |
+| Forget a specific bad deployment record | `deployment-removeDeployment` | Removes one row from history without affecting others (NOT `application-dropDeployment` — that uploads a zip and deploys it) |
 | Wipe deployment history | `application-clearDeployments` / `compose-clearDeployments` | Use sparingly — destroys audit trail |
 | Force "running" state on a healthy-but-misreported container | `application-markRunning` | Cosmetic only — does not start anything |
-| Roll back to the previous good version | `mcp__dokploy__rollback-rollback { rollbackId }` | Look up valid rollbacks via the app's `rollbacks` array on `application-one`. Use `/dokploy-dev:rollback` for the guided flow |
+| Roll back to the previous good version | `mcp__plugin_dokploy-dev_dokploy__rollback-rollback { rollbackId }` | Look up valid rollbacks via the app's `rollbacks` array on `application-one`. Use `/dokploy-dev:rollback` for the guided flow |
 | Reclaim disk and clear build cache | `settings-cleanDockerBuilder`, `cleanUnusedImages`, `cleanUnusedVolumes`, `cleanStoppedContainers` | Use `/dokploy-dev:cleanup` for the guided flow |
 | Kill a wedged runtime container | `docker-killContainer` then `application-redeploy` | Fastest path out of a crash loop |
 
@@ -174,12 +185,12 @@ Pick the smallest action that unblocks the user. Always confirm destructive oper
 
 ## Step 6 — Ask the AI to summarise (when available)
 
-If an AI provider is configured (`mcp__dokploy__ai-getEnabledProviders` returns at least one), let it digest the log and recommend a fix instead of grepping manually.
+If an AI provider is configured (`mcp__plugin_dokploy-dev_dokploy__ai-getEnabledProviders` returns at least one), let it digest the log and recommend a fix instead of grepping manually.
 
 `ai-analyzeLogs` takes the **log text you already fetched in Step 2** — not a `deploymentId`:
 
 ```
-mcp__dokploy__ai-analyzeLogs
+mcp__plugin_dokploy-dev_dokploy__ai-analyzeLogs
   → {
       aiId:    "<id of an enabled provider from ai-getEnabledProviders>",
       logs:    "<the build- or runtime-log text from Step 2>",
@@ -218,9 +229,9 @@ If the fix didn't take, **go back to Step 1**. Do not chain more fixes on top of
 | 502 Bad Gateway | Step 4 Traefik config; check `0.0.0.0` binding | Fix listen address; `redeploy` |
 | TLS handshake error | Step 4; `domain-validateDomain` | Fix DNS, recreate domain with letsencrypt |
 | Deploy stuck `queued` | Step 1 `queueList` | Step 5 `cleanQueues` |
-| Disk-full silent failure | Step 0 `getDockerDiskUsage` | `/dokploy-dev:cleanup`; `redeploy` |
+| Disk-full silent failure | Step 0 `getDockerDiskUsage` / `docker-getServerHealth` | `/dokploy-dev:cleanup`; `redeploy` |
 | Registry pull fails | Build log "unauthorized" | `registry-all`; re-add creds; `redeploy` |
-| Database connection refused from app | `docker-getConfig` (check network), DB `readLogs` | Ensure both containers on same network; verify DB deployed |
+| Database connection refused from app | `docker-getConfig` (check network), DB `readLogs`, `network-inspect` | Ensure both containers on same network (`networkIds` on both sides); verify DB deployed |
 
 ---
 

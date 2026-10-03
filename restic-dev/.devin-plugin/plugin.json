@@ -1,6 +1,6 @@
 {
   "name": "restic-dev",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "restic backup plugin for Agents Store. Set up encrypted daily backups on any Linux server to S3-compatible storage (Cloudflare R2): server recon + restic install, auto-discovery of all Docker volumes/mounts and databases, R2 repository init, a partial-failure-tolerant backup script with logical DB dumps and retention, timezone-aware systemd/cron scheduling, verification, monitoring/dead-man's-switch, and disaster recovery. File-based knowledge, no MCP, no stored credentials.",
   "author": {
     "name": "AGENTS.STORE"

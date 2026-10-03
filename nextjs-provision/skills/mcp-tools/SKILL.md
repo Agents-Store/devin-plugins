@@ -1,25 +1,27 @@
 ---
 name: mcp-tools
 description: >
-  Set up and use shadcn MCP servers for AI-assisted component discovery and installation. This skill should
-  be used when the user asks about "shadcn MCP", "shadcn MCP server", "set up shadcn MCP for Claude",
-  "component MCP tools", "Jpisnice shadcn MCP", "shadcn-ui-mcp-server", "AI component installation",
-  or needs to configure MCP servers for shadcn/ui component work.
+  Set up and use the official shadcn MCP server for AI-assisted component discovery and installation. This skill
+  should be used when the user asks about "shadcn MCP", "shadcn MCP server", "set up shadcn MCP for Claude",
+  "component MCP tools", "shadcn mcp init", "Jpisnice shadcn MCP", "shadcn-ui-mcp-server", "AI component
+  installation", or needs to configure MCP for shadcn/ui component work.
 ---
 
-Two MCP servers enable AI-assisted shadcn/ui component discovery and installation: the official shadcn MCP and the Jpisnice community MCP server.
+One MCP server enables AI-assisted shadcn/ui component discovery and installation: the **official shadcn MCP**, built into the shadcn CLI (`npx shadcn@latest mcp`). This plugin's `.mcp.json` declares exactly that server.
 
 ## Official shadcn MCP
 
-The official MCP is built into the shadcn CLI (v3.0+, current v4).
+### Through this plugin
 
-### Setup
+With the plugin enabled, Claude Code starts the server itself (`npx shadcn@latest mcp`). Its tools are named `mcp__plugin_nextjs-provision_shadcn__<tool>`. The server reads the project's `components.json`, so run the `setup` skill first in a project that has none.
+
+### In a user project (without the plugin)
 
 ```bash
 pnpm dlx shadcn@latest mcp init --client claude
 ```
 
-This generates the MCP configuration for Claude Code automatically. For other clients:
+This generates the MCP configuration for Claude Code automatically. Supported `--client` values: `claude`, `cursor`, `vscode`, `codex`, `opencode`:
 
 ```bash
 # Cursor
@@ -35,172 +37,83 @@ pnpm dlx shadcn@latest mcp init --client codex
 pnpm dlx shadcn@latest mcp init --client opencode
 ```
 
-### What It Enables
-
-- Component resolution from any shadcn-compatible registry
-- Theme management and preview
-- Component search and installation
-- Works with custom registries configured in `components.json`
-
-## Jpisnice Community MCP Server
-
-The `@jpisnice/shadcn-ui-mcp-server` (v2.0.0) provides more granular tools for component discovery.
-
-### Setup for Claude Code
-
-```bash
-claude mcp add shadcn -- bunx -y @jpisnice/shadcn-ui-mcp-server
-```
-
-With a GitHub token for higher API rate limits (5000/hour vs 60/hour):
-
-```bash
-claude mcp add shadcn -- bunx -y @jpisnice/shadcn-ui-mcp-server --github-api-key ghp_YOUR_TOKEN
-```
-
-### Setup for Other Editors
-
-Add to the project's `.mcp.json` or editor settings:
+Or write the server into the project's `.mcp.json` yourself — see `component-search/references/mcp-config-template.json`:
 
 ```json
 {
   "mcpServers": {
     "shadcn": {
-      "command": "bunx",
-      "args": ["-y", "@jpisnice/shadcn-ui-mcp-server"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_YOUR_TOKEN"
-      }
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
     }
   }
 }
 ```
 
-### Available Tools
+### Tools
+
+The server exposes seven tools (shadcn 4.21.1):
 
 | Tool | Description |
 |------|-------------|
-| `list_components` | Browse all available components in the registry |
-| `get_component` | Get the source code for a component |
-| `get_component_demo` | Get usage examples/demo code for a component |
-| `get_component_metadata` | Get dependencies and metadata for a component |
-| `list_blocks` | Browse pre-built templates (dashboards, forms, etc.) |
-| `get_block` | Get source code for a block implementation |
-| `get_directory_structure` | Browse the shadcn/ui repository structure |
-| `list_themes` | Browse available tweakcn themes |
-| `get_theme` | Get CSS variables and config for a tweakcn theme |
-| `apply_theme` | Write a tweakcn theme's CSS/config files into the project (creates a backup; supports `dryRun`) |
+| `get_project_registries` | List the registries configured in `components.json` (requires that file — `init` creates it) |
+| `list_items_in_registries` | Page through items of the given registries; filter with `types` (`ui`, `block`, `component`, `hook`, `page`, `theme`, `style`, `base`, `font`, ...), `limit`, `offset` |
+| `search_items_in_registries` | Fuzzy search by name/description across the given or all configured registries |
+| `view_items_in_registries` | Item details and file contents; items are written `@registry/item` |
+| `get_item_examples_from_registries` | Usage examples and demos with full code (`accordion-demo`, `example-booking-form`, ...) |
+| `get_add_command_for_items` | The `npx shadcn@latest add ...` command for a list of `@registry/item` addresses |
+| `get_audit_checklist` | Checklist to run after adding components or generating code |
 
-The server has **no component-install tools** — component installation happens via the shadcn CLI (`npx shadcn@latest add ...`) after discovery. Note that `apply_theme` does write files: it applies tweakcn theme CSS/config to the project (use `dryRun` to preview).
+Registry and component search work across **every registry configured in `components.json`**, including shadcn studio (`@ss-*`) and any community registry you added.
 
-### Framework Selection
+### Known quirks (shadcn 4.21.1)
 
-The Jpisnice server supports multiple frameworks:
+- `search_items_in_registries` prints `Add command: [object Promise]` for every hit. Do not copy it — build the command (`npx shadcn@latest add @registry/item`) or call `get_add_command_for_items`.
+- A registry that is not listed in `components.json` returns `NOT_CONFIGURED` from the MCP tools (for example `@magicui` in a project with `"registries": {}`), although the CLI itself resolves `@registry/item` for any directory entry. Configure it first with `/add-registries` or `npx shadcn registry add`.
 
-```bash
-# React (default)
-bunx -y @jpisnice/shadcn-ui-mcp-server
+## The community server is no longer shipped
 
-# Svelte
-bunx -y @jpisnice/shadcn-ui-mcp-server --framework svelte
+Earlier versions of this plugin also declared `@jpisnice/shadcn-ui-mcp-server`. It was removed in 1.3.0: its `get_component` returns the Radix variant (`asChild`, `Slot`) even with `--ui-library base`, `get_component_metadata` answers "Component metadata not found" for common components such as `button` and `accordion`, and its `list_components` lists outdated `form` / `sonner` entries. Use the official tools above, or the CLI:
 
-# Vue
-bunx -y @jpisnice/shadcn-ui-mcp-server --framework vue
-
-# React Native
-bunx -y @jpisnice/shadcn-ui-mcp-server --framework react-native
-```
-
-### React UI Library Selection
-
-For React, choose between Radix UI (default) or Base UI primitives:
-
-```bash
-bunx -y @jpisnice/shadcn-ui-mcp-server --ui-library base
-```
-
-### Transport Modes
-
-Transport is selected with the `--mode` and `--port` flags (the `MCP_TRANSPORT_MODE`/`MCP_PORT` env vars still work):
-
-| Mode | Use Case | Command |
-|------|----------|---------|
-| stdio (default) | CLI, Claude Code | `bunx -y @jpisnice/shadcn-ui-mcp-server` |
-| SSE | HTTP-based clients, remote servers | `--mode sse --port 7423` |
-| dual | Both stdio and SSE simultaneously | `--mode dual` |
-
-SSE mode configuration and client attach:
-
-```bash
-bunx -y @jpisnice/shadcn-ui-mcp-server --mode sse --port 7423
-
-# Attach Claude Code to the running SSE server:
-claude mcp add --scope user --transport sse shadcn-mcp-server http://localhost:7423/sse
-```
-
-## Which MCP Server to Use
-
-| Scenario | Recommendation |
-|----------|----------------|
-| Quick setup, standard shadcn/ui | Official MCP |
-| Detailed component exploration | Jpisnice MCP |
-| Custom/private registries | Official MCP |
-| Multi-framework projects | Jpisnice MCP |
-| shadcn studio premium components | Official MCP (works with the namespaced registries in components.json) |
-| Multi-registry search (260+ registries) | Both (Official reads components.json registries; Jpisnice searches GitHub) |
-
-Both servers can coexist. The official MCP integrates with `components.json` registries (including shadcn studio), while the Jpisnice server provides richer browsing tools from GitHub source.
+| Need | Use |
+|------|-----|
+| Component source for your project's base | `npx shadcn@latest view @shadcn/button` or `view_items_in_registries` |
+| Usage docs, API and examples | `npx shadcn@latest docs button` |
+| Demo code | `get_item_examples_from_registries` |
+| Themes and presets | `npx shadcn@latest apply <preset>`, https://ui.shadcn.com/create (see `theme-configuration`) |
 
 ## Workflow: AI-Assisted Component Installation
 
 ```
 1. User describes UI need ("I need a login form")
      ↓
-2. AI uses list_components/list_blocks to find relevant components
+2. AI uses search_items_in_registries / list_items_in_registries to find components and blocks
      ↓
-3. AI uses get_component/get_component_demo/get_component_metadata to review options and dependencies
+3. AI uses view_items_in_registries / get_item_examples_from_registries to review options and dependencies
      ↓
-4. AI composes the CLI command (npx shadcn@latest add ...)
+4. AI gets the command from get_add_command_for_items (npx shadcn@latest add ...)
      ↓
-5. User runs the command (or AI runs via Bash)
+5. User runs the command (or AI runs it via Bash, `--dry-run` first)
      ↓
-6. AI customizes the installed component for the user's needs
+6. AI customizes the installed component, then runs get_audit_checklist
 ```
 
 ## Multi-Registry Search with MCP
 
-When community registries are configured in `components.json`, the official shadcn MCP automatically discovers and searches them. This enables a combined workflow:
+The official MCP only searches registries listed in `components.json`. To search the community directory:
 
-1. **Official MCP** resolves components from all configured registries (standard shadcn/ui + shadcn studio + 260+ community registries)
-2. **Jpisnice MCP** provides deeper GitHub-based search across the shadcn ecosystem — component source code, demos, and block implementations
+1. Add registries to `components.json` (`/add-registries` fetches the directory, skips `unavailable` and hidden entries, and merges the rest; see the `component-search` skill)
+2. Or add a handful with `npx shadcn registry add @name=https://domain.com/r/{name}.json`
 
-### Recommended Dual Setup for User Projects
+Registries can also be declared in `package.json#registries` (CLI 4.18+; merged with `components.json`).
 
-```bash
-# Official MCP (reads registries from components.json)
-pnpm dlx shadcn@latest mcp init --client claude
+## Troubleshooting
 
-# Community MCP (GitHub-based search, richer browsing)
-claude mcp add shadcn-community -- npx -y @jpisnice/shadcn-ui-mcp-server
-```
-
-For a ready-to-use `.mcp.json` template with both servers, see the `component-search` skill's `references/mcp-config-template.json`.
-
-### Adding Community Registries for MCP Search
-
-The official MCP only searches registries listed in `components.json`. To unlock search across 260+ community registries:
-
-1. Add registries to `components.json` (see `component-search` skill for the full list)
-2. Or use the `/setup-registries --all` command to add all registries at once
-
-## Rate Limiting
-
-The Jpisnice MCP server uses GitHub's public API. Without a token, you get 60 requests/hour. With a GitHub Personal Access Token, you get 5000 requests/hour.
-
-To create a token:
-1. Go to GitHub Settings > Developer settings > Personal access tokens > Fine-grained tokens
-2. Create a token with no special permissions (public repo access only)
-3. Pass it via `--github-api-key` flag or `GITHUB_PERSONAL_ACCESS_TOKEN` env var
+| Issue | Fix |
+|-------|-----|
+| MCP server not connecting | Check `/mcp` or `claude mcp list`; the server is started with `npx shadcn@latest mcp` — run that command once by hand to see errors |
+| `NOT_CONFIGURED` for a registry | Add the registry to `components.json` (see above) |
+| Empty `get_project_registries` | No `components.json` or no `registries` in it yet — run `npx shadcn@latest init`, or add registries |
 
 ## What This Skill Does NOT Cover
 

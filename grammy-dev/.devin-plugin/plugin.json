@@ -1,6 +1,6 @@
 {
   "name": "grammy-dev",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "grammY (Telegram bot framework) dev plugin for Agents Store. Covers bot core, filter queries, middleware, commands, keyboards, sessions, conversations, files, payments, deployment, scaling, and the full @grammyjs/* plugin catalog for Node.js/Deno/TypeScript bot developers.",
   "author": {
     "name": "AGENTS.STORE"

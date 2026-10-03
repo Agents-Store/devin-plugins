@@ -189,13 +189,16 @@ const nextConfig = {
 }
 ```
 
-The Babel-based compiler increases build time. Next.js 16.3 adds an experimental Rust-based compiler that runs inside Turbopack (34-46% faster dev-to-ready-page vs Babel):
+The Babel-based compiler increases build time. Next.js 16.3 adds an **experimental** Rust-based compiler that runs inside Turbopack (34-46% faster dev-to-ready-page vs Babel). It is opt-in and released to gather feedback — do not roll it out to production without testing:
 
 ```ts
 const nextConfig = {
-  experimental: { turbopackRustReactCompiler: true },  // 16.3+
+  reactCompiler: true,                                  // still required — the flag below only picks the implementation
+  experimental: { turbopackRustReactCompiler: true },   // 16.3+, Turbopack only
 }
 ```
+
+Constraints: it requires `reactCompiler: true`, works only with Turbopack (using it with `--webpack` throws an error), and `babel-plugin-react-compiler` is not needed.
 
 `create-next-app` offers a `--react-compiler` flag for new projects.
 
@@ -227,11 +230,13 @@ const nextConfig = {
 | Content Type | Strategy | Implementation |
 |-------------|----------|----------------|
 | Marketing pages | Static (SSG) | Default (no dynamic data) |
-| Blog posts | ISR | `export const revalidate = 3600` |
-| Product pages | ISR | `export const revalidate = 60` + `revalidateTag` on update |
+| Blog posts | ISR | `export const revalidate = 3600` — only without `cacheComponents`; with it: `'use cache'` + `cacheLife('hours')` |
+| Product pages | ISR | `export const revalidate = 60` + `revalidateTag` on update — only without `cacheComponents`; with it: `'use cache'` + `cacheLife('minutes')` + `cacheTag()` |
 | User dashboard | Dynamic + Streaming | `<Suspense>` boundaries |
 | Search results | Dynamic | Access `searchParams` |
 | Authenticated pages | Dynamic | Access `cookies()` |
+
+The two ISR rows use the previous model (route segment config). With `cacheComponents: true` the `revalidate`, `dynamic`, `dynamicParams` and `fetchCache` exports are removed and the lifetime moves into the cached function — see the migration table in the `data-fetching` skill's `references/cache-components.md`.
 
 ## Script Optimization
 
@@ -263,6 +268,24 @@ import Link from 'next/link'
 ```
 
 Next.js 16 rewrote prefetching: layout deduplication, incremental prefetching, cancellation when links leave the viewport, and hover prioritization all happen automatically. 16.3 can inline small prefetch payloads into the page (`prefetchInlining`), and `<Link prefetch={true}>` participates in Partial Prefetching when `cacheComponents` + `partialPrefetching` are enabled (see the `data-fetching` skill's Cache Components reference).
+
+With Partial Prefetching, per-link prefetching is the knob for a few high-intent links: `<Link href="/search?q=next" prefetch={true}>` resolves the cached content that depends on that URL before the click, while a plain `<Link>` prefetches only the shared App Shell. Do not put `prefetch={true}` on every card in a large grid — each visible link can trigger a server request; prefer hover-triggered prefetch there. A segment can cap the cost with `export const prefetch = 'partial'` or `'force-disabled'` (requires `cacheComponents`).
+
+## View Transitions
+
+React's `<ViewTransition>` is stable as of React 19.3 (2026-09-09) and works in the App Router with no configuration (the App Router already ships the React features it needs). Route navigations are transitions, so wrapping the same-named element on both pages morphs it across the navigation:
+
+```tsx
+import { ViewTransition } from 'react'
+import Image from 'next/image'
+
+// On both the list page (thumbnail) and the detail page (hero), with the same name:
+<ViewTransition name={`photo-${photo.id}`}>
+  <Image src={photo.src} alt={photo.alt} width={400} height={300} />
+</ViewTransition>
+```
+
+Animations are triggered by Transitions, `<Suspense>` reveals and `useDeferredValue` — a plain `setState` does not start one. Browsers without the View Transitions API simply skip the animation. Guide: [Designing view transitions](https://nextjs.org/docs/app/guides/view-transitions).
 
 ## Production Checklist
 

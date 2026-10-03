@@ -108,11 +108,12 @@ export const parentTask = task({
     // Quick unwrap (throws on error)
     const output = await childTask.triggerAndWait({ data: "value" }).unwrap();
 
-    // Batch with wait
-    const results = await childTask.batchTriggerAndWait([
+    // Batch with wait — the result is `{ id, runs }`; each run has `ok`
+    const { runs } = await childTask.batchTriggerAndWait([
       { payload: { data: "item1" } },
       { payload: { data: "item2" } },
     ]);
+    const outputs = runs.filter((r) => r.ok).map((r) => r.output);
   },
 });
 ```
@@ -153,14 +154,21 @@ export const taskWithWaits = task({
     await wait.for({ minutes: 5 });
     await wait.until({ date: new Date("2024-12-25") });
 
-    // Wait for external approval (human-in-the-loop) — returns Result
-    const result = await wait.forToken<{ approved: boolean }>("user-approval-token");
+    // Wait for external approval (human-in-the-loop): create the token first,
+    // hand token.id (starts with "waitpoint_") to whoever completes it, then wait
+    const token = await wait.createToken({ timeout: "10m" });
+    await notifyApprover(token.id, token.url);
+
+    const result = await wait.forToken<{ approved: boolean }>(token); // returns Result
     if (result.ok) console.log("Approved:", result.output.approved);
   },
 });
+
+// Anywhere else (a route handler, another task): complete it by id
+await wait.completeToken<{ approved: boolean }>(tokenId, { approved: true });
 ```
 
-> Waits > 5 seconds are checkpointed and don't count toward compute.
+> **Checkpoints are a Cloud feature.** On Trigger.dev Cloud a run is checkpointed once it waits 60 seconds or longer (shorter `wait.for` / `wait.until` stay `EXECUTING`), is not billed for compute while checkpointed, and releases its concurrency slots. On **self-hosted there are no checkpoints**: a waiting run stays `EXECUTING` and keeps holding its container and slot.
 
 ## Concurrency & Queues
 
@@ -178,11 +186,34 @@ export const sendEmail = task({
   run: async (payload) => {},
 });
 
-// Per-tenant concurrency at trigger time
+// Per-tenant concurrency at trigger time (a queue per tenant)
 await childTask.trigger(payload, {
   queue: { name: `user-${userId}`, concurrencyLimit: 2 },
 });
 ```
+
+This `concurrencyLimit` form works on every server version (it is the only one enforced below 4.7.0). SDK 4.7 deprecates it in favour of the `concurrency` option below, which needs server ≥ 4.7.0 — on an older server the option is accepted but not applied.
+
+### Concurrency 2.0 (requires server ≥ 4.7.0)
+
+```ts
+import { concurrencyLimit, task } from "@trigger.dev/sdk";
+
+// at most 25 runs at once across every task that holds this named limit
+export const openaiLimit = concurrencyLimit({ name: "openai", total: 25 });
+
+export const generateReport = task({
+  id: "generate-report",
+  // each tenant at most 1 at a time, 10 in total, plus the shared openai cap
+  concurrency: [{ perKey: 1, total: 10 }, openaiLimit],
+  run: async (payload) => {},
+});
+
+// per-tenant concurrency through a key, not a queue per tenant
+await generateReport.trigger(payload, { concurrencyKey: tenantId });
+```
+
+A task takes at most one inline shape plus up to two named limits. `concurrencyLimits.pause/resume/override/reset` manage named limits at runtime. See `references/advanced-tasks.md`.
 
 ## Error Handling & Retries
 
@@ -206,6 +237,8 @@ export const resilientTask = task({
 ```
 
 ## Scheduled Tasks (Cron)
+
+A `schedules.task` with a `cron` is a *declarative* schedule: it is created and updated when `dev` or `deploy` syncs it, with no attach step. Schedules created at runtime with `schedules.create()` are *imperative*. See the **scheduled-tasks** skill and `references/scheduled-tasks.md`.
 
 ```ts
 import { schedules } from "@trigger.dev/sdk";
@@ -266,7 +299,6 @@ export const batchProcessor = task({
 ```
 
 Available methods: `set()`, `get()`, `del()`, `replace()`, `append()`, `remove()`, `increment()`, `decrement()`, `flush()`, `current()`. Max 256KB per run.
-```
 
 ## Machine Presets
 
@@ -283,15 +315,18 @@ Available methods: `set()`, `get()`, `del()`, `replace()`, `append()`, `remove()
 ```ts
 export const heavyTask = task({
   id: "heavy-computation",
-  machine: { preset: "large-2x" },
+  machine: "large-2x",       // or { preset: "large-2x" } — both are valid on a task
   maxDuration: 1800,
   run: async (payload) => {},
 });
 ```
 
+At trigger time only the string form is accepted: `heavyTask.trigger(payload, { machine: "large-2x" })`.
+
 ## Deeper Reference
 
 - @references/basic-tasks.md — core task patterns in detail
 - @references/advanced-tasks.md — debouncing, idempotency, tags, error handling
-- @references/scheduled-tasks.md — cron patterns, dynamic schedules
+- @references/scheduled-tasks.md — the REST form of the schedule calls (the guide itself is the **scheduled-tasks** skill)
 - @references/triggering-patterns.md — all trigger and batch methods
+- @references/record-driven-tasks.md — tasks fed by records in an external system: status lifecycle, idempotency per record, fan-out, AI processing

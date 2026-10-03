@@ -1,64 +1,47 @@
-# Workspaces, Bases, Tables, Fields
+# Workspaces, Bases, Tables, Fields -- curl Recipes (read side)
 
-Imported from the official NocoDB agent-skills CLI.
+Recipes on the Meta API v3 for finding the IDs the record recipes need. Each block maps to a command of the official `nocodb.sh` script (see the parent skill's command map). The `nocodb_api METHOD /path ['body']` wrapper is defined in `../SKILL.md` -- paths are under `${NOCODB_URL}/api/v3`.
+
+**Changing** the schema (creating tables, fields, select options, relations) is the job of the **nocodb-dev** plugin -- its `cli-reference` and `field-management` skills hold the write recipes and every field-type payload. This file stays on the read side that business users need.
 
 ## Workspaces
 
-**Note:** Workspace APIs and Workspace Collaboration APIs are available only with self-hosted **Enterprise** plans and cloud-hosted **Enterprise** plans.
+Listing workspaces is open on all plans; reading a single workspace needs cloud Business and above or a licensed self-hosted deployment.
 
 ```bash
-nc workspace:list                                                               # → wabc1234xyz
-nc workspace:get wabc1234xyz
-nc workspace:create '{"title":"New Workspace"}'
-nc workspace:update wabc1234xyz '{"title":"Renamed"}'
-nc workspace:delete wabc1234xyz
-nc workspace:members wabc1234xyz
-nc workspace:members:add wabc1234xyz '{"email":"user@example.com","roles":"workspace-creator"}'
-nc workspace:members:update wabc1234xyz '{"email":"user@example.com","roles":"workspace-viewer"}'
-nc workspace:members:remove wabc1234xyz '{"email":"user@example.com"}'
+nocodb_api GET /meta/workspaces                                  # → wabc1234xyz
+nocodb_api GET /meta/workspaces/$WORKSPACE_ID
 ```
 
 ## Bases
 
 ```bash
-nc base:list wabc1234xyz                                                        # → pdef5678uvw
-nc base:get pdef5678uvw
-nc base:create wabc1234xyz '{"title":"New Base"}'
-nc base:update pdef5678uvw '{"title":"Renamed"}'
-nc base:delete pdef5678uvw
+nocodb_api GET /meta/workspaces/$WORKSPACE_ID/bases              # → pdef5678uvw
+nocodb_api GET /meta/bases/$BASE_ID
 ```
 
-**Base Collaboration (Enterprise plans only)**
+Base members (cloud Business and above / licensed self-hosted):
 
 ```bash
-nc base:members pdef5678uvw
-nc base:members:add pdef5678uvw '{"email":"user@example.com","roles":"base-editor"}'
-nc base:members:update pdef5678uvw '{"email":"user@example.com","roles":"base-viewer"}'
-nc base:members:remove pdef5678uvw '{"email":"user@example.com"}'
+nocodb_api GET "/meta/bases/$BASE_ID?include[]=members"
 ```
 
 ## Tables
 
 ```bash
-nc table:list pdef5678uvw                                                       # → mghi9012rst
-nc table:get pdef5678uvw mghi9012rst
-nc table:create pdef5678uvw '{"title":"NewTable"}'
-nc table:update pdef5678uvw mghi9012rst '{"title":"Customers"}'
-nc table:delete pdef5678uvw mghi9012rst
+nocodb_api GET /meta/bases/$BASE_ID/tables                       # → mghi9012rst
+nocodb_api GET /meta/bases/$BASE_ID/tables/$TABLE_ID             # fields + views
 ```
 
 ## Fields
 
 ```bash
-nc field:list pdef5678uvw mghi9012rst                                           # → cjkl3456opq
-nc field:get pdef5678uvw mghi9012rst cjkl3456opq
-nc field:create pdef5678uvw mghi9012rst '{"title":"Phone","type":"PhoneNumber"}'
-nc field:update pdef5678uvw mghi9012rst cjkl3456opq '{"title":"Mobile"}'
-nc field:delete pdef5678uvw mghi9012rst cjkl3456opq
+nocodb_api GET /meta/bases/$BASE_ID/tables/$TABLE_ID             # the `fields` array lists them  → cjkl3456opq
+nocodb_api GET /meta/bases/$BASE_ID/fields/$FIELD_ID
 ```
 
-## Field Types
+Each field carries `id`, `title`, `type` (CamelCase: `SingleLineText`, `Number`, `Date`, `SingleSelect`, `LinkToAnotherRecord`, ...) and type-specific `options`. Use the exact `title` in record payloads and `where` strings, and the `id` wherever a tool asks for a field ID (`groupByRecords`, link recipes, view filters).
 
-Supported field types for `field:create`:
+## Ask MCP Instead
 
-SingleLineText, LongText, Number, Decimal, Currency, Percent, Email, URL, PhoneNumber, Date, DateTime, Time, SingleSelect, MultiSelect, Checkbox, Rating, Attachment, Links, User, JSON
+`getTablesList`, `getTableSchema` (and `getBaseSchema` on Cloud / licensed) return the same information without an API token -- see **mcp-patterns**.

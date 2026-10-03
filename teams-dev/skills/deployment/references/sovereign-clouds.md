@@ -1,64 +1,67 @@
 # Sovereign clouds
 
-The `cloud` option on `new App({ cloud })` reconfigures every endpoint the SDK talks to. Match it to the tenant where the bot is deployed.
+A cloud preset reconfigures every endpoint the SDK talks to: login authority, bot service and token service URLs, Graph scope, OpenID metadata and token issuer. Match it to the cloud where the tenant lives.
 
-| Cloud | `cloud` value | Tenant suffix | Notes |
-|---|---|---|---|
-| Public (default) | `PUBLIC` | `*.onmicrosoft.com` | Default; do not set explicitly unless overriding env-based logic |
-| US Government (GCC High) | `US_GOV` | `*.onmicrosoft.us` | GCC and GCC High both use this |
-| US Government DoD | `US_GOV_DOD` | `*.onmicrosoft.us` | DoD-specific routing |
-| China (operated by 21Vianet) | `CHINA` | `*.partner.onmschina.cn` | Separate identity stack |
+| Cloud | `CLOUD` value | Preset | Tenant suffix | Notes |
+|---|---|---|---|---|
+| Public (default) | `Public` | `PUBLIC` | `*.onmicrosoft.com` | Nothing to set |
+| US Government (GCC High) | `USGov` | `US_GOV` | `*.onmicrosoft.us` | |
+| US Government DoD | `USGovDoD` | `US_GOV_DOD` | `*.onmicrosoft.us` | DoD routing |
+| China (operated by 21Vianet) | `China` | `CHINA` | `*.partner.onmschina.cn` | Separate identity stack |
 
-## Code
+## Configuration
 
-```ts
-import { App, PUBLIC, US_GOV, US_GOV_DOD, CHINA } from '@microsoft/teams.apps';
+Environment, next to whichever authentication mode is in use (client secret, managed identity, federated):
 
-const cloud = ((): typeof PUBLIC | typeof US_GOV | typeof US_GOV_DOD | typeof CHINA => {
-  switch (process.env.CLOUD) {
-    case 'USGov':    return US_GOV;
-    case 'USGovDoD': return US_GOV_DOD;
-    case 'China':    return CHINA;
-    default:         return PUBLIC;
-  }
-})();
-
-const app = new App({ cloud });
+```bash
+CLOUD=USGov
+CLIENT_ID=<client-id>
+CLIENT_SECRET=<client-secret>
+TENANT_ID=<tenant-id>
 ```
 
-What changes under the hood:
+In code — the presets come from `@microsoft/teams.api`, not from `@microsoft/teams.apps`:
 
-- **Login authority** — `login.microsoftonline.us`, `login.partner.microsoftonline.cn`, etc.
-- **Bot service base URL** — service endpoint for `/v3/conversations/...` calls.
-- **JWT issuer validation** — accepted `iss` claims on inbound activity tokens.
+```ts
+import { App } from '@microsoft/teams.apps';
+import { US_GOV } from '@microsoft/teams.api';
+
+const app = new App({ cloud: US_GOV });
+void app;
+```
+
+A `cloud` passed in code **takes precedence** over the `CLOUD` variable. If the variable seems ignored, check that it is exported into the process (not only the shell) and that no `cloud:` option overrides it.
+
+## Per-endpoint overrides
+
+`withOverrides(preset, { … })` changes single endpoints, for example the tenant-specific login URL a single-tenant bot in China needs:
+
+```ts
+import { App } from '@microsoft/teams.apps';
+import { CHINA, withOverrides } from '@microsoft/teams.api';
+
+const app = new App({
+  cloud: withOverrides(CHINA, { loginTenant: 'your-tenant-id' }),
+});
+void app;
+```
+
+Override fields: `LoginEndpoint`, `LoginTenant`, `BotScope`, `TokenServiceUrl`, `OpenIdMetadataUrl`, `TokenIssuer`, `GraphScope`.
+
+Graph clients built from the app (`app.graph`, `app.graphBaseUrl`) follow the preset's Graph scope, so sovereign tenants reach the right Graph host. Build user clients with `{ baseUrlRoot: app.graphBaseUrl }` (`graph-integration`).
 
 ## Per-cloud caveats
 
 | Cloud | Caveat |
 |---|---|
-| US Government | Bot must be registered in an Azure US Government subscription. The Azure Bot Service in commercial Azure cannot serve a GCC High tenant. |
-| US Government DoD | Some Graph endpoints lag commercial parity by 1–2 releases. |
-| China | Operated independently of Microsoft global services. `@microsoft/teams.openai` does not work without a region-specific deployment; Azure OpenAI is the only viable backend. |
+| US Government | Register the bot in an Azure US Government subscription; the commercial Azure Bot Service cannot serve a GCC High tenant |
+| US Government DoD | Some Graph endpoints lag the commercial cloud by a release or two |
+| China | Operated independently of the global services; check that the model service you call (Azure OpenAI region and deployment) exists there |
 
-## Manifest
+## Manifest and portal
 
-The manifest schema is identical across clouds, but the **app store / Teams Admin Center** is per-cloud. Sideload via the Developer Portal that matches the tenant (`https://dev.teams.microsoft.us/` for US Gov, `https://dev.teams.microsoft.cn/` for China).
+The manifest schema is the same in every cloud, but the app catalog, admin center and Developer Portal are per cloud. Use the portal that matches the tenant when you upload or manage the app.
 
-## Env example
+## Verify
 
-```
-CLOUD=USGov
-BOT_ID=...
-BOT_PASSWORD=...
-AAD_APP_TENANT_ID=...
-```
-
-## Verification
-
-After deploy, hit `/api/messages` from the bot service and check the logs:
-
-```
-inbound activity from https://smba.infra.gov.teams.microsoft.us/...
-```
-
-The base URL must match the cloud. If you see `smba.infra.teams.microsoft.com` against a `USGov` configuration, the bot is mis-routed — confirm the Azure Bot resource is in the right cloud.
+After deploying, send a message and read the log of the inbound request: the service URL must belong to the cloud (a government bot service host, not the commercial one). A commercial host against a `USGov` setup means the Azure Bot resource sits in the wrong cloud.

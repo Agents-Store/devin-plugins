@@ -56,16 +56,31 @@ restic backup --tag daily \
   --exclude-caches
 rc=$?
 set -e
-# 0 = success, 3 = some files unreadable but a snapshot WAS created (not fatal).
-if [ "$rc" -ne 0 ] && [ "$rc" -ne 3 ]; then
+# 0 = success.
+# 3 = partial: some source data was unreadable (restic >= 0.19: or a source path was
+#     missing) but a snapshot WAS created -> not fatal; log it and carry on.
+# Anything else is a real failure: 1 = no snapshot, 10/11/12 = repo missing/locked/bad password.
+if [ "$rc" -eq 3 ]; then
+  echo "restic backup: exit 3 - partial snapshot created (some source data unreadable or a source path missing); continuing" >&2
+elif [ "$rc" -ne 0 ]; then
   echo "restic backup FAILED with exit code $rc" >&2
   exit "$rc"
 fi
 
 # --- 3) RETENTION ----------------------------------------------------------
+# restic >= 0.19: `forget` exits 3 when it could not remove one or more snapshots.
+# Unlike backup's 3 this is a REAL failure - do not tolerate it. Failing here is
+# intended: the run ends non-zero, so the failure alert / healthcheck /fail ping fires.
+set +e
 restic forget --tag daily \
   --keep-daily 7 --keep-weekly 4 --keep-monthly 6 \
   --prune
+frc=$?
+set -e
+if [ "$frc" -ne 0 ]; then
+  echo "restic forget FAILED with exit code $frc (3 = one or more snapshots could not be removed)" >&2
+  exit "$frc"
+fi
 
 echo "=== restic-backup done (rc=$rc) $(date -Is) ==="
 

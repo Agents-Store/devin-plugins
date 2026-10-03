@@ -31,15 +31,20 @@ The minimum viable path from search to deployed workflow:
 ```
 
 Review results. Pick the best match by quality signals:
-- `totalViews > 10,000` — well-established
+- `totalViews` / `views > 10,000` — well-established
 - Short node list (< 15 nodes) — simpler to configure
-- Recent activity — compatible with current n8n
+- Recent `createdAt` — likelier to use current nodes
+- Free (no `purchaseUrl`, and `price` 0 or absent) — a paid template needs the user's go-ahead; for a bare ID look the price up in the search first
+
+If the n8n-mcp search finds nothing, the same search runs against `api.n8n.io` (`template-discovery` skill).
 
 ### Step 2: Analyze the template
 
 ```
-~~template_get(id={template_id})
+~~template_get(templateId={template_id}, mode="full")
 ```
+
+n8n-mcp reads a local database of about 2,350 templates. On `Template <id> not found`, fetch the template from `api.n8n.io` (`curl -s https://api.n8n.io/api/workflows/templates/{template_id}`, workflow JSON in `.workflow`).
 
 Check:
 - **Node types** — are all nodes available on the instance?
@@ -49,13 +54,15 @@ Check:
 ### Step 3: Deploy
 
 ```
-~~template_deploy(id={template_id})
+~~template_deploy(templateId={template_id})
 ```
 
 The deploy tool handles:
-- Auto-fix for minor schema issues
+- Auto-fix for expression format and `typeVersion` issues
 - Credential stripping (credentials are not imported — must be configured manually)
-- Workflow is created in **inactive** state
+- Workflow is created as an **unpublished draft**
+
+A template that only exists on `api.n8n.io` is imported with `~~workflow_create` instead (`name`, `nodes`, `connections`, `settings`; see `single-workflow-import`, Path 1b).
 
 ### Step 4: Verify
 
@@ -63,14 +70,14 @@ The deploy tool handles:
 ~~workflow_list
 ```
 
-Confirm the workflow appears in the list. Check its status (should be inactive).
+Confirm the workflow appears in the list. Check its status (should be unpublished).
 
-### Step 5: Configure and activate
+### Step 5: Configure and publish
 
 1. Open the workflow in n8n UI
 2. Set up required credentials for each node
 3. Test with a manual execution
-4. Activate the workflow
+4. Publish the workflow (n8n 2.x calls this step Publish; "activate" is the old name) — only when the user asks
 
 ---
 
@@ -81,7 +88,7 @@ Confirm the workflow appears in the list. Check its status (should be inactive).
 Every provisioning session should start with:
 
 ```
-1. ~~instance_audit → is the instance healthy?
+1. ~~instance_health → is the instance reachable and the API key accepted?
 2. ~~workflow_list → what's already deployed?
 3. ~~credential_manage → what credentials exist?
 ```
@@ -93,7 +100,7 @@ This prevents conflicts and identifies reusable credentials.
 When the official library doesn't have what you need:
 
 ```
-1. ~~template_search → official library (9,166+ templates)
+1. ~~template_search → official library (12,900+ templates: n8n-mcp local database first, then api.n8n.io)
 2. Community GitHub repos → Zie619, enescingoz, etc. (see community-source-discovery skill)
 3. Community platforms → n8nworkflows.xyz, n8nfind.net, etc.
 4. Build from scratch → use n8n-native-mcp SDK tools
@@ -113,16 +120,16 @@ Before deploying multiple workflows:
 After every deployment:
 
 1. Confirm workflow exists in `~~workflow_list`
-2. Check workflow is inactive (not auto-activated)
+2. Check workflow is an unpublished draft (nothing is auto-published)
 3. Configure credentials
 4. Run a manual test execution
 5. Check execution output for errors
-6. Activate only after successful test
+6. Publish only after successful test and on the user's request
 
 ## Convention Notes
 
 - All examples use the CONNECTORS pattern — `~~placeholder` for tool-agnostic instructions
-- Workflows are always imported in inactive state — never auto-activate
+- Workflows are always imported as unpublished drafts — never auto-publish (n8n 2.x: publish replaces activate)
 - Credentials are always stripped during import — must be configured manually
-- Batch deployments use tags for grouping: `suite-{name}-{date}`
+- Batch deployments use tags for grouping: `suite-{name}-{date}`, added after each deploy with the `addTag` operation (the deploy tools take no tags)
 - Community JSON is always validated before import

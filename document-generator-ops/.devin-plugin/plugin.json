@@ -1,6 +1,6 @@
 {
   "name": "document-generator-ops",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Professional document generator. Creates proposals, invoices, estimates/quotations, reports, presentations, contracts, NDAs, and certificates of completion in PDF, DOCX, and PPTX formats. Supports multi-language documents with embedded fonts (Cyrillic, Latin). First-use onboarding for style preferences, company profiles, and logo management. Converts between MD, DOCX, PDF, HTML, and PPTX.",
   "author": {
     "name": "AGENTS.STORE"

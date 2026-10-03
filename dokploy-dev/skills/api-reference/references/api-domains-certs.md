@@ -8,7 +8,7 @@
 - [Port (4 endpoints)](#port-4-endpoints)
 - [Forward Auth (Application Authentication) (10 endpoints)](#forward-auth-application-authentication-10-endpoints)
 
-## Domain (9 endpoints)
+## Domain (10 endpoints)
 
 Domains map hostnames to applications and compose services via Traefik.
 
@@ -20,7 +20,8 @@ Domains map hostnames to applications and compose services via Traefik.
 | POST | `/domain.create` | domain.create | Create a new domain mapping |
 | POST | `/domain.update` | domain.update | Update domain configuration |
 | POST | `/domain.delete` | domain.delete | Remove a domain mapping |
-| POST | `/domain.validateDomain` | domain.validateDomain | Check if a domain is valid and resolvable. Input: `domain` (the hostname string, NOT domainId), optional `serverIp` |
+| POST | `/domain.validateDomain` | domain.validateDomain | Check if a domain is valid and resolvable. Input: `domain` (the hostname string, NOT domainId), optional `serverId` (check against that remote server's IPs; `serverIp` was replaced by `serverId` in v0.30) |
+| POST | `/domain.toggleEnable` | domain.toggleEnable | **v0.30.0+** flip a domain's `enabled` flag — the route leaves Traefik, certificate/path/middleware settings stay. Input: `domainId`. Applications apply instantly; compose domains (labels) change on the next deploy |
 | POST | `/domain.generateDomain` | domain.generateDomain | Auto-generate a subdomain (traefik.me) |
 | GET | `/domain.canGenerateTraefikMeDomains` | domain.canGenerateTraefikMeDomains | Check if traefik.me auto-domains are available |
 
@@ -50,7 +51,8 @@ Domains map hostnames to applications and compose services via Traefik.
   "port": "number",
   "https": "boolean",
   "certificateType": "string",
-  "forwardAuthEnabled": "boolean (v0.29.8+, enterprise)"
+  "forwardAuthEnabled": "boolean (v0.29.8+, enterprise)",
+  "enabled": "boolean (v0.30.0+ — false takes the route out of Traefik without deleting the domain)"
 }
 ```
 

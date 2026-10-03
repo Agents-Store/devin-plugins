@@ -1,6 +1,6 @@
 # Scenario: Form conversation bot
 
-Asks the user for name, age, and email across multiple messages using `@grammyjs/conversations`.
+Asks the user for name, age, and email across multiple messages using `@grammyjs/conversations` 2.x (no session plugin needed).
 
 ## Install
 
@@ -12,7 +12,7 @@ npm install grammy @grammyjs/conversations dotenv
 
 ```typescript
 import "dotenv/config";
-import { Bot, Context, GrammyError, HttpError, session } from "grammy";
+import { Bot, Context, GrammyError, HttpError } from "grammy";
 import {
   conversations,
   createConversation,
@@ -20,16 +20,24 @@ import {
   type ConversationFlavor,
 } from "@grammyjs/conversations";
 
+// Outside (middleware) context carries the flavor; the context INSIDE a conversation must not.
 type MyContext = ConversationFlavor<Context>;
-type MyConversation = Conversation<MyContext>;
+type MyConversationContext = Context;
+type MyConversation = Conversation<MyContext, MyConversationContext>;
 
 const bot = new Bot<MyContext>(process.env.BOT_TOKEN!);
 
-// Sessions are required by the conversations plugin
-bot.use(session({ initial: () => ({}) }));
+// Conversations 2.x keeps its own state (in memory by default) — no session needed.
+// To survive restarts: conversations({ storage: { type: "key", version: 1, adapter } })
 bot.use(conversations());
 
-async function signup(conversation: MyConversation, ctx: MyContext) {
+// Registered BEFORE the conversation, otherwise "/cancel" would be swallowed as an answer
+bot.command("cancel", async (ctx) => {
+  await ctx.conversation.exitAll();
+  await ctx.reply("Cancelled.");
+});
+
+async function signup(conversation: MyConversation, ctx: MyConversationContext) {
   await ctx.reply("Welcome! What's your name?");
   const { msg: { text: name } } = await conversation.waitFor("message:text");
 
@@ -39,7 +47,8 @@ async function signup(conversation: MyConversation, ctx: MyContext) {
   });
 
   await ctx.reply("Last one — what's your email?");
-  const email = await conversation.form.email({
+  // There is no email field; Telegram marks addresses as "email" entities, so ask for one of those
+  const email = await conversation.form.entity("email", {
     otherwise: (c) => c.reply("That doesn't look like an email. Try again."),
   });
 
@@ -48,19 +57,15 @@ async function signup(conversation: MyConversation, ctx: MyContext) {
 
   // Persist somewhere (mock here)
   await conversation.external(() =>
-    saveUser({ id, name, age, email, telegramId: ctx.from!.id })
+    saveUser({ id, name, age, email: email.text, telegramId: ctx.from!.id })
   );
 
-  await ctx.reply(`Done! Your id is \`${id}\`.`, { parse_mode: "MarkdownV2" });
+  await ctx.reply(`Done! Your id is <code>${id}</code>.`, { parse_mode: "HTML" });
 }
 
 bot.use(createConversation(signup, "signup"));
 
 bot.command("signup", (ctx) => ctx.conversation.enter("signup"));
-bot.command("cancel", async (ctx) => {
-  await ctx.conversation.exit();
-  await ctx.reply("Cancelled.");
-});
 
 bot.command("start", (ctx) =>
   ctx.reply("Send /signup to begin, /cancel to abort.")
@@ -104,7 +109,9 @@ alice@example.com
 
 ## Notes
 
-- **Session plugin before conversations plugin** — required.
-- **`conversation.form.*` re-prompts on validation failure** — no manual loop needed.
+- **No session plugin** — conversations 2.x stores its state itself. Install `session` only if you also want `ctx.session`; inside a conversation read it with `conversation.external((ctx) => ctx.session)`.
+- **Two context types** — `ConversationFlavor<Context>` outside, a plain `Context` inside the conversation function.
+- **`conversation.form.*` re-prompts on validation failure** — no manual loop needed. The real fields are `text`, `number`, `int`, `select`, `entity`, `photo`, `contact`, … (see the `conversations` skill).
 - **`conversation.external` for `crypto.randomUUID()`, `Date.now()`, DB writes** — keeps the conversation deterministic so it can be replayed.
-- **`/cancel` works thanks to `ctx.conversation.exit()`** — call from any handler to abort the active conversation.
+- **`/cancel` works because it is registered before the conversation** and calls `ctx.conversation.exitAll()` (or `exit("signup")` for one conversation).
+- **HTML for the final message** — MarkdownV2 would need every `!` and `.` escaped.

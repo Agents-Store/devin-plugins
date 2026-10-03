@@ -33,8 +33,15 @@ A filter query is a colon-separated path into this tree. `bot.on("a:b:c")` fires
 ## The basics
 
 ```typescript
-// All kinds of message updates (message, edited, channel post, edited channel post)
+// `message` means ONLY `update.message` — not edits, not channel posts
 bot.on("message", (ctx) => { /* … */ });
+
+// Shortcuts for the first level:
+bot.on("msg",  (ctx) => { /* message + channel_post */ });
+bot.on("edit", (ctx) => { /* edited_message + edited_channel_post */ });
+
+// All four kinds — pass an array (logical OR)
+bot.on(["message", "edited_message", "channel_post", "edited_channel_post"], (ctx) => { /* … */ });
 
 // Only direct messages with text
 bot.on("message:text", (ctx) => { /* … */ });
@@ -45,10 +52,17 @@ bot.on(":text", (ctx) => { /* … */ });
 // Photos
 bot.on("message:photo", (ctx) => { /* … */ });
 
-// Any file payload (photo | video | document | audio | voice | …)
+// Any file payload (photo | live_photo | video | animation | document | audio | voice | video_note | sticker)
 bot.on(":file", async (ctx) => {
   const file = await ctx.getFile();
 });
+
+// Visual media only (photo | live_photo | video)
+bot.on(":media", (ctx) => { /* … */ });
+
+// Edited messages and channel posts — the shortcuts combine with any second level
+bot.on("edit:text", (ctx) => { /* … */ });
+bot.on("msg:text",  (ctx) => { /* message or channel post with text */ });
 
 // Stickers
 bot.on("message:sticker", (ctx) => { /* … */ });
@@ -98,10 +112,12 @@ bot.on("::url").on(":forward_origin", (ctx) => {
 ### Combined with bot.command / bot.hears
 
 ```typescript
-// Only photo messages sent by users (not channels) that contain a caption
+// Photo messages in private chats that also carry a caption.
+// `photo` has no third level — chain two queries instead of "message:photo:caption".
 bot
   .filter((ctx) => ctx.chat?.type === "private")
-  .on("message:photo:caption", (ctx) => { /* … */ });
+  .on("message:photo")
+  .on("message:caption", (ctx) => { /* … */ });
 ```
 
 ## Type narrowing
@@ -147,7 +163,10 @@ bot.filter(isFromAdmin, async (ctx) => {
 
 | Query | Fires on |
 |---|---|
-| `message` | Any direct message (text, photo, doc, …) |
+| `message` | Any `message` update (text, photo, doc, …) — not edits or channel posts |
+| `msg` | `message` or `channel_post` |
+| `edit` | `edited_message` or `edited_channel_post` |
+| `msg:text` / `edit:text` | Text in a message or channel post / in an edit of one |
 | `message:text` | Text message |
 | `message:photo` | Photo |
 | `message:document` | File |
@@ -157,18 +176,20 @@ bot.filter(isFromAdmin, async (ctx) => {
 | `message:contact` | Contact share |
 | `message:new_chat_members` | User joined |
 | `message:left_chat_member` | User left |
+| `message:chat_owner_changed` | Chat ownership transferred (the key was misspelled before grammY 1.42) |
 | `:text` | Text in message OR channel post |
-| `:file` | Any media attachment |
+| `:media` | Photo, live photo or video |
+| `:file` | Any file attachment (photo, live photo, video, animation, document, audio, voice, video note, sticker) |
 | `::url` | URL in text or caption |
 | `::bot_command` | `/something` in text or caption |
 | `edited_message` | User edited a message |
 | `callback_query:data` | Inline-button press |
 | `inline_query` | User typed `@bot ` in any chat |
 | `chosen_inline_result` | User picked an inline result |
-| `chat_member` | Bot's chat-member status changed |
-| `my_chat_member` | Bot was added/removed/promoted |
+| `chat_member` | Another member's status changed (needs `allowed_updates` and admin rights) |
+| `my_chat_member` | The bot's own status changed — added, removed, promoted, blocked |
 | `pre_checkout_query` | Payment confirm step (10s deadline) |
-| `successful_payment` | Payment completed |
+| `message:successful_payment` | Payment completed (`:successful_payment` also matches channel posts) |
 | `business_connection` | Telegram Business connected/disconnected |
 | `business_message` | Message in a Business-managed chat |
 

@@ -57,7 +57,7 @@ bot.api.getUserChatBoosts(chatId, userId);
 ## Available reactions
 
 ```typescript
-bot.api.setMessageReaction(chatId, messageId, other?);  // reactions: ReactionType[]
+bot.api.setMessageReaction(chatId, messageId, reaction[], other?);  // ReactionType[]
 ```
 
 `ReactionType` is `{ type: "emoji", emoji }` or `{ type: "custom_emoji", custom_emoji_id }`.
@@ -83,8 +83,7 @@ bot.api.editGeneralForumTopic(chatId, name);
 ## Telegram Business advanced
 
 ```typescript
-bot.api.setBusinessAccountGiftSettings(businessConnectionId, other?);
-bot.api.getOwnedStickerSets(businessConnectionId);
+bot.api.setBusinessAccountGiftSettings(businessConnectionId, showGiftButton, acceptedGiftTypes);
 ```
 
 ## Edited content

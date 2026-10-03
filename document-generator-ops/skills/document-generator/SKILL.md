@@ -48,11 +48,11 @@ If user preferences are loaded, pre-fill company info, currency, and language fr
 
 | Type | Format | Engine | Script | Notes |
 |------|--------|--------|--------|-------|
-| Proposal | DOCX | docx-js | `generate_docx.js` | Default. Add `"engine": "pandoc"` for PDF-matching style |
-| Proposal | DOCX | pandoc | `generate_docx.js` (engine: "pandoc") | Same HTML templates as PDF. Requires pandoc |
+| Proposal | DOCX | docx-js | `generate_docx.js` | Default. Styled by the plugin (fonts, colours, cover page) |
+| Proposal | DOCX | pandoc | `generate_docx.js` (engine: "pandoc") | Same HTML as the PDF, but pandoc drops the CSS: structure only, look from `assets/reference.docx`. Requires pandoc |
 | Proposal (final) | PDF | playwright | `generate_pdf.js` | Full-page cover, TOC, sections |
 | Invoice | PDF | playwright | `generate_pdf.js` | Always PDF |
-| Report | DOCX | docx-js | `generate_docx.js` | Default. Add `"engine": "pandoc"` for PDF-matching style |
+| Report | DOCX | docx-js | `generate_docx.js` | Default. Styled by the plugin (fonts, colours, cover page) |
 | Report (final) | PDF | playwright | `generate_pdf.js` | Full-page cover, TOC, sections |
 | Presentation | PPTX | pptxgenjs | `generate_pptx.js` | Always PPTX |
 | Contract | DOCX | docx-js | `generate_docx.js` | Default for editable contracts |
@@ -63,11 +63,11 @@ If user preferences are loaded, pre-fill company info, currency, and language fr
 
 **Engine selection for DOCX:**
 - `docx-js` (default): Always works, full feature support (images, complex tables, headers/footers)
-- `pandoc`: Produces DOCX that visually matches PDF output (uses same HTML templates). Set `"engine": "pandoc"` in input JSON. Requires pandoc installed (`which pandoc`).
+- `pandoc`: Converts the same HTML templates to DOCX, but pandoc ignores CSS (inline `style` and `<style>` alike). Only the structure (headings, lists, tables) matches the PDF; fonts, colours and spacing come from `assets/reference.docx`. It does **not** look like the PDF — do not promise that. Set `"engine": "pandoc"` in input JSON. Requires pandoc installed (`which pandoc`).
 
 ### Step 4: BUILD JSON Input
 
-1. Read the template file from `<plugin_dir>/templates/{type}_template.json`
+1. Read the template file from `${CLAUDE_PLUGIN_ROOT}/templates/{type}_template.json`
 2. Merge user data into the template structure
 3. Set `outputPath` to: `{cwd}/{type}_{sanitized_title}_{YYYY-MM-DD}.{ext}`
 4. Write the complete JSON input to a temp file: `{cwd}/.doc_input.json`
@@ -85,14 +85,14 @@ If user preferences are loaded, pre-fill company info, currency, and language fr
 
 ### Step 5: GENERATE
 
-Run the appropriate script via Bash:
+Run the appropriate script via Bash (`${CLAUDE_PLUGIN_ROOT}` is the plugin root; Claude Code substitutes the installed path — do not search for the plugin or `cd` into it):
 ```bash
-cd <plugin_dir> && node scripts/generate_docx.js /absolute/path/to/.doc_input.json
+node "${CLAUDE_PLUGIN_ROOT}/scripts/generate_docx.js" /absolute/path/to/.doc_input.json
 ```
 
 **Check dependencies first (use the centralized checker):**
 ```bash
-cd <plugin_dir> && node scripts/check_deps.js
+node "${CLAUDE_PLUGIN_ROOT}/scripts/check_deps.js"
 ```
 If `ready: false`, show what's missing and ask user permission to install.
 
@@ -110,7 +110,7 @@ If `ready: false`, show what's missing and ask user permission to install.
 
 For converting between formats, use the pandoc wrapper:
 ```bash
-<plugin_dir>/scripts/convert.sh input.md output.pdf
+"${CLAUDE_PLUGIN_ROOT}/scripts/convert.sh" input.md output.pdf
 ```
 
 Supported conversions: MD->PDF, MD->DOCX, MD->HTML, DOCX->PDF, DOCX->MD, HTML->PDF, HTML->DOCX, MD->PPTX
@@ -119,10 +119,11 @@ Supported conversions: MD->PDF, MD->DOCX, MD->HTML, DOCX->PDF, DOCX->MD, HTML->P
 
 | Error | Resolution |
 |-------|-----------|
-| `warning: ONBOARDING_NOT_DONE` | Document generated with defaults. Offer to run `/setup` for custom styling |
-| Module not found (docx, playwright, etc.) | Run `cd <plugin_dir> && npm install` |
+| `warning: ONBOARDING_NOT_DONE` | Document generated with defaults. Offer to run `/document-generator-ops:setup` for custom styling |
+| Module not found (docx, playwright, etc.) | A marketplace install ships the npm modules (Claude Code installs them from `package-lock.json`). If the plugin is loaded in place (`--plugin-dir`), run `npm ci` in the plugin directory |
+| Playwright browser missing (`playwright_browsers` in `check_deps.js` output) | `npx playwright install chromium` — the browser goes to the global Playwright cache and survives plugin updates. Without a browser, `"engine": "pdfkit"` still makes a simple PDF |
 | pandoc not installed | `brew install pandoc` (macOS) or `apt install pandoc` (Linux) |
-| No PDF engine for pandoc | `pip3 install weasyprint` (recommended) or `brew install wkhtmltopdf` |
+| No PDF engine for pandoc | `brew install weasyprint` / `sudo apt install weasyprint` (recommended), or Typst (`brew install typst`); `pip install weasyprint` also works where pip is not locked down (PEP 668). `wkhtmltopdf` is deprecated in pandoc and is not used |
 | Playwright browser launch failed | Add `--no-sandbox` flag (already in script) |
 | Output file not created | Check script stderr, verify output directory exists |
 | Margin format mismatch | Scripts auto-normalize (twips ↔ CSS units) via `utils.js` |

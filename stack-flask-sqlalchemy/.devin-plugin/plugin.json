@@ -1,0 +1,20 @@
+{
+  "name": "stack-flask-sqlalchemy",
+  "version": "2.0.0",
+  "description": "Flask + SQLAlchemy architecture plugin. How the application factory, the Flask-SQLAlchemy session, Alembic migrations and Jinja2 templates fit together: where db is created, the app context, the transaction boundary, expire_on_commit, N+1 at the route-to-template edge, and a full-feature recipe. Tool knowledge comes from its dependencies flask-dev and sqlalchemy-dev.",
+  "author": {
+    "name": "Agents Store",
+    "url": "https://github.com/agents-store"
+  },
+  "license": "MIT",
+  "keywords": [
+    "stack",
+    "flask-sqlalchemy",
+    "architecture",
+    "agents-store",
+    "flask",
+    "sqlalchemy",
+    "python",
+    "alembic"
+  ]
+}

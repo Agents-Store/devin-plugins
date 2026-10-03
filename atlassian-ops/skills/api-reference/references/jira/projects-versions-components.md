@@ -6,7 +6,7 @@ Project containers and the release/component structure inside them. Base `${ATLA
 
 | Method | Purpose & key fields |
 |--------|----------------------|
-| `GET /project` | All visible projects (`getAllProjects`, non-paginated, legacy). |
+| `GET /project` | All visible projects (`getAllProjects`, non-paginated) — **deprecated**, use `/project/search`. |
 | `GET /project/search` | **Paginated** project search (`searchProjects`). `?query=&startAt=&maxResults=&orderBy=name&typeKey=software`. |
 | `POST /project` | Create a project (`createProject`). Body `{"key":"PROJ","name":"…","projectTypeKey":"software","leadAccountId":"…","projectTemplateKey":"…"?,"assigneeType":"PROJECT_LEAD"}`. |
 | `GET /project/{projectIdOrKey}` | Get a project (`getProject`). `?expand=description,lead,issueTypes,url,projectKeys`. |
@@ -22,7 +22,8 @@ Project containers and the release/component structure inside them. Base `${ATLA
 |--------|----------------------|
 | `GET /project/{projectIdOrKey}/version` | Paginated versions (`getProjectVersionsPaginated`). `?orderBy=releaseDate&status=unreleased`. |
 | `POST /version` | Create a version (`createVersion`). Body `{"projectId":10000,"name":"1.2.0","releaseDate":"2026-06-01","description":"…"}`. |
-| `GET /version/{id}` · `PUT /version/{id}` · `DELETE /version/{id}` | Get / update / delete a version. |
+| `GET /version/{id}` · `PUT /version/{id}` | Get / update a version. |
+| `DELETE /version/{id}` | **Deprecated** delete (`deleteVersion`) — use `POST /version/{id}/removeAndSwap` below, which also swaps values in custom fields. |
 | `POST /version/{id}/move` · `PUT /version/{id}/mergeto/{moveIssuesTo}` | Reorder / merge versions (`moveVersion`, `mergeVersions`). |
 | `POST /version/{id}/removeAndSwap` | Delete and reassign issues' fixVersion/affectsVersion (`deleteAndReplaceVersion`). |
 | `GET /version/{id}/relatedIssueCounts` · `/unresolvedIssueCount` | Issue counts for release readiness. |

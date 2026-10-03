@@ -1,13 +1,13 @@
 ---
 name: managed-prompts
-description: Version and override Trigger.dev managed prompts via MCP — list, inspect, promote code versions, create dashboard overrides, hotfix, and revert. Use when the user asks about "trigger.dev prompt", "managed prompts", "prompt version", "prompt override", "hotfix prompt", "promote prompt version", "list prompts", or "revert prompt override".
+description: Define, version and override Trigger.dev managed prompts — prompts.define() in code, resolve() at runtime, and MCP tools to list, inspect, promote code versions, create dashboard overrides, hotfix, and revert. Use when the user asks about "trigger.dev prompt", "managed prompts", "prompts.define", "prompt version", "prompt override", "hotfix prompt", "promote prompt version", "list prompts", or "revert prompt override".
 ---
 
 # Managed Prompts
 
-Trigger.dev ships a **Managed Prompts** system: prompts are declared in code, shipped with the worker version, and can receive dashboard overrides that take effect without a redeploy. Seven MCP tools expose the full lifecycle.
+Trigger.dev ships a **Managed Prompts** system: prompts are declared in code with `prompts.define()`, shipped with the worker version, and can receive dashboard overrides that take effect without a redeploy. Seven MCP tools expose the full lifecycle, and the `prompts` namespace of the SDK exposes the same operations from code.
 
-> **Note:** the `/docs/prompts` page was not published as of 2026-04-24. This skill documents the feature from the MCP tool schemas (introspected directly from the running MCP server). When the official SDK docs publish, update `references/managed-prompts-reference.md` with the code side.
+> **Version note:** declaring prompts in code (`prompts.define()`, `resolve()`, `toAISDKTelemetry()`) is documented at https://trigger.dev/docs/ai/prompts and requires SDK and server ≥ 4.5.0 (the feature shipped in v4.5.0). The MCP tools below exist in the CLI from 4.4.4, but they only manage prompts the server knows about.
 
 ## Model
 
@@ -153,12 +153,48 @@ Re-enables a prior dashboard-sourced version as the active override. Useful for 
 - Prompt overrides are **scoped to an environment + branch**. Always double-check the `environment` argument before calling a write tool — a `prod` override can't be undone on `dev`.
 - `commitMessage` is optional on `create_prompt_override` but required discipline — the dashboard version list is your audit trail.
 - `update_prompt_override` fails loudly if no override is active; treat that as a signal to use `create_prompt_override` instead.
-- Use `--readonly` on the MCP install to block prompt write tools in agent-only setups (along with `deploy`, `trigger_task`, `cancel_run`).
+- Run the MCP server with `trigger.dev mcp --readonly` to hide the five prompt write tools in agent-only setups (along with `deploy`, `trigger_task`, `cancel_run` and the other write tools). `install-mcp` has no such flag.
 - When iterating heavily via code, prefer `promote_prompt_version` over overrides — it keeps source-of-truth in git.
 
-## SDK Usage
+## SDK Usage (requires SDK and server ≥ 4.5.0)
 
-The SDK surface for declaring managed prompts in code is not yet publicly documented (the `/docs/prompts` page is 404 as of 2026-04-24). When Trigger.dev publishes the reference, update `references/managed-prompts-reference.md` with the `@trigger.dev/sdk` side (`prompt()` / `definePrompt()` helper, task integration, tool metadata for AI SDKs, etc.). Until then, this skill anchors on the MCP tool schemas — those are the authoritative source for agents.
+```ts
+import { prompts } from "@trigger.dev/sdk";
+import { z } from "zod";
+
+// Declared in code; deploy versions it automatically (the id becomes the slug)
+export const supportPrompt = prompts.define({
+  id: "customer-support",
+  description: "System prompt for customer support interactions",
+  model: "<model id>",
+  config: { temperature: 0.7 },
+  variables: z.object({ customerName: z.string(), issue: z.string() }),
+  content: `You are a support agent.
+Customer: {{customerName}}
+Issue: {{issue}}`,
+});
+```
+
+Templates use `{{variable}}` placeholders and `{{#flag}}...{{/flag}}` conditionals. Resolve at runtime:
+
+```ts
+const resolved = await supportPrompt.resolve({ customerName: "Alice", issue: "Billing page" });
+resolved.text;      // compiled prompt
+resolved.version;   // e.g. 3
+resolved.model;
+resolved.labels;    // ["current"] or ["override"]
+
+// Standalone, typed by the handle
+const same = await prompts.resolve<typeof supportPrompt>("customer-support", { customerName: "Alice", issue: "Billing page" });
+
+// A specific version or label
+await supportPrompt.resolve(vars, { version: 2 });
+await supportPrompt.resolve(vars, { label: "current" });
+```
+
+Without options `resolve()` returns the active **override** if one exists, otherwise the **current** version. With the AI SDK, spread `...resolved.toAISDKTelemetry()` into `generateText` / `streamText` so generations link to the prompt in the dashboard (token usage, cost and latency per prompt version).
+
+The `prompts` namespace also manages prompts from code: `prompts.list()`, `prompts.versions(slug)`, `prompts.promote(slug, version)`, `prompts.createOverride(slug, { textContent, model, commitMessage })`, `prompts.updateOverride(slug, body)`, `prompts.removeOverride(slug)`, `prompts.reactivateOverride(slug, version)`. For `chat.agent`, store the resolved prompt with `chat.prompt.set(resolved)` and spread `chat.toStreamTextOptions({ registry })` into `streamText` (see the **ai-chat-agents** skill).
 
 ## Deeper Reference
 

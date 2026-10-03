@@ -16,9 +16,40 @@ description: |
 
 # Search and Filter Reference
 
-## Basic Filter Syntax
+NocoDB MCP tools take a filter in one of two forms. **Pass only one of the two** in a call:
 
-Every filter follows this pattern:
+| Form | Parameter | Use it for |
+|------|-----------|------------|
+| **Structured** (preferred) | `filter` | Everything -- names and values are quoted for you, so commas, parentheses and quotes in values are safe |
+| **String** (fallback) | `where` | Short one-liners, and the REST `where=` query parameter |
+
+Both forms work on `queryRecords`, `countRecords`, `groupByRecords`, `updateRecordsByCondition` and on each `aggregate.filterGroups[]` entry (`{ "alias": "...", "filter": ... }` or `{ "alias": "...", "where": "..." }`).
+
+## Structured `filter`
+
+A single condition:
+
+```
+filter: { "field": "Status", "operator": "eq", "value": "Active" }
+```
+
+A group -- `group_operator` is `AND` or `OR`, members may be conditions or nested groups:
+
+```
+filter: { "group_operator": "AND", "filters": [
+  { "field": "Status", "operator": "eq", "value": "Active" },
+  { "group_operator": "OR", "filters": [
+    { "field": "Priority", "operator": "eq", "value": "High" },
+    { "field": "Priority", "operator": "eq", "value": "Urgent" } ] } ] }
+```
+
+- `value` is a scalar for most operators, an **array** for `in`, `allof`, `anyof`, `nallof`, `nanyof`, and omitted for `blank`, `notblank`, `null`, `notnull`, `empty`, `notempty`, `checked`, `notchecked`.
+- Date and DateTime fields add a `sub_operator` (see "Date and Time Filtering" below).
+- Field titles are case-insensitive in `filter`.
+
+## Basic `where` Syntax
+
+Every `where` condition follows this pattern:
 
 ```
 (FieldName,operator,value)
@@ -26,13 +57,15 @@ Every filter follows this pattern:
 
 - Wrap each condition in parentheses.
 - Separate field name, operator, and value with commas.
-- Field names are case-sensitive -- use the exact name from the table schema.
+- Field names are case-sensitive in `where` -- use the exact name from the table schema (a wrong case fails with `Column alias '<name>' not found`).
 
 Example: find all records where Status equals "Active":
 
 ```
 (Status,eq,Active)
 ```
+
+The rest of this page shows the `where` strings; every one has a `filter` equivalent.
 
 ## Text and General Operators
 
@@ -56,13 +89,22 @@ Notes:
 | `lt` | Less than | `(Amount,lt,50)` |
 | `gte` | Greater than or equal | `(Amount,gte,100)` |
 | `lte` | Less than or equal | `(Amount,lte,500)` |
-| `btw` | Between two values | `(Amount,btw,100,500)` |
-| `nbtw` | Not between two values | `(Amount,nbtw,100,500)` |
 
-**Important:** The `btw` operator may not work correctly with Currency fields. For Currency fields, combine `gte` and `lte` instead:
+### Ranges: always two bounds
+
+`btw` / `nbtw` are **rejected** on Number, Decimal, Currency, Percent, Rating, Duration, Date / DateTime and Checkbox fields (`Operation btw is not supported for type <T>`); only Time and text fields accept them. Two bounds work on every type, so write every range that way:
+
+| Need | Filter |
+|------|--------|
+| Between 10 and 100 (inclusive) | `(Price,gte,10)~and(Price,lte,100)` |
+| Not between 0 and 50 | `(Score,lt,0)~or(Score,gt,50)` |
+
+As a structured filter:
 
 ```
-(Price,gte,10)~and(Price,lte,100)
+filter: { "group_operator": "AND", "filters": [
+  { "field": "Price", "operator": "gte", "value": 10 },
+  { "field": "Price", "operator": "lte", "value": 100 } ] }
 ```
 
 ## Null and Empty Operators
@@ -113,7 +155,12 @@ For fields that allow multiple selections:
 
 ## Date and Time Filtering
 
-Date filters use a different structure with sub-operators.
+Date and DateTime fields (and CreatedTime / LastModifiedTime) need a **sub-operator** on every comparison. The `where` form is `(field,operator,sub_operator)` or `(field,operator,sub_operator,value)`; the structured form adds a `sub_operator` key next to `operator`:
+
+```
+filter: { "field": "DueDate", "operator": "lt", "sub_operator": "today" }
+filter: { "field": "DueDate", "operator": "gte", "sub_operator": "exactDate", "value": "2026-06-01" }
+```
 
 ### Relative Date Ranges (isWithin)
 
@@ -145,24 +192,40 @@ Compare a date field to a relative reference point:
 
 ### Exact Date Comparisons
 
-Compare to a specific calendar date:
+Compare to a specific calendar date. The date goes in the **value slot after `exactDate`** -- never directly after the operator:
 
 ```
-(DueDate,eq,exactDate,2024-12-31)
-(DueDate,lt,exactDate,2025-01-01)
-(DueDate,gte,exactDate,2024-06-01)
-(DueDate,btw,exactDate,2024-01-01,exactDate,2024-12-31)
+(DueDate,eq,exactDate,2024-12-31)      CORRECT
+(DueDate,lt,exactDate,2025-01-01)      CORRECT
+(DueDate,gte,exactDate,2024-06-01)     CORRECT
+(DueDate,eq,YYYY-MM-DD)                WRONG -- a bare date is read as the sub-operator
+                                       and rejected: '<date>' is not supported
 ```
+
+A date **range** is two bounds -- `btw` / `nbtw` are not supported on date fields:
+
+```
+(DueDate,gte,exactDate,2024-01-01)~and(DueDate,lte,exactDate,2024-12-31)
+```
+
+Match any of several exact dates with `in`:
+
+```
+(DueDate,in,exactDate,2024-06-15,2024-07-01)
+```
+
+Date fields without a value (`blank`, `notblank`) take no sub-operator: `(DueDate,blank)`.
 
 ### Common Date Filter Patterns
 
 | Need | Filter |
 |------|--------|
 | Created today | `(CreatedAt,eq,today)` |
-| Due this week | `(DueDate,isWithin,pastWeek)` |
+| Due in the next 7 days | `(DueDate,isWithin,nextWeek)` |
 | Overdue items | `(DueDate,lt,today)` |
 | Created in last 30 days | `(CreatedAt,isWithin,pastNumberOfDays,30)` |
-| Due before end of year | `(DueDate,lt,exactDate,2025-12-31)` |
+| Due before the end of 2025 | `(DueDate,lte,exactDate,2025-12-31)` |
+| Due in 2025 | `(DueDate,gte,exactDate,2025-01-01)~and(DueDate,lte,exactDate,2025-12-31)` |
 | Updated in the past 7 days | `(UpdatedAt,gt,daysAgo,7)` |
 
 ## Logical Operators (Combining Filters)
@@ -198,8 +261,10 @@ Mixing AND and OR:
 Using NOT:
 
 ```
-(Status,eq,Active)~and~not(Category,eq,Internal)
+(Status,eq,Active)~and(~not(Category,eq,Internal))
 ```
+
+`~not` only starts an expression or a group -- wrap it in parentheses when it follows `~and` / `~or`. Never put whitespace after `~and`, `~or` or `~not` (`(A,eq,1)~and (B,eq,2)` is a parse error), and write the operators in lowercase.
 
 ## Special Values and Edge Cases
 
@@ -219,13 +284,16 @@ Use the field name as-is. Spaces are allowed inside the parentheses:
 (Order Total,gt,100)
 ```
 
-### Values with Commas
+### Values with Commas, Quotes, Parentheses
 
-If the value itself contains a comma, the filter may misinterpret it. Avoid values with commas in `eq` filters. Use `like` for partial matching instead:
+In a `where` string, wrap such a value in quotes:
 
 ```
-(Address,like,New York)
+(Address,eq,"12 Main St, Springfield")
+(Note,eq,"it's here")
 ```
+
+The structured `filter` needs no quoting at all -- `{ "field": "Address", "operator": "eq", "value": "12 Main St, Springfield" }` is safe as is. Do not leave a trailing space inside a field name (`(Name ,eq,John)` reports `field 'Name ' not found`); a trailing space inside a value is kept and silently matches nothing.
 
 ### Numeric Strings
 
@@ -259,10 +327,10 @@ Sort directions:
 
 ## Practical Examples
 
-### 1. Active high-priority tasks due this week
+### 1. Active high-priority tasks due in the next 7 days
 
 ```
-where: "(Status,eq,Active)~and(Priority,eq,High)~and(DueDate,isWithin,pastWeek)"
+where: "(Status,eq,Active)~and(Priority,eq,High)~and(DueDate,isWithin,nextWeek)"
 sort: [{ "field": "DueDate", "direction": "asc" }]
 ```
 
@@ -344,9 +412,9 @@ where: "(Date,gte,exactDate,2025-01-01)~and(Date,lte,exactDate,2025-03-31)"
 
 When building a filter:
 
-1. Get the exact field names from `mcp__nocodb__getTableSchema`.
-2. Pick the right operator for the field type (text, number, date, checkbox, multi-select).
-3. Combine conditions with `~and` or `~or` (always with tilde).
+1. Get the exact field names from `mcp__plugin_nocodb-ops_nocodb__getTableSchema`.
+2. Pick the right operator for the field type (text, number, date, checkbox, multi-select) -- ranges are two bounds, dates carry a sub-operator.
+3. Prefer the structured `filter`; with `where`, combine conditions with `~and` or `~or` (always with tilde).
 4. Test with a small `pageSize` first to verify results before running large queries.
 5. Add `sort` to control the order of results.
 6. Use `fields` to return only the columns you need.

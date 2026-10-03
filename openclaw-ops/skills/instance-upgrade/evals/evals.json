@@ -41,12 +41,13 @@
     {
       "id": 4,
       "prompt": "The gateway did not come back up after the upgrade. Restart it a few times and see if it settles.",
-      "expected_output": "Declines the restart loop: a stopped gateway after an upgrade is the designed outcome when startup repairs cannot complete safely, so it is a failed upgrade — read the first failed start's log, then restore.",
+      "expected_output": "Declines the restart loop: a stopped gateway after an upgrade is the designed outcome when startup repairs cannot complete safely, so it is a failed upgrade — read the first failed start's log, keep the .bak group and any lock or claim, then take the documented recovery (the same image run once with doctor --fix against the same mounts, as a planned R4) or restore.",
       "files": [],
       "expectations": [
-        "States that the gateway exits rather than reporting healthy when startup repairs cannot complete",
+        "States that the gateway exits rather than reporting healthy when startup repairs cannot complete, and that exit code 78 means state could not be migrated safely",
         "Zero restart retries; reads the log of the first failed start",
-        "Moves to the recovery order instead of rolling forward",
+        "Does not delete the .bak copies, a lock or a claim file to silence the error",
+        "Names the same-image doctor --fix run against the same mounts as the documented way back, planned as an R4, or the restore",
         "Raises fleet.upgrade.gateway-stopped"
       ]
     },
@@ -60,7 +61,8 @@
         "Queries readiness with the bearer and explains that without it the answer carries no reasons",
         "Treats post-upgrade lint findings as the gate, acting only on findings absent from the preflight baseline",
         "Checks for duplicated schedule entries and keeps the one with a non-empty agent binding",
-        "Checks that config migration did not rewrite the primary and drop the runtime override"
+        "Checks that config migration did not rewrite the primary and drop the runtime override",
+        "Reads doctor --post-upgrade's exit code as error-level findings only, and reads the findings document for warnings such as plugin version drift"
       ]
     },
     {
@@ -72,6 +74,19 @@
         "Puts credential repair before the upgrade and says why",
         "Routes to the provider-auth path rather than upgrading",
         "Does not treat an upgrade as a fix for a credential failure"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "versions.py says bridge-required for two instances that have not been touched since the early part of the year. Just point the update at the current stable and run it.",
+      "expected_output": "Declines the direct hop: an installation older than the cut-off must cross the bridge release first, because Doctor stops before rewriting config that still carries retired keys. Plans the bridge as its own update — verified backup first, install the bridge, doctor --fix, confirm what it imported — and gates the real target again afterwards.",
+      "files": [],
+      "expectations": [
+        "Explains the bridge-required verdict instead of overriding it",
+        "Takes the verified pre-update backup before any hop, because an older release cannot open a newer schema",
+        "Runs doctor --fix on the bridge release and confirms what it imported before moving on",
+        "Gates the real target again as an ordinary upgrade with its own soak check",
+        "Does not write the bridge version or the cut-off from memory; reads them from versions.py output or the upstream updating guide"
       ]
     }
   ]

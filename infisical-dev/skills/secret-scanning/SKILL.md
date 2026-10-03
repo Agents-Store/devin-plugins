@@ -15,6 +15,8 @@ infisical scan --verbose             # show each finding
 infisical scan --no-git              # treat the target as a plain directory
 infisical scan --source=./services   # scan a specific path
 infisical scan --log-opts="--all commitA..commitB"   # restrict to a commit range
+infisical scan --confidence=low      # stricter audit: also report low-confidence findings (CLI >= 0.43.136)
+infisical scan --no-color --verbose  # plain text for CI logs
 ```
 
 `scan` exits non-zero (default `1`) when leaks are found — that exit code is what makes it useful in CI.
@@ -26,6 +28,7 @@ Fast checks for local workflows and hooks:
 ```bash
 infisical scan git-changes               # unstaged working-tree diff
 infisical scan git-changes --staged --verbose   # staged changes (use in pre-commit)
+infisical scan git-changes --staged --confidence=low   # stricter hook: also report low-confidence findings (>= 0.43.136)
 ```
 
 ## Install the pre-commit hook
@@ -53,8 +56,14 @@ git config --bool hooks.infisical-scan false
 ```bash
 infisical scan --report-path=leaks.json                  # write findings to a file
 infisical scan --report-format=sarif --report-path=leaks.sarif   # json | csv | sarif
-infisical scan --redact                                  # hide secret values in output
+infisical scan --redact --verbose                        # hide secret values in the console output
 ```
+
+> **`--redact` does not clean the report.** It only hides secret values in verbose/console output; a file written with `--report-path` still contains the leaked secrets. Treat reports and baselines as sensitive: do not commit them, and do not upload them as public CI artifacts.
+
+## Confidence levels
+
+Rules carry a confidence. `--confidence low|medium|high` (default `medium`, available from CLI 0.43.136) sets the lowest level reported; findings from rules that declare no confidence are always reported. Use `low` for a deep audit of history; raise it to `high` only where a missed medium-confidence finding costs less than the noise. The hook installed by `scan install` runs `infisical scan git-changes -v --staged` with the default level.
 
 ## Baselines — ignore known/legacy findings
 
@@ -109,6 +118,7 @@ paths   = ['''(.*?)(jpg|png|gif)$''']
 
 ```bash
 # Fail the pipeline on any leak in the diff being merged
+# (the SARIF report contains the leaked values — keep it out of public artifacts)
 infisical scan git-changes --staged --verbose --report-format=sarif --report-path=scan.sarif
 ```
 
@@ -122,7 +132,9 @@ infisical scan git-changes --staged --verbose --report-format=sarif --report-pat
 | `--report-format` | `-f` | `json` | `json`, `csv`, `sarif` |
 | `--baseline-path` | `-b` | — | Ignore findings already in the baseline |
 | `--exit-code` | — | `1` | Exit code when leaks are found |
-| `--redact` | — | off | Hide secret values in output |
+| `--redact` | — | off | Hide secret values in verbose output (the report file still contains them) |
+| `--confidence` | — | `medium` | Lowest confidence reported: `low`, `medium`, `high` (>= 0.43.136) |
+| `--no-color` | — | off | Turn off color in verbose output |
 | `--no-git` | — | off | Scan as a plain directory |
 | `--log-opts` | — | — | Pass-through `git log` args for a commit range |
 | `--verbose` | `-v` | off | Detailed per-finding output |

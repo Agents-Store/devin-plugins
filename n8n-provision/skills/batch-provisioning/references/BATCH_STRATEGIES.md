@@ -8,9 +8,9 @@ Preset provisioning suites for common use cases. Each suite defines a set of rel
 2. **Search** for each workflow category using the suggested queries
 3. **Analyze** top candidates for quality, node compatibility, and credential overlap
 4. **Plan import order** — deploy dependency-free workflows first
-5. **Batch deploy** with a shared tag for identification
+5. **Batch deploy** as drafts, then add a shared tag (`addTag`) for identification
 6. **Configure credentials** — set up shared credentials once, map to all workflows
-7. **Activate** one-by-one after verification
+7. **Publish** one-by-one after verification (n8n 2.x: publish replaces activate)
 
 ---
 
@@ -172,23 +172,25 @@ Phase 2 (depends on Phase 1):
 When deploying a suite, tag all workflows with a consistent prefix:
 
 ```
-Tag format: suite-{suite-name}-{date}
-Example:    suite-startup-essentials-2026-04-07
+Tag format: suite-{suite-name}-{yyyy-mm-dd}
+Example:    suite-startup-essentials-2026-10-05
 ```
 
+The deploy tools (`n8n_deploy_template`, `n8n_create_workflow`) take no tags. Add the tag after each deployment with `~~workflow_update` (`n8n_update_partial_workflow`, operation `addTag`). A folder is an alternative or addition: `n8n_manage_folders` plus `parentFolderId` / the `moveToFolder` operation.
+
 This enables:
-- Listing all workflows from a batch: `~~workflow_list` and filter by tag
-- Rolling back a batch: identify all tagged workflows and deactivate/delete
+- Listing all workflows from a batch: `n8n_list_workflows({tags: ["suite-…"]})`; tag names are listed by `n8n_list_catalog({kind: "tags"})`
+- Rolling back a batch: list the tagged workflows, show them, and unpublish and archive or delete them only on explicit confirmation
 - Auditing: track which suites are deployed on an instance
 
 ### Pre-deployment checklist
 
 Before deploying any suite:
 
-1. **Check instance readiness** — run `~~instance_audit` or `~~health_check`
+1. **Check instance readiness** — run `~~instance_health`
 2. **List existing workflows** — `~~workflow_list` to detect naming conflicts
 3. **Check existing credentials** — `~~credential_manage` to find reusable credentials
-4. **Verify n8n version** — some templates require specific minimum versions
+4. **Check capabilities** — n8n no longer reports its version to API clients; confirm the node types and `typeVersion`s the templates need are accepted (`~~workflow_validate`, `~~workflow_autofix` preview)
 5. **Plan webhook paths** — ensure no webhook URL collisions between workflows
 
 ### Conflict resolution
@@ -205,7 +207,8 @@ Before deploying any suite:
 After deploying a suite:
 
 1. **List deployed workflows** — verify all expected workflows exist
-2. **Check each workflow status** — should be inactive (not auto-activated)
-3. **Test one workflow** — pick the simplest, configure its credentials, activate, and trigger a test
+2. **Check each workflow status** — should be unpublished drafts (nothing auto-published)
+3. **Test one workflow** — pick the simplest, configure its credentials, run it manually, then publish it and trigger a test
 4. **Configure credentials** — set up all shared credentials, then map to each workflow
-5. **Activate progressively** — activate workflows one at a time, verify each before moving to the next
+5. **Publish progressively** — publish workflows one at a time (`~~workflow_publish`, only on the user's request), verify each before moving to the next
+6. **Security audit** — run `~~instance_audit` (hardcoded secrets, unauthenticated webhooks) after the batch

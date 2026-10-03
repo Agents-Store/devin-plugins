@@ -17,7 +17,7 @@ Get Trigger.dev running in your project — self-hosted or cloud — and verify 
 
 ## Prerequisites
 
-- Node.js 18.20+ (or Bun runtime)
+- Node.js 18.20+ locally (deployed tasks run on the runtime set in `trigger.config.ts`; or Bun)
 - TypeScript 5.0.4+
 - A Trigger.dev account — cloud or self-hosted instance
 - For self-hosted: running webapp + supervisor Docker Compose stacks
@@ -26,7 +26,10 @@ Get Trigger.dev running in your project — self-hosted or cloud — and verify 
 
 ```bash
 npm install @trigger.dev/sdk
+npm install -D trigger.dev   # pin the CLI to the same version as the SDK
 ```
+
+The CLI, `@trigger.dev/sdk` and `@trigger.dev/build` must share one version. On self-hosted, use the version of the server (see the **deployment** skill).
 
 ## Step 2: Authenticate the CLI
 
@@ -52,7 +55,7 @@ npx trigger.dev@latest login -a https://trigger.example.com --profile self-hoste
 
 # Use the profile for dev/deploy
 npx trigger.dev@latest dev --profile self-hosted
-npx trigger.dev@latest deploy --profile self-hosted
+npx trigger.dev@<version> deploy --profile self-hosted
 
 # List all saved profiles
 npx trigger.dev@latest list-profiles
@@ -81,15 +84,32 @@ This creates:
 npx trigger.dev@latest init -p <project-ref> -a https://trigger.example.com
 ```
 
+The CLI has no self-hosted switch of its own on any command; a self-hosted instance is selected only by `-a, --api-url` (or `TRIGGER_API_URL`).
+
+### Non-interactive init (agents, CI)
+
+Without a TTY `init` refuses to run unless you pass `--yes` (it also needs `--project-ref`, or `--project-name` with `--org-name` for a new account):
+
+```bash
+npx trigger.dev@latest init --yes --project-ref proj_xxx -a https://trigger.example.com --no-browser
+```
+
 ### Init Flags
 
 | Flag | Description |
 |------|-------------|
 | `-p, --project-ref` | Project ref (proj_xxx) from dashboard |
 | `-a, --api-url` | API URL for self-hosted |
-| `--runtime` | Runtime: node or bun |
+| `-r, --runtime` | Runtime: `node`, `node-22`, `node-24`, `node-26`, `bun` (default `node-24`) |
+| `-y, --yes` | Skip all prompts; requires `--project-ref`, or `--project-name` with `--org-name` |
+| `--no-browser` | Do not open the browser during login; print the URL |
+| `--project-name`, `--org-name` | Bootstrap a new project / organization non-interactively |
+| `-t, --tag` | `@trigger.dev/sdk` version to install |
+| `--pkg-args <args>` | Extra package-manager arguments (CSV) |
 | `--skip-package-install` | Skip SDK install |
+| `--override-config` | Overwrite an existing config file |
 | `--javascript` | Use JavaScript instead of TypeScript |
+| `--profile` | Login profile to use |
 
 ## Step 4: Configure trigger.config.ts
 
@@ -99,6 +119,7 @@ import { defineConfig } from "@trigger.dev/sdk";
 export default defineConfig({
   project: "proj_xxxxx",  // From your dashboard
   dirs: ["./src/trigger"],
+  maxDuration: 300,       // required: seconds, at least 5 (dev and deploy fail without it)
 });
 ```
 
@@ -123,7 +144,7 @@ export const myFirstTask = task({
 npx trigger.dev@latest dev
 ```
 
-The dev server watches for file changes, registers tasks with the dev environment, and executes tasks locally.
+The dev server watches for file changes, registers tasks with the dev environment, and executes tasks locally. `dev` is a command group whose default sub-command is `start`; `-b/--branch <name>` selects a dev branch, and `dev archive` archives one. In an agent session prefer the MCP tool `start_dev_server`: a foreground `dev` blocks the shell.
 
 ## Step 7: Trigger Your Task
 
@@ -151,7 +172,7 @@ Or use the **Test** tab in the Trigger.dev dashboard.
 | `TRIGGER_PROJECT_REF` | Project identifier from dashboard | `proj_xxxxx` |
 | `TRIGGER_ACCESS_TOKEN` | Personal access token for CI/CD | `tr_pat_xxx` |
 
-Each environment has its own secret key. Pass the appropriate one to the SDK via `configure()`.
+Each environment has its own secret key. The SDK itself reads `TRIGGER_SECRET_KEY`: set it to the key of the environment you are targeting (for example `TRIGGER_SECRET_KEY=$TRIGGER_PROD_SECRET_KEY`), or pass the per-environment key explicitly via `configure({ secretKey })`.
 
 Set in `.env`:
 
@@ -167,7 +188,7 @@ For the full reference, see @references/environment-setup.md.
 
 ## MCP Server Setup
 
-Trigger.dev provides an **official MCP server** shipped with the CLI. As of v4.4.4 the supported install flow is the `install-mcp` command:
+Trigger.dev provides an **official MCP server** shipped with the CLI (41 tools). The supported install flow is the `install-mcp` command:
 
 ```bash
 # Install for a specific AI client (writes the client's MCP config for you)
@@ -193,27 +214,47 @@ Manual config:
 Common flag combinations:
 
 ```bash
-# Dev-only — hides deploy and list_preview_branches
+# Dev-only — every tool rejects non-dev environments; deploy and list_preview_branches fail
 npx trigger.dev@latest install-mcp --dev-only
 
-# Read-only — hides deploy, trigger_task, cancel_run (agent can read but not mutate)
-npx trigger.dev@latest install-mcp --readonly
-
-# Scoped to one project
-npx trigger.dev@latest install-mcp --project-ref proj_abc123
+# Scoped to one project, self-hosted API URL
+npx trigger.dev@latest install-mcp --project-ref proj_abc123 -a https://trigger.example.com
 ```
 
-> **Production tip:** pass `--readonly` when wiring MCP into an agent that must not mutate a production instance. All write tools are hidden server-side, not just filtered by the client.
+### Read-only MCP
 
-See https://trigger.dev/docs/mcp-introduction for the per-client config file locations.
+`--readonly` is a flag of `trigger.dev mcp` only; the installer command rejects it with `unknown option`. Put it in the server args:
 
-## Agent Rules Installation
+```json
+{
+  "mcpServers": {
+    "trigger": {
+      "command": "npx",
+      "args": ["trigger.dev@latest", "mcp", "--readonly"]
+    }
+  }
+}
+```
+
+It hides 15 write tools server-side: `deploy`, `trigger_task`, `cancel_run`, `create_project_in_org`, `initialize_project`, the five prompt writers (`promote_prompt_version`, `create_prompt_override`, `update_prompt_override`, `remove_prompt_override`, `reactivate_prompt_override`), `start_agent_chat`, `send_agent_message`, `close_agent_chat`, `write_session_channel` and `submit_feedback`. It does **not** hide `start_dev_server`, `stop_dev_server` or `switch_profile`.
+
+> **Production tip:** use `mcp --readonly` when wiring MCP into an agent that must not mutate a production instance. Hidden tools are never offered to the model, not just filtered by the client.
+
+See https://trigger.dev/docs/mcp-introduction for the per-client config file locations. The docs page attributes `--readonly` to `install-mcp`; the CLI help of 4.7.2 shows it only on `mcp`.
+
+## Agent Skills Installation
+
+Agent rules were replaced by agent skills. The canonical command is `skills`; `install-rules` is only an alias for it.
 
 ```bash
-npx trigger.dev@latest install-rules
+# Interactive
+npx trigger.dev@latest skills
+
+# Non-interactive, specific targets (claude-code, cursor, vscode, agents.md)
+npx trigger.dev@latest skills --target claude-code --target cursor -y
 ```
 
-Available rule sets: Basic tasks (1,200 tokens), Advanced tasks (3,000), Scheduled tasks (780), Configuration (1,900), Realtime (1,700). Rules auto-update when you run `npx trigger.dev@latest dev`.
+It installs five skills (trigger-authoring-tasks, trigger-realtime-and-frontend, trigger-authoring-chat-agent, trigger-chat-agent-advanced, trigger-cost-savings) into the agent's skills folder, for example `.claude/skills/`. `trigger dev` offers the install on its first run. The `@trigger.dev/sdk` package also ships version-exact `docs/` and `skills/` folders in `node_modules`.
 
 ## Verification Checklist
 

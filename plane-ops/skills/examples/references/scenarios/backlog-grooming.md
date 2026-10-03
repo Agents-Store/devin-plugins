@@ -14,7 +14,8 @@ End-to-end scenario for grooming a backlog of 20 items for a startup team.
 ## Step 1: Assess Backlog Health
 
 ```
-list_work_items({ project_id }) → 20 items
+workitem(action=list, project_id=<id>, pql='stateGroup IN ("backlog","unstarted")') → 20 items
+workitem(action=count, project_id=<id>, pql='stateGroup IN ("backlog","unstarted") AND priority = "none"') → total_count = items without priority
 
 Initial Health Report:
 ┌─────────────────────────────────────┐
@@ -48,7 +49,7 @@ Review each item with the product owner:
 
 ```
 For each item:
-  update_work_item({ project_id, work_item_id, priority: "high" })
+  workitem(action=update, project_id=<id>, workitem_id=<id>, priority="high")
 ```
 
 ---
@@ -76,7 +77,7 @@ For each item:
 
 ```
 For each:
-  update_work_item({ project_id, work_item_id, point: N })
+  workitem(action=update, project_id=<id>, workitem_id=<id>, point=N)
 ```
 
 ---
@@ -89,32 +90,32 @@ For each:
 Split by payment method:
 
 ```
-create_work_item → "SF-24 Stripe card payments" (5 pts, parent: SF-11)
-create_work_item → "SF-25 PayPal integration" (5 pts, parent: SF-11)
-create_work_item → "SF-26 Payment error handling" (3 pts, parent: SF-11)
+workitem(action=create) → "SF-24 Stripe card payments" (5 pts, parent: SF-11)
+workitem(action=create) → "SF-25 PayPal integration" (5 pts, parent: SF-11)
+workitem(action=create) → "SF-26 Payment error handling" (3 pts, parent: SF-11)
 
-create_work_item_relation → SF-25 start_after SF-24
-create_work_item_relation → SF-26 start_after SF-24
+workitem_relation(action=create) → SF-25 start_after SF-24 (relation_type=start_after, workitem_ids=[SF-24 id])
+workitem_relation(action=create) → SF-26 start_after SF-24
 ```
 
 ### SF-08 User management (13 pts)
 Split by CRUD:
 
 ```
-create_work_item → "SF-27 User registration & login" (5 pts, parent: SF-08)
-create_work_item → "SF-28 User profile view & edit" (3 pts, parent: SF-08)
-create_work_item → "SF-29 Password reset flow" (3 pts, parent: SF-08)
-create_work_item → "SF-30 Account deletion" (2 pts, parent: SF-08)
+workitem(action=create) → "SF-27 User registration & login" (5 pts, parent: SF-08)
+workitem(action=create) → "SF-28 User profile view & edit" (3 pts, parent: SF-08)
+workitem(action=create) → "SF-29 Password reset flow" (3 pts, parent: SF-08)
+workitem(action=create) → "SF-30 Account deletion" (2 pts, parent: SF-08)
 ```
 
 ### SF-09 Product catalog (13 pts)
 Split by workflow:
 
 ```
-create_work_item → "SF-31 Product listing page" (5 pts, parent: SF-09)
-create_work_item → "SF-32 Product detail page" (3 pts, parent: SF-09)
-create_work_item → "SF-33 Category filtering" (3 pts, parent: SF-09)
-create_work_item → "SF-34 Product sorting" (2 pts, parent: SF-09)
+workitem(action=create) → "SF-31 Product listing page" (5 pts, parent: SF-09)
+workitem(action=create) → "SF-32 Product detail page" (3 pts, parent: SF-09)
+workitem(action=create) → "SF-33 Category filtering" (3 pts, parent: SF-09)
+workitem(action=create) → "SF-34 Product sorting" (2 pts, parent: SF-09)
 ```
 
 ---
@@ -124,9 +125,9 @@ create_work_item → "SF-34 Product sorting" (2 pts, parent: SF-09)
 5 items lack adequate descriptions. Add acceptance criteria:
 
 ```
-update_work_item({
-  project_id, work_item_id: "SF-12",
-  description_html: "
+workitem(action=update,
+  project_id=<id>, workitem_id=<SF-12 id>,   // resolve with workitem(action=retrieve_by_identifier, workitem_identifier="SF-12")
+  description_html="
     <h3>User Story</h3>
     <p>As a shopper, I want to search for products by name so that I can quickly find what I need.</p>
     <h3>Acceptance Criteria</h3>
@@ -137,8 +138,7 @@ update_work_item({
       <li>Empty state for no results</li>
       <li>Search works with partial matches</li>
     </ul>
-  "
-})
+  ")
 ```
 
 ---
@@ -146,14 +146,14 @@ update_work_item({
 ## Step 6: Label Items
 
 ```
-create_label({ project_id, name: "ready", color: "#22c55e" })
-create_label({ project_id, name: "needs-refinement", color: "#f59e0b" })
+label(action=create, project_id=<id>, name="ready", color="#22c55e")
+label(action=create, project_id=<id>, name="needs-refinement", color="#f59e0b")
 
 For groomed items:
-  update_work_item({ labels: ["ready-label-id"] })
+  workitem(action=manage_label, project_id=<id>, workitem_id=<id>, add_label_id=<ready-label-id>)
 
 For items still needing work:
-  update_work_item({ labels: ["needs-refinement-label-id"] })
+  workitem(action=manage_label, project_id=<id>, workitem_id=<id>, add_label_id=<needs-refinement-label-id>)
 ```
 
 ---

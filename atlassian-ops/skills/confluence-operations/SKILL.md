@@ -12,7 +12,10 @@ Plain-language playbooks for everyday Confluence work, each driving the REST API
 If `ATLASSIAN_*` aren't confirmed this session, run the `setup` skill first (one `GET /wiki/api/v2/spaces?limit=1` call). Define these once:
 
 ```bash
-CONF="${ATLASSIAN_SITE_URL%/}/wiki/api/v2"
+# Classic token → site URL; scoped token (ATLASSIAN_CLOUD_ID set) → API gateway — see `setup`
+CONF_ROOT="${ATLASSIAN_CLOUD_ID:+https://api.atlassian.com/ex/confluence/${ATLASSIAN_CLOUD_ID}}"
+CONF_ROOT="${CONF_ROOT:-${ATLASSIAN_SITE_URL%/}}"
+CONF="${CONF_ROOT}/wiki/api/v2"
 AUTH=(-u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" -H "Accept: application/json")
 JSON=(-H "Content-Type: application/json")
 ```
@@ -21,7 +24,7 @@ JSON=(-H "Content-Type: application/json")
 
 1. **`/wiki/api/v2` base** — the `/wiki` prefix is mandatory; omitting it is the usual cause of a `404`.
 2. **Bodies carry a `representation`** — `{"representation":"storage","value":"<p>…</p>"}` (XHTML) or `atlas_doc_format` (ADF JSON string).
-3. **Update = read-then-write.** Fetch the current `version.number`, then `PUT` with `number + 1`. A stale number returns `409`.
+3. **Update = read-then-write.** Fetch the current `version.number`, then `PUT` with `number + 1`. A stale number returns `409`. **In a space that requires approval before publishing, a direct `PUT` on a published page will return `409` whatever the version** (CHANGE-3432, announced 2026-09-28, rollout pending) — see "update a page safely" below.
 4. **`spaceId` is numeric**, not the space key — resolve the key first.
 5. **Cursor pagination** — follow `_links.next`, don't compute offsets.
 6. **Confirm destructive actions** — `DELETE /pages/{id}` (especially `?purge=true`).
@@ -63,7 +66,16 @@ curl -s "${AUTH[@]}" "${JSON[@]}" -X PUT "${CONF}/pages/${PAGE_ID}" -d "{
   \"body\": {\"representation\": \"storage\", \"value\": \"<h1>Welcome</h1><p>Updated content.</p>\"}
 }" | jq '{id, version: .version.number}'
 ```
-Skipping the version bump → `409 Conflict`. (→ `pages-blogposts.md`)
+Skipping the version bump → `409 Conflict`.
+
+**Approval spaces (announced 2026-09-28, rollout pending).** Once enabled, in a space that needs approval before publishing this `PUT` (and `PUT /pages/{id}/title`) returns `409` even with the right `version.number`. Do not loop on retries. Atlassian's guidance is to save the change as a draft, complete the approval, and publish the approved draft — but no REST draft→approval→publish flow is documented yet, so use the Confluence UI or ask a Confluence admin. (→ `pages-blogposts.md`)
+
+## Workflow: list child pages
+
+```bash
+curl -s "${AUTH[@]}" "${CONF}/pages/${PAGE_ID}/direct-children?limit=50" | jq '.results[] | {id, type, title}'
+```
+`GET /pages/{id}/children` is deprecated — use `direct-children` (it also lists folders, databases, whiteboards and Smart Links). (→ `pages-blogposts.md`)
 
 ## Workflow: create a space
 
@@ -88,7 +100,7 @@ Reply by adding `"parentCommentId":"<id>"`. (→ `comments-attachments.md`)
 Label writes aren't in v2 — use the v1 REST API:
 ```bash
 curl -s -u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" "${JSON[@]}" -X POST \
-  "${ATLASSIAN_SITE_URL%/}/wiki/rest/api/content/${PAGE_ID}/label" \
+  "${CONF_ROOT}/wiki/rest/api/content/${PAGE_ID}/label" \
   -d '[{"prefix":"global","name":"release-1-2"}]'
 ```
 Read labels via v2: `GET ${CONF}/pages/${PAGE_ID}/labels`. (→ `labels-content-properties.md`)
@@ -99,7 +111,7 @@ Read labels via v2: `GET ${CONF}/pages/${PAGE_ID}/labels`. (→ `labels-content-
 curl -s -u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" \
   -H "X-Atlassian-Token: nocheck" \
   -F "file=@./diagram.png" \
-  "${ATLASSIAN_SITE_URL%/}/wiki/rest/api/content/${PAGE_ID}/child/attachment"
+  "${CONF_ROOT}/wiki/rest/api/content/${PAGE_ID}/child/attachment"
 ```
 Read attachment metadata via v2: `GET ${CONF}/pages/${PAGE_ID}/attachments`. (→ `comments-attachments.md`)
 
@@ -108,7 +120,7 @@ Read attachment metadata via v2: `GET ${CONF}/pages/${PAGE_ID}/attachments`. (�
 v2 lists filter by `space-id`/`title`/`status`. For real search use CQL on v1:
 ```bash
 curl -s "${AUTH[@]}" \
-  "${ATLASSIAN_SITE_URL%/}/wiki/rest/api/search?cql=space=PROJ%20AND%20text~%22login%20error%22"
+  "${CONF_ROOT}/wiki/rest/api/search?cql=space=PROJ%20AND%20text~%22login%20error%22"
 ```
 (→ `pages-blogposts.md` Notes)
 

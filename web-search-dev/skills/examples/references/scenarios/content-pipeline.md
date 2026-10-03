@@ -9,10 +9,12 @@ Find relevant content sites using Exa:
 ```
 Tool: web_search_exa
 Input: {
-  "query": "category:news best tech blogs and news sites about web development",
+  "query": "news sites and blogs covering web development, frameworks and tooling",
   "numResults": 20
 }
 ```
+
+(Inline `category:` filters on `web_search_exa` only support `company` and `people`; use the opt-in `web_search_advanced_exa` with `category: "news"` when you need a category filter.)
 
 ## Step 2: Map Each Source Site
 
@@ -29,11 +31,11 @@ Input: {
 
 ## Step 3: Batch Read Articles
 
-Read article content from discovered URLs:
+Read article content from discovered URLs (up to 5 per call; they are read concurrently):
 
 ```
-Tool: parallel_read_url
-Input: { "urls": [
+Tool: read_url
+Input: { "url": [
   "https://techblog.example.com/article-1",
   "https://techblog.example.com/article-2",
   "https://techblog.example.com/article-3",
@@ -44,22 +46,25 @@ Input: { "urls": [
 
 ## Step 4: Extract Structured Data
 
-Turn articles into structured data for your CMS:
+Turn each article into structured data for your CMS (one scrape per URL):
 
 ```
-Tool: firecrawl_extract
+Tool: firecrawl_scrape
 Input: {
-  "urls": ["<article_urls>"],
-  "prompt": "Extract article title, author, publication date, main content, tags/categories, and featured image URL",
-  "schema": {
-    "type": "object",
-    "properties": {
-      "title": { "type": "string" },
-      "author": { "type": "string" },
-      "date": { "type": "string" },
-      "content": { "type": "string" },
-      "tags": { "type": "array", "items": { "type": "string" } },
-      "image": { "type": "string" }
+  "url": "<article_url>",
+  "formats": ["json"],
+  "jsonOptions": {
+    "prompt": "Extract article title, author, publication date, main content, tags/categories, and featured image URL",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "date": { "type": "string" },
+        "content": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "image": { "type": "string" }
+      }
     }
   }
 }
@@ -67,15 +72,7 @@ Input: {
 
 ## Step 5: Classify and Categorize
 
-Use Jina to classify articles into your app's categories:
-
-```
-Tool: classify_text
-Input: {
-  "texts": ["<article_titles_or_summaries>"],
-  "labels": ["frontend", "backend", "devops", "ai-ml", "mobile", "security"]
-}
-```
+Jina's MCP server has no classification tool. Let the model assign each article one of your app's categories (`frontend`, `backend`, `devops`, `ai-ml`, `mobile`, `security`) while it processes the extracted JSON — or add a `category` enum to the extraction schema in Step 4. For high-volume pipelines outside Claude, call Jina's REST classifier (see `api-reference`).
 
 ## Step 6: Deduplicate
 
@@ -102,16 +99,14 @@ Input: {
 
 ## Step 8: Find Featured Images
 
-For articles missing images, find stock photos:
+For articles missing images, find stock photos with the Pexels REST API (see `media-search`):
 
+```bash
+curl -s -H "Authorization: ${PEXELS_API_KEY}" \
+  "https://api.pexels.com/v1/search?query=<article_topic>&orientation=landscape&per_page=3"
 ```
-Tool: searchPhotos
-Input: {
-  "query": "<article_topic>",
-  "orientation": "landscape",
-  "per_page": 3
-}
-```
+
+Keep `photographer` and `url` with the article record — the Pexels link and photographer credit are required on display.
 
 ## Step 9: Import to CMS
 
@@ -135,12 +130,12 @@ for (const article of processedArticles) {
 ```
 Discover sources (Exa)
   → Map site URLs (Firecrawl)
-    → Batch read content (Jina parallel)
-      → Extract structured data (Firecrawl)
-        → Classify (Jina)
+    → Batch read content (Jina read_url, 5 URLs per call)
+      → Extract structured data (Firecrawl scrape, json format)
+        → Classify (model / schema enum)
           → Deduplicate (Jina)
             → Rerank (Jina)
-              → Find missing images (Pexels)
+              → Find missing images (Pexels REST)
                 → Import to CMS
 ```
 

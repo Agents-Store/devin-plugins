@@ -6,9 +6,11 @@ disable-model-invocation: true
 
 # Mattermost REST API Reference
 
-Complete endpoint catalog for the Mattermost REST API v4, split by domain. Official interactive docs: https://api.mattermost.com/
+Complete endpoint catalog for the Mattermost REST API v4, split by domain. Official interactive docs: https://docs.mattermost.com/api (formerly api.mattermost.com)
 
-The **exhaustive source of truth** is the bundled OpenAPI 3.0 spec: `references/mattermost-openapi-v4.yaml` (215 path templates, 600+ operations). The curated `references/*.md` files below cover the core collaboration surface plus system administration in plain, copy-pasteable form. For rarely-used plugin/enterprise endpoints (Playbooks, Boards, Recaps, AI agents, access-control policies, shared/remote clusters), grep the spec.
+The **exhaustive source of truth** is the bundled OpenAPI 3.0 spec: `references/mattermost-openapi-v4.yaml` — 512 path templates, 640 operations (GET/POST/PUT/PATCH/DELETE; 596 core Mattermost plus 44 Playbooks-plugin routes under `/plugins/playbooks/api/v0`). The curated `references/*.md` files below cover the core collaboration surface plus system administration in plain, copy-pasteable form. For rarely-used plugin/enterprise endpoints (Playbooks, Boards, Recaps, AI agents, access-control policies, shared/remote clusters), grep the spec.
+
+**Where the bundled spec comes from.** No ready-made file is published, so it is built from the official `api/v4/source/*.yaml` of `mattermost/mattermost` at tag **v11.11.1** (2026-09-24) with the repo's own `make build-v4`, minus the Go step that only adds code samples; the Playbooks routes are merged in from the Playbooks plugin's `master` at build time. It describes server **v11.11**. Upstream's own build currently fails `swagger-cli validate` on three schema nits (bookmarks, custom profile attributes, content flagging) — harmless for grepping. Mattermost v12.0 (October 2026) changes behaviour that no spec shows: see the v12 notes in `posts.md`, `channels.md`, `integrations.md` and `troubleshoot`. Re-vendor after v12.0 ships; where a `references/*.md` note and the spec disagree, the note was checked against the live changelog and wins.
 
 Load the `setup` skill first for authentication and the global conventions (Bearer header, base path, query pagination, rate limiting) — those rules apply to every endpoint here and are not repeated in each file.
 
@@ -26,9 +28,9 @@ Open the file matching the resource you need:
 
 | Domain | File | Covers |
 |--------|------|--------|
-| Auth & sessions | `references/auth-sessions.md` | login/logout, sessions, MFA, personal access tokens, terms of service |
+| Auth & sessions | `references/auth-sessions.md` | login/logout, sessions, MFA, personal access tokens (expiry, rotation, non-compliant revoke), terms of service |
 | Users | `references/users.md` | users CRUD, search/autocomplete, roles, activation, password, status, preferences, profile image, audits, stats, custom profile attributes |
-| Teams | `references/teams.md` | teams CRUD, members, invites (email/guest), stats, search, icon, scheme, import |
+| Teams | `references/teams.md` | teams CRUD, members, invites (email/guest), stats, search, icon, scheme (Slack import → mmetl, see the note there) |
 | Channels | `references/channels.md` | public/private channels, DM & group channels, members, stats, pinned, bookmarks, sidebar categories, moderation, privacy/restore/move, search |
 | Posts | `references/posts.md` | posts & threads, ephemeral, pinning, reactions, drafts, scheduled posts, search, flagged, unread |
 | Files & emoji | `references/files-emoji.md` | file upload (multipart)/metadata/thumbnail/preview/link/search, upload sessions, custom emoji |

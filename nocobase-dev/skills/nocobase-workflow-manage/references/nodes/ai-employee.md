@@ -1,6 +1,6 @@
 ---
 title: "AI Employee"
-description: "Assign an AI employee to complete a workflow task, return structured output, and optionally require human approval."
+description: "Use when an AI employee should complete a business task inside an async workflow, return structured output, and optionally wait for human approval."
 ---
 
 # AI Employee
@@ -115,7 +115,7 @@ Assignee parsing supports:
 
 - Plain user ids, validated against the `users` collection.
 - Arrays of user ids, such as variables that resolve to an array.
-- Filter objects with a valid `filter`, for example `{ "filter": { "id": { "$in": [1, 2] } } }`.
+- Filter objects with a valid `filter`. Before authoring one, load the `nocobase-utils` skill with topic `filter`, then read [Filter Condition Format](../../../nocobase-utils/references/filter/index.md), resolve the terminal user-field type, and use only its frontend operator allowlist. For multiple IDs, the ID group does not allow `$in`; use an `$or` of `$eq` conditions, for example `{ "filter": { "$or": [{ "id": { "$eq": 1 } }, { "id": { "$eq": 2 } }] } }`.
 
 Only one assignee needs to approve for the workflow to continue. Rejecting aborts the workflow task. Revising keeps the conversation open and lets the AI produce a new approval card.
 
@@ -169,7 +169,10 @@ Not supported. The server-side instruction does not implement `test()`.
     }
   },
   "requiresApproval": "human_decision",
-  "assignees": [1, { "filter": { "id": { "$in": [2, 3] } } }]
+  "assignees": [
+    1,
+    { "filter": { "$or": [{ "id": { "$eq": 2 } }, { "id": { "$eq": 3 } }] } }
+  ]
 }
 ```
 
@@ -199,4 +202,4 @@ Example references:
 - `{{$jobsMapByNodeKey.ai_review.decision}}`
 - `{{$jobsMapByNodeKey.ai_review.detail.reason}}`
 
-If `structuredOutput.schema` is missing, the client exposes no output variables for this node. Use `json-query` or `json-variable-mapping` downstream if you need to reshape nested output.
+If `structuredOutput.schema` is missing, the client exposes no output variables for this node. Do not manually reference child paths that only the server can resolve. Add `json-variable-mapping` or `json-query`, use the whole raw result as its source when available, explicitly model the required fields, and make later nodes use only that JSON node's outputs. Prefer defining `structuredOutput.schema` so the AI Employee node itself provides the frontend variable model.

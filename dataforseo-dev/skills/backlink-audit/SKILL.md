@@ -5,7 +5,7 @@ description: This skill should be used when the user asks about "backlink audit"
 
 # Backlink Audit Workflows
 
-Chained workflows for auditing, analyzing, and prospecting backlinks using DataForSEO MCP tools. All tool references use the `mcp__dataforseo__` prefix.
+Chained workflows for auditing, analyzing and prospecting backlinks with DataForSEO. Every block below is one `api_request` call: the first line is the `method` and `path`, the second is `data`. Before the first call to a path, read its page with `docs_search` and agree a budget (`cost-awareness` skill). Paths and minimal bodies for the whole API are in `../mcp-patterns/references/endpoint-paths.md`.
 
 ## Workflow 1: Full Profile Audit
 
@@ -13,52 +13,41 @@ Comprehensive audit of a domain's entire backlink profile.
 
 ### Step 1 — Get Summary Metrics
 
-Call `backlinks_summary` to retrieve the high-level profile: total backlinks, referring domains, dofollow/nofollow ratio, domain rank, and broken backlinks count.
+The summary gives the high-level profile: total backlinks, referring domains, dofollow and nofollow counts, rank, and broken backlinks.
 
 ```
-Tool: backlinks_summary
-Params:
-  target: "example.com"
+POST /v3/backlinks/summary/live
+data: [{"target": "example.com"}]
 ```
 
 ### Step 2 — Pull Individual Backlinks
 
-Call `backlinks_backlinks` with `mode: "one_per_domain"` to get one representative backlink per referring domain. Set `limit` to 100-200 for the initial review. This avoids thousands of links from a single domain flooding the results.
+Use `mode: "one_per_domain"` to get one representative backlink per referring domain, so thousands of links from one domain do not flood the result. Start with a `limit` of 100 to 200.
 
 ```
-Tool: backlinks_backlinks
-Params:
-  target: "example.com"
-  mode: "one_per_domain"
-  limit: 100
-  order_by: ["rank,desc"]
+POST /v3/backlinks/backlinks/live
+data: [{"target": "example.com", "mode": "one_per_domain", "limit": 100, "order_by": ["rank,desc"]}]
 ```
 
 ### Step 3 — Analyze Referring Domains
 
-Call `backlinks_referring_domains` to get a domain-level view of who links to you, including each referring domain's rank, backlink count, and first/last seen dates.
+A domain-level view of who links to you, with each referring domain's rank, backlink count and first and last seen dates.
 
 ```
-Tool: backlinks_referring_domains
-Params:
-  target: "example.com"
-  limit: 200
-  order_by: ["rank,desc"]
+POST /v3/backlinks/referring_domains/live
+data: [{"target": "example.com", "limit": 200, "order_by": ["rank,desc"]}]
 ```
 
 ### Step 4 — Review Anchor Text Distribution
 
-Call `backlinks_anchors` to see the anchor text distribution. Look for over-optimized anchors (exact-match commercial terms exceeding 5-10% of total), suspicious patterns (foreign-language anchors you did not build), and branded vs. generic ratio.
+Look for over-optimized anchors (exact-match commercial terms above 5 to 10 percent of the total), suspicious patterns (foreign-language anchors you did not build), and the ratio of branded to generic anchors.
 
 ```
-Tool: backlinks_anchors
-Params:
-  target: "example.com"
-  limit: 200
-  order_by: ["backlinks,desc"]
+POST /v3/backlinks/anchors/live
+data: [{"target": "example.com", "limit": 200, "order_by": ["backlinks,desc"]}]
 ```
 
-Combine all four results into a profile summary: total links, domain diversity, dofollow ratio, anchor distribution health, and top linking domains.
+Combine the four results into a profile summary: total links, domain diversity, dofollow ratio, anchor health and the top linking domains.
 
 ## Workflow 2: Spam Detection
 
@@ -66,35 +55,31 @@ Identify toxic and spammy backlinks that could trigger penalties.
 
 ### Step 1 — Bulk Spam Score Check
 
-Call `backlinks_bulk_spam_score` with your domain (and optionally competitor domains for comparison). This returns a spam score for each target.
+Send your domain, and optionally competitors for comparison. One call takes up to 1000 targets.
 
 ```
-Tool: backlinks_bulk_spam_score
-Params:
-  targets: ["example.com", "competitor1.com", "competitor2.com"]
+POST /v3/backlinks/bulk_spam_score/live
+data: [{"targets": ["example.com", "competitor1.com", "competitor2.com"]}]
 ```
 
 ### Step 2 — Review Suspicious Anchors
 
-Call `backlinks_anchors` and flag anchors that match known spam patterns: gambling terms, pharma keywords, foreign-language text unrelated to your niche, or exact-match commercial phrases in high volume.
+Run the anchors call from Workflow 1 and flag anchors that match known spam patterns: gambling terms, pharma keywords, foreign-language text unrelated to your niche, or exact-match commercial phrases in high volume.
 
 ### Step 3 — Inspect Low-Rank Referring Domains
 
-Call `backlinks_referring_domains` with `order_by: ["rank,asc"]` to surface the lowest-authority domains linking to you. Domains with rank 0-5 and high backlink counts are often spam networks.
+Sort referring domains by ascending rank to surface the lowest-authority linkers. Domains with rank 0 to 5 and high backlink counts are often spam networks.
 
 ```
-Tool: backlinks_referring_domains
-Params:
-  target: "example.com"
-  limit: 100
-  order_by: ["rank,asc"]
+POST /v3/backlinks/referring_domains/live
+data: [{"target": "example.com", "limit": 100, "order_by": ["rank,asc"]}]
 ```
 
 ### Step 4 — Build a Disavow List
 
-From the results, compile domains that meet two or more spam indicators:
+Compile the domains that meet two or more spam indicators:
 - Spam score above 50
-- Rank below 10 with generic/spammy anchor text
+- Rank below 10 with generic or spammy anchor text
 - Anchor text in a language or topic unrelated to your site
 - Hundreds of outbound links (link farm behavior)
 
@@ -102,39 +87,34 @@ Format the disavow list as `domain:spamsite.com` entries, one per line.
 
 ## Workflow 3: Link Building Prospecting
 
-Find new link building opportunities by analyzing competitor backlink profiles.
+Find new link opportunities by analyzing competitor backlink profiles.
 
 ### Step 1 — Find Backlink Competitors
 
-Call `backlinks_competitors` with your domain to discover domains that have similar backlink profiles (they share many of the same referring domains).
+Domains with a similar backlink profile (they share many of your referring domains).
 
 ```
-Tool: backlinks_competitors
-Params:
-  target: "example.com"
+POST /v3/backlinks/competitors/live
+data: [{"target": "example.com", "limit": 20}]
 ```
 
 ### Step 2 — Compare Referring Domains
 
-Call `backlinks_referring_domains` on your top 2-3 competitors. Cross-reference with your own referring domains list from Workflow 1.
+Run the referring domains call on your top 2 or 3 competitors and cross-reference with your own list from Workflow 1.
 
 ### Step 3 — Identify Gap Domains
 
-Use `backlinks_domain_intersection` to find referring domains that link to competitors but not to you. These are your prospecting targets.
+Domain intersection finds referring domains that link to the competitors and not to you. `targets` is an object keyed "1", "2", and so on; `exclude_targets` removes domains that already link to you.
 
 ```
-Tool: backlinks_domain_intersection
-Params:
-  targets:
-    1: "competitor1.com"
-    2: "competitor2.com"
-  exclude_targets: ["example.com"]
-  limit: 200
+POST /v3/backlinks/domain_intersection/live
+data: [{"targets": {"1": "competitor1.com", "2": "competitor2.com"},
+        "exclude_targets": ["example.com"], "limit": 200}]
 ```
 
 ### Step 4 — Qualify Prospects
 
-Filter gap domains by rank > 30 (decent authority) and check their backlink counts. High-rank domains that link to multiple competitors in your niche are the highest-priority outreach targets.
+Keep gap domains with rank above 30 and check their backlink counts. High-rank domains that link to several competitors in your niche are the highest-priority outreach targets.
 
 ## Workflow 4: Historical Trends and Link Velocity
 
@@ -142,40 +122,41 @@ Track how a backlink profile changes over time.
 
 ### Step 1 — Get Timeseries Summary
 
-Call `backlinks_timeseries_summary` to see historical backlink and referring domain counts over time. Identify growth spikes, drops, or plateaus.
+Historical backlink and referring domain counts. Identify growth spikes, drops and plateaus.
 
 ```
-Tool: backlinks_timeseries_summary
-Params:
-  target: "example.com"
-  date_from: "2025-01-01"
+POST /v3/backlinks/timeseries_summary/live
+data: [{"target": "example.com", "date_from": "2025-01-01"}]
 ```
 
 ### Step 2 — Check New and Lost Timeseries
 
-Call `backlinks_timeseries_new_lost_summary` to see the rate of new vs. lost backlinks over time. A healthy profile gains more links than it loses. Sudden spikes in new links may indicate a spam attack; sudden drops may indicate link removals or site issues.
+The rate of new against lost backlinks. A healthy profile gains more than it loses. A sudden spike of new links may be a spam attack; a sudden drop may mean link removals or site issues.
+
+```
+POST /v3/backlinks/timeseries_new_lost_summary/live
+data: [{"target": "example.com", "date_from": "2025-01-01"}]
+```
 
 ### Step 3 — Get Recent Changes in Bulk
 
-Call `backlinks_bulk_new_lost_backlinks` to see the most recent new and lost backlinks across one or multiple domains.
+The most recent new and lost backlinks across one or many domains. `date_from` is the threshold: links first seen after it are new, links seen before it and not since are lost.
 
 ```
-Tool: backlinks_bulk_new_lost_backlinks
-Params:
-  targets: ["example.com"]
+POST /v3/backlinks/bulk_new_lost_backlinks/live
+data: [{"targets": ["example.com"], "date_from": "2026-09-01"}]
 ```
 
 ### Step 4 — Monitor Referring Domain Changes
 
-Call `backlinks_bulk_new_lost_referring_domains` to track which referring domains were recently gained or lost.
+Which referring domains were gained or lost.
 
 ```
-Tool: backlinks_bulk_new_lost_referring_domains
-Params:
-  targets: ["example.com"]
+POST /v3/backlinks/bulk_new_lost_referring_domains/live
+data: [{"targets": ["example.com"], "date_from": "2026-09-01"}]
 ```
 
-Compare link velocity against competitors to gauge whether your link building efforts are keeping pace.
+Compare link velocity with competitors to judge whether your link building keeps pace.
 
 ## Interpreting Backlink Metrics
 
@@ -193,7 +174,7 @@ Compare link velocity against competitors to gauge whether your link building ef
 
 ## Target Format
 
-Pass domains without protocol or www prefix. Pass pages with full URL.
+Pass domains without protocol or `www.`. Pass pages as absolute URLs.
 
 | Target Type | Format | Example |
 |-------------|--------|---------|
@@ -204,40 +185,40 @@ Pass domains without protocol or www prefix. Pass pages with full URL.
 
 ## Bulk Operations
 
-Use bulk endpoints for efficiency when analyzing multiple targets at once:
+Bulk endpoints answer for many targets in one call. Prefer them when analyzing 3 or more targets.
 
-| Tool | Max Targets | Returns |
-|------|-------------|---------|
-| `backlinks_bulk_backlinks` | 1000 | Backlink counts per target |
-| `backlinks_bulk_ranks` | 1000 | Domain rank per target |
-| `backlinks_bulk_referring_domains` | 1000 | Referring domain counts per target |
-| `backlinks_bulk_spam_score` | 1000 | Spam scores per target |
-| `backlinks_bulk_new_lost_backlinks` | 1000 | Recent new/lost links per target |
-| `backlinks_bulk_new_lost_referring_domains` | 1000 | Recent new/lost referring domains |
-| `backlinks_bulk_pages_summary` | 1000 | Page-level backlink summary |
-
-Always prefer bulk endpoints when analyzing 3+ targets. They return results for all targets in a single API call.
+| Path under `/v3/backlinks/` | Max targets | Returns |
+|-------------|-------------|---------|
+| `bulk_backlinks/live` | 1000 | Backlink counts per target |
+| `bulk_ranks/live` | 1000 | Rank per target |
+| `bulk_referring_domains/live` | 1000 | Referring domain counts per target |
+| `bulk_spam_score/live` | 1000 | Spam scores per target |
+| `bulk_new_lost_backlinks/live` | 1000 | Recent new and lost links per target |
+| `bulk_new_lost_referring_domains/live` | 1000 | Recent new and lost referring domains |
+| `bulk_pages_summary/live` | 1000 | Page-level backlink summary |
 
 <example>
 User: "Audit the backlink profile of example.com and find toxic links"
 
 Workflow:
-1. Call backlinks_summary for "example.com" — get total backlinks, referring domains, dofollow ratio, broken links
-2. Call backlinks_bulk_spam_score with targets ["example.com"] — check overall spam score
-3. Call backlinks_referring_domains for "example.com", order_by ["rank,asc"], limit 100 — surface lowest-authority linkers
-4. Call backlinks_anchors for "example.com", limit 200 — review anchor text distribution
-5. Flag domains with rank < 10 and spammy anchor text patterns
-6. Present: profile summary (healthy metrics vs. concerns), anchor distribution chart, list of suspected toxic domains with evidence, draft disavow list
+1. docs_search for the four paths below; show the plan (4 calls, limits 100 to 200); get the user's budget
+2. api_request POST /v3/backlinks/summary/live for "example.com" — totals, referring domains, dofollow ratio, broken links
+3. POST /v3/backlinks/bulk_spam_score/live with targets ["example.com"] — overall spam score
+4. POST /v3/backlinks/referring_domains/live with order_by ["rank,asc"], limit 100 — the lowest-authority linkers
+5. POST /v3/backlinks/anchors/live with limit 200 — anchor text distribution
+6. Flag domains with rank < 10 and spammy anchor patterns
+7. Present: profile summary (healthy metrics against concerns), anchor distribution, suspected toxic domains with evidence, draft disavow list
 </example>
 
 <example>
 User: "Find link building opportunities by looking at competitor backlinks"
 
 Workflow:
-1. Call backlinks_summary for "yourdomain.com" — baseline metrics
-2. Call backlinks_competitors for "yourdomain.com" — discover backlink competitors
-3. Call backlinks_domain_intersection with targets {"1": "competitor1.com", "2": "competitor2.com"}, exclude_targets ["yourdomain.com"], limit 200
-4. Filter gap domains: rank > 30, not in your existing referring domains
-5. Call backlinks_bulk_ranks with the top 50 gap domains to confirm authority
-6. Present: list of prospect domains sorted by rank, number of competitors they link to, suggested outreach priority, and estimated difficulty (higher rank = more valuable but harder to earn)
+1. docs_search for the paths below; get the user's budget
+2. api_request POST /v3/backlinks/summary/live for "yourdomain.com" — baseline
+3. POST /v3/backlinks/competitors/live for "yourdomain.com" — backlink competitors
+4. POST /v3/backlinks/domain_intersection/live with targets {"1": "competitor1.com", "2": "competitor2.com"}, exclude_targets ["yourdomain.com"], limit 200
+5. Keep gap domains with rank > 30
+6. POST /v3/backlinks/bulk_ranks/live with the top 50 gap domains to confirm authority
+7. Present: prospect domains sorted by rank, how many competitors each links to, suggested outreach priority and estimated difficulty (higher rank is more valuable and harder to earn)
 </example>

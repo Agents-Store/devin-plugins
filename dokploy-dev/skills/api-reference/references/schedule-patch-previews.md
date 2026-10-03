@@ -34,11 +34,12 @@ Cron-like scheduled tasks. A schedule fires a command on a target at every cron 
 | `composeId` | string | Bind to a compose stack — pair with `serviceName` |
 | `serviceName` | string | Compose service name (required when `composeId` is set) |
 | `serverId` | string | Bind to a remote server — runs on the host |
-| `dokployServer` | boolean | If true, runs on the Dokploy host itself |
+| `scheduleType` | string | `application` \| `compose` \| `server` \| `dokploy-server` (the Dokploy host itself) |
+| `shellType` | string | `bash` \| `sh` |
 | `enabled` | boolean | Toggle without deleting |
 | `timezone` | string | Timezone for the cron schedule |
 
-Exactly one of `applicationId` / `composeId` / `serverId` / `dokployServer: true` must be set. Since v0.29.8, Dokploy-host schedules are organization-scoped (`organizationId`, formerly `userId`).
+Bind the schedule to exactly one target: `applicationId`, `composeId` (+ `serviceName`), `serverId`, or — for the Dokploy host itself — `scheduleType: "dokploy-server"`. Since v0.29.8, Dokploy-host schedules are organization-scoped (the server fills `organizationId` from your session).
 
 ### Common use cases
 
@@ -53,14 +54,12 @@ Exactly one of `applicationId` / `composeId` / `serverId` / `dokployServer: true
 curl -s -X POST "$DOKPLOY_URL/api/schedule.create" \
   -H "x-api-key: $DOKPLOY_API_KEY" -H "Content-Type: application/json" \
   -d '{
-    "json": {
-      "name": "Nightly VACUUM",
-      "cronExpression": "0 3 * * *",
-      "command": "psql -U postgres -d main -c \"VACUUM ANALYZE;\"",
-      "composeId": "comp_abc123",
-      "serviceName": "postgres",
-      "enabled": true
-    }
+    "name": "Nightly VACUUM",
+    "cronExpression": "0 3 * * *",
+    "command": "psql -U postgres -d main -c \"VACUUM ANALYZE;\"",
+    "composeId": "comp_abc123",
+    "serviceName": "postgres",
+    "enabled": true
   }'
 ```
 
@@ -171,5 +170,5 @@ Manual cleanup:
 ```bash
 curl -s -X POST "$DOKPLOY_URL/api/previewDeployment.delete" \
   -H "x-api-key: $DOKPLOY_API_KEY" -H "Content-Type: application/json" \
-  -d "{\"json\":{\"previewDeploymentId\":\"$ID\"}}"
+  -d "{\"previewDeploymentId\":\"$ID\"}"
 ```

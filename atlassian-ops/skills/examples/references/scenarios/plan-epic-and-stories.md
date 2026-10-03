@@ -3,7 +3,10 @@
 Create an Epic, add Stories under it, and report on the epic's children. Assumes `setup` ran. Adjust the project key `PROJ` and summaries.
 
 ```bash
-JIRA="${ATLASSIAN_SITE_URL%/}/rest/api/3"
+# Classic token → site URL; scoped token (ATLASSIAN_CLOUD_ID set) → API gateway — see `setup`
+JIRA_ROOT="${ATLASSIAN_CLOUD_ID:+https://api.atlassian.com/ex/jira/${ATLASSIAN_CLOUD_ID}}"
+JIRA_ROOT="${JIRA_ROOT:-${ATLASSIAN_SITE_URL%/}}"
+JIRA="${JIRA_ROOT}/rest/api/3"
 AUTH=(-u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" -H "Accept: application/json")
 JSON=(-H "Content-Type: application/json")
 PROJ="PROJ"

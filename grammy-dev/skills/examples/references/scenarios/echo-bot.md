@@ -19,13 +19,15 @@ echo-bot/
   "name": "echo-bot",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "dev": "tsx watch src/bot.ts",
-    "start": "node --import tsx src/bot.ts"
+    "dev": "tsx watch --env-file=.env src/bot.ts",
+    "start": "node --env-file=.env --import tsx src/bot.ts"
   },
   "dependencies": {
-    "grammy": "^1.42.0",
-    "dotenv": "^16.4.5"
+    "grammy": "^1.46.0"
   },
   "devDependencies": {
     "tsx": "^4.19.0",
@@ -61,7 +63,6 @@ BOT_TOKEN=123456:ABC-replace-me
 ## src/bot.ts
 
 ```typescript
-import "dotenv/config";
 import { Bot, GrammyError, HttpError } from "grammy";
 
 const bot = new Bot(process.env.BOT_TOKEN!);
@@ -93,5 +94,7 @@ cp .env.example .env  # paste your token
 npm install
 npm run dev
 ```
+
+Needs Node.js 22 or newer: Node loads `.env` itself through `--env-file`, so there is no `dotenv` dependency.
 
 Send `/start` to your bot in Telegram. It should reply within a second.

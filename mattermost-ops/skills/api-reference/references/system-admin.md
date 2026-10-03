@@ -20,7 +20,7 @@ Server-wide operations. **All require the System Admin role** — a `403` means 
 | PUT | `/config` | Replace the whole config. |
 | PUT | `/config/patch` | Patch only the fields you send (preferred). |
 | POST | `/config/reload` | Reload config from disk. |
-| GET | `/config/client?format=old` | Client-visible config (no admin needed). |
+| GET | `/config/client` | Client-visible config (no admin needed). The old `format` query parameter is no longer required (deprecated in v11.0) — just call the bare path. |
 | GET | `/config/environment` | Settings set via env vars (read-only). |
 
 ## Analytics, audits, logs
@@ -40,7 +40,7 @@ Server-wide operations. **All require the System Admin role** — a `403` means 
 |--------|------|---------|
 | POST | `/license` | Upload a license file — multipart `-F "license=@mattermost.mattermost-license"`. |
 | DELETE | `/license` | Remove the license (revert to Team Edition). |
-| GET | `/license/client?format=old` | Client license info. |
+| GET | `/license/client` | Client license info (more detail with `manage_system`; no `format` parameter needed). |
 | POST | `/trial-license` | Request a trial license. |
 
 ## Jobs (async server tasks)

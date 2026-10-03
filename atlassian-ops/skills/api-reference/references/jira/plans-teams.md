@@ -25,6 +25,6 @@ Advanced Roadmaps "Plans" (Jira Premium) and the teams attached to them. Base `$
 
 ## Notes
 - **Premium-only** — these endpoints require Advanced Roadmaps; on Standard they return `403`/`404`.
-- **Plans ≠ Scrum boards/sprints.** Boards, sprints, and the backlog are in the separate **Jira Software Agile REST API** at `${ATLASSIAN_SITE_URL%/}/rest/agile/1.0/…` (`/board`, `/sprint`, `/backlog`) — *not* in this platform spec. If a user needs sprint operations, that's the API to call.
+- **Plans ≠ Scrum boards/sprints.** Boards, sprints, and the backlog are in the separate **Jira Software Agile REST API** at `${JIRA_ROOT}/rest/agile/1.0/…` (`/board`, `/sprint`, `/backlog`) — *not* in this platform spec. If a user needs sprint operations, that's the API to call.
 - `updatePlan` uses operation lists rather than a flat body — grep the spec for the exact shape.
 - For exact schemas: `grep -n '"operationId": "createPlan"' ../jira-openapi-v3.json`.

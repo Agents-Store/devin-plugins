@@ -9,22 +9,21 @@ This skill covers breaking down large work items into smaller, actionable pieces
 
 ## Tool Name Resolution
 
-Tools below are referenced by their **action name** only (e.g., `create_work_item`). Resolve the real tool names for your current Plane MCP server or connector through the `connector-bootstrap` skill. Match by action suffix — never assume a prefix.
+Plane MCP exposes one tool per resource and the operation goes into the `action` parameter: `workitem(action=create, ...)`. This skill writes calls in that form. Resolve the real tool names (`mcp__<server>__<resource>`) for your current Plane connection through the `connector-bootstrap` skill - never assume a server prefix.
 
 ## Available Tools
 
-| Tool | Description |
+| Call | Description |
 |------|-------------|
-| `retrieve_work_item` | Get work item details by UUID |
-| `retrieve_work_item_by_identifier` | Get work item by project identifier + number (e.g., MP-1) |
-| `create_work_item` | Create child work item (with `parent` field for hierarchy) |
-| `update_work_item` | Update work item fields |
-| `create_epic` | Create an epic for grouping stories |
-| `list_epics` | List existing epics |
-| `list_work_item_relations` | Check dependencies and relations |
-| `create_work_item_relation` | Create blocking/relates_to relations |
-| `list_labels` | Get available labels |
-| `create_label` | Create labels like "needs-refinement" |
+| `workitem(action=retrieve)` | Get work item details by UUID |
+| `workitem(action=retrieve_by_identifier)` | Get work item by identifier (`workitem_identifier="MP-1"`) |
+| `workitem(action=create)` | Create child work item (with the `parent` field for hierarchy) |
+| `workitem(action=update)` | Update work item fields |
+| `workitem_type(action=resolve)` | Get the id of the "Epic" type - there are no epic tools; an epic is a work item of that type |
+| `workitem(action=list)` | List existing epics (`pql='type = "<epic-type-id>"'`) or the children of an item (`pql='childOf("MP-42")'`) |
+| `workitem_relation(action=list)` | Check dependencies and relations |
+| `workitem_relation(action=create)` | Create blocking/relates_to relations |
+| `label(action=list)` / `label(action=create)` | Get / create labels like "needs-refinement" |
 
 ## Decomposition Hierarchy
 
@@ -40,31 +39,32 @@ Initiative (optional, workspace-level)
 
 **Epic → Stories:**
 ```
-create_epic({
-  project_id: "<id>",
-  name: "User Authentication",
-  description_html: "<p>Complete auth system with signup, login, and password reset</p>",
-  priority: "high"
-})
+workitem_type(action=resolve, project_id=<id>, name="Epic")
+→ epic type_id
+
+workitem(action=create,
+  project_id=<id>,
+  name="User Authentication",
+  type_id=<epic_type_id>,
+  description_html="<p>Complete auth system with signup, login, and password reset</p>",
+  priority="high")
 → epic_id
 
-create_work_item({
-  project_id: "<id>",
-  name: "User can sign up with email",
-  parent: "<epic_id>",
-  description_html: "<p>As a new user, I want to sign up with email...</p>",
-  point: 5
-})
+workitem(action=create,
+  project_id=<id>,
+  name="User can sign up with email",
+  parent=<epic_id>,
+  description_html="<p>As a new user, I want to sign up with email...</p>",
+  point=5)
 ```
 
 **Story → Tasks:**
 ```
-create_work_item({
-  project_id: "<id>",
-  name: "Implement signup API endpoint",
-  parent: "<story_id>",
-  point: 3
-})
+workitem(action=create,
+  project_id=<id>,
+  name="Implement signup API endpoint",
+  parent=<story_id>,
+  point=3)
 ```
 
 ## INVEST Criteria
@@ -73,7 +73,7 @@ Every user story should meet ALL six INVEST criteria:
 
 | Criterion | What It Means | Plane Validation |
 |-----------|--------------|-----------------|
-| **I**ndependent | Can be developed without depending on other stories | Check `list_work_item_relations` — no `blocked_by` relations |
+| **I**ndependent | Can be developed without depending on other stories | Check `workitem_relation(action=list)` — no `blocked_by` relations |
 | **N**egotiable | Details can be discussed, not a rigid contract | Description uses "As a... I want... so that..." format |
 | **V**aluable | Delivers value to user or business | Ties to an epic or has clear business justification |
 | **E**stimable | Team can estimate the effort | Has enough detail for story points |
@@ -83,11 +83,11 @@ Every user story should meet ALL six INVEST criteria:
 ### INVEST Validation Workflow
 
 ```
-1. retrieve_work_item({ project_id, work_item_id })
+1. workitem(action=retrieve, project_id=<id>, workitem_id=<id>)
    → Get item details
 
 2. Check each criterion:
-   I: list_work_item_relations({ project_id, work_item_id })
+   I: workitem_relation(action=list, project_id=<id>, workitem_id=<id>)
       → Verify no hard blocked_by dependencies
    N: Check description has user story format
    V: Check parent epic exists or description states value
@@ -191,7 +191,7 @@ Split:
 
 ```
 1. Retrieve the work item:
-   retrieve_work_item_by_identifier({ project_identifier: "MP", issue_identifier: 42 })
+   workitem(action=retrieve_by_identifier, workitem_identifier="MP-42")
 
 2. Analyze against INVEST:
    - Is it > 8 points? → needs splitting
@@ -204,30 +204,31 @@ Split:
 
 4. Create child items:
    For each sub-item:
-   create_work_item({
-     project_id: "<id>",
-     name: "<child story name>",
-     parent: "<parent_work_item_id>",
-     description_html: "<p>As a [user]... acceptance criteria...</p>",
-     point: <estimated_points>,
-     priority: "<inherited or adjusted>",
-     labels: ["<inherited labels>"]
-   })
+   workitem(action=create,
+     project_id=<id>,
+     name="<child story name>",
+     parent=<parent_work_item_id>,
+     description_html="<p>As a [user]... acceptance criteria...</p>",
+     point=<estimated_points>,
+     priority="<inherited or adjusted>",
+     labels=[<inherited label uuids>])
 
 5. Update parent:
-   update_work_item({
-     project_id: "<id>",
-     work_item_id: "<parent_id>",
-     description_html: "<p>Parent epic/story. See child items for implementation.</p>"
-   })
+   workitem(action=update,
+     project_id=<id>,
+     workitem_id=<parent_id>,
+     description_html="<p>Parent epic/story. See child items for implementation.</p>")
 
 6. Set relations if needed:
-   create_work_item_relation({
-     project_id: "<id>",
-     work_item_id: "<child1_id>",
-     relation_type: "blocked_by",
-     issues: ["<child0_id>"]
-   })
+   workitem_relation(action=create,
+     project_id=<id>,
+     workitem_id=<child1_id>,
+     relation_type="blocked_by",
+     workitem_ids=[<child0_id>])
+
+7. Verify the split:
+   workitem(action=list, project_id=<id>, pql='childOf("MP-42")', fields="id,name,point,estimate_point")
+   → the children of the parent; their points should roughly sum to the original
 ```
 
 ## Point Distribution After Splitting

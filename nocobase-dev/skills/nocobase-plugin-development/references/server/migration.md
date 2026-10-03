@@ -6,6 +6,14 @@ Read this when you need to handle schema changes, data migrations, or configurat
 
 ### Create a Migration File
 
+For CLI-managed source apps:
+
+```bash
+nb scaffold migration <name> --pkg <plugin-package-name> [--on afterLoad]
+```
+
+For plain source repos:
+
 ```bash
 yarn nocobase create-migration <name> --pkg=<plugin-package-name> [--on=afterLoad]
 ```
@@ -18,7 +26,7 @@ Options for `--on`:
 Example:
 
 ```bash
-yarn nocobase create-migration add-nickname-field --pkg=@my-project/plugin-users --on=afterSync
+nb scaffold migration add-nickname-field --pkg @my-project/plugin-users --on afterSync
 ```
 
 Generates: `src/server/migrations/20240107173313-add-nickname-field.ts`
@@ -124,6 +132,14 @@ export default class extends Migration {
 ```
 
 ### Trigger Migrations
+
+For CLI-managed source apps:
+
+```bash
+nb app upgrade
+```
+
+For plain source repos:
 
 ```bash
 yarn nocobase upgrade

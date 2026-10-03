@@ -35,12 +35,19 @@ Links to detailed workflow scenarios and JSON input examples. For script details
 
 | Command | Purpose | Default Format |
 |---------|---------|----------------|
-| `/generate-proposal` | Business proposals | DOCX |
-| `/generate-invoice` | Invoices and bills | PDF |
-| `/generate-report` | Reports and analysis | DOCX |
-| `/generate-presentation` | Slide presentations | PPTX |
-| `/generate-contract` | Contracts and agreements | DOCX |
-| `/generate-act` | Acts of completed works | PDF |
-| `/convert-document` | Format conversion | varies |
+| `/document-generator-ops:generate-proposal` | Business proposals | DOCX |
+| `/document-generator-ops:generate-invoice` | Invoices and bills | PDF |
+| `/document-generator-ops:generate-estimate` | Cost estimates and quotations | PDF |
+| `/document-generator-ops:generate-report` | Reports and analysis | DOCX |
+| `/document-generator-ops:generate-presentation` | Slide presentations | PPTX |
+| `/document-generator-ops:generate-contract` | Contracts and agreements | DOCX |
+| `/document-generator-ops:generate-nda` | Non-disclosure agreements | PDF |
+| `/document-generator-ops:generate-act` | Acts of completed works | PDF |
+| `/document-generator-ops:convert-document` | Format conversion | varies |
+| `/document-generator-ops:setup` | Style, company profile and logo preferences | — |
 
 These commands are defined in the `commands/` directory and are invocable as slash commands by the user.
+
+## Plugin root in the reference files
+
+The scenario and template files below are read as plain files, so Claude Code does not substitute path variables in them. Wherever they write `<plugin_dir>`, use the plugin root: `${CLAUDE_PLUGIN_ROOT}`. Call scripts as `node "${CLAUDE_PLUGIN_ROOT}/scripts/<script>.js" /absolute/path/input.json`, without `cd` into the plugin.

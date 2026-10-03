@@ -179,7 +179,7 @@ services:
         condition: service_healthy
 
   directus:
-    image: directus/directus:latest
+    image: directus/directus:12.4.1   # pin the tag: Directus 12 changes between minors, so upgrade on purpose
     ports:
       - "8055:8055"
     environment:
@@ -188,7 +188,9 @@ services:
       ADMIN_EMAIL: admin@example.com
       ADMIN_PASSWORD: admin
     healthcheck:
-      test: ["CMD", "wget", "--spider", "http://localhost:8055/server/health"]
+      # /server/ping is public; /server/health answers 403 without a token on Directus 12, so the container never turns healthy.
+      # 127.0.0.1, not localhost: wget tries IPv6 first and Directus listens on IPv4 only.
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8055/server/ping"]
       interval: 10s
       timeout: 5s
       retries: 3

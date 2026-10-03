@@ -135,8 +135,8 @@ bot.on("message", mainHandler); // runs alongside the fork, not after it
 When stacking grammY plugins, ordering matters:
 
 ```typescript
-bot.use(session({ initial: () => ({ counter: 0 }) }));   // 1. session first
-bot.use(conversations());                                 // 2. conversations needs session
+bot.use(session({ initial: () => ({ counter: 0 }) }));   // 1. session first (only if you use sessions)
+bot.use(conversations());                                 // 2. conversations (2.x keeps its own state)
 bot.use(hydrate());                                       // 3. hydrate attaches helpers
 bot.use(i18n.middleware());                               // 4. i18n
 bot.use(myAuthMiddleware);                                // 5. business middleware
@@ -145,7 +145,7 @@ bot.command("start", startHandler);                       // 7. handlers
 bot.catch(globalErrorHandler);                            // 8. catch-all LAST
 ```
 
-Forgetting "session before conversations" gives an obscure `cannot serialize conversation` error.
+`@grammyjs/conversations` 2.x does **not** need the session plugin. Mount session first only when you read `ctx.session` yourself — inside a conversation reach it with `conversation.external((ctx) => ctx.session)`. What does matter: `conversations()` and `createConversation(…)` must come *before* the handler that calls `ctx.conversation.enter`.
 
 ## What this skill does NOT cover
 

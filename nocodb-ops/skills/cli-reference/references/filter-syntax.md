@@ -1,8 +1,8 @@
 # Where Filter Syntax
 
-Complete filter/where clause syntax for both CLI and MCP queries. Imported from the official NocoDB agent-skills.
+Complete `where` clause syntax for REST and MCP record queries, aligned with the live NocoDB MCP server (2026.09). The official `nocodb.sh` script prints its own copy with `where:help`.
 
-Run `nc where:help` for the built-in reference.
+The MCP record tools also take a **structured `filter`** (preferred over `where`; pass only one of the two): a single condition `{ "field", "operator", "value", "sub_operator"? }` or a group `{ "group_operator": "AND" | "OR", "filters": [...] }`. Names and values are quoted for you. Everything below -- operators, date sub-operators, the two-bound range rule -- applies to both forms. REST has only the `where` query parameter.
 
 ## Basic Syntax
 
@@ -37,12 +37,12 @@ Run `nc where:help` for the built-in reference.
 
 ### Range
 
-| Operator | Description | Example |
-|----------|-------------|---------|
-| btw | Between (inclusive) | `(price,btw,10,100)` |
-| nbtw | Not between | `(score,nbtw,0,50)` |
+`btw` / `nbtw` are **rejected** on Number, Decimal, Currency, Percent, Rating, Duration, Date / DateTime and Checkbox fields with `Operation btw is not supported for type <T>`; only Time and text fields accept them. Two bounds work on every type, so always express a range that way:
 
-**Note:** btw/nbtw may not work for Currency fields. Use `(field,gte,min)~and(field,lte,max)` instead.
+| Need | Filter |
+|------|--------|
+| Between (inclusive) | `(price,gte,10)~and(price,lte,100)` |
+| Not between | `(score,lt,0)~or(score,gt,50)` |
 
 ### Null / Empty (no value needed)
 
@@ -73,7 +73,7 @@ Run `nc where:help` for the built-in reference.
 
 ## Date / Time Filtering
 
-Date fields require a sub-operator.
+Date fields require a sub-operator on **every** comparison. In the structured `filter` it is the `sub_operator` key; in `where` it follows the operator. A bare date after the operator is read as the sub-operator and rejected (`'<date>' is not supported`).
 
 ### isWithin — date falls within a time range
 
@@ -104,10 +104,16 @@ Sub-operator (value = YYYY-MM-DD): exactDate
 (created_at,gte,daysAgo,7)                            # Created within last 7 days
 ```
 
-### btw — date range
+### Date range — two bounds (`btw` / `nbtw` are not supported on dates)
 
 ```bash
-(event_date,btw,2024-01-01,2024-12-31)               # Events in year 2024
+(event_date,gte,exactDate,2024-01-01)~and(event_date,lte,exactDate,2024-12-31)    # Events in year 2024
+```
+
+### in — any of several exact dates
+
+```bash
+(due_date,in,exactDate,2024-06-15,2024-07-01)
 ```
 
 ### Null checks for dates (no sub-operator)
@@ -135,6 +141,8 @@ Sub-operator (value = YYYY-MM-DD): exactDate
 ~not(is_deleted,checked)
 ```
 
+Lowercase only: `~AND` / `~OR` error. **Never put whitespace after `~and` / `~or` / `~not`** -- `(a,eq,1)~and (b,eq,2)` is a parse error (a space *before* is fine). `~not` only starts an expression or a group; to negate a later term wrap it: `(a,eq,1)~and(~not(b,checked))`.
+
 **Tip:** Use `in` operator instead of nested OR conditions:
 ```bash
 # Instead of: ((status,eq,active)~or(status,eq,pending))~and(country,eq,USA)
@@ -152,6 +160,8 @@ Value with quotes:  (field,eq,"it's here") or (field,eq,'say "hello"')
 Field with spaces:  (Full Name,eq,John)    # Do NOT use quotes around field names
 ```
 
+A field name must not carry a trailing space (`(name ,eq,John)` reports `field 'name ' not found`); a trailing space in a value is kept and silently matches nothing. Field names in `where` are case-sensitive (`Column alias '<name>' not found` on a case mismatch); the structured `filter` matches field titles case-insensitively.
+
 ## Complex Examples
 
 ```bash
@@ -165,7 +175,7 @@ Field with spaces:  (Full Name,eq,John)    # Do NOT use quotes around field name
 (amount,gte,100)~and(amount,lte,500)~and(status,in,pending,processing)
 
 # Updated recently, not archived
-(updated_at,isWithin,pastNumberOfDays,14)~and~not(is_archived,checked)
+(updated_at,isWithin,pastNumberOfDays,14)~and(~not(is_archived,checked))
 
 # Multiple segments and countries
 (Segment,in,Government,Enterprise)~and(Country,in,Germany,France)

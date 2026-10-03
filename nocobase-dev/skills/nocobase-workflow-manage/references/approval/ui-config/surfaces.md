@@ -37,11 +37,13 @@ Other generic page block types (table, list, calendar, chart, iframe, dynamic-da
 For a usable applicant-facing approval entry, include:
 
 1. One `approvalInitiator` block initialized with the trigger collection's `dataSourceKey` and `collectionName`.
-2. Applicant-editable collection fields in that form, when the applicant must supply or revise approval data.
-3. The default `approvalSubmit` action. It is created automatically; do not delete it unless the user explicitly asks for a non-submittable legacy surface.
+2. Applicant-editable collection fields in that form that cover the workflow's business intent. At minimum, include the fields the applicant must supply or revise for this specific process; never leave the form empty just because the form block exists.
+3. The default `approvalSubmit` action. It is created automatically; do not delete it unless the user explicitly asks for a non-submittable surface.
 4. Optional `approvalSaveDraft` and `approvalWithdraw` actions only when the workflow needs draft or withdrawal behavior.
 
 `markdown`, `jsBlock`, and task-card details can supplement the initiator experience, but they do not satisfy the required submission form. If `workflow.config.centralized=true`, this surface is the approval-center entry; if users also start approvals from application pages, bind the workflow to the relevant create/edit form submit button separately.
+
+Field selection is part of the surface contract. Derive fields from the trigger collection and the requested business workflow. For example, a reimbursement approval usually needs applicant-entered summary/title, amount, reason, date, attachments, and line-item fields if they exist. A leave approval usually needs leave type, date range, duration, and reason. If the user's intent does not name the fields, inspect the collection schema and choose the obvious business fields; ask only when the required information cannot be inferred safely. Do not satisfy this requirement with only system fields, hidden IDs, or an empty `fields: []`.
 
 ### Apply-form actions (`ApplyFormModel.subModels.actions`)
 
@@ -78,7 +80,8 @@ These belong to the approval trigger and are managed via `workflows:update` (and
 | `approvalUid` | string (uid) | Bound `TriggerChildPageModel` root. | **Yes** — written by `applyApprovalBlueprint(surface="initiator")`. Never overwrite manually. |
 | `taskCardUid` | string (uid) | Bound `ApplyTaskCardDetailsModel` root. | **Yes** — written by `applyApprovalBlueprint(surface="taskCard", workflowId=…)`. |
 | `withdrawable` | boolean | Whether withdraw is allowed at runtime. | **Yes** — auto-derived from presence of `ApplyFormWithdrawModel` in the initiator surface. Do not flip it directly. |
-| `applyForm` | string (uid, legacy v1) | Legacy apply-form binding. | No — leave alone unless explicitly migrating off v1. |
+
+Legacy v1 trigger fields such as `applyForm` are not valid targets for this v2 approval UI authoring flow. Do not create them and do not treat them as substitutes for `workflow.config.approvalUid`.
 
 ## Approver Surface (`ApprovalChildPageModel`)
 
@@ -116,6 +119,8 @@ For a usable approval-node task page, include both approval-specific blocks:
 
 Do not build an approver surface with only `approvalInformation`: the approver can inspect data but cannot submit a handling result. Do not build it with only `approvalApprover`: the approver lacks a stable read-only view of the original submission and may confuse editable processing fields with source data.
 
+Do not leave either approver-side block empty. `approvalInformation` should include the original submitted fields that explain what is being approved, not merely an ID or status. `approvalApprover` should include approver-editable fields only when the process requires them, but the process form still needs the decision actions; if editable fields are required by the business process, include them in `approvalApprover` and verify they are present in readback.
+
 ### `configure.approvalReturn` (return-target schema)
 
 Allowed shapes — these are the only `type` values the server understands. Anything else collapses to `start`.
@@ -151,8 +156,8 @@ Both `approvalDelegate` and `approvalAddAssignee` use the same shape:
     "assignees": [
       // user id
       123,
-      // OR a filter that resolves to a user set at runtime; bare objects are auto-wrapped as { filter: <obj> }
-      { "filter": { "$and": [ { "department": { "$includes": "{{currentUser.department}}" } } ] } }
+      // OR a filter that resolves to a user set at runtime; load nocobase-utils topic filter before choosing operators
+      { "filter": { "$and": [ { "department.id": { "$eq": "{{currentUser.department.id}}" } } ] } }
     ],
     // delegate also supports an optional extra-field projection key
     "extraFieldKey": "departmentId"
@@ -161,6 +166,8 @@ Both `approvalDelegate` and `approvalAddAssignee` use the same shape:
 ```
 
 The server normalizes plain objects without a top-level `filter` key into `{ filter: <obj> }`, drops `null` / `''`, and keeps the rest verbatim. For `approvalAddAssignee`, `extraFieldKey` is **not** part of the runtime config write; pass it only when authoring delegate scopes.
+
+Before writing any assignee filter, load the `nocobase-utils` skill with topic `filter`, then read [Filter Condition Format](../../../../nocobase-utils/references/filter/index.md), resolve the terminal user-field frontend interface/type, and choose only an operator allowed for that group. Server normalization does not make shorthand or a backend-only operator frontend-displayable.
 
 ### Approval-node config knobs (`node.config`)
 
@@ -187,6 +194,8 @@ Reconciled by the approver surface (do **not** write directly — let `applyAppr
 | `returnTo`, `returnToNodeVariable` | derived from the return action's `approvalReturn` settings |
 | `toDelegateReassignees`, `toDelegateReassigneesOptions` | derived from the delegate action's `assigneesScope` |
 | `toAddReassignees`, `toAddReassigneesOptions` | derived from the add-assignee action's `assigneesScope` |
+
+Legacy v1 approval-node fields such as `applyDetail` are not valid targets for this v2 approval UI authoring flow. Do not create them and do not treat them as substitutes for `node.config.approvalUid`.
 
 ## Task-Card Surfaces
 
@@ -236,12 +245,12 @@ Use this to translate user intent into the smallest set of `flowSurfaces` operat
 |---|---|---|---|
 | 创建发起页 / build the apply page | `initiator` | `applyApprovalBlueprint` | `{ surface: "initiator", workflowId, blocks: [{ type: "approvalInitiator", resourceInit: { dataSourceKey, collectionName } , fields: [...] }], layout? }`; must keep the auto-created `approvalSubmit` |
 | 替换整个发起页 / rebuild the apply page | `initiator` | `applyApprovalBlueprint` | same as above (`mode: "replace"` is the only mode); do not replace it with helper-only blocks |
-| 添加 / 删除草稿按钮 | `initiator` | `addAction` (add) on `ApplyFormModel` uid; or remove via the legacy node delete on the action uid | `{ target: { uid: "<applyForm-uid>" }, type: "approvalSaveDraft" }` |
-| 添加撤回按钮 / 启用撤回 | `initiator` | `addAction` on `ApplyFormModel` uid | `{ target: { uid: "<applyForm-uid>" }, type: "approvalWithdraw" }` — server flips `workflow.config.withdrawable` to `true` |
+| 添加 / 删除草稿按钮 | `initiator` | `addAction` (add) on `ApplyFormModel` uid; or remove the existing action model by action uid | `{ target: { uid: "<apply-form-model-uid>" }, type: "approvalSaveDraft" }` |
+| 添加撤回按钮 / 启用撤回 | `initiator` | `addAction` on `ApplyFormModel` uid | `{ target: { uid: "<apply-form-model-uid>" }, type: "approvalWithdraw" }` — server flips `workflow.config.withdrawable` to `true` |
 | 关闭撤回 / 不允许撤回 | `initiator` | remove the `ApplyFormWithdrawModel` action node | server flips `workflow.config.withdrawable` back to `false` |
 | 调整提交 / 草稿按钮的二次确认或字段赋值 | `initiator` | `configure` on the action uid | `{ target: { uid }, changes: { confirm: { enable, title, content } } }` or `{ changes: { assignValues: { …field: value… } } }` |
 | 在发起页加一个说明 / 公告 | `initiator` | `addBlock` on `TriggerBlockGridModel` uid | `{ target: { uid: "<grid-uid>" }, type: "markdown" }` |
-| 添加 / 删除发起表单中的字段 | `initiator` | `addField` (or generic remove on the wrapper uid) on `ApplyFormModel` uid | `{ target: { uid: "<applyForm-uid>" }, fieldPath: "<field>" }` |
+| 添加 / 删除发起表单中的字段 | `initiator` | `addField` (or generic remove on the wrapper uid) on `ApplyFormModel` uid | `{ target: { uid: "<apply-form-model-uid>" }, fieldPath: "<field>" }` |
 | 切换发起表单中关联字段的组件 | `initiator` | `configure` on the field-wrapper uid | `{ target: { uid }, changes: { fieldComponent: "<RecordSelectFieldModel | …>" } }` (must come from live catalog enum) |
 | 配置 / 重排我的申请卡片 | apply `taskCard` | `applyApprovalBlueprint` (first time) or `setLayout` (existing) | `{ surface: "taskCard", workflowId, fields: [...], layout? }` |
 

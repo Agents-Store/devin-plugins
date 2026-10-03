@@ -1,6 +1,6 @@
 # Sharing & Access
 
-Public share links, access requests, and auth introspection. Every endpoint is `POST ${OUTLINE_API_URL%/}/<method>` with a JSON body and the Bearer header.
+Public share links, access requests, auth introspection, and workspace webhooks. Every endpoint is `POST ${OUTLINE_API_URL%/}/<method>` with a JSON body and the Bearer header.
 
 ## Shares
 
@@ -31,9 +31,22 @@ An access request is a user's request to view a document they can't currently se
 |--------|----------------------|
 | `auth.info` | Authentication details for the current key. No body → `{user, team}`. Use this as the connection/verification check. |
 | `auth.config` | Workspace auth options (name, hostname, available SSO services). **Unauthenticated** — no Bearer header needed. |
+| `auth.delete` | Sign out the current user. Per the API spec this **rotates the user's token secret, immediately invalidating that user's existing tokens and sessions**. Personal `ol_api_` keys are separate records and most likely survive it, but do not rely on that. No body. **Confirm first**; never use it as a health check. |
+
+## Webhook subscriptions
+
+Workspace webhooks that POST event notifications to your URL. **Workspace admins only.**
+
+| Method | Purpose & key fields |
+|--------|----------------------|
+| `webhookSubscriptions.create` | `{"name"(required, ≤255),"url"(required, ≤1024),"events"(required, string[]),"secret"?}`. `events` takes event names or namespaces; `["*"]` subscribes to all events. `secret` signs the webhook requests. Cloud workspaces require an **HTTPS** `url`; self-hosted workspaces may use HTTP (Outline v1.8.0+). |
+| `webhookSubscriptions.list` | List subscriptions. Pagination + sorting + `{"query"?(name filter)}`. |
+| `webhookSubscriptions.update` | `{"id","name","url","events"}` (all required) + `{"secret"?}`. Updating a **disabled** subscription enables it again. A webhook without a signing secret can be edited (v1.10.1+). |
+| `webhookSubscriptions.delete` | `{"id"}`. |
 
 ## Notes
 
 - `accessRequests.approve` is the one place a third permission value, `admin`, appears (alongside `read`/`read_write`).
+- Treat a webhook `secret` like a password: set it from an env var and never print it back. A `403` on `webhookSubscriptions.*` means the key is not an admin's.
 - `auth.config` is the only endpoint that allows an unauthenticated request here — everything else needs the Bearer key.
-- For exact schemas, search `operationId: shares…` / `accessRequests…` / `auth…` in `outline-openapi.yml`.
+- For exact schemas, search `operationId: shares…` / `accessRequests…` / `auth…` / `webhookSubscriptions…` in `outline-openapi.yml`.

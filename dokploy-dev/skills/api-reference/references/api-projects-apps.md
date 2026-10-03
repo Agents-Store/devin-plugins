@@ -14,7 +14,7 @@ Projects are top-level containers that hold applications, compose services, and 
 |--------|------|-------------|-------------|
 | GET | `/project.all` | project.all | List all projects with their services |
 | GET | `/project.one` | project.one | Get a single project by ID |
-| GET | `/project.search` | project.search | Search projects by name/description |
+| GET | `/project.search` | project.search | Search projects — free-text param is `q` (plus `name`, `description`, `limit`, `offset`) |
 | GET | `/project.allForPermissions` | project.allForPermissions | List projects the current user has access to |
 | POST | `/project.create` | project.create | Create a new project |
 | POST | `/project.update` | project.update | Update project name/description |
@@ -50,7 +50,7 @@ Applications are deployable services within a project — Docker images, GitHub 
 | Method | Path | operationId | Description |
 |--------|------|-------------|-------------|
 | GET | `/application.one` | application.one | Get application by ID with full config |
-| GET | `/application.search` | application.search | Search applications by name |
+| GET | `/application.search` | application.search | Search applications — free-text param is `q` (plus `name`, `appName`, `repository`, `projectId`, `environmentId`, `limit`, `offset`); an unknown `query` key is silently ignored |
 | GET | `/application.readAppMonitoring` | application.readAppMonitoring | Get monitoring data (CPU, memory, network) |
 | GET | `/application.readTraefikConfig` | application.readTraefikConfig | Read the Traefik routing config for this app |
 
@@ -155,7 +155,7 @@ Environments partition a project (default: `production`); applications, database
 |--------|------|-------------|-------------|
 | GET | `/environment.byProjectId` | environment.byProjectId | List environments for a project |
 | GET | `/environment.one` | environment.one | Get a single environment |
-| GET | `/environment.search` | environment.search | Search environments by name |
+| GET | `/environment.search` | environment.search | Search environments — free-text param is `q` (plus `name`, `projectId`, `limit`, `offset`) |
 | POST | `/environment.create` | environment.create | Create a new environment |
 | POST | `/environment.duplicate` | environment.duplicate | Duplicate an environment |
 | POST | `/environment.remove` | environment.remove | Delete an environment |

@@ -18,7 +18,7 @@ All endpoints follow `{METHOD} /api/{tag}.{operationName}` with `x-api-key` auth
 
 ## AI Router
 
-Dokploy v0.29+ provider-agnostic LLM integration.
+Dokploy v0.29+ provider-agnostic LLM integration (unchanged in v0.30).
 
 | Method | Endpoint | Purpose |
 |---|---|---|
@@ -71,7 +71,7 @@ The deployment object includes `status`, `startedAt`, `finishedAt`, `logPath`, `
 
 ## Log Endpoints (v0.29.0+ — runtime logs are first-class)
 
-All `readLogs` endpoints are **GET** with query params (URL-encode the `input`). Two kinds of log:
+All `readLogs` endpoints are **GET** with plain query-string params (`?applicationId=…&tail=200`; the tRPC `input={"json":…}` envelope is rejected on `/api/<tag>.<op>`). Two kinds of log:
 
 | Method | Endpoint | Params | Returns |
 |---|---|---|---|
@@ -79,11 +79,11 @@ All `readLogs` endpoints are **GET** with query params (URL-encode the `input`).
 | GET | `/api/application.readLogs` | `applicationId` (req), `tail`, `since`, `search` | App container **runtime** stdout/stderr |
 | GET | `/api/compose.readLogs` | `composeId` (req), **`containerId` (req)**, `tail`, `since`, `search` | **One** compose container's runtime logs |
 | GET | `/api/{db}.readLogs` | `{db}Id` (req), `tail`, `since`, `search` | DB container runtime logs (`{db}` ∈ postgres/mysql/mariadb/mongo/redis/libsql) |
-| GET | `/api/application.readAppMonitoring` | `applicationId` | CPU / memory / network for an application |
+| GET | `/api/application.readAppMonitoring` | `appName` | CPU / memory / network for an application |
 | GET | `/api/application.readTraefikConfig` | `applicationId` | Traefik router/service entries |
 | POST | `/api/application.updateTraefikConfig` | `applicationId`, `traefikConfig` | Overwrite Traefik config |
 
-Param ranges: `tail` 1–10000 (default 100); `since` is `all` or `<n>{s|m|h|d}` (e.g. `30m`, `2h`); `search` is a substring filter. The response `.data` is a newline-joined string, each line prefixed with an RFC3339 timestamp.
+Param ranges: `tail` 1–10000 (default 100); `since` is `all` or `<n>{s|m|h|d}` (e.g. `30m`, `2h`); `search` is a substring filter. Over REST the response body is a JSON-encoded string (decode with `jq -r .`); through MCP it arrives as `.data`. Either way it is a newline-joined string, each line prefixed with an RFC3339 timestamp.
 
 > **Reading a compose stack = read every container.** `compose.readLogs` is per-container (`containerId` required). Enumerate first via `docker.getContainersByAppNameMatch?appName=<>&appType=docker-compose` (or `docker.getStackContainersByAppName` for swarm), then call `compose.readLogs` once per returned `containerId`. The old [issue #3719](https://github.com/Dokploy/dokploy/issues/3719) "runtime logs not in REST" gap is closed — no SSH/Beszel needed.
 
@@ -98,13 +98,32 @@ Param ranges: `tail` 1–10000 (default 100); `since` is `all` or `<n>{s|m|h|d}`
 | GET | `/api/docker.getContainersByAppNameMatch` | Compose-stack containers by name. Params: `appName`, `appType` (`stack`/`docker-compose`) |
 | GET | `/api/docker.getServiceContainersByAppName` | Swarm service containers (`appName`) |
 | GET | `/api/docker.getStackContainersByAppName` | Compose/Swarm stack service containers (`appName`) |
-| GET | `/api/docker.getConfig` | Full container config (env, command, mounts, network) |
+| GET | `/api/docker.getConfig` | Full container config (command, mounts, network; `Env` is `[REDACTED]` through MCP by default, raw over REST) |
 | POST | `/api/docker.startContainer` | Start by `containerId` |
 | POST | `/api/docker.stopContainer` | Graceful stop |
 | POST | `/api/docker.restartContainer` | Restart in place |
 | POST | `/api/docker.killContainer` | SIGKILL |
 | POST | `/api/docker.removeContainer` | Hard-delete |
-| POST | `/api/docker.uploadFileToContainer` | One-off file push (does NOT survive redeploy) |
+| POST | `/api/docker.uploadFileToContainer` | One-off file push, multipart (`curl -F`; the MCP tool and CLI command have no usable schema): `containerId`, `file`, `destinationPath`, `serverId` (does NOT survive redeploy) |
+| GET | `/api/docker.getServerHealth` | **v0.30.0+** read-only host diagnostics: containers/services, memory/CPU, disk, inotify limits, network IP-pool usage, daemon errors, reservations. Params: `serverId`, `sinceHours` (1–168) |
+| GET | `/api/docker.getEvents` | **v0.30.0+** daemon events `{ events[], fetchedAt }`. Params: `serverId`, `minutes` (1–1440, default 15) |
+| GET | `/api/docker.listContainerFiles` / `.readContainerFile` | **v0.30.0+** list a directory / read a file inside a running container. Params: `containerId`, `path` (absolute), `serverId` |
+| POST | `/api/docker.writeContainerFile` / `.deleteContainerFile` | **v0.30.0+** overwrite (`content`) / delete a path inside a running container — lost on redeploy; confirm first |
+
+### Docker host: images, volumes, disk usage (v0.30.0+)
+
+All take an optional `serverId` (remote server); omit it for the Dokploy host.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/dockerDiskUsage.getDiskUsage` | Rows `{ type, totalCount, active, size, reclaimable, sizeBytes }` for Images / Containers / Local Volumes / Build Cache |
+| GET | `/api/dockerDiskUsage.getBuildCache` | Build-cache entries |
+| POST | `/api/dockerDiskUsage.pruneBuildCache` | Prune the build cache |
+| GET | `/api/dockerImage.getImages` / `.getImageConfig` | List images / inspect one (`imageRef`) |
+| POST | `/api/dockerImage.removeImage` | Remove an image (`repository`, `tag`, `id`, `force`) |
+| GET | `/api/dockerVolume.getVolumes` / `.getVolumesSize` / `.getVolumeConfig` | List volumes / sizes / inspect one (`volumeName`) |
+| GET | `/api/dockerVolume.listVolumeFiles` / `.readVolumeFile` | Browse a volume without SSH. Params: `volumeName`, `path` |
+| POST | `/api/dockerVolume.writeVolumeFile` / `.deleteVolumeFile` / `.removeVolume` | Mutating — `removeVolume` deletes the volume's data |
 
 ---
 
@@ -116,7 +135,7 @@ Param ranges: `tail` 1–10000 (default 100); `since` is `all` or `<n>{s|m|h|d}`
 | POST | `/api/application.cancelDeployment` | Cancel queued/in-flight deploy |
 | POST | `/api/application.cleanQueues` | Clear the application's stuck queue |
 | POST | `/api/application.clearDeployments` | Wipe deployment history (destructive) |
-| POST | `/api/application.dropDeployment` | Drop a single deployment record |
+| POST | `/api/deployment.removeDeployment` | Drop a single bad deployment record (`deploymentId`). Do **not** use `application.dropDeployment` — it is the zip-upload deploy (multipart `curl -F`: `applicationId`, `zip`, `dropBuildPath`) |
 | POST | `/api/application.markRunning` | Force `running` status (cosmetic only) |
 | POST | `/api/compose.killBuild` | Abort compose builder |
 | POST | `/api/compose.cancelDeployment` | Cancel compose deploy |
@@ -141,10 +160,10 @@ Rollback points live on the resource object — `application-one` and `compose-o
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| GET | `/api/settings.health` | Liveness probe (no auth required) |
-| GET | `/api/settings.checkInfrastructureHealth` | Docker + Traefik + disk + network composite check |
+| GET | `/api/settings.health` | Liveness probe (needs the API key on v0.30; the unauthenticated route is `GET /api/trpc/settings.health`) |
+| GET | `/api/settings.checkInfrastructureHealth` | Core services: `{ postgres: { status }, traefik: { status } }` (Redis removed in v0.30.0) — host disk/Docker detail is `docker.getServerHealth` |
 | GET | `/api/settings.checkGPUStatus` | GPU availability |
-| GET | `/api/settings.getDockerDiskUsage` | Per-category disk usage |
+| GET | `/api/settings.getDockerDiskUsage` | Per-category disk usage of the Dokploy host (remote servers: `dockerDiskUsage.getDiskUsage`) |
 | GET | `/api/settings.getLogCleanupStatus` | Log rotation status |
 | GET | `/api/settings.getDokployVersion` / `.getReleaseTag` / `.getUpdateData` | Version metadata |
 | GET | `/api/settings.getIp` / `.getDokployCloudIps` | Server IPs |
@@ -156,10 +175,9 @@ Rollback points live on the resource object — `application-one` and `compose-o
 | POST | `/api/settings.cleanUnusedImages` | Remove dangling images |
 | POST | `/api/settings.cleanUnusedVolumes` | **Destructive** — orphan volumes |
 | POST | `/api/settings.cleanMonitoring` | Reset monitoring data |
-| POST | `/api/settings.cleanRedis` | Flush Dokploy's Redis cache |
-| POST | `/api/settings.cleanAll` | Combined: builder + prune + monitoring + redis |
+| POST | `/api/settings.cleanAll` | Admin-only, **background**: returns `{ status: "scheduled" }` at once; runs containers prune, `image prune --all`, builder prune and `system prune --all` (no volumes, no monitoring data). Optional `serverId` |
 | POST | `/api/settings.updateLogCleanup` | Tune log rotation |
-| POST | `/api/settings.reloadTraefik` / `.reloadServer` / `.reloadRedis` | Restart subsystems |
+| POST | `/api/settings.reloadTraefik` / `.reloadServer` | Restart subsystems |
 
 ---
 
@@ -170,8 +188,8 @@ Rollback points live on the resource object — `application-one` and `compose-o
 ```bash
 curl -s -G "$DOKPLOY_URL/api/deployment.all" \
   -H "x-api-key: $DOKPLOY_API_KEY" \
-  --data-urlencode "input={\"json\":{\"applicationId\":\"$APP_ID\"}}" \
-  | jq '.result.data.json | map(select(.status=="error")) | sort_by(.startedAt) | last'
+  --data-urlencode "applicationId=$APP_ID" \
+  | jq 'map(select(.status=="error")) | sort_by(.startedAt) | last'
 ```
 
 ### Inspect the containers behind an app / compose stack
@@ -180,14 +198,14 @@ curl -s -G "$DOKPLOY_URL/api/deployment.all" \
 # standalone app (type is required)
 curl -s -G "$DOKPLOY_URL/api/docker.getContainersByAppLabel" \
   -H "x-api-key: $DOKPLOY_API_KEY" \
-  --data-urlencode 'input={"json":{"appName":"my-app","type":"standalone"}}' \
-  | jq '.result.data.json[] | {containerId, name, state, status}'
+  --data-urlencode "appName=my-app" --data-urlencode "type=standalone" \
+  | jq '.[] | {containerId, name, state, status}'
 
 # compose stack — every service container
 curl -s -G "$DOKPLOY_URL/api/docker.getContainersByAppNameMatch" \
   -H "x-api-key: $DOKPLOY_API_KEY" \
-  --data-urlencode 'input={"json":{"appName":"my-stack-ab12cd","appType":"docker-compose"}}' \
-  | jq '.result.data.json[] | {containerId, name, state, status}'
+  --data-urlencode "appName=my-stack-ab12cd" --data-urlencode "appType=docker-compose" \
+  | jq '.[] | {containerId, name, state, status}'
 ```
 
 ### Read runtime logs
@@ -196,14 +214,24 @@ curl -s -G "$DOKPLOY_URL/api/docker.getContainersByAppNameMatch" \
 # app runtime logs (last 200 lines, last hour, filtered to "error")
 curl -s -G "$DOKPLOY_URL/api/application.readLogs" \
   -H "x-api-key: $DOKPLOY_API_KEY" \
-  --data-urlencode 'input={"json":{"applicationId":"app123","tail":200,"since":"1h","search":"error"}}' \
-  | jq -r '.result.data.json'
+  --data-urlencode "applicationId=app123" --data-urlencode "tail=200" \
+  --data-urlencode "since=1h" --data-urlencode "search=error" \
+  | jq -r .
 
 # one compose container's logs (containerId from getContainersByAppNameMatch above)
 curl -s -G "$DOKPLOY_URL/api/compose.readLogs" \
   -H "x-api-key: $DOKPLOY_API_KEY" \
-  --data-urlencode 'input={"json":{"composeId":"cmp123","containerId":"a1b2c3d4e5f6","tail":200}}' \
-  | jq -r '.result.data.json'
+  --data-urlencode "composeId=cmp123" --data-urlencode "containerId=a1b2c3d4e5f6" --data-urlencode "tail=200" \
+  | jq -r .
+```
+
+### Host health and recent daemon events (v0.30.0+)
+
+```bash
+curl -s -G "$DOKPLOY_URL/api/docker.getServerHealth" -H "x-api-key: $DOKPLOY_API_KEY" \
+  --data-urlencode "sinceHours=1" | jq '{disk, resources, inotify, daemonErrors}'
+curl -s -G "$DOKPLOY_URL/api/docker.getEvents" -H "x-api-key: $DOKPLOY_API_KEY" \
+  --data-urlencode "minutes=30" | jq '.events | length'
 ```
 
 ### AI-analyse logs (fetch text first, then analyse)
@@ -212,13 +240,13 @@ curl -s -G "$DOKPLOY_URL/api/compose.readLogs" \
 # 1) fetch the log text (build log here)
 LOGS=$(curl -s -G "$DOKPLOY_URL/api/deployment.readLogs" \
   -H "x-api-key: $DOKPLOY_API_KEY" \
-  --data-urlencode "input={\"json\":{\"deploymentId\":\"$DEPLOY_ID\",\"tail\":1000}}" \
-  | jq -r '.result.data.json')
+  --data-urlencode "deploymentId=$DEPLOY_ID" --data-urlencode "tail=1000" \
+  | jq -r .)
 
 # 2) analyse it ($AI_ID from /api/ai.getEnabledProviders; context "build" or "runtime")
 curl -s -X POST "$DOKPLOY_URL/api/ai.analyzeLogs" \
   -H "x-api-key: $DOKPLOY_API_KEY" -H "Content-Type: application/json" \
-  -d "$(jq -nc --arg id "$AI_ID" --arg logs "$LOGS" '{json:{aiId:$id,logs:$logs,context:"build"}}')"
+  -d "$(jq -nc --arg id "$AI_ID" --arg logs "$LOGS" '{aiId:$id,logs:$logs,context:"build"}')"
 ```
 
 ### Clean disk cache
@@ -226,7 +254,7 @@ curl -s -X POST "$DOKPLOY_URL/api/ai.analyzeLogs" \
 ```bash
 for op in cleanDockerBuilder cleanStoppedContainers cleanUnusedImages; do
   curl -s -X POST "$DOKPLOY_URL/api/settings.$op" \
-    -H "x-api-key: $DOKPLOY_API_KEY" -H "Content-Type: application/json" -d '{"json":{}}'
+    -H "x-api-key: $DOKPLOY_API_KEY" -H "Content-Type: application/json" -d '{}'
 done
 ```
 
@@ -236,5 +264,5 @@ done
 curl -s -X POST "$DOKPLOY_URL/api/rollback.rollback" \
   -H "x-api-key: $DOKPLOY_API_KEY" \
   -H "Content-Type: application/json" \
-  -d "{\"json\":{\"rollbackId\":\"$ROLLBACK_ID\"}}"
+  -d "{\"rollbackId\":\"$ROLLBACK_ID\"}"
 ```

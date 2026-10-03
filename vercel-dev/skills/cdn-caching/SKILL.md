@@ -65,11 +65,6 @@ retrieval:
     - stale_time
     - stale_tag
     - stale_error
-chainTo:
-  -
-    pattern: 'use cache|cacheLife|cacheTag'
-    targetSkill: next-cache-components
-    message: 'Next.js cache directives detected — loading Cache Components guidance for revalidate/tag tuning.'
 ---
 
 # Vercel Caching
@@ -88,7 +83,7 @@ Vercel caches at multiple layers between the visitor and your backend. A request
 #### Cache layers
 
 - **CDN cache** — regional, ephemeral. On a hit the region returns the response with no function call. Reads/writes are **free**.
-- **ISR cache** — durable, in a single [Function region](https://vercel.com/docs/functions/configuring-functions/region). On a CDN miss, Vercel reads here _before_ invoking your function (cache shielding), then replicates the result back to the CDN. Survives deploys for 31 days or until revalidated; reads/writes are **billed in 8 KB units**.
+- **ISR cache** — durable, in a single [Function region](https://vercel.com/docs/functions/configuring-functions/region). On a CDN miss, Vercel reads here _before_ invoking your function (cache shielding), then replicates the result back to the CDN. Scoped to its deployment (a new deploy doesn't reuse it); kept until revalidated or unaccessed for 31 days; reads/writes are **billed in 8 KB units**.
 - **Function invocation** — runs only if neither cache has a valid copy. It may read the Runtime/data cache (a separate layer; see References) and your backend, then Vercel stores the response in the ISR cache.
 - **Image cache** — optimized images, cached on the CDN after the first transform.
 - Purges propagate globally in ~300 ms.
@@ -100,8 +95,8 @@ Vercel caches at multiple layers between the visitor and your backend. A request
 - **Cache hit rate** — share served from cache (`HIT`/`STALE`/`PRERENDER`) versus origin (`MISS`/`REVALIDATED`). Measure it over _cacheable_ requests — exclude `BYPASS` and `(not set)` (redirects, errors, uncacheable methods), or they drag the ratio down for non-cache reasons. Low hit rate means more origin load and higher latency.
 - **Revalidation** — refreshing cached content. **Time-based** runs automatically after an interval; **on-demand** runs when you call an API. Both use stale-while-revalidate: visitors keep getting the cached version while the new one regenerates in the background.
 - **Invalidate vs. dangerously-delete** — two ways to clear content, with very different blast on hit rate:
-  - _Invalidate_ (`invalidateByTag`, Next.js `revalidateTag`/`revalidatePath`) = stale-while-revalidate. Keeps serving stale while refreshing in the background → response shows `x-vercel-cache: STALE`.
-  - _Dangerously-delete_ (`dangerouslyDeleteByTag`, Next.js `updateTag` or a revalidate with no lifetime) = hard removal. The next request blocks in the **foreground** to regenerate → `x-vercel-cache: REVALIDATED`.
+  - _Invalidate_ (`invalidateByTag`, Next.js 16+ `revalidateTag(tag, 'max')`) = stale-while-revalidate. Keeps serving stale while refreshing in the background → response shows `x-vercel-cache: STALE`.
+  - _Dangerously-delete_ (`dangerouslyDeleteByTag`, Next.js `updateTag`, `revalidatePath`, or `revalidateTag(tag)` with no profile) = hard removal. The next request blocks in the **foreground** to regenerate → `x-vercel-cache: REVALIDATED`.
 - **Cache tags & blast radius** — tags group cached entries so one call can clear many. A coarse tag attached to thousands of paths has a large _blast radius_: a single write drops them all and the hit rate collapses until they re-warm. Prefer granular tags (`product-${id}`) plus a roll-up tag.
 - **Cache status** (`x-vercel-cache` response header) — the _outcome_:
 
@@ -114,7 +109,7 @@ Vercel caches at multiple layers between the visitor and your backend. A request
   | `REVALIDATED` | Foreground revalidation after a delete (or `Pragma: no-cache`)   |
   | `BYPASS`      | Caching skipped (`no-store`, `private`, cookies, etc.)           |
 
-- **Cache reason** (`cacheReason`) — the finer _explanation_ of that outcome for a single request. The `cache_result` metric lumps all `MISS`es (and all `STALE`s) together; the reason is the only thing that tells them apart. Ten values: four for MISS, three map to BYPASS, three for STALE:
+- **Cache reason** (`cacheReason`) — the finer _explanation_ of that outcome for a single request. The `cache_result` metric lumps all `MISS`es (and all `STALE`s) together; the reason is the only thing that tells them apart. Eleven values: four for MISS, three map to BYPASS, three for STALE, one for REVALIDATED:
 
   | `cacheReason`        | Refines  | Meaning                                                                       |
   | --------------------- | -------- | ----------------------------------------------------------------------------- |
@@ -123,13 +118,14 @@ Vercel caches at multiple layers between the visitor and your backend. A request
   | `error`               | MISS     | An error prevented serving from cache                                         |
   | `vary_key_denied`     | MISS     | Origin's `Vary` header names a high-cardinality header (e.g. `Cookie`); response can't be cached |
   | `draft_mode`          | → BYPASS | Next.js Draft Mode active — bypassed so editors see live content              |
-  | `prerender_bypass`    | → BYPASS | Prerender-bypass cookie/token present                                         |
+  | `prerender_bypass`    | → BYPASS | Request matched the route's `experimentalBypassFor` config (e.g. bot UA on PPR) |
   | `crawler`             | → BYPASS | SEO-crawler UA — full response served so bots index real content              |
   | `stale_time`          | STALE    | Time-based `revalidate` interval elapsed; regenerating in background (SWR)     |
-  | `stale_tag`           | STALE    | Tag invalidated (`revalidateTag` / `invalidateByTag`); regenerating           |
+  | `stale_tag`           | STALE    | Tag invalidated (`invalidateByTag` / `revalidateTag(tag, 'max')`); regenerating |
   | `stale_error`         | STALE    | A revalidation attempt **failed**; serving the last-good copy (a bug signal)  |
+  | Tag-based deletion    | REVALIDATED | Tag deleted (`dangerouslyDeleteByTag` / `revalidateTag(tag)` with no profile / dashboard purge by tag); foreground regen |
 
-  A raw `MISS` with reason `draft_mode` / `prerender_bypass` / `crawler` is **displayed as `BYPASS`** (all usually expected). The three `stale_*` reasons separate a healthy time refresh (`stale_time`) from a broad-tag blast (`stale_tag`) from a failing regen (`stale_error`). Read `cacheReason` from `vercel logs` or the dashboard Logs "Reason" row — the `x-vercel-cache-reason` header is internal-only and not visible via `curl`.
+  A raw `MISS` with reason `draft_mode` / `prerender_bypass` / `crawler` is **displayed as `BYPASS`** (all usually expected). The three `stale_*` reasons separate a healthy time refresh (`stale_time`) from a broad-tag blast (`stale_tag`) from a failing regen (`stale_error`). Read `cacheReason` from `vercel logs` or the dashboard Logs "Reason" row, or aggregate with `vercel metrics vercel.request.count --group-by cache_reason` — the `x-vercel-cache-reason` header is internal-only and not visible via `curl`.
 
 - **PPR state** (`ppr_state`) — for a Partial Prerendering route, _how much_ of the response was prerendered versus computed per request. Only set on `partial_prerender` serves; blank for plain `prerender` / `func` / `static` routes and for cases the proxy can't classify (cold shell miss, `BYPASS`). Three states:
 
@@ -178,7 +174,7 @@ vercel metrics vercel.request.count -S <team> -p <project> \
 
 Once you know hit rate, quantify ISR spend and whether revalidation — not traffic volume — is driving it.
 
-**Utilization vs. ISR billing.** **Utilization** is `vercel.request.count` — total request volume. **ISR cost** is billed separately in 8 KB units: `read_units` when the regional CDN misses and falls through to the ISR cache, and `write_units` on every revalidation/regeneration. The regional CDN shields ISR heavily — most requests never touch the ISR layer, so **read_units will be far below request count**. Do not compare read_units to write_units as a utilization check; focus on **write_units** (revalidation cost) and how they relate to total traffic.
+**Utilization vs. ISR billing.** **Utilization** is `vercel.request.count` — total request volume. **ISR cost** is billed separately in 8 KB units: `read_units` when the regional CDN misses and falls through to the ISR cache, and `write_units` when a revalidation/regeneration produces changed output (unchanged content incurs none). The regional CDN shields ISR heavily — most requests never touch the ISR layer, so **read_units will be far below request count**. Do not compare read_units to write_units as a utilization check; focus on **write_units** (revalidation cost) and how they relate to total traffic.
 
 ```bash
 vercel metrics vercel.request.count -S <team> -p <project> -a sum --since 24h
@@ -252,9 +248,9 @@ The **Firewall/WAF** with the `vercel-firewall` skill can be used to manage veri
 
 ## Reducing ISR cost
 
-- **Prefer tag-based over time-based revalidation.** Replace short `revalidate` intervals with on-demand `revalidateTag` / `invalidateByTag` when content changes — time-based regeneration runs whether or not anything changed. If using Cache Components, analyze `cacheLife` calls with the `next-cache-components` skill.
+- **Prefer tag-based over time-based revalidation.** Replace short `revalidate` intervals with on-demand `revalidateTag` / `invalidateByTag` when content changes — time-based regeneration runs whether or not anything changed. If using Cache Components, check `cacheLife` calls against the Next.js bundled docs (`node_modules/next/dist/docs/`).
 - **Scope tags to specific IDs.** Invalidate `blogPost:<id>`, not a generic `blogPost`/`page` tag — one broad invalidate regenerates everything that carries it.
-- Tune the revalidate interval where your framework declares it (Next.js `revalidate` / `cacheLife`, SvelteKit `isr`, Nuxt `routeRules`, Astro). For Next.js Cache Components, see the `next-cache-components` skill.
+- Tune the revalidate interval where your framework declares it (Next.js `revalidate` / `cacheLife`, SvelteKit `isr`, Nuxt `routeRules`, Astro). For Next.js Cache Components, see the bundled docs or the official `next-cache-components-optimizer` skill (`npx skills add vercel/next.js --skill next-cache-components-optimizer`).
 - Use `CDN-Cache-Control` headers to cache dynamic functions.
 
 ### Inspect one path
@@ -283,7 +279,6 @@ Use `--json` so the agent can parse cache status, path, and timing fields progra
 
 - `vercel-firewall` — manage verified SEO crawlers, block abusive bots, and rate-limit junk BYPASS traffic.
 - `runtime-cache` — caching data _between your function and a backend_ (per-region key-value / data cache). A different layer from the CDN/ISR caches; use it to cache an API response or query result inside a function.
-- `next-cache-components` — Next.js `use cache`, `cacheLife`, `cacheTag`, and `revalidate` tuning (one framework's ISR/PPR controls).
 
 ## References:
 

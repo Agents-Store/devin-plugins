@@ -32,24 +32,23 @@ Complete, copy-paste ready JSON-LD examples for common schema types. Use with th
 }
 ```
 
-## WebSite + SearchAction (Every Site)
+> **Note**: Google's Organization documentation (updated 2026-09) has no required properties and recommends as many relevant ones as apply: `legalName`, `alternateName`, `address`, `telephone`, `email`, `foundingDate`, `vatID` / `taxID` and `iso6523Code` (identification), and for online stores `hasMerchantReturnPolicy`, `hasShippingService` and `hasMemberProgram`. The `logo` must be at least 112x112 px and crawlable and indexable.
 
-Enables the sitelinks searchbox in Google for brand queries:
+## WebSite (Home Page — Site Name)
+
+Google uses `WebSite` `name` and `alternateName` for the site name shown in results. It reads this markup on the home page only:
 
 ```json
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "url": "https://example.com",
+  "url": "https://example.com/",
   "name": "Your Site Name",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://example.com/search?q={search_term_string}"
-  }
+  "alternateName": ["YSN", "yoursite.com"]
 }
 ```
 
-> **Note**: Google also accepts `target` as an `EntryPoint` object with `urlTemplate` and `query-input`, but `schema-dts` types do not include `query-input`. Use the simplified `target` string format above for type-safe TypeScript, or use a type assertion if you need the full format.
+> **Note**: Do not add `SearchAction` for Google. The search box that used to appear under brand results was removed on 2024-11-21, and the markup no longer does anything in Google Search (it is harmless if it already exists). If you want to expose site search to non-Google consumers, `schema-dts` 2.x types it: `WithActionConstraints<SearchAction>` accepts `'query-input': 'required name=search_term_string'` without a type assertion.
 
 ## BreadcrumbList (All Inner Pages)
 
@@ -151,46 +150,9 @@ For news articles, change `@type` to `"NewsArticle"`.
 }
 ```
 
-## HowTo (Tutorials, Guides)
+## Tutorials and Step Lists (no rich result)
 
-Rich result appears on mobile and voice search only (desktop display removed in 2023):
-
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "HowTo",
-  "name": "How to Deploy a Next.js App to Vercel",
-  "description": "Step-by-step guide to deploying your Next.js application.",
-  "totalTime": "PT10M",
-  "tool": [
-    { "@type": "HowToTool", "name": "Vercel CLI" },
-    { "@type": "HowToTool", "name": "Git" }
-  ],
-  "step": [
-    {
-      "@type": "HowToStep",
-      "position": 1,
-      "name": "Install Vercel CLI",
-      "text": "Run npm i -g vercel to install the Vercel CLI globally.",
-      "image": "https://example.com/step1.png"
-    },
-    {
-      "@type": "HowToStep",
-      "position": 2,
-      "name": "Link your project",
-      "text": "Run vercel link in your project directory to connect it to Vercel.",
-      "image": "https://example.com/step2.png"
-    },
-    {
-      "@type": "HowToStep",
-      "position": 3,
-      "name": "Deploy",
-      "text": "Run vercel --prod to deploy to production.",
-      "image": "https://example.com/step3.png"
-    }
-  ]
-}
-```
+Google removed the HowTo rich result on desktop and mobile (fully gone since September 2023) and has since removed its documentation, so no Google SERP feature comes from step markup anymore. Do not add that markup to win a result. Existing markup is harmless and can stay; for new tutorials, mark them up as `Article` / `TechArticle` (see Article / BlogPosting above) and make the steps visible content: an ordered list (`<ol>`) under clear headings, with one action per step.
 
 ## Event
 
@@ -301,11 +263,10 @@ Only for genuine, publicly verifiable events:
 
 ## Implementation Priority
 
-1. **Every site (root layout):** Organization + WebSite + SearchAction
+1. **Every site (root layout):** Organization; **home page:** WebSite (`name` / `alternateName`) for the site name
 2. **All inner pages:** BreadcrumbList
-3. **Blog/news:** Article or NewsArticle
+3. **Blog/news:** Article or NewsArticle (also for tutorials)
 4. **E-commerce:** Product + Offer + AggregateRating
-5. **Tutorials:** HowTo (mobile rich result only)
-6. **Events:** Event (genuine, verifiable events only)
-7. **Local business:** LocalBusiness with geo + hours
-8. **Do NOT implement:** FAQPage (restricted to gov/health since 2023)
+5. **Events:** Event (genuine, verifiable events only)
+6. **Local business:** LocalBusiness with geo + hours
+7. **Skip for SERP purposes:** FAQPage and HowTo (both rich results removed from Google Search — FAQ on 2026-05-07, HowTo in 2023) and `SearchAction` (search box removed 2024-11-21). Markup that already exists is harmless

@@ -1,7 +1,7 @@
 {
   "name": "deep-research-ops",
-  "version": "3.0.0",
-  "description": "Deep Research plugin. Comprehensive web research using 4 providers (Exa, Firecrawl, Jina, Perplexity) with capability-based CONNECTORS pattern and automatic FALLBACK chains. Search, scrape, crawl, extract — each action tries multiple providers until one succeeds.",
+  "version": "3.1.0",
+  "description": "Multi-step research workflow over any search MCP servers; installs web-search-dev for the tools.",
   "author": {
     "name": "AGENTS.STORE"
   },

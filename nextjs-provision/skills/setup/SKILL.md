@@ -42,66 +42,86 @@ The CLI v4 `init` command (alias `create`) supports:
 - `-b base|radix|aria` -- component base (**Base UI is the default since July 2026**; Radix and React Aria remain fully supported)
 - `-p <preset>` -- style preset
 - `-d` -- accept defaults (equivalent to `--template=next --preset=base-nova`)
+- `-n <name>`, `-y` -- project name and skip prompts (`npx shadcn@latest init -t next -d -n my-app --no-monorepo -y` scaffolds and initializes a Next.js app non-interactively)
 - `--css-variables` (default true), `--rtl`, `--pointer` (adds `cursor: pointer` CSS for buttons), `--monorepo`
 
-Base colors are now **neutral | stone | zinc | mauve | olive | mist | taupe**. Visual styles are the 8 official presets — **Vega** (classic look), **Nova** (compact, default), **Maia** (rounded), **Lyra** (sharp/mono), **Mira** (dense), **Luma**, **Rhea**, **Sera** — chosen via preset or the visual builder at https://ui.shadcn.com/create (`npx shadcn create`). Apply a preset to an existing project with `shadcn apply <preset-code> [--only theme|font]`.
+Base colors are now **neutral | stone | zinc | mauve | olive | mist | taupe**. Visual styles are the 8 official presets — **Vega** (classic look), **Nova** (compact, default), **Maia** (rounded), **Lyra** (sharp/mono), **Mira** (dense), **Luma**, **Rhea**, **Sera** — chosen via preset or the visual builder at https://ui.shadcn.com/create (`npx shadcn create`). Apply a preset to an existing project with `shadcn apply <preset-code> [--only theme|font]` (`--only` re-applies just the theme or just the font). Inspect presets with `npx shadcn@latest preset decode <code>`, `preset resolve` (the preset of the current project), `preset url <code>` and `preset open <code>`.
 
 This creates:
 - `components.json` -- Configuration file for the shadcn CLI
-- `lib/utils.ts` (or `src/lib/utils.ts`) -- The `cn()` class merge utility
-- Updates `globals.css` with CSS variables for the chosen theme
-- Installs dependencies: `clsx`, `tailwind-merge`, `class-variance-authority`
+- `lib/utils.ts` (or `src/lib/utils.ts`) -- the `cn()` class merge utility, a one-line re-export from the `cn` package (CLI 4.21+)
+- Updates `globals.css` with CSS variables for the chosen theme (plus the `tailwindcss`, `tw-animate-css` and `shadcn/tailwind.css` imports)
+- Installs dependencies: `cn`, `class-variance-authority`, `tw-animate-css`, `lucide-react` (or the chosen icon library) and the base package (`@base-ui/react`, or `radix-ui` for `-b radix`)
 
 ## Step 2: Verify Base Installation
 
 Check these files exist and are correct:
 
-1. **`components.json`** -- Should contain (`"style": "new-york"` is still the standard value; `"default"` is deprecated). For Tailwind v4, `tailwind.config` is left blank:
+1. **`components.json`** -- Should look like this (this is what CLI 4.21 writes for `init -d` on a Next.js app; the `style` value is `<base>-<preset>`: `base-nova` for Base UI, `radix-nova` for Radix). For Tailwind v4, `tailwind.config` is left blank:
    ```json
    {
      "$schema": "https://ui.shadcn.com/schema.json",
-     "style": "new-york",
+     "style": "base-nova",
      "rsc": true,
      "tsx": true,
      "tailwind": {
        "config": "",
-       "css": "src/app/globals.css",
+       "css": "app/globals.css",
        "baseColor": "neutral",
-       "cssVariables": true
+       "cssVariables": true,
+       "prefix": ""
      },
+     "iconLibrary": "lucide",
+     "rtl": false,
      "aliases": {
        "components": "@/components",
-       "utils": "@/lib/utils"
-     }
+       "utils": "@/lib/utils",
+       "ui": "@/components/ui",
+       "lib": "@/lib",
+       "hooks": "@/hooks"
+     },
+     "menuColor": "default",
+     "menuAccent": "subtle",
+     "registries": {}
    }
    ```
-   (Tailwind v3 projects keep `"config": "tailwind.config.ts"`.)
+   (Tailwind v3 projects keep `"config": "tailwind.config.ts"`; with a `src/` directory `css` is `src/app/globals.css`.) **Do not hand-edit `style` back to `new-york`**: it is the legacy pre-nova value, the shadcn studio URL templates are built for `base-nova` / `radix-nova` (a raw `new-york` studio URL returns 404, and the CLI falls back to the old Radix build of the item), and the `components-json` docs page still shows the old value.
 
-2. **`lib/utils.ts`** -- Should export the `cn()` helper:
+2. **`lib/utils.ts`** -- Should be a one-line re-export of the `cn()` helper from the `cn` package:
    ```typescript
-   import { type ClassValue, clsx } from "clsx"
-   import { twMerge } from "tailwind-merge"
-
-   export function cn(...inputs: ClassValue[]) {
-     return twMerge(clsx(inputs))
-   }
+   export { cn } from "cn"
    ```
+   `package.json` then lists `cn` (`^0.4.0`) instead of `clsx` + `tailwind-merge`, and registry components import `cn` from `"cn"`.
 
-3. **`globals.css`** -- Should contain `:root` and `.dark` CSS variable blocks
-
-4. **Font variable check** -- After init, verify `globals.css` does not contain circular font references:
-   - `--font-sans: var(--font-sans)` — **wrong**, circular reference, browser falls back to system font
-   - `--font-sans: var(--font-geist-sans)` — **correct**, maps to the CSS variable set by `next/font` in `layout.tsx`
-
-   If the project uses Geist (Next.js default), ensure `layout.tsx` declares the font variable:
-   ```typescript
-   import { Geist } from "next/font/google"
-   const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" })
+   **If the project was created before CLI 4.21** its `lib/utils.ts` still defines `cn()` itself by combining `clsx` with `tailwind-merge`. That keeps working. To move to the new scheme on Tailwind v4, run:
+   ```bash
+   npx shadcn@latest migrate cn          # whole project; installs `cn`, removes clsx/tailwind-merge when nothing else uses them
+   npx shadcn@latest migrate cn src/lib/utils.ts   # or one file / a glob (keeps the old packages installed)
    ```
-   And `globals.css` maps it (inside `@theme inline`):
+   The migration rewrites `lib/utils.ts` to the re-export above and rewrites other `clsx` / `tailwind-merge` imports. It reports unsupported shapes for manual review. **Tailwind v3 projects stay on `tailwind-merge` v2** — the `cn` merge engine supports Tailwind v4 only.
+
+3. **`globals.css`** -- Should start with three imports and contain `:root` and `.dark` CSS variable blocks:
    ```css
-   --font-sans: var(--font-geist-sans);
+   @import "tailwindcss";
+   @import "tw-animate-css";
+   @import "shadcn/tailwind.css";
    ```
+   `shadcn/tailwind.css` provides the shared Tailwind v4 utilities — the `data-open:` / `data-closed:` variants and the accordion animations. `npx shadcn@latest eject` inlines it into your CSS and drops the `shadcn` dependency (irreversible).
+
+4. **Font variable check** -- `init` wires a font in two places that must agree. In the generated app, `layout.tsx` declares the font with a CSS variable and `globals.css` maps it inside `@theme inline`:
+   ```typescript
+   // app/layout.tsx
+   import { Geist } from "next/font/google"
+   const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
+   // ... className={cn("font-sans", geist.variable)} on the <html> element
+   ```
+   ```css
+   /* app/globals.css */
+   @theme inline {
+     --font-sans: var(--font-sans);
+   }
+   ```
+   This exact pair is what CLI 4.21 generates and it renders the font correctly — do not "fix" it. The check is that the variable name in `layout.tsx` (`variable: "--font-sans"`) is the name `@theme inline` refers to, and that the font's `variable` class is applied to `<html>` or `<body>`. If you use a differently named variable (`--font-geist-sans`), map it explicitly: `--font-sans: var(--font-geist-sans);`.
 
 ## Step 3: Configure shadcn studio Registries
 
@@ -156,7 +176,7 @@ Premium access requires converting the registry entries in `components.json` to 
 }
 ```
 
-Free components and blocks work without credentials. Premium content requires a shadcn studio license (Basic $99, Pro $199, Team $449, Enterprise $849).
+Free components and blocks work without credentials. Premium content requires a shadcn studio license (Basic $99, Pro $199, Team $449, Enterprise $849 one-time; launch prices on https://shadcnstudio.com/pricing as of 2026-10-02 — check the page before quoting).
 
 ## Step 5: Test Component Installation
 
@@ -179,13 +199,13 @@ Check that:
 
 ## Step 6: Configure Community Registries (Optional)
 
-The official shadcn MCP only searches registries listed in `components.json`. To unlock search across all 260+ community registries (267 as of Aug 2026), populate them from the official endpoint:
+The official shadcn MCP only searches registries listed in `components.json`. To make every registry visible to the MCP, populate them from the official endpoint (418 entries on 2026-10-02):
 
 ```bash
 curl -s https://ui.shadcn.com/r/registries.json
 ```
 
-This returns a JSON array with `name`, `url`, `homepage`, `description` for every registry. Add entries with the native command:
+This returns a JSON array with `name`, `url`, `homepage`, `description`, `health` and `ranking` for every registry. `health.status` is `healthy`, `degraded`, `unavailable` or `observing`, and `health.hidden` marks entries the directory hides — skip `unavailable` and hidden ones. The CLI itself resolves `@registry/item` for any directory entry without further configuration; the bulk step below only matters for MCP search. Add entries with the native command:
 
 ```bash
 npx shadcn registry add @magicui=https://magicui.design/r/{name} @aceternity=https://ui.aceternity.com/registry/{name}.json
@@ -202,7 +222,7 @@ Or add them to the `"registries"` field in `components.json` directly:
 }
 ```
 
-Use the `/add-registries` command to do this in bulk automatically — it fetches the endpoint, parses all entries, and merges them into `components.json`.
+Use the `/add-registries` command to do this in bulk automatically — it fetches the endpoint, drops `unavailable` and hidden entries, and merges the rest into `components.json`. Registries can also be declared in `package.json#registries` (CLI 4.18+; merged with `components.json`) — `/add-registries` only writes `components.json`.
 
 ### Install the Official shadcn Skill
 

@@ -47,15 +47,28 @@ const batch = await firecrawl.batchScrape(['https://example.com/a', 'https://exa
   options: { formats: ['markdown'] },
 });
 
-// Extract structured data
-const extracted = await firecrawl.extract({
-  urls: ['https://example.com/pricing'],
-  prompt: 'Extract pricing plans',
-  schema: { type: 'array', items: { type: 'object', properties: { plan: { type: 'string' }, price: { type: 'string' } } } },
+// Structured data from one URL: scrape with a json format
+const doc = await firecrawl.scrape('https://example.com/pricing', {
+  formats: [{
+    type: 'json',
+    prompt: 'Extract pricing plans',
+    schema: { type: 'object', properties: { plans: { type: 'array', items: { type: 'object', properties: { plan: { type: 'string' }, price: { type: 'string' } } } } } },
+  }],
 });
+console.log(doc.json);
+
+// Structured data from unknown URLs / several sites: the research agent (waiter)
+const found = await firecrawl.agent({
+  prompt: 'Find the top 5 headless CMS vendors and their pricing',
+  schema: { type: 'object', properties: { vendors: { type: 'array', items: { type: 'object' } } } },
+  maxCredits: 500,
+});
+// Or async: startAgent() + getAgentStatus(id)
 ```
 
-v4 also adds `interact()` / `stopInteraction()` for live browser-session page manipulation.
+The SDK's `extract()` / `startExtract()` are deprecated (the extract endpoint is in maintenance mode) — prefer the two patterns above.
+
+v4 also adds `interact()` / `stopInteraction()` for live browser-session page manipulation (`interact(scrapeJobId, { prompt | code })`).
 
 ### Python
 
@@ -114,11 +127,6 @@ const githubResults = await exa.search('authentication middleware', {
   includeDomains: ['github.com'],
 });
 
-// Find similar pages
-const similar = await exa.findSimilar('https://example.com/article', {
-  numResults: 10,
-});
-
 // Direct answer with citations
 const { answer } = await exa.answer('What changed in React 19 server components?');
 // Streaming variants: exa.streamAnswer(...), exa.streamSearch(...)
@@ -129,7 +137,10 @@ const run = await exa.agent.runs.create({
   effort: 'auto',
 });
 const finished = await exa.agent.runs.pollUntilFinished(run.id);
+// effort: 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | 'auto' | 'ultra'
 ```
+
+Looking up pages "similar to this URL" no longer has a replacement: the similarity endpoint is deprecated, so describe the source page in a normal `search()` query.
 
 ### Python
 
@@ -177,13 +188,8 @@ const response = await client.responses.create({
   input: 'Compare tRPC vs GraphQL for Next.js',
 });
 
-// Sonar API — OpenAI-style chat completions
-const sonarResponse = await client.chat.completions.create({
-  model: 'sonar-pro',
-  messages: [
-    { role: 'user', content: 'What are the latest React 19 features?' },
-  ],
-});
+// Sonar chat completions are legacy (support ended 2026-09-27) — use the Agent API above:
+// sonar / sonar-pro -> preset 'fast', sonar-reasoning-pro -> 'low', sonar-deep-research -> 'high'
 
 // Search API — ranked results, no AI answer
 const searchResults = await client.search.create({
@@ -205,11 +211,7 @@ response = client.responses.create(
     input="Compare tRPC vs GraphQL for Next.js"
 )
 
-# Sonar API
-sonar_response = client.chat.completions.create(
-    model="sonar-pro",
-    messages=[{"role": "user", "content": "React 19 features"}]
-)
+# Sonar chat completions are legacy (support ended 2026-09-27): use client.responses with a preset
 
 # Search API
 search_results = client.search.create(query="React 19 new features", max_results=5)

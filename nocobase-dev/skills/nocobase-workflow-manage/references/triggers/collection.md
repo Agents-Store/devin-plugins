@@ -1,6 +1,6 @@
 ---
 title: "Data Table Events"
-description: "Monitor additions/updates/deletions of specified data tables and trigger flows, with trigger data written to $context.data."
+description: "Use when collection data changes themselves should trigger automation, independent of a specific UI action; prefer post-action when request context matters."
 ---
 
 # Data Table Events
@@ -27,6 +27,8 @@ description: "Monitor additions/updates/deletions of specified data tables and t
 | appends | string[] | [] | No | Paths of associated fields to be preloaded. Associations are not loaded for delete events. See [Common Conventions - appends](../conventions/index.md#the-appends-field-in-trigger-and-node-configuration). |
 
 Variables are NOT supported in trigger configuration items.
+
+Before writing `condition`, load the `nocobase-utils` skill with topic `filter`, then read [Filter Condition Format](../../../nocobase-utils/references/filter/index.md), inspect the collection's live field metadata, and validate each operator against the terminal field's frontend operator group. Natural-language “less than” on a date means `$dateBefore`, not `$lt`; no variable or backend acceptance can override the frontend allowlist.
 
 ## Example Configuration
 

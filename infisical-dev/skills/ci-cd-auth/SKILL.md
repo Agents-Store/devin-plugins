@@ -24,6 +24,8 @@ infisical run --projectId="$PROJECT_ID" --env=prod -- npm run build
 - `--plain` prints only the JWT; `--silent` suppresses update notices — together they make the output safe to capture.
 - Credentials can also come from `INFISICAL_UNIVERSAL_AUTH_CLIENT_ID` / `INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET`.
 - Once `INFISICAL_TOKEN` is set, every subsequent command auto-detects it.
+- A machine-identity login creates no login profile; the token is all there is. For EU Cloud, a dedicated or a self-hosted instance, set `INFISICAL_DOMAIN` (or pass `--domain` on `login`) so the token is requested from the right instance.
+- To scope the session to a sub-organization the identity can reach, add `--organization-slug=<slug>`; without it the session uses the organization the identity was created in.
 - With machine-identity auth there is no `.infisical.json`, so pass `--projectId` explicitly.
 - In production, also set `export INFISICAL_DISABLE_UPDATE_CHECK=true`.
 
@@ -47,9 +49,14 @@ infisical login --method=gcp-iam --machine-identity-id="$MI_ID" \
 # Azure
 infisical login --method=azure --machine-identity-id="$MI_ID" --silent --plain
 
-# OIDC / generic JWT (GitHub Actions, GitLab CI, etc.)
+# OIDC (GitHub Actions, GitLab CI, etc.)
 infisical login --method=oidc-auth --machine-identity-id="$MI_ID" --jwt="$ID_TOKEN" --silent --plain
+
+# Generic JWT auth (a JWT your own issuer signs)
+infisical login --method=jwt-auth --machine-identity-id="$MI_ID" --jwt="$JWT" --silent --plain
 ```
+
+`--jwt` replaces the deprecated `--oidc-jwt`. `--method` covers `universal-auth`, `kubernetes`, `azure`, `gcp-id-token`, `gcp-iam`, `aws-iam`, `oidc-auth` and `jwt-auth` (plus `user` for people). The official Infisical skills list 13 machine-identity auth methods (Universal, Token, Kubernetes, GCP, AliCloud, AWS, Azure, TLS Certificate, OCI, OIDC, JWT, LDAP, SPIFFE); for the ones `login --method` does not cover, authenticate through an SDK or the Infisical Agent.
 
 ## Renew an access token
 
@@ -81,8 +88,8 @@ Entrypoint script that logs in inside the container, then execs the app:
 export INFISICAL_TOKEN=$(infisical login --method=universal-auth \
   --client-id="$INFISICAL_CLIENT_ID" \
   --client-secret="$INFISICAL_CLIENT_SECRET" --plain --silent)
-exec infisical run --projectId "$PROJECT_ID" --env "$APP_ENV" \
-  --domain "$INFISICAL_API_URL" -- node server.js
+# INFISICAL_DOMAIN (set on the container for EU / self-hosted) is read by both commands
+exec infisical run --projectId "$PROJECT_ID" --env "$APP_ENV" -- node server.js
 ```
 
 In Docker Compose, set `env_file` or `environment: [INFISICAL_TOKEN]` on the service and use the same `CMD`.
@@ -95,6 +102,7 @@ In Docker Compose, set `env_file` or `environment: [INFISICAL_TOKEN]` on the ser
     INFISICAL_CLIENT_ID:     ${{ secrets.INFISICAL_CLIENT_ID }}
     INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
     PROJECT_ID:              ${{ vars.INFISICAL_PROJECT_ID }}
+    INFISICAL_DOMAIN:        ${{ vars.INFISICAL_DOMAIN }}   # only for EU Cloud / dedicated / self-hosted
     INFISICAL_DISABLE_UPDATE_CHECK: "true"
   run: |
     export INFISICAL_TOKEN=$(infisical login --method=universal-auth \
@@ -108,15 +116,19 @@ Headless first-run setup that creates the admin user, organization, and an insta
 
 ```bash
 infisical bootstrap \
-  --domain="$INFISICAL_API_URL" \
+  --domain="$INFISICAL_DOMAIN" \
   --email="$ADMIN_EMAIL" \
   --password="$ADMIN_PASSWORD" \
   --organization="$ORG_NAME" \
   --ignore-if-bootstrapped
 ```
 
-The JSON output includes the instance-admin token — treat it like root credentials. For Kubernetes, add `--output=k8-secret` with `--k8-secret-name` / `--k8-secret-namespace` to emit a Secret manifest.
+The command prints JSON that includes the instance-admin machine identity's token (`.identity.credentials.token`) — treat it like root credentials. For Kubernetes, add `--output=k8-secret` with `--k8-secret-name` / `--k8-secret-namespace` to write the result to a Kubernetes Secret instead (it must run inside a pod whose service account can get/create/update Secrets in that namespace).
+
+## Infisical Agent (secrets as files, no `run`)
+
+When an application should read secrets from files that stay fresh — or cannot be wrapped by `infisical run` — run the Infisical Agent next to it: `infisical agent --config agent-config.yaml`. It authenticates as a machine identity and renders secrets through Go templates into files (the config can also be passed as base64 in `INFISICAL_AGENT_CONFIG_BASE64`). The agent takes its instance from `infisical.address` in the config, not from `--domain`. For certificates there is `infisical cert-manager agent --config certificate-agent-config.yaml`. Flag details are in the `cli-reference` skill.
 
 ## Self-hosted note
 
-Set `INFISICAL_API_URL` (preferred) or pass `--domain` on **every** command including `login` — historically `login` did not always honor `--domain` for self-hosted flows, so the env var is the reliable choice.
+Set `INFISICAL_DOMAIN` once (or pass `--domain`, a global flag that `login` honors, or set `domain` in `.infisical.json`). `infisical token renew` does not use a login profile, so for any instance other than US Cloud pass `--domain` or set `INFISICAL_DOMAIN` there too. A `--domain` / `INFISICAL_DOMAIN` that names a different instance than the profile you are logged in to makes the command fail (see the `troubleshoot` skill).

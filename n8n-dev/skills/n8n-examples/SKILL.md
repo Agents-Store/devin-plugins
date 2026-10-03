@@ -20,6 +20,7 @@ Step-by-step scenario walkthroughs showing complete workflow development from pl
 - Access webhook body data correctly (`$json.body.*`)
 - Configure Slack node for message posting
 - Add response to webhook caller
+- Publish the workflow once it is verified
 
 ### 2. [Scheduled Report Generator](references/scenarios/scheduled-report.md)
 
@@ -34,14 +35,26 @@ Step-by-step scenario walkthroughs showing complete workflow development from pl
 
 ### 3. [AI Agent Chatbot](references/scenarios/ai-agent-chatbot.md)
 
+> This is an **AI Agent node inside a workflow**. A first-class n8n **Agent** (its own artifact with draft, publish and version history) is built with the native MCP agent tools — see the **n8n-native-mcp** skill — and designed with **n8n-agents**.
+
 **Pattern**: AI Agent Workflow
 **Complexity**: Complex (7+ nodes)
 **What you learn**:
-- Configure AI Agent with language model
+- Configure AI Agent (Tools Agent) with language model
 - Add tools (HTTP Request, database)
 - Set up memory for conversation context
 - Handle chat input/output via webhook
 - AI connection types (ai_languageModel, ai_tool, ai_memory)
+
+### 4. [Record-Driven Background Workflows](references/background-processing-patterns.md)
+
+**Pattern**: Scheduled sync, webhook-triggered processing, error recovery (sketches)
+**Complexity**: Medium
+**What you learn**:
+- Process records from another system and write a status back
+- Branch a webhook by event type and keep processing idempotent
+- Wire an error workflow with a bounded retry
+- Keep tokens in credentials now that n8n 2.x blocks `$env`
 
 ---
 
@@ -67,7 +80,8 @@ n8n_create_workflow({name, nodes, connections})
 ```
 Or native MCP for SDK-based creation:
 ```
-get_sdk_reference() → get_node_types([...]) → validate_workflow(code) → create_workflow_from_code(code)
+get_workflow_sdk_reference → get_workflow_best_practices → search_nodes → get_node_types
+  → validate_workflow(code) → create_workflow_from_code(code, versionName)
 ```
 
 ### 4. Validate
@@ -80,10 +94,11 @@ n8n_validate_workflow({id: "workflow-id"})
 n8n_update_partial_workflow({id, operations: [...]})
 ```
 
-### 6. Activate
+### 6. Publish
 ```
 n8n_update_partial_workflow({id, operations: [{type: "activateWorkflow"}]})
 ```
+In n8n 2.x the workflow body is a *draft*; this operation **publishes** it (the name is unchanged for compatibility, the editor calls it Publish). Publish only when the owner wants the triggers live. With the native MCP use `publish_workflow(workflowId)`.
 
 ---
 
@@ -110,6 +125,8 @@ Common nodes used across scenarios:
 
 - **n8n-workflow-patterns** — Architectural patterns for all workflow types
 - **n8n-mcp-tools-expert** — External MCP tool usage details
-- **n8n-native-mcp** — Native MCP (SDK-based) workflow creation
+- **n8n-native-mcp** — Native MCP (SDK-based) workflow creation, tests, publishing, first-class Agents
 - **n8n-expression-syntax** — Expression patterns for data mapping
 - **n8n-node-configuration** — Node-specific configuration guidance
+- **n8n-agents** — AI Agent node design: tools, memory, structured output
+- **n8n-error-handling** — Error outputs, error workflows and response shapes for the scenarios above

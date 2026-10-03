@@ -4,13 +4,26 @@
     {
       "id": 7,
       "prompt": "I want to trigger a Trigger.dev task via MCP, wait for it to complete, and if it fails, get the error details. What MCP tools do I use?",
-      "expected_output": "Should show: get_current_worker to check schema, trigger_task, wait_for_run_to_complete, get_run_details for errors",
+      "expected_output": "Should show: get_current_worker for the task slugs, get_task_schema for the payload schema, trigger_task, wait_for_run_to_complete, get_run_details for errors",
       "files": [],
       "expectations": [
-        "Mentions get_current_worker tool', 'type': 'content_check",
-        "Mentions trigger_task tool', 'type': 'content_check",
-        "Mentions wait_for_run_to_complete or get_run_details', 'type': 'content_check",
-        "Shows sequential workflow pattern', 'type': 'content_check"
+        "Mentions get_current_worker tool",
+        "Mentions get_task_schema (payload schemas are not returned by get_current_worker)",
+        "Mentions trigger_task tool",
+        "Mentions wait_for_run_to_complete or get_run_details",
+        "Shows sequential workflow pattern"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "I am wiring the Trigger.dev MCP server into an agent that must never deploy, trigger or cancel anything on our production instance. How do I configure it?",
+      "expected_output": "Should put --readonly in the args of the trigger.dev mcp server command (it is not an install-mcp flag), and list the write tools it hides",
+      "files": [],
+      "expectations": [
+        "Uses trigger.dev mcp with --readonly in the server args",
+        "Does not recommend install-mcp --readonly (that option does not exist)",
+        "Names write tools it hides such as deploy, trigger_task and cancel_run",
+        "Mentions that start_dev_server and switch_profile are not hidden, or offers --dev-only for environment restriction"
       ]
     }
   ]

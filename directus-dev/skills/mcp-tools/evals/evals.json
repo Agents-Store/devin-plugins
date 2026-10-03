@@ -25,6 +25,19 @@
         "Shows correct JSON example with action parameter",
         "Mentions data must be an array for create"
       ]
+    },
+    {
+      "id": 25,
+      "prompt": "My MCP client sends every Directus tool definition to the model and runs out of context. Can Directus reduce that?",
+      "expected_output": "registry mode via ?tool_mode=registry with search, execute, schema",
+      "files": [],
+      "expectations": [
+        "Recommends registry mode with the /mcp?tool_mode=registry URL",
+        "Names the three root tools search, execute and schema",
+        "Explains the search then execute sequence",
+        "Warns not to auto-approve execute",
+        "Notes that default mode is better when the client already has tool search"
+      ]
     }
   ]
 }

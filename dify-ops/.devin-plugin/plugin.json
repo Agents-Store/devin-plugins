@@ -1,7 +1,7 @@
 {
   "name": "dify-ops",
-  "version": "1.0.1",
-  "description": "Dify self-hosted update operations plugin. Pull upstream changes, merge into local dev branch, sync .env variables, detect Docker project names, and rebuild containers for Dify Docker deployments.",
+  "version": "1.1.0",
+  "description": "Dify self-hosted update operations plugin. Pre-flight the target release and the bundled Weaviate migration path, back up volumes with the stack down, merge a release tag into the local dev branch, sync .env variables, and pull and restart containers for Dify Docker deployments.",
   "author": {
     "name": "AGENTS.STORE"
   },

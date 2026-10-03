@@ -9,12 +9,13 @@ Diagnostics and fixes for common Next.js issues. Start with the quick diagnostic
 
 ## Quick Diagnostics Checklist
 
-1. **Check Next.js version**: `npx next --version` — ensure 14+ for stable App Router
-2. **Check Node.js version**: `node -v` — 20.9+ required for Next.js 16
-3. **Clear cache**: `rm -rf .next && npm run dev`
-4. **Check TypeScript**: `npx tsc --noEmit` — catch type errors early
-5. **Check console**: Both browser console and terminal for error messages
-6. **Check MCP**: If using `next-devtools-mcp`, call `nextjs_call` with `get_errors`
+1. **Check Next.js version**: `npx next --version` — ensure 14+ for stable App Router; on 16.3 be at `16.3.8` or later (security fixes)
+2. **Check Node.js version**: `node -v` — `>=20.9.0` is the formal minimum for Next.js 16, but use Node 22 or 24 LTS (Node 20 is end-of-life)
+3. **Check the caching model**: is `cacheComponents: true` in `next.config.ts`? It decides which fixes below apply — `export const dynamic` / `revalidate` / `dynamicParams` work only when it is off
+4. **Clear cache**: `rm -rf .next && npm run dev`
+5. **Check TypeScript**: `npx tsc --noEmit` — catch type errors early
+6. **Check console**: Both browser console and terminal for error messages
+7. **Check MCP**: If using `next-devtools-mcp`, call `nextjs_call` with `get_errors`
 
 ## Hydration Errors
 
@@ -155,10 +156,24 @@ Only use `suppressHydrationWarning` for leaf elements where the mismatch is cosm
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| "Dynamic server usage" | Using `cookies()`, `headers()`, or `searchParams` in a statically generated page | Add `export const dynamic = 'force-dynamic'` or restructure to fetch dynamically |
+| "Dynamic server usage" | Using `cookies()`, `headers()`, or `searchParams` in a statically generated page | Without `cacheComponents`: add `export const dynamic = 'force-dynamic'` or restructure to fetch dynamically. With `cacheComponents: true` that export is removed — wrap the component that reads the runtime API in `<Suspense>` (see "Cache Components Errors" below) |
 | "generateStaticParams is required for dynamic routes with output: export" | Missing static params for static export | Add `generateStaticParams` or remove `output: 'export'` |
 | "Module not found: Can't resolve 'fs'" | Using Node.js modules in client code | Move to Server Component or Route Handler |
 | "`params` is now a Promise" | Next.js 15+ async params not awaited | `const { id } = await params` |
+
+## Cache Components Errors
+
+Apply only when `cacheComponents: true`. Here every dynamic read is a choice: **stream** it behind `<Suspense>`, **cache** it with `'use cache'`, or (for uncached IO) block the route with `export const instant = false`. Do not reach for `export const dynamic = 'force-dynamic'` — it is removed under Cache Components (everything is dynamic by default). Next.js 16.3 prints these as labelled fix menus in the dev overlay, the `next dev` terminal and `next build`.
+
+| Error / symptom | Cause | Fix |
+|-----------------|-------|-----|
+| "Next.js encountered uncached data during prerendering or a navigation" (Blocking Route, `blocking-prerender-dynamic`) | An uncached `fetch()`, database call or `await connection()` ran outside `<Suspense>` | Wrap the reader in `<Suspense fallback={...}>`, or cache it with `'use cache'` + `cacheLife()` (not applicable to `connection()`). Keep the boundary close to the data access — one around the whole page leaves an empty static shell |
+| "Next.js encountered runtime data during prerendering or a navigation" (`blocking-prerender-runtime`) | `cookies()`, `headers()`, `params` or `searchParams` read outside `<Suspense>` | Pass the promise down and `await` it inside a `<Suspense>` boundary; with Cache Components this replaces `export const dynamic = 'force-dynamic'` |
+| Build error on `new Date()`, `Date.now()`, `Math.random()`, `crypto.randomUUID()` during prerender | Synchronous non-deterministic read cannot be silently included in the static shell | Call `await io()` (from `next/cache`) before it, inside `<Suspense>`; or capture it once with `'use cache'` |
+| `Route segment config "dynamicParams" is not compatible with nextConfig.cacheComponents` | `export const dynamicParams` is not supported with Cache Components | Delete the export; call `notFound()` when the param does not resolve to real data |
+| `empty-generate-static-params` | `generateStaticParams` returned `[]` | Return at least one real param; other params still get a static shell and stream at request time |
+| `next-request-in-use-cache` | `cookies()`, `headers()` or `searchParams` read inside a `'use cache'` scope | Read it outside and pass the value as an argument, or use `'use cache: private'` |
+| Route still returns `200` but navigation blocks | Insights appear in the dev overlay, terminal and MCP `get_errors`, not in the HTTP response | Read the overlay or call `get_errors` through `next-devtools-mcp` |
 
 ## Data Fetching Errors
 
@@ -173,7 +188,7 @@ Only use `suppressHydrationWarning` for leaf elements where the mismatch is cosm
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| Broken/missing images, no visible error | Upstream image source returns 403 — `next/image` proxies through `/_next/image` so the HTTP error is hidden from the browser | Check network tab for `/_next/image` requests returning 403/401. If the upstream (e.g., Directus, S3) requires auth, include `access_token` or API key in the image URL |
+| Broken/missing images, no visible error | Upstream image source returns 403 — `next/image` proxies through `/_next/image` so the HTTP error is hidden from the browser | Check network tab for `/_next/image` requests returning 403/401. If the upstream (e.g., Directus, S3) requires auth, make the files public in the upstream or serve them through a Route Handler of your own that adds the credential server-side. Never put a token or API key in the image URL: `/_next/image?url=` carries the full source URL into the HTML for every visitor |
 | "Invalid src prop" or "hostname not configured" | Remote image domain missing from config | Add the domain to `images.remotePatterns` in `next.config.ts` |
 | Images load in `<img>` but not `<Image>` | `next/image` optimizer can't fetch the upstream URL | Verify the upstream URL is reachable from the server (not just the browser). Common with private networks or auth-protected CDNs. Next 16 blocks optimization of local-IP upstreams by default — set `images.dangerouslyAllowLocalIP: true` for private networks |
 | Blurry or low-quality images | Wrong `sizes` prop or default quality | Set `sizes` to match actual display size. In Next 16, `quality` values other than 75 require `images.qualities` config — the prop is coerced to the closest configured value, so raising `quality` alone silently no-ops |

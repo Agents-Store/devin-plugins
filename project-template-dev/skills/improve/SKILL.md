@@ -87,10 +87,11 @@ If the user disagrees, reclassify.
 ### If routed to Plugin:
 Invoke `/plugin-creator:feedback` via the Skill tool. Pass the improvement details (plugin name, skill name if known, what happened, what should happen, severity) so the feedback skill can pick up context without re-asking.
 
-If `/plugin-creator:feedback` is not available (plugin-creator not installed), display:
-> "The `plugin-creator` plugin is not installed. To fix plugins, either:
-> 1. Install plugin-creator and run `/plugin-creator:feedback`
-> 2. Manually edit the plugin source at `$PLUGINS_PUBLIC_SOURCE_DIR/{plugin-name}/` or `$PLUGINS_PRIVATE_SOURCE_DIR/{plugin-name}/`"
+If `/plugin-creator:feedback` is not available (the private `plugin-creator` plugin is not installed), display:
+> "No plugin-feedback tool is installed. To fix the plugin, either:
+> 1. Edit the plugin source at `$PLUGINS_PUBLIC_SOURCE_DIR/{plugin-name}/` (or `$PLUGINS_PRIVATE_SOURCE_DIR/{plugin-name}/` if you have it)
+> 2. Open a GitHub issue on the plugin's repository with the details above (`gh issue create`)
+> 3. Record it in this project's `LEARNINGS.md` to handle later"
 
 ### If routed to Template (Level 0 or Level 1):
 Read and follow the feedback skill at `${CLAUDE_PLUGIN_ROOT}/skills/feedback/SKILL.md`. The feedback skill handles locating the parent template, applying the fix, recording in LEARNINGS.md, and committing.

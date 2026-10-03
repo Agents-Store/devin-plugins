@@ -32,7 +32,7 @@ Every application in Dokploy lives inside a project. Create one first.
 **MCP:**
 
 ```
-mcp__dokploy__project-create
+mcp__plugin_dokploy-dev_dokploy__project-create
 ```
 
 Parameters:
@@ -57,7 +57,7 @@ Save the returned `projectId` for the next steps.
 **Resolve the target environment** — resources live under a project *environment* (default `production`), not the project itself:
 
 ```
-mcp__dokploy__project-one { "projectId": "<projectId>" }
+mcp__plugin_dokploy-dev_dokploy__project-one { "projectId": "<projectId>" }
    → environments[0].environmentId
 ```
 
@@ -72,7 +72,7 @@ Create an application resource within the project's environment.
 **MCP:**
 
 ```
-mcp__dokploy__application-create
+mcp__plugin_dokploy-dev_dokploy__application-create
 ```
 
 Parameters:
@@ -104,7 +104,7 @@ Link the application to a GitHub repository.
 **MCP:**
 
 ```
-mcp__dokploy__application-saveGithubProvider
+mcp__plugin_dokploy-dev_dokploy__application-saveGithubProvider
 ```
 
 Parameters (`repository` is the repo **name only** — NOT the full URL; get `githubId` from `gitProvider-getAll`):
@@ -138,7 +138,7 @@ Choose the build method. Nixpacks auto-detects the language and framework. Use D
 **MCP:**
 
 ```
-mcp__dokploy__application-saveBuildType
+mcp__plugin_dokploy-dev_dokploy__application-saveBuildType
 ```
 
 Parameters:
@@ -169,7 +169,7 @@ Pass environment variables to the application. Use the `KEY=VALUE\nKEY2=VALUE2` 
 **MCP:**
 
 ```
-mcp__dokploy__application-saveEnvironment
+mcp__plugin_dokploy-dev_dokploy__application-saveEnvironment
 ```
 
 Parameters:
@@ -198,7 +198,7 @@ Configure a custom domain with HTTPS. The app must listen on the port specified 
 **MCP:**
 
 ```
-mcp__dokploy__domain-create
+mcp__plugin_dokploy-dev_dokploy__domain-create
 ```
 
 Parameters:
@@ -236,7 +236,7 @@ Trigger the deployment. Dokploy will clone the repo, build the image, and start 
 **MCP:**
 
 ```
-mcp__dokploy__application-deploy
+mcp__plugin_dokploy-dev_dokploy__application-deploy
 ```
 
 Parameters:
@@ -266,7 +266,7 @@ Check that the deployment succeeded and the domain is working.
 **MCP:**
 
 ```
-mcp__dokploy__application-one
+mcp__plugin_dokploy-dev_dokploy__application-one
 ```
 
 Parameters:
@@ -283,7 +283,7 @@ Look for `"applicationStatus": "done"` in the response.
 **MCP:**
 
 ```
-mcp__dokploy__domain-validateDomain
+mcp__plugin_dokploy-dev_dokploy__domain-validateDomain
 ```
 
 Parameters (the **hostname string**, not the domainId):

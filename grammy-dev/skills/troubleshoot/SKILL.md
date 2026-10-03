@@ -47,7 +47,7 @@ If `url` is non-empty you have a webhook set — `bot.start()` will fight it. Ei
 
 ```typescript
 bot.api.config.use(apiThrottler());
-bot.api.config.use(autoRetry({ maxAttempts: 3, maxDelaySeconds: 10 }));
+bot.api.config.use(autoRetry({ maxRetryAttempts: 3, maxDelaySeconds: 10 }));
 ```
 
 ## Bot replies twice to every message
@@ -78,7 +78,7 @@ type MyContext = Context & SessionFlavor<MyData>;
 const bot = new Bot<MyContext>(token);
 ```
 
-Same applies to every plugin that augments context: `ConversationFlavor`, `HydrateFlavor`, `ParseModeFlavor`, `ChatMembersFlavor`, etc. Combine them:
+Same applies to every plugin that augments context: `ConversationFlavor`, `HydrateFlavor`, `FileFlavor`, `ChatMembersFlavor`, `CommandsFlavor`, etc. (`@grammyjs/parse-mode` 2.x has no flavor — it only builds formatted strings.) Combine them:
 
 ```typescript
 type MyContext = HydrateFlavor<ConversationFlavor<Context & SessionFlavor<MyData>>>;
@@ -88,14 +88,15 @@ type MyContext = HydrateFlavor<ConversationFlavor<Context & SessionFlavor<MyData
 
 Checklist:
 
-1. Did you mount the session plugin *before* `conversations()`? Without session, conversation state isn't persisted.
-2. Did you call `bot.use(createConversation(myConvo, "name"))` AND `ctx.conversation.enter("name")`?
+1. Is `bot.use(conversations())` installed, and does `bot.use(createConversation(myConvo, "name"))` come *before* the handler that calls `ctx.conversation.enter("name")`? (Conversations 2.x does not need the session plugin.)
+2. Does the inside context type differ from the outside one? Only the outside type gets `ConversationFlavor`.
 3. Inside the conversation, do you call `await conversation.wait*()` — never plain `await new Promise(...)`?
-4. Inside the conversation, do you wrap non-deterministic calls (fetch, randomUUID, Date.now) in `conversation.external(() => …)`?
+4. Inside the conversation, do you wrap non-deterministic calls (fetch, randomUUID, Date.now, database, session) in `conversation.external(() => …)`?
+5. After a restart the dialog is gone? The default state lives in memory — pass `conversations({ storage: { type: "key", version: 1, adapter } })` to persist it, and bump `version` when you change the conversation.
 
 ## "Cannot serialize conversation"
 
-You stored something non-serializable in `conversation.session` (a function, class instance, Map, Set). Conversations must only hold JSON-compatible values. Wrap non-serializable computation in `conversation.external`.
+`conversation.external` returned something that cannot survive `JSON.stringify` (a function, class instance, Map, Set, bigint). Whatever `external` returns is stored by the plugin, so return plain JSON values — or give `external` `{ task, beforeStore, afterLoad }` functions that convert the value to and from a serializable form.
 
 ## ctx.reply works but ctx.api.sendMessage(otherChatId, …) fails with "chat not found"
 
@@ -136,7 +137,7 @@ for (const part of chunk(longText)) await ctx.reply(part);
 `Bad Request: can't parse entities` means your text breaks the chosen parse_mode.
 
 - For `MarkdownV2`: every literal `_ * [ ] ( ) ~ ` `` ` `` `> # + - = | { } . !` must be escaped with `\\` (in TS source).
-- Easier: install `@grammyjs/parse-mode` and use the `bold(text)`, `italic(text)` builders which escape for you.
+- Easier: install `@grammyjs/parse-mode` and build the message with ``fmt`${b}text${b}` `` — you send `msg.text` plus `{ entities: msg.entities }`, so no escaping is involved at all (see `plugins-catalog`).
 
 ## "Cannot find module 'grammy'" or similar import failure
 

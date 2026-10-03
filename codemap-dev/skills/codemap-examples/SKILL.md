@@ -18,7 +18,7 @@ A junior developer joins a team with an existing Flask + SQLAlchemy application.
 ### Step 1: Full onboarding
 
 ```
-/codemap:onboard
+/codemap-dev:onboard
 ```
 
 **What happens:**
@@ -33,7 +33,7 @@ A junior developer joins a team with an existing Flask + SQLAlchemy application.
 ### Step 2: Understand a specific module
 
 ```
-/codemap:explain routes/deals.py
+/codemap-dev:explain routes/deals.py
 ```
 
 **What happens:**
@@ -43,7 +43,7 @@ A junior developer joins a team with an existing Flask + SQLAlchemy application.
 ### Step 3: Review your first PR
 
 ```
-/codemap:review #15
+/codemap-dev:review #15
 ```
 
 **What happens:**
@@ -58,7 +58,7 @@ A developer needs to understand the data model before making changes.
 ### Step 1: Generate ERD and documentation
 
 ```
-/codemap:db
+/codemap-dev:db
 ```
 
 **What happens:**
@@ -71,7 +71,7 @@ A developer needs to understand the data model before making changes.
 ### Step 2: Explore a specific relationship
 
 ```
-/codemap:explain models/deal.py
+/codemap-dev:explain models/deal.py
 ```
 
 **What happens:**
@@ -86,18 +86,18 @@ A developer needs to create architecture diagrams for a team knowledge-sharing s
 ### Step 1: System overview
 
 ```
-/codemap:diagram architecture
+/codemap-dev:diagram architecture
 ```
 
 **What happens:**
 1. Scans root configs, entry points, all top-level directories
 2. Generates C4 container diagram showing all services, databases, external APIs
-3. Saves to `docs/codemap/diagrams/architecture.drawio` and opens interactive preview
+3. Saves to `docs/codemap/diagrams/architecture.drawio` and, if the client supports MCP Apps, shows an inline preview
 
 ### Step 2: Specific feature flow
 
 ```
-/codemap:diagram sequence POST /api/deals
+/codemap-dev:diagram sequence POST /api/deals
 ```
 
 **What happens:**
@@ -108,7 +108,7 @@ A developer needs to create architecture diagrams for a team knowledge-sharing s
 ### Step 3: Discover all user flows
 
 ```
-/codemap:flows
+/codemap-dev:flows
 ```
 
 **What happens:**

@@ -38,7 +38,9 @@ For non-bot share contexts (a button in a Web App, an external page):
 
 ```typescript
 const link = await bot.api.createInvoiceLink(
-  "Pro upgrade", "Unlimited everything", "pro_v1", "XTR",
+  "Pro upgrade", "Unlimited everything", "pro_v1",
+  "",      // provider_token — an empty string for Telegram Stars
+  "XTR",
   [{ label: "Pro plan", amount: 100 }],
 );
 // → "https://t.me/$..."
@@ -64,7 +66,7 @@ bot.on("pre_checkout_query", async (ctx) => {
 });
 
 // Step 2 — fulfil
-bot.on(":successful_payment", async (ctx) => {
+bot.on("message:successful_payment", async (ctx) => {
   const pay = ctx.message.successful_payment;
   await grantEntitlement(ctx.from.id, pay.invoice_payload);
   await ctx.reply("Payment received — thanks!");
@@ -96,7 +98,7 @@ const keyboard = new InlineKeyboard()
 
 ## Telegram Business
 
-Telegram Business lets a paid Business user delegate their account to a bot — the bot reads and replies to that user's regular DMs.
+Telegram Business lets a Business user delegate their account to a bot — the bot reads and replies to that user's regular DMs. Since Bot API 10.0 (2026-05-08) the account owner no longer needs Telegram Premium for the bot to manage the account.
 
 ### Subscribe to a Business account
 
@@ -106,7 +108,8 @@ The user adds your bot in Telegram Settings → Business → Chatbots. Telegram 
 bot.on("business_connection", async (ctx) => {
   const conn = ctx.businessConnection;
   // Persist conn.id → conn.user.id mapping
-  await saveBusinessConnection(conn.id, conn.user.id, conn.can_reply);
+  // `rights` (BusinessBotRights, Bot API 9.0+) replaced the old boolean flag on the connection
+  await saveBusinessConnection(conn.id, conn.user.id, conn.rights?.can_reply ?? false);
 });
 ```
 
@@ -129,9 +132,10 @@ Always include `business_connection_id` when calling `sendMessage` / `sendPhoto`
 
 ### Limitations
 
-- Only Business-tier users can connect a bot.
+- The owner connects the bot in Settings → Business → Chatbots (no Premium needed since 10.0) and decides which rights it gets.
 - The connection can be revoked at any time — handle `business_connection.is_enabled === false`.
-- You cannot start a conversation; you can only reply within existing chats unless `conn.can_reply` is true and the contact is a Business contact.
+- What the bot may do depends on `conn.rights`: reply (`conn.rights?.can_reply`), `can_read_messages`, `can_delete_outgoing_messages`, `can_delete_all_messages`, `can_edit_name` / `can_edit_bio` / `can_edit_profile_photo` / `can_edit_username`, `can_change_gift_settings`, `can_view_gifts_and_stars`, `can_convert_gifts_to_stars`, `can_transfer_and_upgrade_gifts`, `can_transfer_stars`, `can_manage_stories`. Check the right before calling the matching method.
+- You cannot start a conversation; you can only reply within existing chats, and only while `conn.rights?.can_reply` is set.
 
 ## Telegram Games
 
@@ -168,17 +172,13 @@ bot.on("callback_query:game_short_name", async (ctx) => {
 From your game's backend (when the user finishes):
 
 ```typescript
-await bot.api.setGameScore(
-  userId,
-  score,
-  { chat_id: chatId, message_id: messageId, force: false },
-);
+await bot.api.setGameScore(chatId, messageId, userId, score, { force: false });
 ```
 
 `force: true` allows decreasing scores.
 
 ```typescript
-const high = await bot.api.getGameHighScores(userId, { chat_id, message_id });
+const high = await bot.api.getGameHighScores(chatId, messageId, userId);
 ```
 
 ## Quick decision tree

@@ -25,6 +25,18 @@
         {"assertion": "drops_table_last", "text": "DROP TABLE IF EXISTS comes after constraint removal"},
         {"assertion": "correct_order", "text": "Shows operations in the correct safe order: constraints first, then table"}
       ]
+    },
+    {
+      "id": 3,
+      "prompt": "Drop the obsolete legacy_notes column from products. The database is connected to both NocoDB and NocoBase.",
+      "expected_output": "Asks for confirmation of the exact column and recommends a backup (pg_dump) first, because the drop cannot be undone and external sources have no NocoDB trash. Shows ALTER TABLE ... DROP COLUMN, then tells the user to run Meta Sync in NocoDB and refresh the data source in NocoBase.",
+      "files": [],
+      "expectations": [
+        {"assertion": "asks_confirmation", "text": "Asks the user to confirm the exact column before dropping it"},
+        {"assertion": "recommends_backup", "text": "Recommends a backup such as pg_dump before the drop"},
+        {"assertion": "drop_column_syntax", "text": "Uses ALTER TABLE ... DROP COLUMN with quoted identifiers"},
+        {"assertion": "syncs_platforms", "text": "Tells the user to run Meta Sync in NocoDB and refresh the data source in NocoBase afterwards"}
+      ]
     }
   ]
 }

@@ -5,6 +5,17 @@ description: n8n CLI commands for self-hosted instances. Use when executing work
 
 # n8n CLI Recipes
 
+n8n has two command-line tools; do not mix them up.
+
+| | **Server CLI** (`n8n <command>`) | **n8n CLI** (`n8n-cli`, package `@n8n/cli`) |
+|---|---|---|
+| Runs | on the machine that hosts n8n | from any machine with network access |
+| Authenticates with | direct database access (bypasses access control) | an API key (respects the key's scopes) |
+| Needs n8n running | no, for most commands | yes |
+| Best for | backups, migrations, license, emergency resets | scripts, remote management, AI agents |
+
+Everything below, up to the `@n8n/cli` section at the end, is the **Server CLI**.
+
 ## Running CLI Commands
 
 How you invoke CLI commands depends on your installation method.
@@ -14,6 +25,8 @@ How you invoke CLI commands depends on your installation method.
 ```bash
 n8n <command>
 ```
+
+> **n8n 3.0 (scheduled for October 2026) no longer supports installs run with `npm` or `npx n8n` — self-hosted n8n will require Docker.** Plan the move before upgrading; for new setups use the Docker forms below.
 
 ### Docker
 
@@ -49,23 +62,27 @@ This runs the workflow once synchronously and outputs the result to stdout. Usef
 
 ## Workflow Status Management
 
-Activate or deactivate workflows from CLI. Changes the `active` flag in the database.
+In n8n 2.x a workflow is *published* or *unpublished* (it was "active" / "inactive" in 1.x). The CLI changes that state directly in the database.
 
 ```bash
-# Deactivate a specific workflow
-n8n update:workflow --id=<ID> --active=false
+# Publish the current draft of one workflow
+n8n publish:workflow --id=<ID>
 
-# Activate a specific workflow
-n8n update:workflow --id=<ID> --active=true
+# Publish a specific historical version
+n8n publish:workflow --id=<ID> --versionId=<VERSION_ID>
 
-# Deactivate ALL workflows
-n8n update:workflow --all --active=false
+# Unpublish one workflow
+n8n unpublish:workflow --id=<ID>
 
-# Activate ALL workflows
-n8n update:workflow --all --active=true
+# Unpublish ALL workflows
+n8n unpublish:workflow --all
 ```
 
-**Important:** After changing workflow status via CLI, you must **restart n8n** for the changes to take effect. The running n8n process caches workflow active states.
+- `publish:workflow` has **no `--all`** on purpose: it stops accidental bulk publishing in production. Publish workflows one ID at a time.
+- `unpublish:workflow` takes either `--id` or `--all`, never both.
+- The old `update:workflow` command is **deprecated since n8n 2.0 and will be removed**. Do not use it in new scripts.
+
+**Important:** These commands operate on the database. If n8n is running, the change only takes effect after you **restart n8n**.
 
 ---
 
@@ -83,12 +100,21 @@ n8n export:workflow --id=<ID> --output=workflow.json
 # Export all workflows as separate files in a directory
 n8n export:workflow --all --separate --output=backups/workflows/
 
-# Export with backup flag (includes metadata)
+# Export with backup flag (shorthand for --all --pretty --separate)
 n8n export:workflow --backup --output=backups/latest/
 
 # Pretty-print the JSON output
 n8n export:workflow --all --pretty
+
+# Export the published version instead of the current draft
+n8n export:workflow --id=<ID> --published --output=published.json
+n8n export:workflow --all --published --output=workflows.json     # unpublished workflows are skipped
+
+# Export one historical version
+n8n export:workflow --id=<ID> --version=<VERSION_ID> --output=workflow-v1.json
 ```
+
+Exports now carry a `versionMetadata` property (the version's historical name and description); import preserves it in the workflow history.
 
 ### Export Credentials
 
@@ -123,7 +149,9 @@ n8n export:entities --outputDir=./outputs --includeExecutionHistoryDataTables=tr
 | `--all` | Export all items of this type |
 | `--id=<ID>` | Export a single item by ID |
 | `--output=<path>` | Output file or directory path |
-| `--backup` | Include additional metadata for backup purposes |
+| `--backup` | Shorthand for `--all --pretty --separate`; combine with `--output=<directory>`. Exports workflows and credentials only — not a complete instance backup |
+| `--published` | Export the published version instead of the draft (workflows only; with `--all`, unpublished workflows are skipped; not with `--version`) |
+| `--version=<ID>` | Export one historical version (workflows only; not with `--all` or `--published`) |
 | `--pretty` | Pretty-print JSON output |
 | `--separate` | Write each item as a separate file |
 | `--decrypted` | Export credentials with decrypted (plaintext) secret values |
@@ -148,7 +176,12 @@ n8n import:workflow --input=workflow.json --projectId=<PROJECT_ID>
 
 # Import and assign to a specific user
 n8n import:workflow --input=workflow.json --userId=<USER_ID>
+
+# Keep each file's `active` flag instead of unpublishing everything (multi-main / queue mode only)
+n8n import:workflow --separate --input=backups/workflows/ --activeState=fromJson
 ```
+
+**`import:workflow` unpublishes every imported workflow** by default (`--activeState=false`). After a restore, publish the workflows you need one by one. Imported workflows keep their exported IDs and **overwrite** workflows with the same ID — change or delete the IDs first if that is not what you want. Known issue: on a single-main instance the cron triggers of a previously active workflow keep running until n8n restarts.
 
 ### Import Credentials
 
@@ -177,7 +210,8 @@ n8n import:entities --inputDir=./outputs --truncateTables=true
 | `--input=<path>` | Input file or directory path |
 | `--separate` | Read from separate files in a directory |
 | `--projectId=<ID>` | Import into a specific project |
-| `--userId=<ID>` | Assign imported items to a specific user |
+| `--userId=<ID>` | Assign imported items to a specific user (not with `--projectId`) |
+| `--activeState=<false\|fromJson>` | `false` (default) unpublishes imported workflows; `fromJson` keeps each file's `active` field (multi-main / queue mode only) |
 | `--skipMigrationChecks` | Skip database migration version checks during import |
 | `--truncateTables` | Clear existing data before importing (entities only) |
 
@@ -207,8 +241,11 @@ echo "Backup saved to $BACKUP_DIR"
 # Import credentials first (workflows may reference them)
 n8n import:credentials --input="$BACKUP_DIR/credentials.json"
 
-# Import workflows
+# Import workflows (they arrive unpublished)
 n8n import:workflow --input="$BACKUP_DIR/workflows.json"
+
+# Publish the ones that should run, one ID at a time, then restart n8n if it was running
+n8n publish:workflow --id=<ID>
 ```
 
 ### Migrate Between Instances
@@ -220,7 +257,7 @@ n8n export:workflow --all --output=workflows.json
 
 # Copy files to target instance, then import
 n8n import:credentials --input=creds-decrypted.json
-n8n import:workflow --input=workflows.json
+n8n import:workflow --input=workflows.json      # imported workflows are unpublished
 
 # Clean up decrypted file
 rm creds-decrypted.json
@@ -305,7 +342,7 @@ The CLI respects the same environment variables as the n8n server:
 | `N8N_HOST` | Host to bind to |
 | `N8N_PORT` | Port to listen on |
 | `N8N_PROTOCOL` | `http` or `https` |
-| `DB_TYPE` | Database type (`sqlite`, `postgresdb`, `mysqldb`) |
+| `DB_TYPE` | Database type (`sqlite` or `postgresdb`; MySQL/MariaDB support was removed in n8n 2.0) |
 | `DB_POSTGRESDB_HOST` | PostgreSQL host |
 | `DB_POSTGRESDB_DATABASE` | PostgreSQL database name |
 | `N8N_ENCRYPTION_KEY` | Encryption key for credentials (critical for import/export) |
@@ -325,13 +362,18 @@ The CLI respects the same environment variables as the n8n server:
 0 2 * * * docker exec -u node n8n n8n export:workflow --all --output=/backups/workflows-$(date +\%Y\%m\%d).json 2>&1 | logger -t n8n-backup
 ```
 
-### Deactivate All Workflows Before Maintenance
+### Unpublish All Workflows Before Maintenance
 
 ```bash
-n8n update:workflow --all --active=false
-# ... perform maintenance ...
-n8n update:workflow --all --active=true
-# Restart n8n to apply changes
+# Record what is published first, so you know what to bring back
+n8n export:workflow --all --published --output=published-before-maintenance.json
+
+n8n unpublish:workflow --all
+# Restart n8n to apply the change, then ... perform maintenance ...
+
+# There is no "publish all": publish each workflow again by ID
+n8n publish:workflow --id=<ID>
+# Restart n8n to apply the change
 ```
 
 ### Test Workflow from CI/CD
@@ -344,3 +386,26 @@ if echo "$OUTPUT" | grep -q "ERROR"; then
   exit 1
 fi
 ```
+
+---
+
+## `@n8n/cli` — the remote API client
+
+A lightweight client over the Public API. It runs anywhere with network access and respects the API key's scopes. Current release at the time of writing: 0.20.0 (`npm view @n8n/cli version`).
+
+```bash
+# Zero install
+npx @n8n/cli workflow list
+
+# Or install globally
+npm install -g @n8n/cli
+
+# Connect (saved to ~/.n8n-cli/config.json, mode 0600) ...
+n8n-cli config set-url https://<n8n-host>
+n8n-cli config set-api-key "$N8N_API_KEY"
+# ... or use environment variables N8N_URL and N8N_API_KEY, or the --url / --api-key flags
+```
+
+Topics: `workflow` (list, get, create, update, delete, activate, deactivate, tags, transfer), `execution`, `credential`, `project`, `tag`, `variable`, `data-table`, `user`, `source-control`, `audit`, `login` / `logout`. Output via `--format=table|json|id-only`. `n8n-cli skill install --global` installs a skill that teaches Claude Code the client.
+
+Use it for remote reads and scripted changes; use the Server CLI for anything that must bypass access control (backups, license, resets) — and remember the two have different `activate` / `publish` vocabularies, so check `n8n-cli workflow --help` on the version you installed.

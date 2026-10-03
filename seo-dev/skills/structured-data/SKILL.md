@@ -1,11 +1,13 @@
 ---
 name: structured-data
-description: Schema.org structured data and JSON-LD implementation for Next.js. This skill should be used when the user asks about "structured data", "JSON-LD", "Schema.org", "rich snippets", "rich results", "schema markup", "Organization schema", "Article schema", "Product schema", "BreadcrumbList", "FAQ schema", or needs to add structured data to improve search appearance.
+description: Schema.org structured data and JSON-LD implementation for Next.js. This skill should be used when the user asks about "structured data", "JSON-LD", "Schema.org", "rich snippets", "rich results", "schema markup", "Organization schema", "Article schema", "Product schema", "BreadcrumbList", or needs to add structured data to improve search appearance.
 ---
 
 # Structured Data (Schema.org / JSON-LD)
 
-Structured data tells search engines what your content means, not just what it says. Google uses it to generate rich results (star ratings, product prices, breadcrumb trails, FAQ dropdowns). Use JSON-LD format — Google's recommended approach.
+Structured data tells search engines what your content means, not just what it says. Google uses it to generate rich results (product prices and ratings, breadcrumb trails, event listings, article and video appearances) and to pick a site name. Use JSON-LD format — Google's recommended approach.
+
+Not every type still produces a visible result. Google retires features over time — the FAQ rich result stopped appearing on 2026-05-07, the HowTo rich result was removed from desktop and mobile (fully gone since September 2023), and the search box under brand results was removed on 2024-11-21. Markup for a retired feature is harmless (Google says unsupported structured data causes no problems in Search or errors in Search Console), but it earns no SERP appearance. Before recommending a type for its search appearance, check the current [Search Gallery](https://developers.google.com/search/docs/appearance/structured-data/search-gallery).
 
 ## Setup
 
@@ -73,19 +75,21 @@ export function createOrganization(org: {
   }
 }
 
-export function createWebSite(url: string, name: string): WithContext<WebSite> {
+export function createWebSite(
+  url: string,
+  name: string,
+  alternateName?: string[]
+): WithContext<WebSite> {
+  // Google reads WebSite name / alternateName / url as the site name shown in
+  // results. It only uses this markup on the home page. Do not add a
+  // SearchAction here: Google removed the search-box feature it powered, and
+  // the markup no longer does anything in Google Search.
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     url,
     name,
-    // SearchAction with query-input requires a type assertion because schema-dts
-    // does not include the 'query-input' property in its SearchAction type.
-    // The JSON-LD output is valid — Google requires this exact format.
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${url}/search?q={search_term_string}`,
-    } as WithContext<WebSite>['potentialAction'],
+    alternateName,
   }
 }
 
@@ -170,12 +174,12 @@ export function createProduct(product: {
 
 ### Sitewide Schema (Root Layout)
 
-Place Organization and WebSite schema in the root layout — they apply to every page:
+Place Organization schema in the root layout — it applies to every page. `WebSite` (site name) is read by Google from the home page only, so render it in `app/page.tsx` instead (see below):
 
 ```tsx
 // app/layout.tsx
 import { JsonLd } from '@/components/json-ld'
-import { createOrganization, createWebSite } from '@/lib/schema'
+import { createOrganization } from '@/lib/schema'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -192,10 +196,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             ],
           })}
         />
-        <JsonLd data={createWebSite('https://yourdomain.com', 'Your Company')} />
         {children}
       </body>
     </html>
+  )
+}
+```
+
+### Home Page (Site Name)
+
+```tsx
+// app/page.tsx
+import { JsonLd } from '@/components/json-ld'
+import { createWebSite } from '@/lib/schema'
+
+export default function HomePage() {
+  return (
+    <>
+      <JsonLd data={createWebSite('https://yourdomain.com', 'Your Company', ['YC'])} />
+      {/* page content */}
+    </>
   )
 }
 ```
@@ -246,7 +266,7 @@ const schemas = {
   '@context': 'https://schema.org',
   '@graph': [
     createOrganization({ name: 'Acme', logo: '/logo.png', url: 'https://acme.com' }),
-    createWebSite('https://acme.com', 'Acme'),
+    createWebSite('https://acme.com', 'Acme'), // home page only
   ],
 }
 
@@ -256,26 +276,36 @@ const schemas = {
 />
 ```
 
-## Rich Results Impact (2026)
+## What Google Still Renders (2026)
 
-| Schema Type | Rich Result | CTR Lift | Use On |
-|-------------|-------------|----------|--------|
-| Organization | Knowledge panel | Brand queries | Root layout |
-| WebSite + SearchAction | Sitelinks searchbox | Brand queries | Root layout |
-| BreadcrumbList | Breadcrumb trail in SERP | +5-10% | All pages |
-| Article | Article snippets | High | Blog/news posts |
-| Product + Offer | Price, stock, ratings | +30-35% | Product pages |
-| HowTo | Step display (mobile only) | +15-25% | Tutorial pages |
-| Event | Event listing | +20-25% | Event pages |
+Types Google lists in its [Search Gallery](https://developers.google.com/search/docs/appearance/structured-data/search-gallery) (last updated 2026-06-15): Article, Breadcrumb, Carousel, Course list, Dataset, Discussion forum, Education Q&A, Employer aggregate rating, Event, Image metadata, Job posting, Local business, Math solver, Movie, Organization, Product, Profile page, Q&A, Recipe, Review snippet, Software app, Speakable, Subscription and paywalled content, Vacation rental, Video. Eligibility and the exact appearance differ per type — read the type's own documentation.
 
-**FAQPage is restricted** to government and health websites since 2023. Do not implement it for regular websites — the rich result will not appear.
+| Schema Type | What it feeds | Use On |
+|-------------|---------------|--------|
+| Organization | Organization details, logo, knowledge panel signals | Root layout |
+| WebSite (`name`, `alternateName`) | Site name in results | Home page only |
+| BreadcrumbList | Breadcrumb trail in the result | Inner pages |
+| Article | Article appearance (headline, image, dates, author) | Blog / news posts |
+| Product + Offer | Product snippets and merchant listings (price, availability, ratings) | Product pages |
+| Event | Event experiences | Event pages |
+| SoftwareApplication | Software app appearance | App pages |
+
+**No longer produce a Google SERP feature** — do not implement these to win a result:
+
+| Type | Status |
+|------|--------|
+| FAQPage | The FAQ rich result stopped appearing for all sites on 2026-05-07; Google removed its documentation and Rich Results Test support |
+| HowTo | The HowTo rich result is removed on both desktop and mobile (fully gone since September 2023); its documentation was removed |
+| WebSite + SearchAction (search box under brand results) | Feature removed on 2024-11-21 |
+
+Existing valid markup of these types is harmless and does not need to be deleted — other consumers may still read it. Just do not spend effort adding it for Google, and write useful visible content (an FAQ section, numbered steps) for readers instead. Do not quote click-through-rate lifts for any type: Google publishes none.
 
 ## Validation
 
 Always validate structured data before deploying:
 
-1. **Google Rich Results Test**: https://search.google.com/test/rich-results — test by URL or paste code
-2. **Schema.org Validator**: https://validator.schema.org/ — syntax validation
+1. **Google Rich Results Test**: https://search.google.com/test/rich-results — test by URL or paste code (only for types Google still renders; it no longer evaluates FAQ markup)
+2. **Schema.org Validator**: https://validator.schema.org/ — syntax validation, works for any type
 3. **Google Search Console** → Enhancements — monitor after deployment (2-4 weeks for results)
 
 For complete JSON-LD examples covering all schema types, see `references/schema-examples.md`.
@@ -284,7 +314,8 @@ For complete JSON-LD examples covering all schema types, see `references/schema-
 
 | Mistake | Fix |
 |---------|-----|
-| Using `FAQPage` on a regular website | Restricted to gov/health since 2023 — remove it |
+| Adding `FAQPage` or `HowTo` markup to win a rich result | Both features are removed from Google Search (FAQ since 2026-05-07, HowTo since 2023). Markup is harmless, but build a good visible FAQ or step list and skip the effort |
+| Adding `WebSite` + `SearchAction` for a search box in results | That feature was removed in 2024. Keep `WebSite` with `name` / `alternateName` for the site name |
 | Missing `@context` field | Always include `'@context': 'https://schema.org'` |
 | Two identical schema types on same page | Combine into one or use `@graph` |
 | Hardcoded dates | Use dynamic dates from CMS/database |

@@ -7,10 +7,10 @@
       "expected_output": "Should combine routing pattern, parallelization with batch.triggerByTaskAndWait, and wait.forToken for human approval",
       "files": [],
       "expectations": [
-        "Uses routing pattern (classify then dispatch)', 'type': 'content_check",
-        "Uses batch or parallel execution pattern', 'type': 'content_check",
-        "Includes wait.forToken or human-in-the-loop', 'type': 'content_check",
-        "Checks result.ok before accessing output', 'type': 'content_check"
+        "Uses routing pattern (classify then dispatch)",
+        "Uses batch or parallel execution pattern",
+        "Includes wait.createToken followed by wait.forToken (token id starts with waitpoint_), or another human-in-the-loop mechanism",
+        "Checks result.ok before accessing output"
       ]
     }
   ]

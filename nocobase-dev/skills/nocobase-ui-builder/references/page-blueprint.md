@@ -2,7 +2,7 @@
 
 This file defines the simplified public page-structure JSON blueprint used by `applyBlueprint`.
 
-Agent-facing write path is `nb api flow-surfaces apply-blueprint`. This file owns the raw page business document; for command body details, always read [tool-shapes.md](./tool-shapes.md). For reusable popup / block / fields planning, read [templates.md](./templates.md) instead of restating that matrix here.
+Agent-facing write path is `nb api flow-surfaces apply-blueprint`. This file owns the raw page business document; for command body details, always read [tool-shapes.md](./tool-shapes.md). For layout/group/page-identity decisions, read [navigation-targets.md](./navigation-targets.md). For reusable popup / block / fields planning, read [templates.md](./templates.md) instead of restating that matrix here.
 
 ## 1. Core Rules
 
@@ -11,8 +11,9 @@ Agent-facing write path is `nb api flow-surfaces apply-blueprint`. This file own
 - `version` stays `"1"`.
 - `mode` is either `"create"` or `"replace"`.
 - `create` creates a new menu item + page.
-- For duplicate-page prevention, page identity is `(navigation.group.routeId, page.title)`, after resolving a unique `navigation.group.title` to routeId. In `create`, same group + same page title may be prepared as `replace` with `target.pageSchemaUid`; different group + same page title does not merge, reuse, or auto-replace another page.
-- In `create`, any newly created `navigation.group` and any top-level or second-level `navigation.item` must include one valid semantic Ant Design icon.
+- `navigation.layoutUid` and `navigation.portalUid` are mutually exclusive create targets. After Portal preflight selects a no-code Portal, `portalUid` is required from its exact `list-navigation-targets` mapping even when the user did not explicitly request a workspace, and `layoutUid` must be omitted. Omit both for desktop/admin only in the legacy lane explicitly proven by `capabilities.multiPortal === false`; that same legacy lane uses `layoutUid: "mobile-layout-model"` for mobile intent.
+- Duplicate-page prevention follows [navigation-targets.md](./navigation-targets.md): page identity is target layout/portal + `navigation.group.routeId` (or the mobile/root slot) + `page.title`. The same group and same title may replace; a different group, layout, or portal with the same title does not merge, reuse, or auto-replace another page.
+- In non-mobile `create`, any newly created `navigation.group` and any top-level or second-level `navigation.item` must include one valid semantic Ant Design icon. In mobile `create`, `navigation.item` must include the root tab title/icon and no group icon is needed.
 - `replace` rewrites one existing page and therefore requires `target.pageSchemaUid`.
 - In `replace`, omitted page-level fields are left unchanged.
 - Tabs are interpreted in array order. In `replace`, blueprint tabs map to existing route-backed tab slots by index.
@@ -80,6 +81,7 @@ Payload boundary:
   "version": "1",
   "mode": "create",
   "navigation": {
+    "portalUid": "<resolved-no-code-portal-uid>",
     "group": { "title": "Workspace", "icon": "AppstoreOutlined" },
     "item": { "title": "Employees", "icon": "TeamOutlined" }
   },
@@ -137,7 +139,7 @@ Payload boundary:
 - `version`: currently only `"1"`
 - `mode`: `"create" | "replace"`
 - `target`: required only for `replace`, shape `{ "pageSchemaUid": "..." }`
-- `navigation`: only for `create`; controls menu group/item metadata. Newly created groups must include `icon`, and newly created top-level or second-level items must also include `icon`.
+- `navigation`: only for `create`; controls target Portal/layout plus menu group/item metadata. Set at most one of `layoutUid` and `portalUid`. A selected no-code Portal requires its exactly mapped `portalUid` regardless of whether the user said workspace; omit both only for desktop/admin in the explicitly proven `capabilities.multiPortal === false` legacy lane. For legacy mobile layouts or mobile-backed no-code Portals, put the entry title/icon in `navigation.item` and omit `navigation.group`. See [navigation-targets.md](./navigation-targets.md) for target discovery, group reuse, duplicate same-title groups, and duplicate-page identity.
 - `page`: page-level metadata
 - `defaults`: optional collection-level defaults for generated popup names and large grouped popup field candidates
 - `assets`: reusable script/chart blobs referenced by blocks/fields/actions
@@ -244,22 +246,16 @@ Example:
 
 ### `navigation.group` semantics
 
-- Prefer `navigation.group.routeId` when the destination menu group is already known.
-- `navigation.group.routeId` has highest priority; when it is present, `title`, `icon`, `tooltip`, and `hideInMenu` are ignored for the existing group.
-- `navigation.group.title` is for new-group creation or unique same-title reuse.
-- When `navigation.group.title` creates a new group, `navigation.group.icon` is required.
-- When `routeId` is omitted and `title` matches:
-  - zero existing groups -> create a new group
-  - one existing group -> reuse that group
-  - multiple existing groups -> reject and require `routeId`
-- If same-title reuse hits an existing group, `icon`, `tooltip`, and `hideInMenu` are ignored.
-- If an existing group's metadata must change, do not rely on applyBlueprint create; use low-level `updateMenu` instead.
-- During backend authoring, the server may rewrite one unique same-title existing group or one explicit `routeId` group to `navigation.group.routeId`. Treat the persisted response as authoritative.
+- `navigation.group` is for non-mobile creates only; mobile layouts and mobile-backed portals omit the group.
+- Prefer `navigation.group.routeId` when the non-mobile destination group is known.
+- `navigation.group.title` may create or reuse a group only under the target layout or portal; duplicate same-title groups require explicit `routeId`.
+- `navigation.group.routeId` has highest priority and ignores group metadata on reuse.
+- For the full group resolution and duplicate-page identity matrix, use [navigation-targets.md](./navigation-targets.md).
 
 ### `navigation.item` semantics
 
-- In `create`, a new top-level or second-level `navigation.item` must include both `title` and `icon`.
-- When `navigation.item` is attached under one explicit existing `navigation.group.routeId`, keep `icon` by default.
+- In `create`, a new top-level or second-level `navigation.item` must include both `title` and `icon`; for mobile, this is the root tab entry.
+- When `navigation.item` is attached under one explicit existing non-mobile `navigation.group.routeId`, keep `icon` by default.
 - Replacing the page does not use `navigation.item` to mutate existing menu metadata.
 
 ## 3. Create Example
@@ -843,6 +839,8 @@ Workflow binding for submit/update actions uses only `settings.triggerWorkflows`
 ```
 
 For collection-action hosts (`table`, `list`, `gridCard`, `calendar`, `kanban`):
+
+Before explicitly writing any `defaultFilter.items[].operator`, load the `nocobase-utils` skill with topic `filter`, then read [Filter Condition Format](../../nocobase-utils/references/filter/index.md), resolve each `path`'s terminal field from live metadata, and select only an operator allowed for that frontend field group. Keep the UI Builder `{ logic, items }` shape. Date wording such as “less than/before” maps to `$dateBefore`, not `$lt`; “at least/greater than or equal” maps to `$dateNotBefore`, not `$gte`.
 
 - when the user only asks to “增加筛选 / filter” on that data block, or explicitly adds “搜索 / search” to that host with wording such as “支持搜索 / 带搜索 / 可搜索 / searchable”, prefer the same block-level `filter` action
 - do not upgrade that request into a root `filterForm` unless the user explicitly asks for a filter/search block, form, or query area

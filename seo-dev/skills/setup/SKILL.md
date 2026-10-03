@@ -38,7 +38,7 @@ Only one package is needed — `schema-dts` provides TypeScript types for Schema
 pnpm add -D schema-dts
 ```
 
-Do NOT install `next-seo` — it is deprecated and replaced by the built-in Next.js Metadata API. Do NOT install `next-sitemap` unless the project has complex dynamic sitemap requirements that exceed built-in `sitemap.ts` capabilities.
+`next-seo` is not needed. Meta tags (`<title>`, description, Open Graph, canonical) come from the built-in Next.js Metadata API — do not use the Pages Router `NextSeo` / `DefaultSeo` components in an App Router project. `next-seo` v7 (7.3.0, July 2026) is actively maintained, but it is now a library of JSON-LD components (`ArticleJsonLd`, `ProductJsonLd`, ...). It is an optional alternative to the hand-written `JsonLd` component + `schema-dts` types taught in the `structured-data` skill; if the project already uses it, keep it rather than rewriting. Do NOT install `next-sitemap` unless the project has complex dynamic sitemap requirements that exceed built-in `sitemap.ts` capabilities.
 
 ## Step 3: Set metadataBase in Root Layout
 
@@ -141,7 +141,7 @@ After setup, confirm all pieces are in place:
 1. Run `pnpm build` — no metadata errors
 2. Visit `http://localhost:3000/sitemap.xml` — valid XML
 3. Visit `http://localhost:3000/robots.txt` — correct rules
-4. View page source — `<title>`, `<meta name="description">`, and `metadataBase` present
+4. Inspect the rendered page (DevTools Elements, Search Console URL Inspection, or Playwright) — `<title>`, `<meta name="description">`, and resolved absolute `og:image` URLs present. on request-time rendered pages Next.js 15.2+ streams `generateMetadata` output into `<body>` for JavaScript-capable crawlers (prerendered pages with a non-dynamic `generateMetadata` keep it in the initial `<head>`); `curl` shows streamed metadata in `<head>` only for HTML-limited bots (see the `meta-tags` skill)
 5. Check `<link rel="canonical">` on each page
 
 ## SEO Setup Checklist

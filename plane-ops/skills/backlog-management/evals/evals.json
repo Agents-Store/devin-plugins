@@ -7,7 +7,7 @@
       "expected_output": "Full health report: total items, unestimated count, no-priority count, no-assignee count, oversized items, missing descriptions, health score %, status tier (Healthy/Good/Needs Work/Unhealthy), and a prioritized remediation plan.",
       "files": [],
       "expectations": [
-        "Fetches all work items via list_work_items",
+        "Counts the PQL-filterable metrics with workitem(action=count, pql=...) and lists the backlog with workitem(action=list, pql='stateGroup IN (\"backlog\",\"unstarted\")') following next_cursor",
         "Calculates all 6 metrics: total, unestimated, unassigned, no_priority, no_description, large_items",
         "Produces a health score using the (ready_items / total_items) × 100 formula",
         "Maps the score to a tier (Healthy/Good/Needs Work/Unhealthy)",
@@ -50,6 +50,19 @@
         "Suggests a re-measure at the end to confirm health improved",
         "References other skills (estimation, task-decomposition) for sub-tasks"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Which backlog items in TaskFlow have gone stale and have nobody assigned? Don't pull the whole backlog into the conversation.",
+      "expected_output": "Server-side PQL filter on the backlog state groups, hasNoAssignee() and updatedAt < daysAgo(n), counted first and listed second; stale items proposed for cancel-then-archive, never silently deleted.",
+      "expectations": [
+        "Filters server-side with pql on workitem(action=list) or workitem(action=count), e.g. stateGroup IN (\"backlog\",\"unstarted\") AND hasNoAssignee() AND updatedAt < daysAgo(42), instead of listing everything and filtering client-side",
+        "Counts first with workitem(action=count) and reads total_count before listing",
+        "Keeps the query at 5 conditions or fewer and consults get_pql_reference for anything beyond the documented examples",
+        "Proposes cancelling and then archiving (workitem(action=archive) needs a completed or cancelled item) rather than deleting, and asks before any delete",
+        "Says that unestimated or no-description items cannot be filtered by PQL and are read from the point and description_stripped fields of the listed items"
+      ],
+      "files": []
     }
   ]
 }

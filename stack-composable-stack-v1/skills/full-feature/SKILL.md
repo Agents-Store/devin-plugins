@@ -16,25 +16,25 @@ Follow these steps in order for every new feature.
 1. Define tables in PostgreSQL using `snake_case` naming
 2. Include standard fields: `id`, `created_at`, `updated_at`
 3. Define relations (foreign keys, junction tables)
-4. Create the tables using the `postgresql-external-dev` plugin skills
-5. Alternatively, create tables directly using PostgreSQL MCP:
+4. Create the tables using the `postgresql-external-dev` plugin skills (`create-tables`, `relations`)
+5. Alternatively, create tables directly using PostgreSQL MCP (tools: `postgresql-external-dev:postgres-mcp-tools`):
 
 ```
-Tool: mcp__postgresql-mcp__execute_sql
+Tool: mcp__plugin_stack-composable-stack-v1_postgresql-mcp__execute_sql
 Input: { "sql": "CREATE TABLE orders (id SERIAL PRIMARY KEY, title TEXT NOT NULL, status TEXT DEFAULT 'pending', created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now())" }
 ```
 
 6. Verify schema with PostgreSQL MCP:
 
 ```
-Tool: mcp__postgresql-mcp__list_tables
+Tool: mcp__plugin_stack-composable-stack-v1_postgresql-mcp__list_tables
 Input: { "table_names": "orders" }
 ```
 
 Verify the tables also appear in NocoDB:
 
 ```
-Tool: mcp__nocodb__getTablesList
+Tool: mcp__plugin_stack-composable-stack-v1_nocodb__getTablesList
 ```
 
 ### Step 2: Set Up NocoDB Views (Data Layer)
@@ -65,6 +65,9 @@ Choose the appropriate service:
 3. Add NocoDB read/write operations
 4. Configure error handling
 5. Name: `[Domain] - [Action] - [Trigger]`
+6. Publish the workflow so the production webhook URL is live
+
+Workflow shapes: `n8n-dev:examples`. Which service to pick: `background-job`.
 
 **For Trigger.dev tasks (durable, long-running):**
 1. Create task file in `src/trigger/`
@@ -73,14 +76,16 @@ Choose the appropriate service:
 4. Add NocoDB status updates
 5. Deploy with `npx trigger.dev deploy`
 
+Task code: `trigger-dev:task-development` (`references/record-driven-tasks.md`).
+
 ### Step 5: Connect the Layers
 
 Wire up the integration points:
 
-1. **Data → Logic**: NocoDB webhook → n8n/Trigger.dev
-2. **Interface → Logic**: NocoBase button/workflow → n8n webhook
+1. **Data → Logic**: NocoDB webhook → n8n/Trigger.dev (`nocodb-to-n8n`, `nocodb-to-trigger`; events and payload: `nocodb-ops:webhooks`)
+2. **Interface → Logic**: NocoBase button/workflow → n8n webhook (`nocobase-to-n8n`)
 3. **Logic → Data**: n8n/Trigger.dev → NocoDB MCP (read/write records)
-4. **Logic → Data (direct)**: n8n HTTP Request → PostgREST API (REST CRUD)
+4. **Logic → Data (direct)**: n8n HTTP Request → PostgREST API (REST CRUD; see `data-access-selection`)
 5. **Logic → Data (SQL)**: Trigger.dev/n8n → PostgreSQL MCP `execute_sql` (complex queries)
 6. **Logic → Interface**: n8n → NocoBase API (update UI state)
 

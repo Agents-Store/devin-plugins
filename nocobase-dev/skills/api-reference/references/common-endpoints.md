@@ -102,10 +102,11 @@ curl -X POST -H "$H" -H "$J" \
 # List
 curl -H "$H" "${NB_URL}/api/workflows:list"
 
-# Manually trigger a workflow (key or id)
+# Manually run a workflow — filterByTk is the integer workflow id; the whole body is the
+# trigger context (here a collection-event trigger: `data` is the record), no extra envelope
 curl -X POST -H "$H" -H "$J" \
-     -d '{"data": {"orderId": 100}}' \
-     "${NB_URL}/api/workflows:trigger?filterByTk=order-fulfilment"
+     -d '{"data": {"id": 100, "status": "paid"}}' \
+     "${NB_URL}/api/workflows:execute?filterByTk=12"
 
 # Recent executions
 curl -H "$H" "${NB_URL}/api/executions:list?pageSize=50&sort=-createdAt"
@@ -175,3 +176,33 @@ For pages, blocks, popups, tabs, and linkage rules prefer the `flowSurfaces` res
 ```
 
 URL-encode and pass as `?filter=…`. Operators: `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$notIn`, `$includes`, `$notIncludes`, `$startsWith`, `$endsWith`, `$null`, `$notNull`, `$between`, `$and`, `$or`. Full grammar lives in `nocobase-data-modeling`.
+
+## 11. Calling the API from n8n or another service
+
+An automation tool reaches the same endpoints with a bearer token. In an **n8n HTTP Request node** keep the token in a credential (Generic Credential Type → Header Auth, name `Authorization`, value `Bearer <API key>`) and fix the base URL in the node. n8n 2.x blocks `$env` in expressions and Code nodes by default, so do not build the URL or token from `{{ $env.… }}`.
+
+| Operation | Method and URL | Body |
+|-----------|----------------|------|
+| List with a filter | `GET ${NB_URL}/api/orders:list` with query `filter={"status":{"$eq":"pending"}}` and `pageSize=50` | — |
+| Create | `POST ${NB_URL}/api/orders:create` | `{ "title": "New Order", "status": "pending" }` |
+| Update | `POST ${NB_URL}/api/orders:update?filterByTk=1` | `{ "status": "completed" }` |
+
+The same calls with `curl` (`-G` and `--data-urlencode` do the URL-encoding of the JSON filter):
+
+```bash
+curl -G -H "$H" "${NB_URL}/api/orders:list" \
+     --data-urlencode 'filter={"status":{"$eq":"pending"}}' \
+     --data-urlencode 'pageSize=50'
+
+curl -X POST -H "$H" -H "$J" \
+     -d '{"title":"New Order","status":"pending"}' \
+     "${NB_URL}/api/orders:create"
+
+curl -X POST -H "$H" -H "$J" \
+     -d '{"status":"completed"}' \
+     "${NB_URL}/api/orders:update?filterByTk=1"
+```
+
+- `:list` answers `{ "data": [...], "meta": { "count", "page", "pageSize", "totalPage" } }` — page through with `page` until `totalPage`
+- The update body holds only the fields to change; `filterByTk` is the primary key of the record
+- The token needs a role that may use those actions on that collection (a `403` is ACL, see `nocobase-acl-manage`)

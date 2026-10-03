@@ -10,7 +10,7 @@ your-project/
 │   ├── another-task.ts
 │   └── streams.ts           # Optional — realtime stream definitions
 ├── package.json
-├── .env                     # TRIGGER_SECRET_KEY, TRIGGER_API_URL
+├── .env                     # TRIGGER_SECRET_KEY (current environment's key), TRIGGER_API_URL
 └── ...
 ```
 
@@ -24,7 +24,8 @@ import { defineConfig } from "@trigger.dev/sdk";
 export default defineConfig({
   project: "proj_xxxxx",
   dirs: ["./src/trigger"],    // Where to find task files
-  runtime: "node",            // "node", "node-22", or "bun"
+  runtime: "node",            // "node", "node-22", "node-24", "node-26", or "bun"
+  maxDuration: 300,           // required: seconds, at least 5
   logLevel: "info",
 });
 ```
@@ -42,7 +43,7 @@ For monorepos, point to the config explicitly:
 
 ```bash
 npx trigger.dev@latest dev --config ./packages/jobs/trigger.config.ts
-npx trigger.dev@latest deploy --config ./packages/jobs/trigger.config.ts
+npx trigger.dev@<version> deploy --config ./packages/jobs/trigger.config.ts
 ```
 
 ## Multiple Task Directories
@@ -50,6 +51,7 @@ npx trigger.dev@latest deploy --config ./packages/jobs/trigger.config.ts
 ```ts
 export default defineConfig({
   project: "proj_xxxxx",
+  maxDuration: 300,
   dirs: ["./src/trigger", "./src/jobs", "./src/scheduled"],
 });
 ```

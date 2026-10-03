@@ -15,9 +15,11 @@ ${CLAUDE_PLUGIN_ROOT}/references/openapi/nocobase.json
 ```
 
 - OpenAPI version: `3.0.3`
-- API version: `2.1.0-beta.29`
-- Endpoints: 272 paths
+- API version: `2.1.0-beta.29` — a **snapshot** from a 2.1.0-beta.29 stand; the stable line is 2.2.x (2.2.20 on 2026-10-02) and publishes more groups (AI employees, LLM services, knowledge bases, …) that this snapshot lacks. Refresh from a ≥ 2.2.x stand is pending.
+- Endpoints: 272 operations on 272 paths, 56 distinct tags (the 19 in the top-level `tags[]` are only the curated headline groups) plus 4 untagged operations (`systemSettings`, `backupSettings`)
 - Server: `/api/` (relative to NocoBase host)
+
+**The snapshot may not contain a group your instance serves.** For the live schema of the connected app, `GET ${NB_URL}/api/swagger:getUrls` lists its schema URLs (needs the API documentation plugin), or ask the CLI — `nb api --help` and `nb api <group> --help` list what the connected app exposes, because `nb` builds those commands from the app's own OpenAPI schema (`nb env update` refreshes them). Treat this file as a map, the live app as the truth.
 
 ## Base URL and auth
 
@@ -68,8 +70,9 @@ Top groups by operation count — see `references/tags-overview.md` for the full
 | `$collection*` (data + 4 relation types) | 41 | CRUD on user-defined collections + relation actions |
 | `collections`, `collections.fields`, `collectionCategories`, `fields`, `dbViews` | 25 | Data modelling surface (schema admin) |
 | `pm` | 9 | Plugin manager (`/api/pm:enable`, `:disable`, `:list`, …) |
+| `backups`, `migration`, `migrationLogs`, `migrationRules`, `migrationRule` | 21 | Server-side backups (`/backup:*`) and migration files, rules and logs (`/migration:*`, `/migrationRules:*`, `/migrationLog:*`) |
 | `roles*`, `dataSources.roles*` | 28 | ACL — roles, role resources, scopes, user-role membership |
-| `workflows`, `flow_nodes`, `executions`, `jobs`, `userWorkflowTasks`, `workflows.nodes` | 24 | Workflow CRUD + execution monitoring |
+| `workflows`, `flow_nodes`, `executions`, `jobs`, `userWorkflowTasks`, `workflows.nodes` | 24 | Workflow CRUD, manual run (`/workflows:execute`) + execution monitoring |
 | `users`, `users.roles`, `apiKeys`, `Auth`, `Authenticator`, `OIDC`, `SAML`, `Basic auth`, `verifications*` | ~30 | Identity, auth, MFA |
 | `app` | 5 | Lifecycle — `getInfo`, `getLang`, `getPlugins`, `restart`, `clearCache` |
 | `uiSchemas` | 9 | Lower-level UI schema CRUD (used by ui-builder) |
@@ -104,7 +107,7 @@ Always feed the path you derived back to the user as `${NB_URL}/api{path}` — t
 ## Distilled summaries
 
 - `references/tags-overview.md` — every tag, one line each, with the matching skill in this plugin.
-- `references/common-endpoints.md` — copy-paste curl recipes for the 12 highest-traffic operations.
+- `references/common-endpoints.md` — copy-paste curl recipes for the highest-traffic operations, plus a section on calling the API from n8n or another service.
 
 ## Notes and gotchas
 
@@ -113,4 +116,5 @@ Always feed the path you derived back to the user as `${NB_URL}/api{path}` — t
 - **Pagination.** `page` (1-indexed) and `pageSize` (default 20) on any `:list`. The response wraps results in `{ data, meta: { count, page, pageSize, totalPage } }`.
 - **`appends`.** Pass `appends=relName` (repeat for each relation) on `:list` / `:get` to eager-load relations; otherwise relations are not embedded.
 - **Errors.** 4xx/5xx return `{ errors: [{ message, code? }] }`. 401 is auth (see `auth` skill); 403 is ACL (see `nocobase-acl-manage`).
-- **OpenAPI completeness.** The spec covers core + bundled plugins shipping with NocoBase v2.1.0-beta.29. Custom plugins add their own routes that are not in this file — load `nocobase-plugin-development` to learn how plugins register routes.
+- **Manual workflow run.** `POST /api/workflows:execute?filterByTk=<integer workflow id>` (optional `autoRevision=1`). The **whole JSON body is the trigger context** — no `values` or other envelope around it; its shape depends on the trigger (a collection-event trigger reads `data` — the record — a schedule trigger reads `date`). Response: `{ execution: { id, status }, newVersionId? }` — the object may arrive under a `data` key, so read both. The key of a workflow is not accepted as `filterByTk`. A different action, `:trigger`, exists only for custom-action triggers — see `nocobase-workflow-manage`.
+- **OpenAPI completeness.** The spec covers core + bundled plugins shipping with NocoBase v2.1.0-beta.29. Newer core releases and custom plugins add routes that are not in this file — use the live schema (above), and load `nocobase-plugin-development` to learn how plugins register routes.

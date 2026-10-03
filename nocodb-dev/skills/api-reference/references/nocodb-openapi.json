@@ -4,8 +4,8 @@
     "id": "qiz1rcfqd2jy6"
   },
   "info": {
-    "title": "NocoDB",
-    "version": null,
+    "title": "NocoDB v3",
+    "version": "",
     "description": "NocoDB API Documentation"
   },
   "servers": [
@@ -1523,235 +1523,6 @@
   },
   "components": {
     "schemas": {
-      "0": {
-        "title": "Formula Button",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "formula"
-            ],
-            "description": "Button type: formula"
-          },
-          "formula": {
-            "type": "string",
-            "description": "Formula to execute"
-          },
-          "label": {
-            "type": "string",
-            "description": "Label of the button"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Icon of the button"
-          },
-          "color": {
-            "type": "string",
-            "enum": [
-              "brand",
-              "red",
-              "green",
-              "maroon",
-              "blue",
-              "orange",
-              "pink",
-              "purple",
-              "yellow",
-              "gray"
-            ],
-            "description": "Color of the button"
-          },
-          "theme": {
-            "type": "string",
-            "enum": [
-              "solid",
-              "light",
-              "text"
-            ],
-            "description": "Theme of the button"
-          }
-        },
-        "required": [
-          "type",
-          "formula"
-        ],
-        "additionalProperties": false
-      },
-      "1": {
-        "title": "Webhook Button",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "webhook"
-            ],
-            "description": "Button type: webhook"
-          },
-          "button_hook_id": {
-            "type": "string",
-            "description": "ID of the webhook to trigger"
-          },
-          "label": {
-            "type": "string",
-            "description": "Label of the button"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Icon of the button"
-          },
-          "color": {
-            "type": "string",
-            "enum": [
-              "brand",
-              "red",
-              "green",
-              "maroon",
-              "blue",
-              "orange",
-              "pink",
-              "purple",
-              "yellow",
-              "gray"
-            ],
-            "description": "Color of the button"
-          },
-          "theme": {
-            "type": "string",
-            "enum": [
-              "solid",
-              "light",
-              "text"
-            ],
-            "description": "Theme of the button"
-          }
-        },
-        "required": [
-          "type",
-          "button_hook_id"
-        ],
-        "additionalProperties": false
-      },
-      "2": {
-        "title": "AI Button",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "ai"
-            ],
-            "description": "Button type: AI"
-          },
-          "prompt": {
-            "type": "string",
-            "description": "AI prompt to execute"
-          },
-          "integration_id": {
-            "type": "string",
-            "description": "Integration ID for AI service"
-          },
-          "theme": {
-            "type": "string",
-            "enum": [
-              "solid",
-              "light",
-              "text"
-            ],
-            "description": "Theme of the button"
-          },
-          "output_column_ids": {
-            "type": "string",
-            "description": "IDs of columns where AI output should be stored"
-          },
-          "label": {
-            "type": "string",
-            "description": "Label of the button"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Icon of the button"
-          },
-          "color": {
-            "type": "string",
-            "enum": [
-              "brand",
-              "red",
-              "green",
-              "maroon",
-              "blue",
-              "orange",
-              "pink",
-              "purple",
-              "yellow",
-              "gray"
-            ],
-            "description": "Color of the button"
-          }
-        },
-        "required": [
-          "type",
-          "prompt",
-          "integration_id"
-        ],
-        "additionalProperties": false
-      },
-      "3": {
-        "title": "Script Button",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "script"
-            ],
-            "description": "Button type: script"
-          },
-          "script_id": {
-            "type": "string",
-            "description": "ID of the script to trigger"
-          },
-          "label": {
-            "type": "string",
-            "description": "Label of the button"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Icon of the button"
-          },
-          "color": {
-            "type": "string",
-            "enum": [
-              "brand",
-              "red",
-              "green",
-              "maroon",
-              "blue",
-              "orange",
-              "pink",
-              "purple",
-              "yellow",
-              "gray"
-            ],
-            "description": "Color of the button"
-          },
-          "theme": {
-            "type": "string",
-            "enum": [
-              "solid",
-              "light",
-              "text"
-            ],
-            "description": "Theme of the button"
-          }
-        },
-        "required": [
-          "type",
-          "script_id"
-        ],
-        "additionalProperties": false
-      },
       "DataUpsertRecordRequest": {
         "type": "object",
         "required": [
@@ -2163,6 +1934,11 @@
               "enum": [
                 "SingleLineText"
               ]
+            },
+            "options": {
+              "type": "object",
+              "description": "SingleLineText takes no options.",
+              "additionalProperties": false
             }
           }
         },
@@ -2381,6 +2157,9 @@
               "enum": [
                 "Attachment"
               ]
+            },
+            "options": {
+              "$ref": "#/components/schemas/FieldOptions_Attachment"
             }
           }
         },
@@ -2391,6 +2170,11 @@
               "enum": [
                 "Geometry"
               ]
+            },
+            "options": {
+              "type": "object",
+              "description": "Geometry takes no options.",
+              "additionalProperties": false
             }
           }
         },
@@ -2479,6 +2263,26 @@
               "enum": [
                 "Year"
               ]
+            },
+            "options": {
+              "type": "object",
+              "description": "Year takes no options.",
+              "additionalProperties": false
+            }
+          }
+        },
+        "AutoNumber": {
+          "title": "AutoNumber",
+          "properties": {
+            "type": {
+              "enum": [
+                "AutoNumber"
+              ]
+            },
+            "options": {
+              "type": "object",
+              "description": "AutoNumber takes no options.",
+              "additionalProperties": false
             }
           }
         },
@@ -2528,6 +2332,9 @@
               "enum": [
                 "CreatedBy"
               ]
+            },
+            "options": {
+              "$ref": "#/components/schemas/FieldOptions_CreatedBy"
             }
           }
         },
@@ -2538,6 +2345,9 @@
               "enum": [
                 "LastModifiedBy"
               ]
+            },
+            "options": {
+              "$ref": "#/components/schemas/FieldOptions_LastModifiedBy"
             }
           }
         },
@@ -2574,6 +2384,11 @@
               "enum": [
                 "JSON"
               ]
+            },
+            "options": {
+              "type": "object",
+              "description": "JSON takes no options.",
+              "additionalProperties": false
             }
           }
         }
@@ -3090,7 +2905,6 @@
           },
           "field_id": {
             "type": "string",
-            "format": "uuid",
             "description": "Identifier for the field being sorted."
           },
           "direction": {
@@ -3137,7 +2951,6 @@
           },
           "field_id": {
             "type": "string",
-            "format": "uuid",
             "description": "Identifier for the field being sorted."
           },
           "direction": {
@@ -3147,6 +2960,11 @@
               "desc"
             ],
             "description": "Sorting direction, either 'asc' (ascending) or 'desc' (descending)."
+          },
+          "enabled": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether this sort is enabled. Disabled sorts are skipped during evaluation."
           }
         },
         "required": [
@@ -3639,7 +3457,6 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
             "description": "Unique identifier for the view."
           },
           "title": {
@@ -3654,7 +3471,9 @@
               "kanban",
               "calendar",
               "form",
-              "map"
+              "map",
+              "timeline",
+              "gantt"
             ],
             "description": "Type of the view."
           }
@@ -3724,7 +3543,9 @@
                     "kanban",
                     "calendar",
                     "form",
-                    "map"
+                    "map",
+                    "timeline",
+                    "gantt"
                   ],
                   "description": "Type of the view."
                 },
@@ -3787,7 +3608,10 @@
               "kanban",
               "calendar",
               "map",
-              "form"
+              "form",
+              "timeline",
+              "gantt",
+              "list"
             ],
             "description": "Type of the view."
           },
@@ -3861,7 +3685,7 @@
             "show"
           ]
         },
-        "description": "List of fields to be displayed in the view. \n\n- If not specified, all fields are displayed by default.\n- If an empty array is provided, only the display value field will be shown.\n- In case of partial list, fields not included in the list will be excluded from the view."
+        "description": "List of fields to be displayed in the view. \n\n- If not specified, all fields are displayed by default.\n- If an empty array is provided, only the display value field will be shown.\n- In case of partial list, fields not included in the list will be excluded from the view.\n- A `field_id` that does not exist on the table is rejected with `404`."
       },
       "ViewRowColour": {
         "type": "object",
@@ -4032,6 +3856,166 @@
           "date_ranges"
         ]
       },
+      "ViewOptionsTimeline": {
+        "type": "object",
+        "description": "Timeline view configuration. A timeline may have multiple date ranges (e.g. \"planned\" vs \"actual\"); each range has a required start field and an optional end field.",
+        "additionalProperties": false,
+        "properties": {
+          "date_ranges": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "start_date_field_id": {
+                  "type": "string",
+                  "description": "Field ID of the start date column."
+                },
+                "end_date_field_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Field ID of the end date column. Null means the range is a single point in time."
+                }
+              },
+              "required": [
+                "start_date_field_id"
+              ]
+            }
+          }
+        }
+      },
+      "ViewOptionsTimelineCreate": {
+        "description": "Timeline view configuration on create — same shape as ViewOptionsTimeline but requires date_ranges. Update (PATCH) uses the base schema so partial updates are allowed.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ViewOptionsTimeline"
+          },
+          {
+            "required": [
+              "date_ranges"
+            ]
+          }
+        ]
+      },
+      "ViewOptionsGantt": {
+        "type": "object",
+        "description": "Gantt view configuration. Bundles the per-view DateDependency rule with presentation settings stored on the view's meta JSON.",
+        "additionalProperties": false,
+        "properties": {
+          "date_dependency": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DateDependency"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The view-owned date dependency rule. When null, the gantt falls back to the table-level default rule (if any). PATCH replaces the entire object — no partial updates."
+          }
+        }
+      },
+      "ViewOptionsGanttCreate": {
+        "description": "Gantt view configuration on create — same shape as ViewOptionsGantt but requires date_dependency. Update (PATCH) uses the base schema so partial updates are allowed.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ViewOptionsGantt"
+          },
+          {
+            "required": [
+              "date_dependency"
+            ]
+          }
+        ]
+      },
+      "DateDependency": {
+        "type": "object",
+        "description": "Date dependency rule for a gantt view. Top-level properties are all optional; supplying a child object (`dates`, `dependency`) commits to providing every property inside it.",
+        "additionalProperties": false,
+        "properties": {
+          "dates": {
+            "type": "object",
+            "description": "Date column pair. Atomic — supply both or omit the block entirely.",
+            "additionalProperties": false,
+            "properties": {
+              "start_field_id": {
+                "type": "string",
+                "description": "Field ID of the start date column."
+              },
+              "end_field_id": {
+                "type": "string",
+                "description": "Field ID of the end date column."
+              }
+            },
+            "required": [
+              "start_field_id",
+              "end_field_id"
+            ]
+          },
+          "duration_field_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional standalone duration field; independent of the `dates` block."
+          },
+          "dependency": {
+            "type": "object",
+            "description": "Predecessor/successor link configuration. Atomic — supply all five properties or omit the block entirely.",
+            "additionalProperties": false,
+            "properties": {
+              "linkrow_field_id": {
+                "type": "string",
+                "description": "Link-to-another-record field that connects predecessor/successor records."
+              },
+              "linkrow_role": {
+                "type": "string",
+                "enum": [
+                  "predecessors",
+                  "successors"
+                ]
+              },
+              "connection_type": {
+                "type": "string",
+                "enum": [
+                  "end-to-start",
+                  "end-to-end",
+                  "start-to-end",
+                  "start-to-start"
+                ]
+              },
+              "buffer_type": {
+                "type": "string",
+                "enum": [
+                  "flexible",
+                  "fixed",
+                  "none"
+                ]
+              },
+              "buffer_days": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Buffer in days. Meaningful when `buffer_type` is `fixed`; pass 0 when buffer_type is `flexible` or `none`."
+              }
+            },
+            "required": [
+              "linkrow_field_id",
+              "linkrow_role",
+              "connection_type",
+              "buffer_type",
+              "buffer_days"
+            ]
+          },
+          "include_weekends": {
+            "type": "boolean",
+            "default": true
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true,
+            "description": "Soft-disable the rule without deleting it."
+          }
+        }
+      },
       "ViewOptionsGallery": {
         "type": "object",
         "properties": {
@@ -4043,10 +4027,75 @@
       },
       "ViewOptionsMap": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
-          "fk_geo_data_col_id": {
+          "geo_data_field_id": {
             "type": "string",
-            "description": "Foreign Key to GeoData Column to be used for the map view."
+            "description": "Field ID of the GeoData column plotted on the map."
+          }
+        }
+      },
+      "ViewOptionsList": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "List view configuration. Records are organised into a hierarchy of levels; each level is a table linked to its parent through a link field.",
+        "properties": {
+          "levels": {
+            "type": "array",
+            "description": "Ordered levels of the list. Level 1 is the root table; deeper levels connect to their parent via link_field_id.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "level": {
+                  "type": "number",
+                  "description": "1-based depth of this level (1 = root)."
+                },
+                "table_id": {
+                  "type": "string",
+                  "description": "Table shown at this level."
+                },
+                "link_field_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Link field connecting this level to its parent. Omitted/null for the root level."
+                },
+                "filters": {
+                  "$ref": "#/components/schemas/FilterCreate",
+                  "description": "Filters applied at this level."
+                },
+                "sorts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SortCreate"
+                  },
+                  "description": "Sorts applied at this level."
+                },
+                "fields": {
+                  "$ref": "#/components/schemas/ViewFields",
+                  "description": "Field visibility/order at this level. Listed fields are shown in order; unlisted fields are hidden (same semantics as top-level fields)."
+                }
+              },
+              "required": [
+                "level",
+                "table_id"
+              ]
+            }
+          },
+          "show_empty_parents": {
+            "type": "boolean",
+            "description": "Show parent rows that have no child records."
+          },
+          "row_height": {
+            "type": "string",
+            "enum": [
+              "short",
+              "medium",
+              "tall",
+              "extra"
+            ],
+            "description": "Height of the rows in the list view.",
+            "default": "short"
           }
         }
       },
@@ -4086,19 +4135,39 @@
             "description": "Whether to hide branding on the form."
           },
           "banner": {
-            "type": "string",
-            "format": "uri",
-            "description": "URL of the banner image for the form."
+            "description": "Banner image for the form. A bare URL string is accepted and normalized into an attachment object.",
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "$ref": "#/components/schemas/FormImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "logo": {
-            "type": "string",
-            "format": "uri",
-            "description": "URL of the logo for the form."
+            "description": "Logo for the form. A bare URL string is accepted and normalized into an attachment object.",
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "$ref": "#/components/schemas/FormImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "form_background_color": {
             "type": "string",
-            "description": "Background color for the form.",
-            "pattern": "^#[0-9A-Fa-f]{6}$"
+            "description": "Background color for the form. 3-, 6- and 8-digit (with alpha) forms are accepted.",
+            "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
           },
           "redirect_url": {
             "type": "string",
@@ -4120,7 +4189,8 @@
               "$ref": "#/components/schemas/FormFieldConfig"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "ViewCreate": {
         "type": "object",
@@ -4266,6 +4336,76 @@
               },
               {
                 "type": "object",
+                "title": "timeline",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "timeline"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsTimelineCreate"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                },
+                "required": [
+                  "options"
+                ]
+              },
+              {
+                "type": "object",
+                "title": "gantt",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "gantt"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsGanttCreate"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                },
+                "required": [
+                  "options"
+                ]
+              },
+              {
+                "type": "object",
                 "title": "map",
                 "properties": {
                   "type": {
@@ -4311,6 +4451,21 @@
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "title": "list",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "list"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsList"
                   }
                 }
               }
@@ -4441,6 +4596,58 @@
               },
               {
                 "type": "object",
+                "title": "timeline",
+                "properties": {
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsTimeline"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "title": "gantt",
+                "properties": {
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsGantt"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                }
+              },
+              {
+                "type": "object",
                 "title": "map",
                 "properties": {
                   "options": {
@@ -4474,6 +4681,15 @@
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "title": "list",
+                "properties": {
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsList"
                   }
                 }
               }
@@ -4671,6 +4887,73 @@
               },
               {
                 "type": "object",
+                "title": "timeline",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "timeline"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsTimeline"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                },
+                "required": [
+                  "options"
+                ]
+              },
+              {
+                "type": "object",
+                "title": "gantt",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "gantt"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsGantt"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                }
+              },
+              {
+                "type": "object",
                 "title": "map",
                 "properties": {
                   "type": {
@@ -4698,6 +4981,21 @@
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
                     "description": "Row colour configuration for the the view."
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "title": "list",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "list"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsList"
                   }
                 }
               }
@@ -4760,7 +5058,8 @@
               "LastModifiedBy",
               "LinkToAnotherRecord",
               "User",
-              "JSON"
+              "JSON",
+              "AutoNumber"
             ],
             "description": "Field data type."
           },
@@ -4838,7 +5137,8 @@
                   "CreatedBy",
                   "LastModifiedBy",
                   "User",
-                  "JSON"
+                  "JSON",
+                  "AutoNumber"
                 ],
                 "description": "Field data type."
               }
@@ -4863,6 +5163,10 @@
           "generate_text_using_ai": {
             "type": "boolean",
             "description": "Enable text generation for this field using NocoAI."
+          },
+          "smart_mode": {
+            "type": "boolean",
+            "description": "Enable smart text mode."
           }
         },
         "additionalProperties": false
@@ -4871,7 +5175,7 @@
         "type": "object",
         "title": "PhoneNumber",
         "properties": {
-          "validation": {
+          "validate": {
             "type": "boolean",
             "description": "Enable validation for phone numbers."
           }
@@ -4882,7 +5186,7 @@
         "type": "object",
         "title": "URL",
         "properties": {
-          "validation": {
+          "validate": {
             "type": "boolean",
             "description": "Enable validation for URL."
           }
@@ -4893,7 +5197,7 @@
         "type": "object",
         "title": "Email",
         "properties": {
-          "validation": {
+          "validate": {
             "type": "boolean",
             "description": "Enable validation for Email."
           }
@@ -4904,9 +5208,18 @@
         "type": "object",
         "title": "Number",
         "properties": {
-          "locale_string": {
-            "type": "boolean",
-            "description": "Show thousand separator on the UI."
+          "separator": {
+            "type": "string",
+            "description": "Thousand/decimal separator style. `locale` uses the runtime locale, `none_period` / `none_comma` disable thousand grouping.",
+            "enum": [
+              "locale",
+              "none_period",
+              "none_comma",
+              "comma_period",
+              "period_comma",
+              "space_period",
+              "space_comma"
+            ]
           }
         },
         "additionalProperties": false
@@ -4920,6 +5233,19 @@
             "description": "Decimal field precision. Defaults to 0",
             "minimum": 0,
             "maximum": 5
+          },
+          "separator": {
+            "type": "string",
+            "description": "Thousand/decimal separator style. `locale` uses the runtime locale, `none_period` / `none_comma` disable thousand grouping.",
+            "enum": [
+              "locale",
+              "none_period",
+              "none_comma",
+              "comma_period",
+              "period_comma",
+              "space_period",
+              "space_comma"
+            ]
           }
         },
         "additionalProperties": false
@@ -4927,13 +5253,19 @@
       "FieldOptions_Currency": {
         "type": "object",
         "title": "Currency",
-        "description": "Currency settings for this column. Locale defaults to `en-US` and currency code defaults to `USD`",
+        "description": "Currency settings for this column. `currency_locale` defaults to `en-US` and `currency_code` defaults to `USD`",
         "properties": {
-          "locale": {
+          "currency_locale": {
             "type": "string",
             "description": "Locale for currency formatting. Refer https://simplelocalize.io/data/locales/"
           },
-          "code": {
+          "precision": {
+            "type": "number",
+            "description": "Number of decimal places. Defaults to 2.",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "currency_code": {
             "type": "string",
             "description": "Currency code. Refer https://simplelocalize.io/data/locales/",
             "enum": [
@@ -5132,6 +5464,20 @@
           "show_as_progress": {
             "type": "boolean",
             "description": "Display as a progress bar."
+          },
+          "shape": {
+            "type": "string",
+            "enum": [
+              "bar",
+              "circle"
+            ],
+            "description": "Progress bar shape. Only applies when `show_as_progress` is enabled.\n- `bar` (default)\n- `circle`"
+          },
+          "precision": {
+            "type": "number",
+            "description": "Number of decimal places. Defaults to 2.",
+            "minimum": 0,
+            "maximum": 5
           }
         },
         "additionalProperties": false
@@ -5153,7 +5499,7 @@
         "properties": {
           "date_format": {
             "type": "string",
-            "description": "Date format. Supported options are listed below\n- `YYYY/MM/DD`\n- `YYYY-MM-DD`\n- `YYYY MM DD`\n- `DD/MM/YYYY`\n- `DD-MM-YYYY`\n- `DD MM YYYY`\n- `MM/DD/YYYY`\n- `MM-DD-YYYY`\n- `MM DD YYYY`\n- `YYYY-MM`\n- `YYYY MM`"
+            "description": "Date format. Supported options are listed below\n- `YYYY/MM/DD`\n- `YYYY-MM-DD`\n- `YYYY MM DD`\n- `DD/MM/YYYY`\n- `DD-MM-YYYY`\n- `DD MM YYYY`\n- `MM/DD/YYYY`\n- `MM-DD-YYYY`\n- `MM DD YYYY`\n- `YYYY-MM`\n- `YYYY MM`\n- `dddd YYYY-MM-DD`\n- `ddd YYYY-MM-DD`\n- `dddd DD/MM/YYYY`\n- `ddd DD/MM/YYYY`\n- `dddd MM/DD/YYYY`\n- `ddd MM/DD/YYYY`"
           },
           "time_format": {
             "type": "string",
@@ -5184,7 +5530,7 @@
         "properties": {
           "date_format": {
             "type": "string",
-            "description": "Date format. Supported options are listed below\n- `YYYY/MM/DD`\n- `YYYY-MM-DD`\n- `YYYY MM DD`\n- `DD/MM/YYYY`\n- `DD-MM-YYYY`\n- `DD MM YYYY`\n- `MM/DD/YYYY`\n- `MM-DD-YYYY`\n- `MM DD YYYY`\n- `YYYY-MM`\n- `YYYY MM`"
+            "description": "Date format. Supported options are listed below\n- `YYYY/MM/DD`\n- `YYYY-MM-DD`\n- `YYYY MM DD`\n- `DD/MM/YYYY`\n- `DD-MM-YYYY`\n- `DD MM YYYY`\n- `MM/DD/YYYY`\n- `MM-DD-YYYY`\n- `MM DD YYYY`\n- `YYYY-MM`\n- `YYYY MM`\n- `dddd YYYY-MM-DD`\n- `ddd YYYY-MM-DD`\n- `dddd DD/MM/YYYY`\n- `ddd DD/MM/YYYY`\n- `dddd MM/DD/YYYY`\n- `ddd MM/DD/YYYY`"
           }
         },
         "additionalProperties": false
@@ -5251,8 +5597,8 @@
           },
           "color": {
             "type": "string",
-            "description": "Specifies icon color using a hexadecimal color code (e.g., `#36BFFF`).",
-            "pattern": "^#[0-9A-Fa-f]{6}$"
+            "description": "Specifies icon color using a hexadecimal color code (e.g., `#36BFFF`). 3-, 6- and 8-digit (with alpha) forms are accepted.",
+            "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
           }
         },
         "additionalProperties": false
@@ -5276,8 +5622,8 @@
           },
           "color": {
             "type": "string",
-            "description": "Specifies icon color using a hexadecimal color code (e.g., `#36BFFF`).",
-            "pattern": "^#[0-9A-Fa-f]{6}$"
+            "description": "Specifies icon color using a hexadecimal color code (e.g., `#36BFFF`). 3-, 6- and 8-digit (with alpha) forms are accepted.",
+            "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
           }
         },
         "additionalProperties": false
@@ -5286,7 +5632,7 @@
         "type": "object",
         "title": "Barcode",
         "properties": {
-          "format": {
+          "barcode_format": {
             "type": "string",
             "description": "Barcode format (e.g., CODE128)."
           },
@@ -5315,6 +5661,71 @@
           "formula": {
             "type": "string",
             "description": "Formula expression."
+          },
+          "display_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Field type the formula result is rendered as. Null renders the raw result."
+          },
+          "display_column_meta": {
+            "type": "object",
+            "description": "Field options applied to the rendered result, shaped like the `display_type` field's own options."
+          }
+        },
+        "additionalProperties": false
+      },
+      "FieldOptions_Attachment": {
+        "type": "object",
+        "title": "Attachment",
+        "properties": {
+          "max_number_of_attachments": {
+            "type": "integer",
+            "description": "Maximum number of files per cell.",
+            "minimum": 1
+          },
+          "max_attachment_size": {
+            "type": "integer",
+            "description": "Maximum size per file, in megabytes.",
+            "minimum": 1
+          },
+          "supported_attachment_mime_types": {
+            "type": "array",
+            "description": "Allowed MIME types. `*` allows everything.",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "FieldOptions_CreatedBy": {
+        "type": "object",
+        "title": "CreatedBy",
+        "properties": {
+          "allow_multiple_users": {
+            "type": "boolean",
+            "description": "Allow selecting multiple users."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Notify the user when they are assigned to a record."
+          }
+        },
+        "additionalProperties": false
+      },
+      "FieldOptions_LastModifiedBy": {
+        "type": "object",
+        "title": "LastModifiedBy",
+        "properties": {
+          "allow_multiple_users": {
+            "type": "boolean",
+            "description": "Allow selecting multiple users."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Notify the user when they are assigned to a record."
           }
         },
         "additionalProperties": false
@@ -5326,6 +5737,10 @@
           "allow_multiple_users": {
             "type": "boolean",
             "description": "Allow selecting multiple users."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Notify the user when they are assigned to a record."
           }
         },
         "additionalProperties": false
@@ -5345,6 +5760,29 @@
           "error": {
             "type": "string",
             "description": "Error message when dependent field is deleted"
+          },
+          "enable_conditions": {
+            "type": "boolean",
+            "description": "Apply the linked field's filters when resolving the lookup."
+          },
+          "lookup_limit": {
+            "type": "number",
+            "description": "Maximum number of linked records to resolve."
+          },
+          "use_recursive_evaluation": {
+            "type": "boolean",
+            "description": "Resolve lookups of lookups recursively."
+          },
+          "display_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Field type the looked-up value is rendered as. Null renders the raw value."
+          },
+          "display_column_meta": {
+            "type": "object",
+            "description": "Field options applied to the rendered value, shaped like the `display_type` field's own options."
           }
         },
         "required": [
@@ -5382,6 +5820,29 @@
           "error": {
             "type": "string",
             "description": "Error message when dependent field is deleted"
+          },
+          "precision": {
+            "type": "number",
+            "description": "Number of decimal places for numeric rollups. Defaults to 0.",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "enable_conditions": {
+            "type": "boolean",
+            "description": "Apply the linked field's filters when computing the rollup."
+          },
+          "separator": {
+            "type": "string",
+            "description": "Thousand/decimal separator style for numeric rollups. `locale` uses the runtime locale, `none_period` / `none_comma` disable thousand grouping.",
+            "enum": [
+              "locale",
+              "none_period",
+              "none_comma",
+              "comma_period",
+              "period_comma",
+              "space_period",
+              "space_comma"
+            ]
           }
         },
         "required": [
@@ -5461,9 +5922,14 @@
                 ],
                 "description": "Button type: webhook"
               },
-              "button_hook_id": {
+              "webhook_id": {
                 "type": "string",
                 "description": "ID of the webhook to trigger"
+              },
+              "button_hook_id": {
+                "type": "string",
+                "deprecated": true,
+                "description": "Deprecated alias of `webhook_id`, accepted on write and normalised to it. Responses always use `webhook_id`."
               },
               "label": {
                 "type": "string",
@@ -5501,7 +5967,7 @@
             },
             "required": [
               "type",
-              "button_hook_id"
+              "webhook_id"
             ],
             "additionalProperties": false
           },
@@ -5623,6 +6089,61 @@
               "script_id"
             ],
             "additionalProperties": false
+          },
+          {
+            "title": "URL Button",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "url"
+                ],
+                "description": "Button type: url"
+              },
+              "formula": {
+                "type": "string",
+                "description": "Formula that produces the URL to open"
+              },
+              "label": {
+                "type": "string",
+                "description": "Label of the button"
+              },
+              "icon": {
+                "type": "string",
+                "description": "Icon of the button"
+              },
+              "color": {
+                "type": "string",
+                "enum": [
+                  "brand",
+                  "red",
+                  "green",
+                  "maroon",
+                  "blue",
+                  "orange",
+                  "pink",
+                  "purple",
+                  "yellow",
+                  "gray"
+                ],
+                "description": "Color of the button"
+              },
+              "theme": {
+                "type": "string",
+                "enum": [
+                  "solid",
+                  "light",
+                  "text"
+                ],
+                "description": "Theme of the button"
+              }
+            },
+            "required": [
+              "type",
+              "formula"
+            ],
+            "additionalProperties": false
           }
         ],
         "errorMessage": {
@@ -5631,10 +6152,11 @@
         "discriminator": {
           "propertyName": "type",
           "mapping": {
-            "formula": "#/components/schemas/0",
-            "webhook": "#/components/schemas/1",
-            "ai": "#/components/schemas/2",
-            "script": "#/components/schemas/3"
+            "formula": "#/components/schemas/FieldOptions_Button/oneOf/0",
+            "webhook": "#/components/schemas/FieldOptions_Button/oneOf/1",
+            "ai": "#/components/schemas/FieldOptions_Button/oneOf/2",
+            "script": "#/components/schemas/FieldOptions_Button/oneOf/3",
+            "url": "#/components/schemas/FieldOptions_Button/oneOf/4"
           }
         }
       },
@@ -5644,11 +6166,23 @@
         "properties": {
           "relation_type": {
             "type": "string",
-            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one"
+            "enum": [
+              "om",
+              "mo",
+              "mm",
+              "oo",
+              "hm",
+              "bt"
+            ],
+            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one\n- `hm` has-many\n- `bt` belongs-to"
           },
           "related_table_id": {
             "type": "string",
             "description": "Identifier of the linked table."
+          },
+          "enable_conditions": {
+            "type": "boolean",
+            "description": "Apply the link's configured filters when resolving linked records."
           }
         },
         "required": [
@@ -5663,11 +6197,23 @@
         "properties": {
           "relation_type": {
             "type": "string",
-            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one"
+            "enum": [
+              "om",
+              "mo",
+              "mm",
+              "oo",
+              "hm",
+              "bt"
+            ],
+            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one\n- `hm` has-many\n- `bt` belongs-to"
           },
           "related_table_id": {
             "type": "string",
             "description": "Identifier of the linked table."
+          },
+          "enable_conditions": {
+            "type": "boolean",
+            "description": "Apply the link's configured filters when resolving linked records."
           }
         },
         "required": [
@@ -5907,6 +6453,72 @@
         "errorMessage": {
           "oneOf": "Must match either a Filter or a FilterGroup schema."
         }
+      },
+      "FieldOptionAddItem": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Choice title."
+          },
+          "color": {
+            "type": "string",
+            "description": "Tile color for the choice as a hex code (e.g. `#36BFFF`). Defaults to a palette color when omitted.",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "FieldOptionDeleteItem": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the choice to remove. Must match an existing choice title exactly."
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "FieldOptionsAddReq": {
+        "type": "object",
+        "description": "Add choices (options) to a SingleSelect/MultiSelect field. Titles that already exist on the field are skipped (idempotent).",
+        "properties": {
+          "choices": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/FieldOptionAddItem"
+            }
+          }
+        },
+        "required": [
+          "choices"
+        ],
+        "additionalProperties": false
+      },
+      "FieldOptionsDeleteReq": {
+        "type": "object",
+        "description": "Remove choices (options) from a SingleSelect/MultiSelect field by title. Titles not present on the field are ignored (idempotent).",
+        "properties": {
+          "choices": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/FieldOptionDeleteItem"
+            }
+          }
+        },
+        "required": [
+          "choices"
+        ],
+        "additionalProperties": false
       },
       "FieldUpdate": {
         "allOf": [
@@ -7084,6 +7696,10 @@
             "type": "boolean",
             "description": "Whether the requesting user is a member of this team."
           },
+          "scim_managed": {
+            "type": "boolean",
+            "description": "Whether the team is provisioned by SCIM from an identity provider."
+          },
           "managers": {
             "type": "array",
             "description": "List of user IDs who are owners/managers of this team.",
@@ -7205,6 +7821,147 @@
             "description": "Updated team badge color (hex code)",
             "example": "#00AEEF",
             "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        }
+      },
+      "EnvironmentV3": {
+        "type": "object",
+        "description": "Environment for v3 API — a named stage (production / staging / custom) that resolves per-environment integration configuration. The built-in `production` and `staging` environments are virtual: they exist for every workspace and organization without a stored row, are locked, and use their reserved key as `id`.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Environment ID. Custom environments use a generated ID; the built-in environments use their reserved key (`production` / `staging`).",
+            "example": "envabc12345"
+          },
+          "key": {
+            "type": "string",
+            "description": "Stable slug auto-derived from the title at create time and frozen thereafter — renaming the title never changes it. Used to reference the environment.",
+            "example": "qa",
+            "maxLength": 50
+          },
+          "title": {
+            "type": "string",
+            "description": "Human-readable environment name",
+            "example": "QA",
+            "maxLength": 255
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional description shown on the environment card / editor",
+            "example": "Pre-release verification"
+          },
+          "color": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Solid color (hex) used for the environment’s dot / badge",
+            "example": "#6A7184",
+            "maxLength": 20
+          },
+          "is_default": {
+            "type": "boolean",
+            "description": "True only for the built-in `production` environment — the fallback whose configuration is the integration’s own config."
+          },
+          "is_locked": {
+            "type": "boolean",
+            "description": "True for the built-in environments (`production` / `staging`) — they cannot be renamed or deleted."
+          },
+          "workspace_id": {
+            "type": "string",
+            "description": "Present on workspace-scoped custom environments. At most one of `workspace_id` / `org_id` is set; both are absent on the virtual built-in environments.",
+            "example": "w6dw3fo0"
+          },
+          "org_id": {
+            "type": "string",
+            "description": "Present on organization-scoped environments, which are shared by all of the organization’s workspaces.",
+            "example": "org123"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp (absent on the virtual built-in environments)"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp (absent on the virtual built-in environments)"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "ID of the user who created the environment (absent on the virtual built-in environments)",
+            "example": "usr1234567"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "title",
+          "is_default",
+          "is_locked"
+        ]
+      },
+      "EnvironmentCreateV3Req": {
+        "type": "object",
+        "description": "Environment creation request for v3 API. Creates a CUSTOM environment — the built-in `production` and `staging` environments always exist and cannot be created. The stable `key` slug is auto-derived from the title server-side; clients never send a key.",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Environment name. Must contain at least one letter or number, must not collide with a built-in environment name (Production / Staging), and must derive to a key not already in use in the scope.",
+            "example": "QA",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description shown on the environment card / editor",
+            "example": "Pre-release verification"
+          },
+          "color": {
+            "type": "string",
+            "description": "Solid color (hex) used for the environment’s dot / badge",
+            "example": "#6A7184",
+            "maxLength": 20
+          },
+          "order": {
+            "type": "number",
+            "description": "Display position among environments; defaults to the end of the list",
+            "example": 1
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "EnvironmentUpdateV3Req": {
+        "type": "object",
+        "description": "Environment update request for v3 API. Only `title`, `description`, `color` and `order` are editable — the `key` slug is frozen at create time and renaming the title never re-derives it. The built-in environments (`production` / `staging`) cannot be updated.",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "New environment name. The `key` slug is NOT re-derived on rename.",
+            "example": "QA Renamed",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description shown on the environment card / editor",
+            "example": "Pre-release verification"
+          },
+          "color": {
+            "type": "string",
+            "description": "Solid color (hex) used for the environment’s dot / badge",
+            "example": "#c2410c",
+            "maxLength": 20
+          },
+          "order": {
+            "type": "number",
+            "description": "Display position among environments",
+            "example": 1
           }
         }
       },
@@ -7604,12 +8361,13 @@
           },
           "base_role": {
             "type": "string",
-            "description": "Base role to assign to the team (creator or lower only)",
+            "description": "Base role to assign to the team (creator or lower only). app-user is the base standing of an app-attached team.",
             "enum": [
               "creator",
               "editor",
               "viewer",
               "commenter",
+              "app-user",
               "no-access"
             ],
             "example": "editor"
@@ -7658,12 +8416,13 @@
           },
           "base_role": {
             "type": "string",
-            "description": "New base role for the team (creator or lower only)",
+            "description": "New base role for the team (creator or lower only). app-user is the base standing of an app-attached team.",
             "enum": [
               "creator",
               "editor",
               "viewer",
               "commenter",
+              "app-user",
               "no-access"
             ],
             "example": "viewer"
@@ -8160,6 +8919,11 @@
                 "type": "string",
                 "enum": [
                   "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
                   "custom"
                 ]
               },
@@ -8287,6 +9051,11 @@
                 "type": "string",
                 "enum": [
                   "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
                   "custom"
                 ]
               },
@@ -8439,6 +9208,11 @@
                 "type": "string",
                 "enum": [
                   "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
                   "custom"
                 ]
               }
@@ -8578,6 +9352,147 @@
                 "type": "string",
                 "enum": [
                   "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
+                  "custom"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "chart_type"
+        ]
+      },
+      "WidgetOptionsScatter": {
+        "type": "object",
+        "description": "Options for a scatter plot widget (type=chart, chart_type=scatter). Same data structure as bar chart.",
+        "properties": {
+          "chart_type": {
+            "type": "string",
+            "enum": [
+              "scatter"
+            ]
+          },
+          "data_source": {
+            "type": "string",
+            "enum": [
+              "table",
+              "view",
+              "filter"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "x_axis": {
+                "type": "object",
+                "properties": {
+                  "field_id": {
+                    "type": "string"
+                  },
+                  "sort_by": {
+                    "type": "string",
+                    "enum": [
+                      "x_axis",
+                      "y_axis"
+                    ]
+                  },
+                  "order_by": {
+                    "type": "string",
+                    "enum": [
+                      "default",
+                      "asc",
+                      "desc"
+                    ]
+                  },
+                  "include_empty_records": {
+                    "type": "boolean"
+                  },
+                  "include_others": {
+                    "type": "boolean"
+                  },
+                  "category_limit": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "field_id"
+                ]
+              },
+              "y_axis": {
+                "type": "object",
+                "properties": {
+                  "start_at_zero": {
+                    "type": "boolean"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "field_id": {
+                          "type": "string"
+                        },
+                        "aggregation": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "field_id",
+                        "aggregation"
+                      ]
+                    }
+                  },
+                  "group_by": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "appearance": {
+            "type": "object",
+            "properties": {
+              "size": {
+                "type": "string",
+                "enum": [
+                  "small",
+                  "medium",
+                  "large"
+                ]
+              },
+              "show_count_in_legend": {
+                "type": "boolean"
+              },
+              "show_value_in_chart": {
+                "type": "boolean"
+              },
+              "legend_position": {
+                "type": "string",
+                "enum": [
+                  "top",
+                  "right",
+                  "bottom",
+                  "left",
+                  "none"
+                ]
+              },
+              "color_schema": {
+                "type": "string",
+                "enum": [
+                  "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
                   "custom"
                 ]
               }
@@ -8745,6 +9660,9 @@
                 "$ref": "#/components/schemas/WidgetOptionsLineChart"
               },
               {
+                "$ref": "#/components/schemas/WidgetOptionsScatter"
+              },
+              {
                 "$ref": "#/components/schemas/WidgetOptionsText"
               },
               {
@@ -8859,6 +9777,7 @@
       "DashboardUpdateReq": {
         "description": "Dashboard update request body",
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "title": {
             "type": "string",
@@ -8919,6 +9838,9 @@
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsLineChart"
+              },
+              {
+                "$ref": "#/components/schemas/WidgetOptionsScatter"
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsText"
@@ -8998,6 +9920,9 @@
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsLineChart"
+              },
+              {
+                "$ref": "#/components/schemas/WidgetOptionsScatter"
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsText"
@@ -9339,7 +10264,7 @@
             "type": "string",
             "description": "Comment text (supports markdown).",
             "example": "This is a comment",
-            "maxLength": 3000
+            "maxLength": 10000
           },
           "created_by": {
             "type": "string",
@@ -9384,7 +10309,7 @@
             "type": "string",
             "description": "Comment text (supports markdown).",
             "example": "This is a comment",
-            "maxLength": 3000
+            "maxLength": 10000
           }
         },
         "required": [
@@ -9399,7 +10324,7 @@
             "type": "string",
             "description": "Updated comment text.",
             "example": "Updated comment",
-            "maxLength": 3000
+            "maxLength": 10000
           }
         },
         "required": [
@@ -9420,6 +10345,46 @@
         "required": [
           "list"
         ]
+      },
+      "FormImage": {
+        "type": "object",
+        "description": "An image attached to a form (banner or logo).",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Publicly reachable image URL."
+          },
+          "path": {
+            "type": "string",
+            "description": "Storage path, for images already uploaded to this instance."
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title."
+          },
+          "mimetype": {
+            "type": "string",
+            "description": "MIME type of the image."
+          },
+          "size": {
+            "type": "number",
+            "description": "Size in bytes."
+          },
+          "icon": {
+            "type": "string",
+            "description": "Icon name shown in place of a thumbnail."
+          },
+          "signedUrl": {
+            "type": "string",
+            "description": "Read-only. Signed URL generated on read; ignored on write."
+          },
+          "signedPath": {
+            "type": "string",
+            "description": "Read-only. Signed path generated on read; ignored on write."
+          }
+        },
+        "additionalProperties": false
       },
       "FormFieldConfig": {
         "type": "object",
@@ -9451,49 +10416,78 @@
           },
           "validators": {
             "type": "array",
-            "description": "List of validators for the field.",
+            "description": "List of validators for the field. Evaluated by the Enterprise form renderer only; the community edition ignores them.",
             "items": {
               "$ref": "#/components/schemas/FormFieldValidator"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "FormFieldValidator": {
         "type": "object",
-        "description": "Validator configuration for a form field.",
+        "description": "One validation rule on a form field. The renderer matches on `type` with no fallback branch, so a type outside this enum is dropped silently — the enum is kept in sync with `nocodb-sdk`'s validation type unions (`src/lib/form.ts`).\n\nNote `required` is NOT a validator type: use the sibling `required` boolean on the field config. Option limiting is not a validator either: use `is_limit_option`.\n\nCustom validators are evaluated by the Enterprise form renderer only.",
         "properties": {
           "type": {
             "type": "string",
             "enum": [
-              "required",
-              "regex",
-              "minValue",
-              "maxValue",
               "minLength",
               "maxLength",
+              "startsWith",
+              "endsWith",
+              "includes",
+              "notIncludes",
+              "regex",
               "email",
+              "businessEmail",
+              "phoneNumber",
               "url",
-              "custom"
+              "min",
+              "max",
+              "minDate",
+              "maxDate",
+              "minTime",
+              "maxTime",
+              "minYear",
+              "maxYear",
+              "minSelected",
+              "maxSelected",
+              "fileTypes",
+              "fileSize",
+              "fileCount"
             ],
-            "description": "Type of validation to apply."
+            "description": "Type of validation to apply. Applicable field types:\n- text: `minLength`, `maxLength`, `startsWith`, `endsWith`, `includes`, `notIncludes`, `regex`\n- Email / PhoneNumber / URL: `email`, `businessEmail`, `phoneNumber`, `url`\n- numeric: `min`, `max`\n- Date / DateTime: `minDate`, `maxDate`\n- Time: `minTime`, `maxTime`\n- Year: `minYear`, `maxYear`\n- MultiSelect / User: `minSelected`, `maxSelected`\n- Attachment: `fileTypes`, `fileSize`, `fileCount`"
           },
           "value": {
             "type": [
               "string",
-              "integer",
+              "number",
+              "array",
               "null"
             ],
-            "description": "Validator parameter value (e.g., min/max number, pattern string)."
+            "description": "Validator parameter. Number for `minLength`, `maxLength`, `min`, `max`, `minYear`, `maxYear`, `minSelected`, `maxSelected`, `fileCount`, `fileSize` (kilobytes, whatever `unit` says). String for `startsWith`, `endsWith`, `includes`, `notIncludes`, `minDate`, `maxDate`, `minTime`, `maxTime`. Array of MIME patterns (`image/*`, `application/pdf`) for `fileTypes`. Omitted for `email`, `businessEmail`, `phoneNumber`, `url`, which are presence toggles, and for `regex`, which reads `regex` instead.\n\nAn empty string or explicit null disables the rule."
           },
           "message": {
             "type": "string",
-            "description": "Custom error message for validation failure."
+            "description": "Error message shown when the rule fails. Falls back to a generated message."
           },
           "regex": {
             "type": "string",
-            "description": "Regular expression pattern (for regex validator type)."
+            "description": "Regular expression pattern. Required when `type` is `regex`, ignored otherwise. Evaluated by the form renderer in the browser only — the submit endpoint does not re-check it, because an author-supplied backtracking pattern would stall the server."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "KB",
+              "MB"
+            ],
+            "description": "`fileSize` only — the unit the limit was authored in. `value` is stored in kilobytes either way; this only controls how the limit is displayed."
           }
-        }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
       },
       "WorkflowList": {
         "type": "object",

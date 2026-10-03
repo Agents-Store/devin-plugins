@@ -52,20 +52,21 @@ Compare key template files between parent and child. Focus on files that are inh
 | Category | Files |
 |----------|-------|
 | Process skills | `.claude/skills/brainstorming/`, `planning/`, `tdd/`, `debugging/`, `verification/` |
-| Core commands | `.claude/commands/commit.md`, `pr.md`, `plan.md`, `review.md`, `retro.md`, `sync.md`, `fix-issue.md`, `init-stack.md` |
+| Core workflow skills | `.claude/skills/commit/`, `pr/`, `plan-feature/`, `code-review-project/`, `retro/`, `sync/`, `fix-issue/`, `init-stack/` (templates that predate the skills layout: `.claude/commands/<name>.md`, including `plan.md` and `review.md`) |
 | Rules | `.claude/rules/safety.md`, `search-before-building.md`, `project-conventions.md` |
 | Agent | `.claude/agents/code-reviewer.md` |
 | Settings template | `.claude/settings.local.json.example` |
 | Docs structure | `docs/architecture.md`, `docs/code-style.md`, `docs/api-conventions.md` |
-| Scripts | `scripts/sync-context.sh` |
+| Scripts | `scripts/sync-context.sh` (mirrors the shared rules into `.cursor/`) |
 | Editor config | `.editorconfig` |
 
 ### Files to Skip (project-specific)
 
 Do NOT sync these — they contain project-specific content:
 - `stack.json` (different level and parent)
-- `CLAUDE.md` (customized per project)
+- `CLAUDE.md` and `AGENTS.md` (customized per project)
 - `.env.example` (may have project-specific additions)
+- `.mcp.json` (the server set follows the project's stack) and `.claude/settings.json` (its `enabledPlugins` follow the project's `stack.json`)
 - `project-config/SKILL.md` (contains resource IDs)
 - Any domain-specific skills, agents, or rules
 
@@ -100,7 +101,7 @@ Show the user what changed:
 - .claude/rules/new-rule.md
 
 ### Modified in Parent (your version differs)
-- .claude/commands/commit.md — {brief description of changes}
+- .claude/skills/commit/SKILL.md — {brief description of changes}
 - .claude/rules/safety.md — {brief description of changes}
 - scripts/sync-context.sh — {brief description of changes}
 
@@ -109,7 +110,7 @@ Show the user what changed:
 - (... list of identical files)
 
 ### Skipped (project-specific)
-- stack.json, CLAUDE.md, .env.example, project-config/SKILL.md
+- stack.json, CLAUDE.md, AGENTS.md, .env.example, .mcp.json, .claude/settings.json, project-config/SKILL.md
 ```
 
 ## Step 5: User Decision
@@ -132,9 +133,9 @@ For each file the user chose to accept or merge:
 1. Copy the parent version to the child project (or apply the merge)
 2. Track which files were synced
 
-## Step 7: Check .env.example and CLAUDE.md
+## Step 7: Check .env.example, .mcp.json and CLAUDE.md
 
-These project-specific files are skipped from automatic sync, but may have relevant additions in the parent. Compare them separately and suggest manual updates:
+These project-specific files are skipped from automatic sync, but may have relevant additions in the parent. Compare them separately and suggest manual updates. For `.mcp.json` suggest only servers and `${VAR}` references that are new in the parent; never write a literal URL or token into the child's `.mcp.json`:
 
 > "The parent template's `.env.example` has new variables that your project doesn't have:
 > - `VERCEL_PROJECT_ID` (added in parent on 2026-03-28)

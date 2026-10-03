@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "Publish a sprint report for Sprint 14 of TaskFlow. 34/40 points completed, goal achieved, 2 items carried over.",
-      "expected_output": "Gathers cycle data, renders the sprint-report HTML template, calls create_project_page, returns the URL.",
+      "expected_output": "Gathers cycle data, renders the sprint-report HTML template, calls page(action=create, project_id, ...), returns the URL.",
       "files": [],
       "expectations": [
         "Consults connector-bootstrap",
         "Uses the sprint-report HTML template from references/templates/sprint-report.html",
         "Populates Summary, Delivered, Not Delivered, Metrics, Next Sprint sections",
-        "Calls create_project_page with valid description_html"
+        "Calls page(action=create) with project_id, name and valid description_html"
       ]
     },
     {
@@ -40,13 +40,13 @@
     {
       "id": 4,
       "prompt": "Publish a Q2 roadmap page showing Now / Next / Later / Parked.",
-      "expected_output": "Uses the roadmap template, aggregates cycles/modules/epics/milestones into the four buckets, calls create_project_page.",
+      "expected_output": "Uses the roadmap template, aggregates cycles/modules/epics/milestones into the four buckets, calls page(action=create).",
       "files": [],
       "expectations": [
         "Uses the roadmap HTML template from references/templates/roadmap.html",
         "Classifies items into Now / Next / Later / Parked buckets correctly",
-        "Pulls data from list_cycles, list_modules, list_epics, list_milestones",
-        "Calls create_project_page with the rendered HTML"
+        "Pulls data from cycle(action=list), module(action=list), an epic listing through workitem(action=list, pql='type = \"<epic-type-id>\"') (there is no epic tool), milestone(action=list)",
+        "Calls page(action=create) with the rendered HTML"
       ]
     },
     {
@@ -58,7 +58,7 @@
         "Uses the milestone-update HTML template",
         "Computes remaining points, ETA, and risk level (Red/Yellow/Green)",
         "Renders On Track, At Risk, Blocked sections",
-        "Calls create_project_page with the rendered HTML"
+        "Calls page(action=create) with the rendered HTML"
       ]
     },
     {
@@ -96,6 +96,43 @@
         "Does NOT use any custom data-* attribute",
         "Cites Gotcha 2 (task lists stripped) from List Rendering Gotchas"
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "The Sprint 14 report page we published yesterday has a wrong velocity number (it says 34, should be 31). Fix it.",
+      "expected_output": "Agent updates the existing page in place instead of creating a duplicate or telling the user to edit it in the web UI: retrieves the page, corrects the number in the full HTML body, and calls page(action=update) with the whole description_html.",
+      "files": [],
+      "expectations": [
+        "Does not claim that pages are write-once or that the user must edit the page in the Plane web UI (the page tool supports update)",
+        "Retrieves the page first with page(action=retrieve)",
+        "Calls page(action=update) with the complete edited description_html, not a fragment, because update replaces the whole body",
+        "Does not create a second page for the same report"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Delete the test page 'Sandbox sprint report' from the Sandbox project.",
+      "expected_output": "Agent knows delete needs an archived page and the user's confirmation: shows the page, asks for explicit confirmation, archives it, then deletes it.",
+      "files": [],
+      "expectations": [
+        "Identifies the page and shows it to the user before deleting",
+        "Asks for explicit confirmation before the delete (destructive action)",
+        "Calls page(action=archive) before page(action=delete), because delete is refused for a page that is not archived",
+        "Does not say that pages cannot be deleted through the API"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Publish the release notes for v2.0 using what we tracked in Plane releases. Customer-facing.",
+      "expected_output": "Finds the release with the release tool, reads its work items and existing changelog, groups items into the Release Notes template, publishes a page and stores the notes in the release changelog.",
+      "expectations": [
+        "Finds the release with release(action=list) (and release_tag for the version string) instead of asking the user to list what shipped",
+        "Reads the shipped items with release(action=list_workitems, release_id) following next_cursor, and the current changelog with release(action=get_changelog) before overwriting it",
+        "Uses the release-notes HTML template, grouped by Highlights, New Features, Improvements, Bug Fixes, Breaking Changes, and omits internal work for a customer audience",
+        "Publishes with page(action=create) and stores the notes with release(action=update_changelog, release_id, description_html)",
+        "Does not use a create_release_notes or per-operation legacy tool name"
+      ],
+      "files": []
     }
   ]
 }

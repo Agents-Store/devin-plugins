@@ -1,52 +1,57 @@
 ---
 name: troubleshoot
-description: This skill should be used when the user encounters "DataForSEO errors", "DataForSEO not working", "DataForSEO connection issues", "debug DataForSEO", "DataForSEO MCP problems", or needs to diagnose and fix common problems with DataForSEO MCP tools.
+description: This skill should be used when the user encounters "DataForSEO errors", "DataForSEO not working", "DataForSEO connection issues", "debug DataForSEO", "DataForSEO MCP problems", "tool not found" for a DataForSEO tool, or needs to diagnose and fix common problems with the DataForSEO MCP server.
 ---
 
 # Troubleshoot
 
-Diagnose and fix common problems with DataForSEO MCP tools — connection failures, authentication errors, parameter mistakes, empty results, and cost management.
+Diagnose and fix common problems with the DataForSEO v3 MCP server: connection failures, authentication errors, wrong request bodies, empty results and cost surprises.
 
 ## Quick Diagnostics
 
-When something is not working, run this sequence to isolate the problem:
+Run this sequence to isolate the problem. Steps 1 and 2 cost nothing.
 
-### Step 1 — Connectivity Test
+### Step 1 — Is the server running?
 ```
-Tool: serp_locations
-Input: {
-  "country_iso_code": "US"
-}
+docs_list_sections()
 ```
 
-This is the lightest DataForSEO call. If it returns location data, the MCP server is running and authenticated. If it fails, the problem is connection or auth.
+This needs no credentials. If it returns the 13 section names, the MCP server is running. If the tool does not exist or the call fails, the problem is the server startup (see "MCP Server Startup Issues").
 
-### Step 2 — Check the Error
-- **No response / timeout** → MCP server is not running. See "MCP Server Startup Issues" below.
-- **401 Unauthorized** → Wrong credentials. See "Authentication Errors" below.
-- **400 Bad Request** → Invalid parameters. See "Parameter Errors" below.
-- **500 Internal Server Error** → DataForSEO server issue. See "When to Escalate" below.
+### Step 2 — Do the credentials work?
+```
+api_request({method: "GET", path: "/v3/appendix/user_data", noAiMode: true})
+```
 
-### Step 3 — Verify Tool Name
-DataForSEO MCP exposes 70+ tools. Confirm you are calling the correct tool name. Tool names follow a pattern: `{api_group}_{endpoint}` (e.g., `backlinks_summary`, `on_page_lighthouse`, `serp_organic_live_advanced`). If a tool is not found, the MCP server may be an older version — see "MCP Server Startup Issues" for update instructions.
+DataForSEO does not charge for this endpoint. `status_code` 20000 with a `money.balance` means authentication works. If it fails, see "Authentication Errors".
+
+### Step 3 — Check the error
+- **No response or timeout**: the MCP server is not running. See "MCP Server Startup Issues".
+- **401 Unauthorized**: wrong credentials. See "Authentication Errors".
+- **400 Bad Request or a 40xxx task code**: invalid request body. See "Request Errors".
+- **500 Internal Server Error**: DataForSEO server issue. See "When to Escalate".
+
+### Step 4 — Check the tool name
+The v3 server has **four tools** and no others: `docs_list_sections`, `docs_index`, `docs_search` and `api_request`. A "tool not found" for any other name (for example `backlinks_summary`, `on_page_lighthouse` or `serp_organic_live_advanced`) means the call comes from the v2 server, whose per-endpoint tools were removed. Send the same request through `api_request` with the endpoint's REST path (see the `mcp-patterns` skill).
 
 ## Authentication Errors
 
-DataForSEO uses **username and password** (not API keys). These are set as environment variables in the MCP configuration.
+DataForSEO authenticates with an **API login and an API password**, set as environment variables in the MCP configuration. The API password is generated at [app.dataforseo.com/api-access](https://app.dataforseo.com/api-access) and is **not** the account password.
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| 401 Unauthorized | Wrong or missing credentials | Verify `DATAFORSEO_USERNAME` and `DATAFORSEO_PASSWORD` in `.mcp.json` env block |
+| 401 Unauthorized | Wrong or missing credentials | Verify `DATAFORSEO_USERNAME` (or `DATAFORSEO_LOGIN`) and `DATAFORSEO_PASSWORD` |
+| 401 with the account password | The account password was used | Use the API password from the API Access page |
 | 403 Forbidden | Account suspended or plan limits exceeded | Log in at app.dataforseo.com to check account status |
-| "Invalid credentials" in response | Typo in username or password | Copy-paste credentials directly from DataForSEO dashboard |
+| "Invalid credentials" in the response | Typo in the login or password | Copy and paste both from the API Access page |
 
-The `.mcp.json` should contain:
+The plugin's `.mcp.json` should contain:
 ```json
 {
   "mcpServers": {
     "dataforseo": {
       "command": "npx",
-      "args": ["-y", "dataforseo-mcp-server@latest"],
+      "args": ["-y", "dataforseo-mcp-server@3"],
       "env": {
         "DATAFORSEO_USERNAME": "${DATAFORSEO_USERNAME}",
         "DATAFORSEO_PASSWORD": "${DATAFORSEO_PASSWORD}"
@@ -56,104 +61,109 @@ The `.mcp.json` should contain:
 }
 ```
 
-The `${DATAFORSEO_USERNAME}` and `${DATAFORSEO_PASSWORD}` placeholders are resolved from your environment. Verify these are set in your shell profile or Claude Desktop settings.
+The server accepts `DATAFORSEO_USERNAME` as an alias of its own variable `DATAFORSEO_LOGIN`. The `${...}` placeholders are resolved from your environment; verify both are set in your shell profile or the Claude Code settings `env` block, and restart Claude Code after changing them.
 
 ## MCP Server Startup Issues
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| "Tool not found" | MCP server not started or wrong package | Restart Claude Code; verify `.mcp.json` exists in plugin root |
-| "npx: command not found" | Node.js not installed or not in PATH | Install Node.js >= v20 from nodejs.org |
-| Server starts then crashes | npx cache corrupted | Run `npx clear-npx-cache` then restart |
-| Old tool names / missing tools | Cached old package version | Run `npx clear-npx-cache` to force re-download of `@latest` |
-| "ENOENT" or "spawn error" | `npx` path not found by Claude Code | Use absolute path to npx: replace `"command": "npx"` with full path (e.g., `"/usr/local/bin/npx"`) |
+| The DataForSEO tools are missing | Server not started or wrong package | Restart Claude Code; verify `.mcp.json` exists in the plugin root |
+| "npx: command not found" | Node.js not installed or not in PATH | Install Node.js 22 or newer from nodejs.org |
+| Server starts then crashes | Node.js too old, or a corrupted npx cache | `node --version` must be 22 or newer; run `npx clear-npx-cache` and restart |
+| Old per-endpoint tool names appear | A cached v2 package | Run `npx clear-npx-cache` to force a fresh download of `dataforseo-mcp-server@3` |
+| "ENOENT" or "spawn error" | `npx` path not found by Claude Code | Use the absolute path to npx: replace `"command": "npx"` with the full path (for example `"/usr/local/bin/npx"`) |
 
-To verify Node.js version: `node --version` (must be >= v20).
+To verify the Node.js version: `node --version` (22 or newer).
 
-## Parameter Errors
+## Request Errors
 
-### Location Names
-Location must be the **exact full country name**, not an ISO code.
+### Find the right body
+
+Do not guess field names. Read the endpoint's page, which lists every field, which are required, and the limits:
+```
+docs_search({url: "backlinks/summary/live"})
+```
+Add `needCodeExample: true` for a complete example request. Example bodies for every endpoint are in `../mcp-patterns/references/endpoint-paths.md`.
+
+### Location and language
+Send `location_code` (2840 is United States) or `location_name` with the full name; one of the two is required on most endpoints. An ISO code such as `"US"` in `location_name` is rejected.
 
 | Wrong | Correct |
 |-------|---------|
-| `"US"` | `"United States"` |
-| `"UK"` | `"United Kingdom"` |
-| `"DE"` | `"Germany"` |
+| `"location_name": "US"` | `"location_name": "United States"` or `"location_code": 2840` |
+| `"location_name": "UK"` | `"location_name": "United Kingdom"` or `"location_code": 2826` |
+| `"language_code": "English"` | `"language_code": "en"` or `"language_name": "English"` |
 
-Use `serp_locations` to find exact location names and codes:
+Look names and codes up with a free GET:
 ```
-Tool: serp_locations
-Input: {
-  "country_iso_code": "US"
-}
+api_request({method: "GET", path: "/v3/serp/google/locations/US"})
 ```
 
-### Required Fields
-Each tool has required parameters. Common missing fields:
-- `on_page_lighthouse` requires `url`
-- `backlinks_summary` requires `target` (domain or URL)
-- `content_analysis_phrase_trends` requires `keyword` AND `date_from`
-- `ai_opt_llm_ment_search` requires `targets` array with at least one object
+### Required fields
+Each endpoint has required fields. Common misses:
+- `/v3/on_page/lighthouse/live/json` needs `url`
+- `/v3/backlinks/summary/live` needs `target` (a domain without `https://` and `www.`, or an absolute page URL)
+- `/v3/content_analysis/phrase_trends/live` needs `keyword` and `date_from`
+- `/v3/dataforseo_labs/google/domain_intersection/live` needs `target1` and `target2`, not a `targets` object
+- `/v3/ai_optimization/llm_mentions/search_mentions/live` needs a `target` array with at least one included entity
+- `/v3/ai_optimization/chat_gpt/llm_responses/live` needs `user_prompt` and `model_name`
+- A Live endpoint takes one task: `data` is an array with one object
 
-### Filter Syntax
-DataForSEO uses a specific filter format: `["field", "operator", "value"]`. Nested filters use arrays of arrays. Check available filters per endpoint:
+### Filter syntax
+Filters are `[["field", "operator", value], "and", ["field2", "operator", value2]]`. Field names are per API; list them with:
 ```
-Tool: backlinks_available_filters
-Input: {}
+docs_search({url: "backlinks/filters"})
+docs_search({url: "dataforseo_labs/filters"})
+docs_search({url: "ai_optimization/llm_mentions/filters"})
 ```
-```
-Tool: dataforseo_labs_available_filters
-Input: {}
-```
-```
-Tool: ai_optimization_llm_mentions_filters
-Input: {}
-```
+
+### The response looks cut down
+That is `.ai` mode, the default: empty fields are dropped, `limit` and `depth` default to 10, and the envelope has no `cost`. Set `limit` or `depth` explicitly, or send the call with `noAiMode: true` if a field you need is missing.
 
 ## Empty Results
 
 | Scenario | Likely Cause | Action |
 |----------|-------------|--------|
-| Backlinks return empty | Domain is new or has no indexed backlinks | Verify domain has been live and linked to for 30+ days |
-| Keyword volume = 0 | Keyword has no search data in that location | Try broader keyword or different location |
-| LLM mentions return empty | Domain not cited by LLMs for tracked queries | Normal for smaller/newer sites — focus on content optimization |
-| SERP returns no results | Wrong location/language combination | Check valid combinations with `serp_locations` |
+| Backlinks return empty | Domain is new or has no indexed backlinks | Verify the domain has been live and linked to for 30+ days |
+| Keyword volume is 0 | No search data for that keyword in that location | Try a broader keyword or a different location |
+| LLM mentions return empty | Domain not cited by LLMs for the tracked queries | Normal for smaller or newer sites; focus on content optimization |
+| LLM mentions empty for a non-US location | ChatGPT data is United States and English only | Use `"platform": "google"` or the US location |
+| SERP returns no results | Wrong location and language combination | Check valid combinations with the locations and languages GET endpoints |
 | Content analysis returns empty | Keyword too niche or misspelled | Try broader or alternative phrasing |
 
-Empty results are NOT errors. They mean DataForSEO has no data for that query — which is itself valuable information (your keyword may be too niche or your domain too new).
+Empty results are not errors. DataForSEO has no data for that query, which is itself information.
 
 ## Cost Model
 
-DataForSEO charges **per API call**, not by rate limits or monthly subscriptions (though minimums may apply). Each MCP tool call translates to one or more API requests.
+DataForSEO bills **per request**, and prices differ per endpoint; some are billed per result row or per 10 SERP results. The documentation tools and the lookup GETs are free; every `api_request` to a data endpoint is paid.
 
-Key cost facts:
-- **Every tool call costs credits.** Be intentional — do not call tools speculatively.
-- **Different endpoints have different costs.** Lighthouse and SERP scraping cost more than keyword data.
-- **Bulk endpoints are cheaper per-unit** than individual calls (e.g., `backlinks_bulk_ranks` vs. calling `backlinks_summary` in a loop).
-- **Monitor usage** at [app.dataforseo.com](https://app.dataforseo.com) under Account > API Usage.
-- **Set budget alerts** in the DataForSEO dashboard to avoid unexpected charges.
+- **Every data request costs money.** Do not call speculatively. The `cost-awareness` skill is the gate.
+- **Bulk endpoints are cheaper per unit** than loops (for example `/v3/backlinks/bulk_ranks/live` against many summary calls).
+- **Monitor usage** at [app.dataforseo.com](https://app.dataforseo.com) under Account, API Usage.
+- **Set budget alerts** in the DataForSEO dashboard.
 
 ## Common Error Codes
 
 | HTTP Status | DataForSEO Code | Meaning | Action |
 |-------------|----------------|---------|--------|
 | 200 | 20000 | Success | Response contains data |
-| 200 | 20100 | Task created | Async task queued (not used in live endpoints) |
+| 200 | 20100 | Task created | Async task queued (not used by Live endpoints) |
 | 400 | 40000 | Bad request | Check required parameters |
 | 400 | 40001 | Invalid field | Parameter name or value is wrong |
 | 400 | 40002 | Invalid value | Value format or range is incorrect |
 | 401 | 40100 | Unauthorized | Check credentials |
 | 402 | 40200 | Payment required | Account balance depleted |
 | 403 | 40300 | Forbidden | Endpoint not available on your plan |
-| 404 | 40400 | Not found | Endpoint does not exist — check tool name |
-| 429 | 42900 | Rate limited | Too many concurrent requests — add delays |
-| 500 | 50000 | Internal error | DataForSEO server issue — retry or escalate |
+| 404 | 40400 | Not found | The path does not exist; check it against `docs_index` |
+| 429 | 42900 | Rate limited | Too many requests; add delays |
+| 500 | 50000 | Internal error | DataForSEO server issue; retry or escalate |
+
+The full list: `docs_search({url: "appendix/errors"})`.
 
 ## When to Escalate
 
-- **Persistent 500 errors** → Check [DataForSEO status page](https://status.dataforseo.com). If the service is up, contact DataForSEO support with the request payload and error response.
-- **Data seems wrong** → Compare DataForSEO results with a manual Google search for the same query in the same location. Note that DataForSEO data may lag by hours or days.
-- **MCP server crashes repeatedly** → Check Node.js version (`node --version` must be >= v20). Try `npx clear-npx-cache` and restart. If it persists, check the npm package page for known issues.
-- **Tool exists in docs but not in MCP** → The MCP server may not expose all DataForSEO endpoints. Check the `dataforseo-mcp-server` npm package documentation for the list of supported tools.
-- **Account or billing issues** → These cannot be resolved through the MCP. Log in at [app.dataforseo.com](https://app.dataforseo.com) or contact DataForSEO support directly.
+- **Persistent 500 errors**: check the [DataForSEO status page](https://status.dataforseo.com). If the service is up, contact DataForSEO support with the request body and the error response.
+- **Data seems wrong**: compare DataForSEO results with a manual Google search for the same query in the same location. DataForSEO data may lag by hours or days.
+- **MCP server crashes repeatedly**: check `node --version` (22 or newer), try `npx clear-npx-cache` and restart. If it persists, check the npm package page for known issues.
+- **An endpoint is in the docs but the call fails**: confirm the path with `docs_index` and the body with `docs_search`; the server forwards whatever you send.
+- **Account or billing issues**: these cannot be resolved through the MCP. Log in at [app.dataforseo.com](https://app.dataforseo.com) or contact DataForSEO support.

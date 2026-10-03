@@ -12,9 +12,9 @@ Find current, accurate documentation for any framework, library, or service.
 For ANY question about a known framework or library (React, Next.js, Prisma, Tailwind, Vue, etc.), ALWAYS start with Context7. It returns indexed, up-to-date documentation — faster and more accurate than general web search. Skip Context7 only if the tool/library is unknown or Context7 doesn't resolve it.
 
 ```
-Step 1 — Resolve library:
+Step 1 — Resolve library (`query` and `libraryName` are both required; use the official name, e.g. "Next.js"):
 Tool: resolve-library-id
-Input: { "libraryName": "nextjs" }
+Input: { "query": "useSearchParams suspense boundary error", "libraryName": "Next.js" }
 → Returns: "/vercel/next.js"
 
 Step 2 — Query docs:
@@ -46,10 +46,10 @@ ALWAYS use Context7 first when the library name is known. This is the fastest pa
 ```
 Step 1 — Resolve library:
 Tool: resolve-library-id
-Input: { "libraryName": "nextjs" }
+Input: { "query": "How to implement middleware for authentication", "libraryName": "Next.js" }
 → Returns: "/vercel/next.js"
 
-Step 2 — Query docs:
+Step 2 — Query docs (one concept per call, at most 3 Context7 calls per question):
 Tool: query-docs
 Input: {
   "libraryId": "/vercel/next.js",
@@ -74,7 +74,7 @@ Input: {
 }
 ```
 
-Note: `web_search_exa` accepts only `query` and `numResults`. Domain filters require `web_search_advanced_exa`, an opt-in tool enabled via the remote MCP URL's `tools` parameter (see `mcp-patterns/references/exa-tools.md`).
+Note: `web_search_exa` accepts only `query` and `numResults`. Domain filters require `web_search_advanced_exa`, an opt-in tool — enable it with the `ENABLED_TOOLS` environment variable (bundled server) or the `tools` URL parameter (hosted MCP); see `mcp-patterns/references/exa-tools.md`.
 
 ### Domain-Scoped Doc Search
 
@@ -113,23 +113,29 @@ Use for "how do I" questions and debugging.
 
 ### Quick How-To
 
+Perplexity's ask / reason / research tools take a `messages` array (not `query`):
+
 ```
 Tool: perplexity_ask
-Input: { "query": "How to set up Tailwind CSS v4 in Next.js 15" }
+Input: { "messages": [{ "role": "user", "content": "How to set up Tailwind CSS v4 in Next.js 15" }] }
 ```
 
 ### Debug a Framework Error
 
 ```
 Tool: perplexity_reason
-Input: { "query": "Next.js error: 'useSearchParams() should be wrapped in a suspense boundary'. What causes this and how to fix it?" }
+Input: {
+  "messages": [{ "role": "user", "content": "Next.js error: 'useSearchParams() should be wrapped in a suspense boundary'. What causes this and how to fix it?" }]
+}
 ```
 
 ### Compare Approaches
 
+`perplexity_search` still takes a plain `query` and returns ranked results; `search_type: "fast"` makes routine lookups cheaper:
+
 ```
 Tool: perplexity_search
-Input: { "query": "Server Components vs Client Components data fetching patterns Next.js 15" }
+Input: { "query": "Server Components vs Client Components data fetching patterns Next.js 15", "max_results": 5, "search_type": "fast" }
 ```
 
 ## Pattern 4: Read Specific Docs Page
@@ -143,13 +149,18 @@ Input: { "url": "https://nextjs.org/docs/app/api-reference/functions/use-router"
 
 ### Read Multiple Doc Pages
 
+`read_url` takes up to 5 URLs per call; add `question` to get only the passages that answer it.
+
 ```
-Tool: parallel_read_url
-Input: { "urls": [
-  "https://react.dev/reference/react/use",
-  "https://react.dev/reference/react/useActionState",
-  "https://react.dev/reference/react/useOptimistic"
-]}
+Tool: read_url
+Input: {
+  "url": [
+    "https://react.dev/reference/react/use",
+    "https://react.dev/reference/react/useActionState",
+    "https://react.dev/reference/react/useOptimistic"
+  ],
+  "question": "When should I use each of these hooks?"
+}
 ```
 
 ## Pattern 5: Combined Workflow — Deep Doc Research
@@ -164,10 +175,10 @@ Step 2 — Search for community patterns:
 Tool: web_search_advanced_exa (with GitHub/StackOverflow domains)
 
 Step 3 — Get AI summary:
-Tool: perplexity_search
+Tool: perplexity_ask (messages: [{ role: "user", content: "..." }])
 
 Step 4 — Read the most relevant pages:
-Tool: parallel_read_url (with top URLs from steps 1-3)
+Tool: read_url (url: up to 5 top URLs from steps 1-3, plus a question)
 ```
 
 ## Common Documentation Domains

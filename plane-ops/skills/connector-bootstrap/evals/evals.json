@@ -4,13 +4,14 @@
     {
       "id": 1,
       "prompt": "Create a new sprint for my Plane project. The Plane tools are not visible in my tool list yet.",
-      "expected_output": "Agent probes ToolSearch with multiple queries (plane, work_item, cycle, create_cycle) and discovers deferred Plane tools before asking for more info or refusing.",
+      "expected_output": "Agent probes ToolSearch with multiple queries (plane, workitem cycle module, then legacy names) and discovers deferred Plane tools - resource tools such as cycle with an action parameter, or legacy create_cycle - before asking for more info or refusing.",
       "files": [],
       "expectations": [
         "Calls ToolSearch with at least 4 distinct queries before claiming tools are missing",
-        "Uses the select: form for specific action names (e.g., create_cycle, list_projects)",
+        "Probes for the resource tools of Plane MCP 0.3+ (queries such as 'plane' and 'workitem cycle module') before or alongside the legacy per-operation names",
+        "Uses the select: form once a server segment is known (e.g., mcp__<server>__cycle) or for a legacy name",
         "Does not assume a specific MCP prefix like mcp__<provider>__plane-i-",
-        "Matches tools by action suffix, not by prefix"
+        "Matches tools by resource name (resource surface) or action suffix (legacy surface), not by prefix"
       ]
     },
     {
@@ -19,8 +20,8 @@
       "expected_output": "Agent detects multiple Plane instances from ToolSearch results and asks which one to use before listing anything.",
       "files": [],
       "expectations": [
-        "Probes ToolSearch and finds list_work_items tool(s)",
-        "Detects multiple tools with the same action suffix but different prefixes",
+        "Probes ToolSearch and finds workitem or cycle resource tool(s), or list_work_items on a legacy connector",
+        "Detects multiple tools with the same resource or action name but different server segments",
         "Asks the user which instance to operate on instead of guessing",
         "Remembers the choice for subsequent calls in the session"
       ]
@@ -44,9 +45,9 @@
       "files": [],
       "expectations": [
         "Recognizes 'ticket' as a work-management trigger",
-        "Consults connector-bootstrap and probes ToolSearch for create_work_item",
+        "Consults connector-bootstrap and probes ToolSearch for the workitem resource tool (and, as fallback, create_work_item)",
         "Does not refuse on the basis that the user didn't mention Plane explicitly",
-        "Proceeds to create the work item once tools are resolved"
+        "Proceeds to create the work item once tools are resolved, using workitem(action=create) on the resource surface"
       ]
     },
     {
@@ -59,6 +60,55 @@
         "Does not load the connector-bootstrap skill content",
         "Answers the weather question normally or explains it lacks weather data"
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "Show me the sprints of project TaskFlow. My Plane MCP server is version 0.3.3 - the tool list only shows workitem, cycle, module, page, project and similar tools with an action parameter.",
+      "expected_output": "Agent recognizes the resource surface, does NOT report Plane as not connected because create_cycle / list_cycles are missing, and calls cycle(action=list, project_id=...) after resolving the project.",
+      "files": [],
+      "expectations": [
+        "Recognizes a tool named cycle with an action enum as the resource surface of Plane MCP 0.3+",
+        "Does not conclude that Plane is not connected because legacy names like list_cycles or create_cycle are absent",
+        "Calls cycle(action=list, project_id=...) directly, because the skills and commands are written in resource form and need no translation on this surface",
+        "Resolves the project via project(action=list) (paginated: follows next_cursor if needed) before calling cycle"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Create an epic 'Checkout redesign' in project TaskFlow and attach it to the initiative 'Q4 Growth'.",
+      "expected_output": "Agent knows that no epic tools exist: resolves the Epic work item type, creates a workitem with that type_id, then attaches it with initiative(action=manage_workitems, add_ids=[...]).",
+      "files": [],
+      "expectations": [
+        "Does not search for or call create_epic / add_epic_to_initiative",
+        "Calls workitem_type(action=resolve, name='Epic') to get the type_id",
+        "Creates the epic with workitem(action=create, type_id=...)",
+        "Attaches it with initiative(action=manage_workitems, add_ids=[<epic work item id>])"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Add PROJ-148 and PROJ-150 to the Sprint 15 cycle of TaskFlow. This Plane connector is an old one: ToolSearch only shows list_cycles, create_cycle, list_work_items, add_work_items_to_cycle and similar per-operation tools; there is no workitem or cycle tool.",
+      "expected_output": "Agent recognizes the per-operation surface, uses the fallback table to translate cycle(action=manage_workitems, add_ids=[...]) into the connector's add_work_items_to_cycle with issue_ids, and checks the schema for parameter names first.",
+      "expectations": [
+        "Recognizes that no tool named workitem or cycle exists and that this is the per-operation fallback surface, not 'Plane not connected'",
+        "Translates cycle(action=manage_workitems, add_ids=[...]) into add_work_items_to_cycle (or manage_cycle_work_items on an official pre-0.3.0 server) using the fallback table",
+        "Passes the work item ids as issue_ids (plural array) after inspecting the tool schema, and uses work_item_id style names where the schema does",
+        "Resolves PROJ-148 and PROJ-150 with retrieve_work_item_by_identifier using the split project_identifier and integer issue_identifier",
+        "Tells the user that upgrading the server to Plane MCP 0.3.0 or later is the better fix, and that pql, count and release tools are unavailable on this connector"
+      ],
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Which work items are overdue and still open across all our Plane projects? We run Plane MCP 0.3.3.",
+      "expected_output": "Agent finds the resource surface and uses a server-side PQL filter on workitem list without a project_id, instead of looping over projects and filtering client-side.",
+      "expectations": [
+        "Probes ToolSearch (plane, workitem cycle module) and finds the workitem tool",
+        "Calls workitem(action=list, pql='isOverdue()') or equivalent without project_id to search the whole workspace",
+        "Consults get_pql_reference for syntax beyond the documented examples and stays within 5 conditions",
+        "Follows next_cursor if the result is paginated"
+      ],
+      "files": []
     }
   ]
 }

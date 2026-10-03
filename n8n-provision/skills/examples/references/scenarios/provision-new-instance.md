@@ -5,7 +5,7 @@ Complete walkthrough for setting up a fresh n8n instance with 10 foundational wo
 ## Prerequisites
 
 - n8n instance running and accessible via API
-- API key with Owner-level permissions
+- n8n API key (Settings > n8n API) of a user who can create workflows. Listing credentials needs an Owner or Admin user; publishing needs the `workflow:activate` scope and the `workflow:publish` permission
 - MCP server configured with instance URL and API key
 - Credentials ready: Slack OAuth, Gmail/SMTP, GitHub PAT, Google Calendar OAuth
 
@@ -14,13 +14,13 @@ Complete walkthrough for setting up a fresh n8n instance with 10 foundational wo
 Verify the instance is healthy and empty before provisioning.
 
 ```
-~~instance_audit
+~~instance_health
 ```
 
 Expected result:
-- Instance is reachable
-- n8n version is current (1.x+)
-- No critical health issues
+- `status` is `healthy`, the API key is accepted
+- Response time is reasonable (`performance.responseTimeMs`)
+- n8n 2.x capabilities: n8n no longer reports its version to API clients, so probe what the key can do (`GET /api/v1/discover`) instead of comparing version numbers
 
 ```
 ~~workflow_list
@@ -69,10 +69,10 @@ Review top 3 results. Look for:
 Pick the best match. Note the template ID.
 
 ```
-~~template_get(id={best_match_id})
+~~template_get(templateId={best_match_id}, mode="full")
 ```
 
-Verify: nodes are all built-in, credential type is `slackOAuth2Api`.
+Verify: nodes are all built-in, credential type is `slackOAuth2Api`. If `get_template` answers `Template <id> not found`, fetch the template from `api.n8n.io` (see `template-discovery`); the same applies to every `~~template_get` below.
 
 ### 3b: Email Forwarding/Routing
 
@@ -104,18 +104,18 @@ Look for: webhook trigger (receives error events) → format message → Slack n
 ~~template_search("database backup schedule S3 cloud storage")
 ```
 
-Look for: schedule trigger → execute command/HTTP → upload to S3/storage.
+Look for: schedule trigger → database export or HTTP call → upload to S3/storage. Skip templates built on the Execute Command node — n8n 2.x disables it by default.
 
 ## Step 4: Analyze Top Results
 
 For each of the 5 selected templates, fetch full details:
 
 ```
-~~template_get(id={slack_hub_id})
-~~template_get(id={email_forward_id})
-~~template_get(id={crm_sync_id})
-~~template_get(id={error_alert_id})
-~~template_get(id={backup_id})
+~~template_get(templateId={slack_hub_id}, mode="full")
+~~template_get(templateId={email_forward_id}, mode="full")
+~~template_get(templateId={crm_sync_id}, mode="full")
+~~template_get(templateId={error_alert_id}, mode="full")
+~~template_get(templateId={backup_id}, mode="full")
 ```
 
 For each, check:
@@ -129,17 +129,25 @@ For each, check:
 
 ## Step 5: Batch Deploy Phase 1
 
-Deploy all 5 Phase 1 workflows with a batch tag.
+Deploy all 5 Phase 1 workflows, then add the batch tag to each.
 
 ```
-~~template_deploy(id={slack_hub_id}, name="Slack Notification Hub", tags=["suite-startup-essentials-2026-04-07"])
-~~template_deploy(id={email_forward_id}, name="Email Forwarding", tags=["suite-startup-essentials-2026-04-07"])
-~~template_deploy(id={crm_sync_id}, name="CRM Contact Sync", tags=["suite-startup-essentials-2026-04-07"])
-~~template_deploy(id={error_alert_id}, name="Error Alerting", tags=["suite-startup-essentials-2026-04-07"])
-~~template_deploy(id={backup_id}, name="Backup Automation", tags=["suite-startup-essentials-2026-04-07"])
+~~template_deploy(templateId={slack_hub_id}, name="Slack Notification Hub")
+~~template_deploy(templateId={email_forward_id}, name="Email Forwarding")
+~~template_deploy(templateId={crm_sync_id}, name="CRM Contact Sync")
+~~template_deploy(templateId={error_alert_id}, name="Error Alerting")
+~~template_deploy(templateId={backup_id}, name="Backup Automation")
 ```
 
-All workflows are imported in **inactive** state.
+Each call returns a `workflowId`. The deploy tools take no tags, so tag every new workflow with the batch tag:
+
+```
+~~workflow_update(id={workflowId}, operations: [{type: "addTag", tag: "suite-startup-essentials-2026-10-05"}])
+```
+
+A template that was only found on `api.n8n.io` is created with `~~workflow_create` (name, nodes, connections, settings) instead of `~~template_deploy`; the tag step is the same.
+
+All workflows are imported as **unpublished drafts**.
 
 ## Step 6: Verify Phase 1
 
@@ -149,7 +157,7 @@ All workflows are imported in **inactive** state.
 
 Confirm all 5 workflows appear. Check:
 - Names are correct
-- Status is inactive
+- Status is unpublished
 - Tags are applied
 
 ## Step 7: Search and Deploy Phase 2
@@ -174,12 +182,12 @@ Now search for workflows that depend on Phase 1 (Slack, Email).
 ~~template_search("invoice generate PDF email send")
 ```
 
-Analyze, then deploy:
+Analyze, then deploy and tag each result with `addTag` as in Step 5:
 
 ```
-~~template_deploy(id={calendar_id}, name="Calendar Automation", tags=["suite-startup-essentials-2026-04-07"])
-~~template_deploy(id={github_pr_id}, name="GitHub PR Notifications", tags=["suite-startup-essentials-2026-04-07"])
-~~template_deploy(id={invoice_id}, name="Invoice Generation", tags=["suite-startup-essentials-2026-04-07"])
+~~template_deploy(templateId={calendar_id}, name="Calendar Automation")
+~~template_deploy(templateId={github_pr_id}, name="GitHub PR Notifications")
+~~template_deploy(templateId={invoice_id}, name="Invoice Generation")
 ```
 
 ## Step 8: Search and Deploy Phase 3
@@ -196,11 +204,11 @@ Analyze, then deploy:
 ~~template_search("daily standup summary slack schedule automated")
 ```
 
-Analyze, then deploy:
+Analyze, then deploy and tag each result as in Step 5:
 
 ```
-~~template_deploy(id={onboarding_id}, name="Customer Onboarding Sequence", tags=["suite-startup-essentials-2026-04-07"])
-~~template_deploy(id={standup_id}, name="Daily Standup Summary", tags=["suite-startup-essentials-2026-04-07"])
+~~template_deploy(templateId={onboarding_id}, name="Customer Onboarding Sequence")
+~~template_deploy(templateId={standup_id}, name="Daily Standup Summary")
 ```
 
 ## Step 9: Configure Credentials
@@ -243,12 +251,12 @@ Now set up credentials and map them to workflows. This is best done in the n8n U
 2. Enter Access Key + Secret Key
 3. Map to: Backup Automation
 
-## Step 10: Activate Progressively
+## Step 10: Publish Progressively
 
-Activate workflows one at a time, testing each:
+In n8n 2.x a workflow is **published** (it was "activated" in 1.x). Publish workflows one at a time, testing each, and only with the user's go-ahead:
 
 ```
-Activation order (lowest risk first):
+Publish order (lowest risk first):
 1. Backup Automation → trigger manually, verify backup created
 2. Error Alerting → send test webhook, verify Slack message
 3. Slack Notification Hub → send test webhook, verify routing
@@ -266,14 +274,14 @@ For each workflow:
 2. Click "Execute Workflow" for manual test
 3. Check execution output — all nodes should show green checkmarks
 4. If errors: check credential mapping and node configuration
-5. Once test passes: activate the workflow
+5. Once test passes: publish the workflow (Publish button, `~~workflow_publish`, or `publish_workflow` in the native MCP)
 
 ## Final State
 
 After completing all steps:
-- 10 workflows deployed and active
+- 10 workflows deployed and published
 - 6 credential sets configured
-- All workflows tagged with `suite-startup-essentials-2026-04-07`
+- All workflows tagged with `suite-startup-essentials-2026-10-05`
 - Instance is fully provisioned for basic startup automation
 
 ## Rollback
@@ -281,7 +289,7 @@ After completing all steps:
 If something goes wrong and you need to undo:
 
 ```
-~~workflow_list → filter by tag "suite-startup-essentials-2026-04-07"
+~~workflow_list → filter by tag "suite-startup-essentials-2026-10-05"
 ```
 
-Deactivate all tagged workflows first, then delete if needed. Credentials can remain — they don't cause harm when unused.
+Unpublish all tagged workflows first (`unpublish_workflow` in the native MCP, or the `deactivateWorkflow` operation of `n8n_update_partial_workflow`), then archive or delete them only on explicit confirmation. Credentials can remain — they don't cause harm when unused.

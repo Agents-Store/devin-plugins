@@ -5,7 +5,7 @@ description: This skill should be used when the user asks about "keyword researc
 
 # Keyword Research Workflows
 
-Chained workflows for discovering, evaluating, and prioritizing keywords using DataForSEO MCP tools. All tool references use the `mcp__dataforseo__` prefix.
+Chained workflows for discovering, evaluating and prioritizing keywords with DataForSEO. Every block below is one `api_request` call: the first line is the `method` and `path`, the second is `data`. Before the first call to a path, read its page with `docs_search` and agree a budget (`cost-awareness` skill). Paths and minimal bodies for the whole API are in `../mcp-patterns/references/endpoint-paths.md`.
 
 ## Workflow 1: Topic-Based Keyword Research
 
@@ -13,53 +13,42 @@ Start from a broad topic and expand into a prioritized keyword list.
 
 ### Step 1 — Generate Seed Ideas
 
-Call `dataforseo_labs_google_keyword_ideas` with 2-5 seed keywords. Set `location_name` and `language_code` to match the target market. Set `limit` to 100-200 for the initial pass.
+Send 2 to 5 seed keywords to keyword ideas. Set the location and language for the target market and a `limit` of 100 to 200 for the first pass; in the default `.ai` mode an unset `limit` is 10.
 
 ```
-Tool: dataforseo_labs_google_keyword_ideas
-Params:
-  keywords: ["project management software", "task management tool"]
-  location_name: "United States"
-  language_code: "en"
-  limit: 200
+POST /v3/dataforseo_labs/google/keyword_ideas/live
+data: [{"keywords": ["project management software", "task management tool"],
+        "location_code": 2840, "language_code": "en", "limit": 200}]
 ```
 
 ### Step 2 — Get Metrics in Bulk
 
-Collect all discovered keywords and pass them to `dataforseo_labs_google_keyword_overview` for metrics. This tool accepts up to 700 keywords in a single call, making it far more cost-efficient than fetching metrics one-by-one.
+Collect the keywords and send them to keyword overview for volume, CPC, competition and difficulty. One call takes up to 700 keywords, far cheaper than one call per keyword.
 
 ```
-Tool: dataforseo_labs_google_keyword_overview
-Params:
-  keywords: [<all keywords from Step 1>]
-  location_name: "United States"
-  language_code: "en"
+POST /v3/dataforseo_labs/google/keyword_overview/live
+data: [{"keywords": [<all keywords from Step 1>], "location_code": 2840, "language_code": "en"}]
 ```
 
 ### Step 3 — Classify Search Intent
 
-Pass the keyword list to `dataforseo_labs_search_intent` to classify each keyword as informational, navigational, commercial, or transactional. Use this to segment your final list by funnel stage.
+Search intent labels each keyword informational, navigational, commercial or transactional, so the list can be split by funnel stage. It takes up to 1000 keywords and has no location or language field.
 
 ```
-Tool: dataforseo_labs_search_intent
-Params:
-  keywords: [<keywords from Step 2>]
-  language_code: "en"
+POST /v3/dataforseo_labs/google/search_intent/live
+data: [{"keywords": [<keywords from Step 2>]}]
 ```
 
 ### Step 4 — Assess Difficulty in Bulk
 
-Filter to promising candidates and run `dataforseo_labs_bulk_keyword_difficulty` to get difficulty scores for the entire set at once.
+Filter to the promising candidates, then score the whole set in one call.
 
 ```
-Tool: dataforseo_labs_bulk_keyword_difficulty
-Params:
-  keywords: [<filtered keywords>]
-  location_name: "United States"
-  language_code: "en"
+POST /v3/dataforseo_labs/google/bulk_keyword_difficulty/live
+data: [{"keywords": [<filtered keywords>], "location_code": 2840, "language_code": "en"}]
 ```
 
-Combine the results: sort by search_volume descending, filter by keyword_difficulty < 40 for quick wins, and group by search intent.
+Combine the results: sort by search volume descending, keep difficulty under 40 for quick wins, group by search intent.
 
 ## Workflow 2: Competitor-Based Keyword Discovery
 
@@ -67,63 +56,54 @@ Extract keyword opportunities from a competitor domain.
 
 ### Step 1 — Pull Competitor Keywords
 
-Call `dataforseo_labs_google_keywords_for_site` with the competitor domain to discover all keywords the domain is associated with.
+Keywords for site returns the keywords a domain is relevant for.
 
 ```
-Tool: dataforseo_labs_google_keywords_for_site
-Params:
-  target: "competitor.com"
-  location_name: "United States"
-  language_code: "en"
-  limit: 500
+POST /v3/dataforseo_labs/google/keywords_for_site/live
+data: [{"target": "competitor.com", "location_code": 2840, "language_code": "en", "limit": 500}]
 ```
 
 ### Step 2 — Check Current Rankings
 
-Use `dataforseo_labs_google_ranked_keywords` to see which keywords the competitor actually ranks for and at what positions.
+Ranked keywords shows where the domain actually ranks, with the position of each.
 
 ```
-Tool: dataforseo_labs_google_ranked_keywords
-Params:
-  target: "competitor.com"
-  location_name: "United States"
-  language_code: "en"
-  limit: 500
+POST /v3/dataforseo_labs/google/ranked_keywords/live
+data: [{"target": "competitor.com", "location_code": 2840, "language_code": "en", "limit": 500}]
 ```
 
 ### Step 3 — Get Full Metrics
 
-Pass the discovered keywords to `dataforseo_labs_google_keyword_overview` to retrieve search volume, CPC, competition, and difficulty.
-
-Focus on keywords where the competitor ranks in positions 4-20 (vulnerable positions) and where search volume exceeds 100.
+Send the discovered keywords to keyword overview (Workflow 1, Step 2). Focus on keywords where the competitor ranks in positions 4 to 20 (vulnerable positions) and volume exceeds 100.
 
 ## Workflow 3: Keyword Gap Analysis
 
-Find keywords competitors rank for but your domain does not.
+Find keywords a competitor ranks for and your domain does not.
 
 ### Step 1 — Intersect Domains
 
-Call `dataforseo_labs_google_domain_intersection` with your domain and 1-2 competitor domains. Set `intersections` to identify keywords unique to competitors.
+Domain intersection compares two domains. With `intersections: false` it returns the keywords `target1` ranks for and `target2` does not, so put the competitor first and your own domain second. With `true` it returns the keywords both rank for.
 
 ```
-Tool: dataforseo_labs_google_domain_intersection
-Params:
-  targets:
-    1: "competitor1.com"
-    2: "competitor2.com"
-  exclude_targets: ["yourdomain.com"]
-  location_name: "United States"
-  language_code: "en"
-  limit: 300
+POST /v3/dataforseo_labs/google/domain_intersection/live
+data: [{"target1": "competitor1.com", "target2": "yourdomain.com", "intersections": false,
+        "location_code": 2840, "language_code": "en", "limit": 300}]
 ```
+
+Repeat with the second competitor in `target1`.
 
 ### Step 2 — Evaluate Difficulty
 
-Pass gap keywords to `dataforseo_labs_bulk_keyword_difficulty` to find low-difficulty opportunities the competitors hold that you can capture.
+Pass the gap keywords to bulk keyword difficulty (Workflow 1, Step 4) to find low-difficulty keywords the competitors hold and you can take.
 
-### Step 3 — Validate with SERP
+### Step 3 — Validate with the SERP
 
-For the top 10-20 candidates, run `serp_organic_live_advanced` to see the current SERP landscape and assess whether you can realistically compete.
+For the 10 to 20 best candidates, read the live SERP and judge whether you can compete. This is the most expensive step; run it last, on a short list.
+
+```
+POST /v3/serp/google/organic/live/advanced
+data: [{"keyword": "<candidate>", "location_code": 2840, "language_code": "en", "depth": 10}]
+```
 
 ## Interpreting Keyword Metrics
 
@@ -138,57 +118,62 @@ For the top 10-20 candidates, run `serp_organic_live_advanced` to see the curren
 
 ## Location and Language Parameters
 
-Use full country names for `location_name`: "United States", "United Kingdom", "Germany", "France", "Australia". Use ISO 639-1 codes for `language_code`: "en", "de", "fr", "es", "pt".
+Use `location_code` (2840 is United States) or the full country name in `location_name`, and an ISO 639-1 `language_code` such as "en", "de", "fr", "es", "pt". If unsure of a code, look it up for free:
 
-Retrieve available locations via `kw_data_google_ads_locations` if unsure about the exact name string.
+```
+GET /v3/dataforseo_labs/locations_and_languages
+```
 
 ## Filtering Syntax
 
-DataForSEO Labs endpoints accept nested filter arrays. Use the following format:
+Labs endpoints accept nested filter arrays in the request:
 
 ```json
 [
   ["keyword_info.search_volume", ">", 100],
   "and",
-  ["keyword_info.keyword_difficulty", "<", 30]
+  ["keyword_properties.keyword_difficulty", "<", 30]
 ]
 ```
 
 Common filter fields:
 - `keyword_info.search_volume` — monthly searches
-- `keyword_info.keyword_difficulty` — difficulty score
+- `keyword_properties.keyword_difficulty` — difficulty score (it lives in `keyword_properties`, not `keyword_info`)
 - `keyword_info.cpc` — cost per click
 - `keyword_info.competition_level` — "LOW", "MEDIUM", "HIGH"
 - `serp_info.se_results_count` — total SERP results for the keyword
 
-Combine conditions with `"and"` / `"or"` strings between filter arrays.
+On `keyword_ideas` and `keyword_suggestions` these paths are as written. Endpoints that wrap each item in `keyword_data` (`related_keywords`, `ranked_keywords`, `domain_intersection`) prefix them: `keyword_data.keyword_properties.keyword_difficulty`, `keyword_data.keyword_info.search_volume`.
+
+The full field list for an endpoint is on its `docs_search` page and at `docs_search({url: "dataforseo_labs/filters"})`.
 
 ## Cost Optimization
 
-1. **Use keyword_overview first.** It processes up to 700 keywords in one API call. Always batch keywords through this before using more expensive endpoints like keyword_ideas or keyword_suggestions.
-2. **Use bulk endpoints.** `bulk_keyword_difficulty` and `bulk_traffic_estimation` process many keywords at once for a fraction of the per-keyword cost.
-3. **Set limits.** Always set `limit` on discovery endpoints (keyword_ideas, keywords_for_site) to avoid pulling thousands of results when 200-500 suffice.
-4. **Filter server-side.** Pass filters in the API call rather than retrieving all results and filtering client-side.
+1. **Use keyword overview first.** It takes up to 700 keywords in one call. Run the keywords through it before any more expensive endpoint.
+2. **Use bulk endpoints.** `bulk_keyword_difficulty` (1000 keywords) and `bulk_traffic_estimation` (1000 targets) replace loops.
+3. **Set limits.** Always set `limit` on discovery endpoints (keyword ideas, keywords for site); 200 to 500 rows usually suffice.
+4. **Filter server-side.** Put `filters` and `order_by` in the request rather than fetching everything and filtering afterwards.
 
 <example>
 User: "Find easy keywords for a SaaS project management tool"
 
 Workflow:
-1. Call dataforseo_labs_google_keyword_ideas with seeds ["project management software", "task management app", "team collaboration tool"], location_name "United States", language_code "en", limit 200
-2. Collect all returned keywords → pass to dataforseo_labs_google_keyword_overview (batch of up to 700)
-3. Filter results: search_volume > 200 AND keyword_difficulty < 35
-4. Pass filtered set to dataforseo_labs_search_intent to classify intent
-5. Sort by search_volume descending, group by intent
-6. Present: table of keywords with volume, difficulty, CPC, intent — prioritize commercial/transactional intent with low difficulty
+1. docs_search for the four paths below, show the plan (4 calls, limit 200 on the first), get the user's budget
+2. api_request POST /v3/dataforseo_labs/google/keyword_ideas/live with seeds ["project management software", "task management app", "team collaboration tool"], location_code 2840, language_code "en", limit 200
+3. Pass the keywords to /v3/dataforseo_labs/google/keyword_overview/live (one call, up to 700)
+4. Keep search_volume > 200 and keyword_difficulty < 35
+5. Pass the survivors to /v3/dataforseo_labs/google/search_intent/live
+6. Present: table of keywords with volume, difficulty, CPC and intent; commercial and transactional intent with low difficulty first
 </example>
 
 <example>
 User: "What keywords does ahrefs.com rank for that we don't?"
 
 Workflow:
-1. Call dataforseo_labs_google_domain_intersection with targets {"1": "ahrefs.com"}, exclude_targets ["yourdomain.com"], location_name "United States", language_code "en", limit 300
-2. Pass resulting keyword list to dataforseo_labs_bulk_keyword_difficulty to assess ranking feasibility
-3. Filter: keyword_difficulty < 50 AND search_volume > 500
-4. For top 10 keywords, call serp_organic_live_advanced to inspect current SERP composition
-5. Present: gap keywords sorted by opportunity score (high volume + low difficulty), with SERP context for top picks
+1. docs_search for /v3/dataforseo_labs/google/domain_intersection/live; get the user's budget
+2. api_request POST that path with target1 "ahrefs.com", target2 "yourdomain.com", intersections false, location_code 2840, language_code "en", limit 300
+3. Pass the keyword list to /v3/dataforseo_labs/google/bulk_keyword_difficulty/live
+4. Keep keyword_difficulty < 50 and search_volume > 500
+5. For the top 10, read the live SERP at /v3/serp/google/organic/live/advanced
+6. Present: gap keywords sorted by opportunity (high volume, low difficulty), with SERP context for the top picks
 </example>

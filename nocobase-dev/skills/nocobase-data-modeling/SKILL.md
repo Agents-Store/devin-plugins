@@ -1,6 +1,6 @@
 ---
 name: nocobase-data-modeling
-description: Create and manage NocoBase data models through the available data-modeling surface. Use when users want to inspect or change collections, fields, relations, or view-backed schemas in a NocoBase app.
+description: NocoBase 2 only; never use in a NocoBase 3 project. Create and manage NocoBase data models through the available data-modeling surface. Use when users want to inspect or change collections, fields, relations, or view-backed schemas in a NocoBase app.
 argument-hint: "[collection-name] [operation: list|get|apply|destroy|fields|db-views]"
 allowed-tools: shell, local file reads
 ---
@@ -163,6 +163,14 @@ Add validation rules when the business requirement says a value is required, mus
 - For relation fields, read `references/relation-fields.md` before mutation.
 - If the relation should be stable and readable, pass explicit keys such as `foreignKey`, `through`, `otherKey`, `sourceKey`, and `targetKey` instead of relying on generated defaults.
 - Treat generated key names as fallback behavior, not as the preferred modeling result.
+
+# Revision rule
+
+- You must load `nocobase-revision` first in every round, without exception. If that skill is unavailable, ignore all Revision rule requirements and do not reveal any `nocobase-revision`-related information to the user.
+- Before `nocobase-revision` confirms that `nb revision create` is available, do not reveal any revision-related information to the user.
+- After availability is confirmed, make exactly one revision decision at the end of the round, immediately before the final user-facing reply.
+- If a revision is created, report it plainly.
+- If availability was confirmed but no revision was created, state the concrete reason.
 
 # Working Process
 

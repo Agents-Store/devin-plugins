@@ -9,7 +9,7 @@ Long-horizon planning sits above sprints and modules. This skill covers the thre
 
 ## Tool Name Resolution
 
-Resolve real tool names via the `connector-bootstrap` skill.
+Plane MCP exposes one tool per resource and the operation goes into the `action` parameter: `initiative(action=create, ...)`. This skill writes calls in that form. Resolve the real tool names (`mcp__<server>__<resource>`) through the `connector-bootstrap` skill - never assume a server prefix.
 
 ## The Three Hierarchies
 
@@ -21,68 +21,93 @@ Resolve real tool names via the `connector-bootstrap` skill.
 
 A work item can belong to an epic, a module, a cycle, and a milestone simultaneously.
 
-## Available Actions
+## Available Calls
 
-### Epics
-`list_epics`, `create_epic`, `retrieve_epic`, `update_epic`, `delete_epic`
+### Epics - there are no epic tools
+
+An epic is a **work item whose type is named "Epic"**. All epic operations are `workitem` calls plus one lookup of the type id:
+
+| Operation | Call |
+|-----------|------|
+| Find the Epic type | `workitem_type(action=resolve, project_id, name="Epic")` - `id` is the `type_id`; finds or creates the type, never duplicates |
+| Create | `workitem(action=create, project_id, name, type_id=<epic-type-id>, ...)` |
+| List epics | `workitem(action=list, project_id, pql='type = "<epic-type-id>"')` |
+| Read / update / delete | `workitem(action=retrieve\|update\|delete, project_id, workitem_id)` |
+| Children | the `parent` field of the child work item |
+| List children | `workitem(action=list, project_id, pql='childOf("<epic identifier or uuid>")')` |
 
 ### Initiatives
-`list_initiatives`, `create_initiative`, `retrieve_initiative`, `update_initiative`, `delete_initiative`
+`initiative(action=list|retrieve|create|update|delete)`, `list_projects`, `add_projects`, `remove_projects`, `list_workitems`, `manage_workitems`
 
 ### Milestones
-`list_milestones`, `create_milestone`, `retrieve_milestone`, `update_milestone`, `delete_milestone`, `add_work_items_to_milestone`, `remove_work_items_from_milestone`, `list_milestone_work_items`
+`milestone(action=list|retrieve|create|update|delete)`, `list_workitems`, `manage_workitems`
 
 ## Creating an Epic
 
 ```
 1. connector-bootstrap  → resolve tools
-2. list_projects        → pick project_id
-3. create_epic({
-     project_id,
-     name: "Multi-tenant support",
-     description_html: "<h3>Goal</h3>…<h3>Success metrics</h3>…",
-     lead: "<user_uuid>",
-     start_date, target_date,
-     priority
-   })
+2. project(action=list) → pick project_id
+3. workitem_type(action=resolve, project_id=<id>, name="Epic")
+   → the returned id is the epic type_id
+4. workitem(action=create,
+     project_id=<id>,
+     name="Multi-tenant support",
+     type_id=<epic-type-id>,
+     description_html="<h3>Goal</h3>…<h3>Success metrics</h3>…",
+     assignees=[<lead_user_uuid>],
+     start_date="YYYY-MM-DD", target_date="YYYY-MM-DD",
+     priority="high")
 ```
 
-Add child work items by setting the epic as the parent (check the exact field name in the tool schema — typically `parent` or `epic_id` on the child work item).
+Add child work items by setting the epic as the parent: `workitem(action=create, ..., parent=<epic_workitem_id>)`, or `workitem(action=update, ..., parent=<epic_workitem_id>)` for an existing item. A parent is set on the child, never on the epic.
+
+Epics need the project's `epics` and `workitem_types` features: check with `project(action=get_features, project_id)` and, with the user's consent, enable with `project(action=update_features, project_id, epics=true, workitem_types=true)`. If a call is refused because the plan does not include work item types, say so; the epic then has to be an ordinary work item with a parent-child tree.
+
+`isEpic()` is also a PQL predicate ("issue type is epic" per `get_pql_reference`). Whether a type created or found by `workitem_type(action=resolve, name="Epic")` counts as an epic for it depends on how Plane flags epic types - confirm on your instance; the `type = "<epic-type-id>"` filter does not depend on that.
 
 ## Creating an Initiative
 
-Initiatives are **workspace-level** — they do NOT take a `project_id`. Use them to express strategic bets that span several projects:
+Initiatives are **workspace-level** - they do NOT take a `project_id`. Use them to express strategic bets that span several projects:
 
 ```
-create_initiative({
-  name: "International expansion Q3",
-  description_html: "<h3>Why</h3>…<h3>Bets</h3>…<h3>Out of scope</h3>…",
-  lead: "<user_uuid>",                       // may default to null
-  start_date: "YYYY-MM-DD",
-  end_date: "YYYY-MM-DD"                      // note: end_date, not target_date for initiatives
-})
+initiative(action=create,
+  name="International expansion Q3",
+  description_html="<h3>Why</h3>…<h3>Bets</h3>…<h3>Out of scope</h3>…",
+  lead=<user_uuid>,
+  start_date="YYYY-MM-DD",
+  end_date="YYYY-MM-DD",              // end_date, not target_date, for initiatives
+  state="DRAFT")                      // DRAFT | PLANNED | ACTIVE | COMPLETED | CLOSED
 ```
 
-New initiatives are typically created in `DRAFT` state. Move them to active state separately if your instance supports it. Link epics and projects to the initiative per your instance's schema — this varies widely between Plane deployments.
+`create` takes no project list. Link projects and epics afterwards, then read the links back (both calls return nothing):
+
+```
+initiative(action=add_projects, initiative_id=<id>, project_ids=[<project_uuid>, ...])
+initiative(action=list_projects, initiative_id=<id>)
+
+initiative(action=manage_workitems, initiative_id=<id>, add_ids=[<epic work item id>, ...])
+initiative(action=list_workitems, initiative_id=<id>)
+```
+
+A work item of any type can be linked to an initiative, so link the epic work items. The tool needs the workspace's native initiatives feature: check `workspace(action=get_features)` and, with the user's consent, enable it with `workspace(action=update_features, initiatives=true)`. While it is off, `initiative` tells you that initiatives are stored as "Initiative" work items (`workitem_type(action=resolve, name="Initiative")`), and linking projects or work items is not possible.
 
 ## Creating a Milestone
 
-Milestones answer the question "what must ship by this date?".
-
-**Field name caveat:** most Plane deployments use **`title`** for the milestone name, NOT `name`. Verify the tool schema before the first call. The `description` field may or may not be supported on your instance — start minimal and add fields only after confirming they work.
+Milestones answer the question "what must ship by this date?". A milestone has a **`title`** (not `name`) and a `target_date`:
 
 ```
-1. create_milestone({
-     project_id,
-     title: "v2.0 Public Beta",               // usually "title", NOT "name"
-     target_date: "YYYY-MM-DD"
-   })
+1. milestone(action=create,
+     project_id=<id>,
+     title="v2.0 Public Beta",
+     target_date="YYYY-MM-DD")
 
-2. add_work_items_to_milestone({
-     project_id,
-     milestone_id,
-     issue_ids: [...]                         // plural; see Known Limitations below
-   })
+2. milestone(action=manage_workitems,
+     project_id=<id>,
+     milestone_id=<milestone_id>,
+     add_ids=[<work item uuid>, ...])      // returns nothing
+
+3. milestone(action=list_workitems, project_id=<id>, milestone_id=<milestone_id>)
+   → read the membership back
 ```
 
 ## Reporting Progress
@@ -90,8 +115,11 @@ Milestones answer the question "what must ship by this date?".
 ### Epic progress
 
 ```
-1. list_work_items({ project_id, filter: parent = epic_id })
-2. Group by state group; sum points
+1. workitem(action=count, project_id=<id>,
+            pql='childOf("<epic identifier>")', group_by=state__group)
+   → child counts per state group in one call
+2. workitem(action=list, project_id=<id>, pql='childOf("<epic identifier>")', fields="id,name,point,estimate_point,state")
+   → sum points by state group (counts have no points)
 3. completion_rate = completed_points / total_points
 4. Forecast: project remaining points at current velocity → target_date slippage
 ```
@@ -99,7 +127,9 @@ Milestones answer the question "what must ship by this date?".
 ### Milestone health
 
 ```
-1. list_milestone_work_items({ project_id, milestone_id })
+1. workitem(action=count, project_id=<id>,
+            pql='milestone = "<milestone_id>"', group_by=state__group)
+   milestone(action=list_workitems, project_id=<id>, milestone_id=<milestone_id>)
 2. Days to target_date
 3. Remaining points
 4. Velocity-based ETA: remaining_points / weekly_velocity
@@ -114,7 +144,7 @@ Risk thresholds:
 
 ### Initiative rollup
 
-Aggregate completion across all linked epics and projects. Report per-epic and overall.
+Aggregate completion across all linked epics and projects: `initiative(action=list_workitems)` gives the epics, `initiative(action=list_projects)` the projects; then count each epic's children as above. Report per-epic and overall.
 
 ## When to Use Which
 

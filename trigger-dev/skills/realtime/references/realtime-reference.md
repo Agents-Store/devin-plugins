@@ -71,11 +71,11 @@ const { parts, error } = useRealtimeStream(aiStream, runId, {
 
 ### useWaitToken
 
-Complete a wait token from the UI:
+Complete a wait token from the UI. `tokenId` is the `id` from `wait.createToken()` (it starts with `waitpoint_`) and `accessToken` is that token's `publicAccessToken`; both come from your backend:
 
 ```tsx
-const { complete, isCompleting } = useWaitToken(tokenId, { accessToken });
-await complete({ approved: true });
+const { complete, isLoading, isCompleted, isReady, error } = useWaitToken(tokenId, { accessToken });
+complete({ approved: true });
 ```
 
 ## Backend Subscription Methods

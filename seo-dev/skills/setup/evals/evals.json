@@ -13,7 +13,7 @@
         "Configures title template in root layout metadata",
         "Adds default description to root layout",
         "Installs schema-dts as dev dependency",
-        "Does NOT install next-seo (deprecated)"
+        "Does NOT use next-seo NextSeo/DefaultSeo for meta tags (Metadata API instead); treats next-seo v7 JSON-LD components as an optional alternative, not a requirement"
       ]
     }
   ]

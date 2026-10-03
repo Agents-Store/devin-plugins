@@ -156,6 +156,8 @@ Surface the inverse side of a `relationship` without storing extra data:
 
 `users.posts` is computed at query time from posts where `author = user.id`.
 
+**Polymorphic joins (3.90.0):** a join whose `collection` is an array of collections now applies the complete `where` and throws a `QueryError` for unsupported filters — localized fields, fields inside arrays/blocks, paths that traverse relationship/upload/json fields (such as `owner.email`), the `near`/`within`/`intersects`/`all` operators, and a field path with incompatible types across the joined collections. This also applies to those collections' read access rules, a join's `where`, and admin `baseFilter`/`baseListFilter` used by folders. Rewrite such filters to use direct, compatible fields.
+
 ## Container Fields
 
 ### group

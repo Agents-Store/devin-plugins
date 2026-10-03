@@ -59,7 +59,8 @@ export const hourlySync = schedules.task({
     metadata.set("total", records.length);
 
     // Batch sync all records in parallel
-    const results = await syncRecord.batchTriggerAndWait(
+    // The result is `{ id, runs }`
+    const { runs: results } = await syncRecord.batchTriggerAndWait(
       records.map(r => ({ payload: { id: r.id, source: "api" } }))
     );
 
@@ -98,9 +99,10 @@ import { prismaExtension } from "@trigger.dev/build/extensions/prisma";
 export default defineConfig({
   project: "proj_xxxxx",
   dirs: ["./src/trigger"],
+  maxDuration: 300,
   build: {
     extensions: [
-      prismaExtension({ schema: "prisma/schema.prisma", migrate: true }),
+      prismaExtension({ mode: "legacy", schema: "prisma/schema.prisma", migrate: true }),
     ],
   },
 });

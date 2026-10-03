@@ -36,7 +36,7 @@
 | `layers.interface` | Yes | Interface layer technologies as lowercase strings |
 | `plugins.technology` | Yes | Required Technology plugin names (e.g., `"directus-dev"`) |
 | `plugins.process` | Yes | Required Process plugin names |
-| `plugins.stack` | Yes | Required Stack plugin names (e.g., `"stack-directus-nextjs-dev"`) |
+| `plugins.stack` | Yes | Required Stack plugin names (e.g., `"stack-directus-nextjs"`) |
 
 ## Examples
 
@@ -77,9 +77,9 @@
     "interface": ["nextjs"]
   },
   "plugins": {
-    "technology": ["directus-dev", "nextjs-dev", "nextjs-provision", "vercel"],
+    "technology": ["directus-dev", "nextjs-dev", "nextjs-provision", "vercel-dev"],
     "process": [],
-    "stack": ["stack-directus-nextjs-dev"]
+    "stack": ["stack-directus-nextjs"]
   }
 }
 ```
@@ -99,7 +99,7 @@
     "interface": ["nuxt"]
   },
   "plugins": {
-    "technology": ["nocodb-dev", "n8n-ops", "trigger-dev-dev"],
+    "technology": ["nocodb-dev", "n8n-dev", "trigger-dev"],
     "process": [],
     "stack": []
   }
@@ -123,9 +123,9 @@ Note: Nuxt appears in both `logic` and `interface` because it handles server rou
     "interface": ["nextjs"]
   },
   "plugins": {
-    "technology": ["directus-dev", "nextjs-dev", "nextjs-provision", "vercel"],
+    "technology": ["directus-dev", "nextjs-dev", "nextjs-provision", "vercel-dev"],
     "process": ["plane-ops"],
-    "stack": ["stack-directus-nextjs-dev"]
+    "stack": ["stack-directus-nextjs"]
   }
 }
 ```
@@ -136,6 +136,6 @@ Note: Nuxt appears in both `logic` and `interface` because it handles server rou
 2. `parent` must be `null` if and only if `level` is `0`
 3. At Level 1+, at least one layer must have technologies
 4. At Level 1+, `plugins.technology` should list at least one plugin
-5. Plugin names must match Agents Store naming: `{tool}-{process}` for technology, `stack-{name}-{process}` for stack
+5. Plugin names must match Agents Store naming: `{tool}-{process}` for technology and process plugins, `stack-{name}` for stack plugins (no process suffix). Use the `name` from the plugin's `plugin.json`; a plugin that was renamed or retired keeps working through the marketplace `renames` map, but new templates use the current name
 6. Layer values should be lowercase technology identifiers
 7. Full-stack frameworks (Next.js, Nuxt, SvelteKit, Remix) must appear in BOTH `logic` and `interface` layers — they serve as backend (API routes, server middleware) and frontend (SSR/CSR rendering) simultaneously

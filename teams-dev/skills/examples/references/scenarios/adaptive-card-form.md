@@ -1,93 +1,91 @@
 # Scenario — Adaptive Card form
 
-A bot that posts a sign-up card. The user fills the fields, clicks **Save**, and the bot acknowledges the submission.
+A bot that posts a sign-up card. The user fills in the fields and clicks **Save**; the bot validates on the client, receives the values and acknowledges.
 
-## Steps
+## 1. Scaffold
 
 ```bash
-teams project new typescript card-form --template echo
+teams project new typescript card-form -t echo --yes
 cd card-form
-npm install
+npm install @microsoft/teams.cards @microsoft/teams.api
 ```
 
-Edit `src/index.ts`:
+Register the app as in `echo-bot.md` when you want to test in Teams.
+
+## 2. The bot
+
+Replace `src/index.ts`:
 
 ```ts
 import { App } from '@microsoft/teams.apps';
-import { DevtoolsPlugin } from '@microsoft/teams.dev';
 import {
+  ActionSet,
   AdaptiveCard,
+  ChoiceSetInput,
+  ExecuteAction,
+  SubmitData,
   TextBlock,
   TextInput,
-  ChoiceSetInput,
-  Choice,
-  ExecuteAction,
 } from '@microsoft/teams.cards';
-import { MessageActivity, cardAttachment } from '@microsoft/teams.api';
 
 const buildForm = () =>
-  new AdaptiveCard()
-    .addBody(new TextBlock('Sign up').withWeight('Bolder').withSize('Large'))
-    .addBody(
-      new TextInput('email')
-        .withPlaceholder('you@example.com')
-        .withIsRequired(),
+  new AdaptiveCard(
+    new TextBlock('Sign up', { weight: 'Bolder', size: 'Large' }),
+    new TextInput({ id: 'email', label: 'Email', placeholder: 'you@example.com' })
+      .withIsRequired()
+      .withErrorMessage('An email is required'),
+    new ChoiceSetInput(
+      { title: 'Engineer', value: 'eng' },
+      { title: 'Designer', value: 'design' },
+      { title: 'Product', value: 'pm' },
     )
-    .addBody(
-      new ChoiceSetInput('role')
-        .withChoices([
-          new Choice('Engineer', 'eng'),
-          new Choice('Designer', 'design'),
-          new Choice('Product', 'pm'),
-        ])
-        .withStyle('compact')
-        .withValue('eng'),
-    )
-    .addActions(
-      new ExecuteAction('save').withTitle('Save').withStyle('positive'),
-    );
-
-const app = new App({
-  plugins: [new DevtoolsPlugin()],
-});
-
-app.on('message', async ({ send }) => {
-  await send(
-    new MessageActivity('Please fill the form:').addAttachment(
-      cardAttachment('adaptive', buildForm()),
+      .withId('role')
+      .withLabel('Role')
+      .withStyle('compact')
+      .withValue('eng'),
+    new ActionSet(
+      new ExecuteAction({ title: 'Save' })
+        .withData(new SubmitData('save_signup'))
+        .withAssociatedInputs('auto')      // collect and validate every input of the card
+        .withStyle('positive'),
     ),
   );
+
+const app = new App();
+
+app.on('message', async ({ send }) => {
+  await send(buildForm());
 });
 
-app.on('card.action.save', async ({ activity, send }) => {
-  const data = activity.value as { email: string; role: string };
+app.on('card.action.save_signup', async ({ activity, send }) => {
+  const data = activity.value.action.data as { email: string; role: string };
   await send(`Saved: ${data.email} (${data.role})`);
+  return {
+    statusCode: 200,
+    type: 'application/vnd.microsoft.activity.message',
+    value: 'Saved',
+  } as const;
 });
 
-(async () => {
-  await app.start();
-})();
+app.start(process.env.PORT || 3978).catch(console.error);
 ```
 
-## Run
+## 3. Run and verify
 
 ```bash
-devtunnel host -p 3978 --allow-anonymous
-teams app update $(teams app list --json | jq -r '.[0].teamsAppId') --endpoint "https://<tunnel-host>/api/messages"
-npm run dev
+DANGEROUSLY_ALLOW_UNAUTHENTICATED_REQUESTS=true npm run dev
+agentsplayground -e http://localhost:3978/api/messages -c emulator
 ```
 
-## Verify
+1. Send any message; the bot answers with the card.
+2. Click **Save** with an empty email: the client blocks it and shows the error message.
+3. Fill the email, keep the role default, click **Save**: the bot replies `Saved: <email> (eng)`.
 
-1. Send any message to the bot.
-2. The bot posts a card with email + role inputs and a Save button.
-3. Fill the email, leave the role default, click **Save**.
-4. The bot replies with `Saved: <email> (eng)`.
-
-DevTools shows three activities: inbound message, outbound card, inbound `card.action.save`.
+The Playground shows the raw card JSON and the invoke the click produces; render fidelity is best judged in Teams.
 
 ## Common tweaks
 
-- Validate the email in the handler with a regex before saving.
-- Re-render the card on save with `Action.Execute({ data: { kind: 'refresh' } })` to give visual feedback.
-- Convert the form into a dialog modal — see `dialogs` for the `dialog.open.<id>` + `dialog.submit.<id>` shape.
+- Re-render the card instead of sending a message: return `{ statusCode: 200, type: 'application/vnd.microsoft.card.adaptive', value: <card> }` from the handler.
+- Turn the form into a dialog: put the same card into `dialog.open.<id>` (`dialogs`).
+- Validate the email on the server too — client validation is a convenience, not a guarantee.
+- Several actions on one card: one `SubmitData` name each, one `card.action.<name>` handler each (`adaptive-cards`).

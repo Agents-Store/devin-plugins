@@ -56,7 +56,10 @@ Run these checks first:
 | `no basic auth credentials` | Docker credentials store empty for this host | Run `docker login` on the machine; in CI, add login step before deploy |
 | Push to `localhost:5000` fails on CI | `DEPLOY_REGISTRY_HOST` on server still set to default | Set public hostname in webapp `.env` + restart webapp |
 | "No tasks found" | Wrong `dirs` config | Check `dirs` in trigger.config.ts |
-| Version mismatch | SDK/CLI out of sync | `npm install @trigger.dev/sdk@latest` |
+| Version mismatch | SDK/CLI out of sync (`deploy` aborts in CI) | `npx trigger.dev@<version> update` aligns every `@trigger.dev/*` package with the CLI; on self-hosted use the server's version |
+| `The "maxDuration" trigger.config option is now required` | `defineConfig` has no `maxDuration` | Add `maxDuration: 300` (seconds, at least 5) |
+| Type error on `prismaExtension` | Missing `mode` | Add `mode: "legacy"` (Prisma 6), `"engine-only"` or `"modern"` (Prisma 6.16+/7) |
+| `unknown option '--readonly'` | `--readonly` passed to `install-mcp` | Put it on the server: `trigger.dev mcp --readonly` |
 
 ### Registry Push Failures (Self-Hosted)
 
@@ -119,7 +122,12 @@ docker compose logs -f supervisor
 | Worker token missing | Separate machines | Check webapp logs for token on first start |
 | Registry auth fails | Wrong credentials or stale docker keychain | See "Registry Push Failures" above — verify via `curl -u user:pass https://$URL/v2/` returns 200 |
 | Object storage error | MinIO bucket missing | Create `packets` bucket via MinIO UI (:9001) |
-| Disk full | Old runs not cleaned | Configure retention, clean old data |
+| Disk full | Old runs not cleaned | Configure retention, clean old data; store events in ClickHouse (`EVENT_REPOSITORY_DEFAULT_STORE=clickhouse_v2`) |
+| Webapp will not boot after upgrading to 4.5.6+ | Old published default credentials still in `.env` | Set unique values (`./generate-secrets.sh`), or temporarily `ALLOW_INSECURE_DEFAULT_SECRETS=true` |
+| Worker fails to authenticate (split setup) | `MANAGED_WORKER_SECRET` differs between webapp and worker | Use the webapp's value on the worker; never run `generate-secrets.sh` on the worker host |
+| TRQL / dashboards empty or erroring | ClickHouse missing or older than 25.8 | Run the bundled ClickHouse (or an external one at 25.8+) |
+| Runs that wait never release their slot | Self-hosted has no checkpoints | Expected: waiting runs stay `EXECUTING`; raise concurrency or avoid long in-task waits |
+| Chat agents or sessions do nothing | Server older than 4.5.0 | Upgrade the server, or use plain tasks |
 
 ### Log Analysis
 
@@ -151,7 +159,7 @@ See the **observability** skill for the full TRQL syntax reference.
 
 ## MCP Tool Annotations (v4.4.4+)
 
-Every MCP tool now carries `readOnlyHint` / `destructiveHint` annotations. If your MCP client respects them, agents can be prevented from calling write tools without explicit approval. For a hard-enforced read-only deployment, install with `npx trigger.dev@latest install-mcp --readonly` — `deploy`, `trigger_task`, and `cancel_run` are hidden server-side.
+Every MCP tool carries `readOnlyHint` / `destructiveHint` annotations. If your MCP client respects them, agents can be prevented from calling write tools without explicit approval. For a hard-enforced read-only deployment run the server as `trigger.dev mcp --readonly` (set it in the server `args`; the installer has no such flag). It hides 15 write tools server-side: `deploy`, `trigger_task`, `cancel_run`, project creation and initialization, the five prompt writers, the three agent-chat writers, `write_session_channel` and `submit_feedback`. `start_dev_server` and `switch_profile` stay visible.
 
 ## Deeper Reference
 

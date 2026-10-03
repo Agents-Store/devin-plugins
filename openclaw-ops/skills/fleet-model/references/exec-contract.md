@@ -42,10 +42,14 @@ an explicit mode that contradicts the state is refused rather than silently down
 
 ## Safe on a broken instance
 
-Only `setup`, `qa`, `database` (`ocexec.SAFE_BROKEN`). They are the subcommands that do not assume a
-live gateway, a resolved model chain or reachable channels. Anything else against a down instance is
-refused with the reason, because the failure it produces is about the missing gateway, not about the
-problem you are chasing — which is how a diagnosis session turns into an hour of chasing a red herring.
+Only `setup`, `qa`, `database` and `doctor` (`ocexec.SAFE_BROKEN`). They are the subcommands that do
+not assume a live gateway, a resolved model chain or reachable channels. `doctor` is on the list because
+it is the documented way back for a gateway that exited unable to migrate its state: the same image,
+once, against the same mounts, then a normal start. Its read postures (`--lint`, `--post-upgrade`) run
+as is; `doctor --fix` is an R4, so the door refuses it as a raw call and the plan comes first. Anything
+else against a down instance is refused with the reason, because the failure it produces is about the
+missing gateway, not about the problem you are chasing — which is how a diagnosis session turns into an
+hour of chasing a red herring.
 
 ## Standing bans
 
@@ -58,7 +62,7 @@ problem you are chasing — which is how a diagnosis session turns into an hour 
 | a chat/completion request as a health check | Every such request creates a full agent session — it costs money, writes history, and can itself be what is broken. Use the health endpoint family |
 | an auth mutation without the fleet front lock | The runtime's own serialisation lock is a file lock **inside one state dir** and serialises nothing across instances. `ocexec.py` takes the `fleet-auth` lock itself for any `models auth …` call (`gate.fleet_lock`); a multi-step procedure takes it around the whole sequence with `gate.py lock take fleet-auth` and passes the printed token as `--lock-token`, then `gate.py lock release fleet-auth --token …`. Busy prints the holder, the operation and the seconds left; `gate.py lock status fleet-auth` asks the same question |
 | any call against an `alien` instance, or one with `manage:false` | The layout fingerprint failed, or the operator excluded it. Nothing here knows what that object is, so it stays an inventory row: reads of the host side are fine, its CLI is not run |
-| anything but `setup`, `qa`, `database` in cold mode | A cold container is not a gateway; see "Safe on a broken instance" above |
+| anything but `setup`, `qa`, `database`, `doctor` in cold mode | A cold container is not a gateway; see "Safe on a broken instance" above |
 | above R0 without `--yes` **in a later turn** | Reads are free, effects are not, and `--yes` is never added in the turn the command was first proposed |
 | hand-written `docker exec` / `docker compose exec` | Bypasses redaction, risk classification and every ban above |
 
@@ -79,6 +83,26 @@ the raw door perform them would put the most dangerous operations on the least s
 A read subcommand carrying a write flag (`--fix`, `--force`, `--write`, `--set`, `--apply`) is
 promoted to R2 regardless of its name — and so is any argv the read list does not recognise, which
 is why an unknown verb cannot slip through as a read.
+
+The markers name commands that **exist in the current command tree**, and they are by effect, not by
+name. R3 (backup first): `sessions cleanup`, `memory reset`, `memory forget`, `memory index --force`,
+`backup restore`, `update repair`, `doctor --state-sqlite compact` and
+`doctor --session-sqlite compact|import|recover|restore`. R4 (typed confirmation): `update` in any form
+— `update cleanup` also retires the migration recovery originals for good — `secrets store
+set|rm|import`, `secrets apply`, `doctor --generate-gateway-token`, `doctor --fix` (and its alias
+`--repair`, which is normalised to it, so `doctor --lint --repair` is an R4 too), `doctor --yes` (it
+enters repair maintenance), `security audit --fix`, `fleet rm`, `migrate apply`, the root shorthand
+`--update`, any `triage` that is not `--json` / `--non-interactive` (it hands the installation to a
+coding agent that repairs on its own), and a top-level `reset` or `uninstall`. Plain `doctor` and
+`doctor --non-interactive` are R2: ordinary doctor can copy legacy config and migrate state even
+without `--fix`. A few
+reads are not what their family suggests: `update status` is a ledger read, `memory status --index`
+reindexes, and anything carrying `--allow-exec` (doctor, the secrets audit) runs the exec-backed
+secret references the config declares, so it is an R1. `triage --json` and `gateway diagnostics export`
+follow one rule: they write only a sanitized support export and change no config or state, so they are
+reads — unless a caller-chosen `--output` names the destination, which makes either an R2. Global options in front (`--profile <name>`) do
+not hide a command word. When a build lacks a verb, upstream's `--help` wins and the marker list is wrong
+until it is edited — the classifier is a safety net, not a command catalogue.
 
 **"The plan behind it" is a thing, not a phrase.** Above R0 the door wants one of two proofs, because
 `--yes` records that a human answered and nothing else: `--plan-id <command>/<instance>/<utc-stamp>`,
@@ -114,9 +138,13 @@ gate.py plan list
   visible, so a suppressed match is never invisible.
 - `--json` parses **stdout only**. Merging stderr into the document is how a CLI update banner ends up
   inside a JSON value and every later parse fails with a misleading error.
-- Exit codes carry meaning for a known set of commands (lint, post-upgrade, credential check, security
-  audit): 0 clean, 1 error, 2 warn — and for the credential check, 1 expired, 2 expiring. For anything
-  else, assume only the ordinary "0 is success" and read the payload.
+- Exit codes carry meaning for a known set of commands, each from upstream's own documentation
+  (`ocjson.EXIT_CONTRACTS`): `doctor --lint` — 0 nothing at or above `--severity-min`, 1 a finding at
+  or above it, **2 the command failed** (not "warnings only"); `doctor --post-upgrade` — 1 only for a
+  `level: "error"` finding; `secrets audit --check` — 1 findings, 2 unresolved references; the
+  credential check — 1 expired, missing or indeterminate, 2 expiring. **`security audit` has no
+  contract**: upstream documents no exit-code table, so its code is "0 succeeded" and its payload is
+  the answer. For anything else, assume only the ordinary "0 is success" and read the payload.
 - `ocexec.py` returns the child's exit code unchanged, plus its own: 64 refused by policy, 65 unknown
   or unusable instance, 66 docker unavailable.
 

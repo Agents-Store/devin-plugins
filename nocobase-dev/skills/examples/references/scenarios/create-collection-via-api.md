@@ -67,10 +67,14 @@ curl -H "$H" "${NB_URL}/api/posts:get?filterByTk=${POST_ID}"
 ## 5. Verify from the CLI
 
 ```bash
-nb api collections list | grep -E '\bposts\b'
+nb api data-modeling collections get --filter-by-tk posts --appends fields -j
 ```
 
-Should print the `posts` row. If the schema doesn't show up, run `nb api app:clearCache` then retry — schema reads are cached.
+Should print the `posts` collection with its `title` and `body` fields. (Use `-e <env>` to pick a saved env other than the current one; `nb api data-modeling --help` lists the sibling commands.) If the schema doesn't show up, clear the server cache over REST and retry — schema reads are cached:
+
+```bash
+curl -X POST -H "$H" "${NB_URL}/api/app:clearCache"
+```
 
 ## 6. Clean up
 
@@ -88,5 +92,5 @@ curl -X POST -H "$H" -H "$J" \
 ## When to deviate
 
 - If you also need relations, fields under `nocobase-data-modeling` cover hasMany/belongsToMany payloads.
-- For seeded sample data at scale, prefer a `nb migration import` over hundreds of `:create` calls — see `nocobase-publish-manage`.
+- For seeded sample data at scale, prefer a backup restore or a migration file (`nb backup restore --file …`, `nb api migration …`) over hundreds of `:create` calls — see `nocobase-publish-manage`. Both overwrite data; read its safety rules first.
 - If the collection already exists, switch to `:update` with `filterByTk: "<name>"` against `/api/collections:update`.

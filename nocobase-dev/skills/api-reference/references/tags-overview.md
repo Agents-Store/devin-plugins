@@ -1,10 +1,10 @@
 # OpenAPI tag overview
 
-Every tag from `references/openapi/nocobase.json`, with a one-line summary and the matching specialist skill in this plugin.
+Every tag from `references/openapi/nocobase.json` (a 2.1.0-beta.29 snapshot — newer servers publish more groups; see `api-reference`), with a one-line summary and the matching specialist skill in this plugin.
 
 | Tag | Ops | What it does | Specialist skill |
 |---|---:|---|---|
-| `flowSurfaces` | 46 | Atomic and declarative FlowModel surface orchestration — pages, blocks, popups, tabs, layout, linkage, blueprints, templates. Used by the UI builder. | `nocobase-ui-builder` |
+| `flowSurfaces` | 46 | Atomic and declarative FlowModel surface orchestration — pages, blocks, popups, tabs, layout, linkage, blueprints, templates. Used by the UI builder. | `nocobase-portal-manage` (→ `nocobase-ui-builder`) |
 | `$collection` | 10 | CRUD on a user-defined data table (`{collectionName}:list/get/create/update/destroy/move`). | `nocobase-data-modeling`, `nocobase-data-analysis` |
 | `$collection.$manyToManyAssociation` | 10 | Many-to-many relation actions (`list/get/create/update/destroy/move/set/add/remove/toggle`). | `nocobase-data-modeling` |
 | `$collection.$oneToManyAssociation` | 9 | One-to-many relation actions. | `nocobase-data-modeling` |
@@ -34,12 +34,16 @@ Every tag from `references/openapi/nocobase.json`, with a one-line summary and t
 | `apiKeys` | 3 | API key CRUD (the API Keys plugin). | `auth` |
 | `Auth`, `Authenticator`, `Basic auth`, `OIDC`, `SAML`, `Push` | ~13 | Authenticator configuration and sign-in endpoints. | `auth` |
 | `verifications`, `verifications_providers` | 9 | MFA / verification challenges. | `auth` |
-| `workflows` | 8 | Workflow CRUD, version sync, manual run. | `nocobase-workflow-manage` |
+| `workflows` | 8 | Workflow CRUD, revision, sync, manual run (`/workflows:execute`). | `nocobase-workflow-manage` |
 | `workflows.nodes` | 1 | Create node in workflow (association). | `nocobase-workflow-manage` |
 | `flow_nodes` | 7 | Update, delete, move, duplicate, test a node. | `nocobase-workflow-manage` |
 | `executions` | 4 | Execution list, get, cancel, delete. | `nocobase-workflow-manage` |
 | `jobs` | 3 | Node job list, get, resume. | `nocobase-workflow-manage` |
 | `userWorkflowTasks` | 1 | Current-user workflow task queue. | `nocobase-workflow-manage` |
+| `backups` | 8 | Server-side backup files — list, create, status, download, remove, restore, restore-upload, restore-status (`/backup:*`). | `nocobase-publish-manage` |
+| `migration` | 7 | Migration files — list, get, create from a rule, download, remove, check, execute (`/migration:*`). | `nocobase-publish-manage` |
+| `migrationRules`, `migrationRule` | 3 | List, get and create migration rules. | `nocobase-publish-manage` |
+| `migrationLogs` | 3 | Migration log list, get, download (`/migrationLog:*`). | `nocobase-publish-manage` |
 | `uiSchemas` | 9 | Lower-level UI schema CRUD (used internally by `flowSurfaces`). | `nocobase-ui-builder` |
 | `themeConfig` | 4 | Theme configuration. | `nocobase-utils` |
 | `storages` | 5 | File storages (local, s3, …). | `nocobase-utils` |
@@ -48,4 +52,4 @@ Every tag from `references/openapi/nocobase.json`, with a one-line summary and t
 | `chinaRegions` | 1 | Bundled China regions reference data. | `nocobase-utils` |
 | `swagger` | 1 | Swagger doc serving. | `nocobase-utils` |
 
-The 19 tags listed in `tags[]` at the top of the spec are the curated headline groups; the table above includes every tag actually attached to operations.
+The 19 tags listed in `tags[]` at the top of the spec are the curated headline groups; the table above includes every tag actually attached to operations (56 distinct tags). Four operations carry no tag: `/systemSettings:get`, `/systemSettings:update`, `/backupSettings:get`, `/backupSettings:update`.

@@ -7,6 +7,18 @@ description: Design taxonomies for Plane projects — labels, workflow states, w
 
 Plane gives you four metadata mechanisms for work items. Pick the right one or your project becomes a tag soup nobody can search.
 
+## Tool Name Resolution
+
+Plane MCP exposes one tool per resource and the operation goes into the `action` parameter: `label(action=create, ...)`. Resolve the real tool names (`mcp__<server>__<resource>`) through the `connector-bootstrap` skill - never assume a server prefix.
+
+| Mechanism | Calls |
+|---|---|
+| Labels | `label(action=list\|retrieve\|create\|update\|delete)` |
+| States | `state(action=list\|retrieve\|create\|update\|delete)` (`group`, `sequence`, `default`) |
+| Work item types | `workitem_type(action=list\|resolve\|create\|update\|delete\|import_to_project)` |
+| Properties | `workitem_property(action=list\|create\|update\|delete\|list_options\|create_option\|manage_type_properties\|set_value\|...)` |
+| Usage numbers for audits | `workitem(action=count, project_id, group_by=labels__id\|state_id\|type_id\|priority)` |
+
 ## The Four Mechanisms
 
 | Mechanism | Purpose | Cardinality | Workflow effect |
@@ -106,7 +118,7 @@ Plane groups states into five fixed buckets. **Velocity counts only items moved 
 
 1. **Max 6 states across started + unstarted** — beyond that, the board becomes a horizontal scroll wasteland.
 2. **Don't add per-team states** like "In Alice's review". Use assignee for that.
-3. **Sequence matters for burndown** — order states left-to-right in the natural flow. `update_state` accepts `sequence`.
+3. **Sequence matters for burndown** — order states left-to-right in the natural flow. `state(action=update, state_id, project_id, sequence=...)` sets it.
 4. **Renaming is safe**, deleting is not — items in a deleted state break. Migrate first via `/bulk-update --state new`.
 5. **Pick one default state** for new items (usually `Backlog` or `New`).
 
@@ -137,16 +149,19 @@ Properties are typed fields. They are the right mechanism for **structured, quer
 
 ### Property data types
 
-| Type | Use for |
-|---|---|
-| `text` | freeform short string (root cause one-liner) |
-| `number` | counts, ratios, customer impact |
-| `select` | one-of fixed options (severity, environment) |
-| `multi-select` | many-of fixed options (affected platforms) |
-| `date` | deadlines, discovery dates |
-| `boolean` | yes/no flags that need filtering (use a label for casual flags) |
-| `user` | secondary owners (reviewer, QA lead) |
-| `url` | links beyond `/link add` (vendor docs) |
+| Type | Plane `property_type` | Use for |
+|---|---|---|
+| `text` | `TEXT` (needs a `display_format`) | freeform short string (root cause one-liner) |
+| `number` | `DECIMAL` | counts, ratios, customer impact |
+| `select` | `OPTION` | one-of fixed options (severity, environment) |
+| `multi-select` | `OPTION` with `is_multi=true` | many-of fixed options (affected platforms) |
+| `date` | `DATETIME` (needs a `display_format`) | deadlines, discovery dates |
+| `boolean` | `BOOLEAN` | yes/no flags that need filtering (use a label for casual flags) |
+| `user` | `RELATION` with `relation_type=USER` | secondary owners (reviewer, QA lead) |
+| `url` | `URL` | links beyond `/link add` (vendor docs) |
+| rich text | `RELATION` with `relation_type=RICH_TEXT` | long-form notes per item |
+
+Also available: `EMAIL`, `FILE`, `FORMULA`, `CASCADING`. Create with `workitem_property(action=create, workitem_type_id, display_name, property_type, ...)`; options go in `options=[{"name","color","is_default"}]` or later through `create_option`. Properties live with a type: attach or detach with `manage_type_properties` (`attach_ids` / `detach_ids`; detach removes the association only). A property id is also what PQL filters on: `cf["<property-uuid>"] = "<option-uuid>"`; EMAIL, FILE and FORMULA properties cannot be filtered.
 
 ### Example property sets per type
 
@@ -178,10 +193,10 @@ Properties are typed fields. They are the right mechanism for **structured, quer
 
 Run this every quarter:
 
-1. **Labels** — list all labels. Drop any with <3 uses or no use in the last 90 days. Merge near-duplicates.
-2. **States** — check distribution. If items pile up in one state, the workflow has a bottleneck not captured by a state.
-3. **Types** — check usage. If a type has <5% of items, fold it into another.
-4. **Properties** — check fill rate. If a property is filled <30% of the time, it's not pulling its weight — remove or make optional.
+1. **Labels** — `label(action=list)` for the catalogue, then `workitem(action=count, project_id, group_by=labels__id)` for the uses of every label in one call (key `"None"` = items without any label). Drop any with <3 uses or no use in the last 90 days (`pql='label = "<label-uuid>" AND updatedAt >= daysAgo(90)'`). Merge near-duplicates.
+2. **States** — `workitem(action=count, project_id, group_by=state_id)` (or `pql='stateGroup IN openStates()'` with `group_by=state_id`). If items pile up in one state, the workflow has a bottleneck not captured by a state.
+3. **Types** — `workitem(action=count, project_id, group_by=type_id)`. If a type has <5% of items, fold it into another.
+4. **Properties** — fill rate = `workitem(action=count, project_id, pql='cf["<property-uuid>"] IS NOT NULL')` divided by the total count. If a property is filled <30% of the time, it's not pulling its weight — remove or make optional.
 
 Bad taxonomy is technical debt that compounds. A 30-minute quarterly audit prevents a 3-day cleanup later.
 

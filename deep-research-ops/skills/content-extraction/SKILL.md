@@ -11,8 +11,9 @@ Reading and extracting content from web pages, PDFs, and entire sites. All calls
 
 ### Fallback chain:
 ```
-1. Jina — fast, clean markdown
-2. Firecrawl — JS rendering, advanced options
+1. Jina read_url — fast, clean markdown (pages and PDFs)
+2. Firecrawl scrape — JS rendering, advanced options
+3. Exa fetch (pass maxCharacters: 20000 — the default is 3000 per page) — last resort
 On error → next provider.
 ```
 
@@ -21,6 +22,14 @@ On error → next provider.
 ~~scrape("https://example.com/article")
 → Returns clean markdown content
 ```
+
+### Cheap mode — only the relevant passages:
+```
+~~scrape(url, question: "What are the default rate limits?", topk: 3)
+→ Returns only the passages that answer the question, not the whole page
+   (Jina read_url question/topk; fallback: Firecrawl scrape in "query" format)
+```
+Use it by default in READ. Read in full when you need exact quotes or tables, or the passages were not enough.
 
 ### For JS-heavy pages:
 ```
@@ -31,9 +40,11 @@ If ~~scrape returns empty, try provider with waitFor/JS rendering support.
 
 ### Fallback chain:
 ```
-1. Jina parallel — batch all URLs at once
-2. Sequential ~~scrape per URL individually
+1. Jina read_url with an array — up to 5 URLs in one call
+2. Exa fetch with several URLs in one call (maxCharacters: 20000; default is 3000 per page)
+3. Sequential ~~scrape per URL individually
 ```
+More than 5 URLs → split into batches of 5. Only the Jina call honours `question`; the fallbacks return full pages, so select the passages yourself (or use the Firecrawl "query" format per URL).
 
 ### Workflow: search → rank → read
 ```
@@ -46,7 +57,8 @@ If ~~scrape returns empty, try provider with waitFor/JS rendering support.
 
 ### Fallback chain:
 ```
-1. Firecrawl crawl → crawl_id, then poll status until "completed"
+1. Firecrawl crawl — waits for the crawl to finish and returns the data
+   (check-status only to pick up a crawl started earlier or cut off)
 2. Firecrawl map → list of URLs, then ~~batch_scrape(selected_urls)
 ```
 
@@ -59,44 +71,56 @@ Crawl with limit, includePaths, excludePaths to control scope.
 
 ### Fallback chain:
 ```
-1. Firecrawl extract — LLM extraction with JSON schema
-2. Firecrawl scrape with JSON options
+1. Firecrawl scrape in "json" format with a prompt and schema — one URL per call
+2. Firecrawl agent — when the URLs are not known or the data is spread across sites
+3. ~~scrape, then extract the fields yourself
 ```
 
-### With JSON schema:
+### With JSON schema (known URL):
 ```
-~~extract(urls, prompt, schema) → structured data matching your schema
+~~extract(url, prompt, schema) → structured data matching your schema
+→ repeat for each URL
 ```
+
+### Unknown URLs or several sites:
+```
+1. Start the agent with a prompt, optional seed URLs, schema and a credit limit → job id
+2. Poll the job every 15-30 seconds until "completed" or "failed" (1-3 minutes)
+```
+The agent spends credits — always set a limit.
 
 ## Browser Sessions
 
 For dynamic pages requiring interaction (Firecrawl only):
 ```
-1. Create browser session → session_id
-2. Execute browser actions (navigate, click, type, screenshot)
-3. Delete browser session
+1. Open a page with a natural-language instruction → scrapeId
+2. Follow up on the same scrapeId (navigate, click, type)
+3. Stop the session
 ```
+The session acts on the live site — form submissions have side effects.
 
 ## PDF Processing
 
 ```
-Extract figures, tables, equations from PDF documents.
-Useful for academic papers from arXiv or any PDF URL.
+Text of a PDF: ~~scrape(pdf_url) — read_url and Firecrawl scrape both read PDFs.
+Figures, tables, equations: PDF extraction (by arXiv id or URL) returns them as images.
+Papers from the paper index: ~~academic_search read-paper step returns the passages
+that answer a question.
 ```
 
 ## Autonomous Research Agent
 
-For complex multi-step research (Firecrawl only):
+For complex multi-step research — the `~~deep_agent` capability (see CONNECTORS.md):
 ```
-1. Start agent with prompt and optional URLs → agent_id
-2. Poll agent status until "completed" (may take 1-5 minutes)
+1. Start the agent with a prompt and optional URLs → job id
+2. Poll the job every 15-30 seconds until "completed" (typically 1-3 minutes)
 ```
 
 ## Utility Tools
 
 | Tool | Purpose |
 |------|---------|
-| Screenshot | Capture a webpage for visual reports |
+| Screenshot | Capture a webpage for visual reports (ask for URLs, not base64 images) |
 | Date detection | Detect page publication date for freshness |
 
 ## Best Practices
@@ -108,7 +132,8 @@ For complex multi-step research (Firecrawl only):
 5. **PDFs** — use PDF extraction for academic papers
 6. **Structured data** — ~~extract with JSON schema
 7. **Check dates** — detect page date to filter stale content
-8. **Browser sessions** — only for SPA, always delete session after use
+8. **Browser sessions** — only for SPA, always stop the session after use
+9. **Long pages** — pass a `question` to read only the relevant passages
 
 ## Common Errors
 

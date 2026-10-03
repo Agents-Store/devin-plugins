@@ -14,7 +14,7 @@ Copy this directory's contents into your Devin plugin directory. The manifest (`
 
 - `create` — Use this skill when the user asks to "create a new template", "scaffold a Level 1 template", "create project-{stack}", "make a new stack template", "fork project-template", "create a demo template", "set up a new project from template", or wants to create any new project template at Level 1, 1.5, or 2 from the universal base or a stack template.
 
-- `examples` — Use this skill when the user asks for "examples", "how does template feedback work", "show me a walkthrough", "demo the template workflow", or needs to see end-to-end scenario walkthroughs for the project-template-creator plugin.
+- `examples` — Use this skill when the user asks for "examples", "how does template feedback work", "show me a walkthrough", "demo the template workflow", or needs to see end-to-end scenario walkthroughs for the project-template-dev plugin.
 
 - `feedback` — Use this skill when the user says "this should be in the parent template", "fix the template", "add this to project-template", "send feedback to parent", "improve the base template", "this skill belongs in the template", "update the parent", "push this up to the template", "the template needs this", "this is missing from the template", or discovers any issue while working in a child project that should be fixed in a parent template (Level 0 or Level 1).
 

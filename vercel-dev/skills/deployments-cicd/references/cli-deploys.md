@@ -40,13 +40,15 @@ git config user.email "team-owner@example.com"
 git commit --allow-empty -m "chore: update deploy author"
 ```
 
-### `output: 'standalone'` causes 404 on Vercel
+### `output: 'standalone'` as a possible cause of a 404 on Vercel
 
 **Symptom:** Build succeeds, `vercel inspect` shows READY, but all pages return 404.
 
-**Root cause:** `output: 'standalone'` in `next.config.ts` is designed for Docker/Node.js self-hosting. It changes the build output format in a way Vercel's routing doesn't expect.
+**Check first:** Vercel routes from metadata generated at build time, so a READY build with a 404 usually means a wrong Framework Preset ("Other") or Output Directory. Set `"framework": "nextjs"` as in the first section, or fix Project Settings → Build and Deployment. See [Why is my deployed project giving a 404?](https://vercel.com/kb/guide/why-is-my-deployed-project-giving-404).
 
-**Fix:** Conditionally disable for Vercel:
+**Possible cause (not reproduced):** `output: 'standalone'` in `next.config.ts` is designed for Docker/Node.js self-hosting and changes the build output format. No primary source confirms it breaks Vercel routing, so treat it as a suspect only after the preset and output directory are ruled out.
+
+**Test:** Conditionally disable it for Vercel and redeploy:
 ```typescript
 const nextConfig: NextConfig = {
   ...(process.env.VERCEL ? {} : { output: 'standalone' as const }),
@@ -58,9 +60,15 @@ const nextConfig: NextConfig = {
 
 **Symptom:** Build fails with `TypeError: Invalid URL` or similar — env vars like `NEXT_PUBLIC_*` are `undefined` during build.
 
-**Root cause:** `vercel env add <name> preview` requires a Git branch when the project has no Git integration, and fails.
+**Root cause:** The Preview environment has no value for them. Vercel CLI 62.2.0 takes `vercel env add name [environment] [--git-branch <NAME>] [--value <VALUE>] [--yes]`, so a Git branch is not required (read from `vercel env add --help`, not re-run on a project without Git integration). If `vercel env add ... preview` still fails on your CLI, use the `-b`/`-e` fallback below.
 
-**Fix:** Pass env vars directly during deploy:
+**Fix:** Add the variables to Preview non-interactively:
+```bash
+vercel env add NEXT_PUBLIC_DIRECTUS_URL preview --value "$NEXT_PUBLIC_DIRECTUS_URL" --yes
+```
+`--value` is visible in the process list and shell history; for secrets pipe the value on stdin instead of passing `--value`.
+
+**Fallback (nothing stored):** Pass env vars directly during deploy:
 ```bash
 source .env.local && vercel deploy \
   -b NEXT_PUBLIC_DIRECTUS_URL="$NEXT_PUBLIC_DIRECTUS_URL" \
@@ -73,14 +81,24 @@ Use `-b` for build-time vars and `-e` for runtime vars. `NEXT_PUBLIC_*` vars nee
 
 ## Deploy Hooks (CMS / External Trigger Rebuilds)
 
-Deploy Hooks let external services trigger a full production rebuild via a POST request — useful for headless CMS content changes (Directus, Sanity, Contentful, Strapi, etc.).
+Deploy Hooks let external services trigger a full rebuild of one Git branch via a GET or POST request — useful for headless CMS content changes (Directus, Sanity, Contentful, Strapi, etc.).
 
 ### Create a Deploy Hook
 
-1. Vercel dashboard → project Settings → Git → **Deploy Hooks**
-2. Name: e.g. "CMS Content Update"
+Deploy Hooks exist only for a project **connected to a Git repository**. A project that is deployed from the CLI alone cannot have one, so connect a repository first (or use ISR revalidation below).
+
+1. Vercel dashboard → project Settings → Git → **Deploy Hooks** (or `vercel deploy-hooks create [name]`)
+2. Name: e.g. "CMS Content Update" — one hook per branch unless you have several data sources
 3. Branch: `main` (or your production branch)
 4. Copy the generated URL (format: `https://api.vercel.com/v1/integrations/deploy/prj_xxx/xxx`)
+
+### Limits and Options
+
+- **Count:** 5 deploy hooks per project on Hobby and Pro, 10 on Enterprise.
+- **Rate:** up to 60 triggers per hour per project, summed over all of its hooks. A CMS that fires a webhook on every save can hit this; trigger on publish only.
+- **Build cache:** a hook reuses the build cache by default. Append `?buildCache=false` to the URL to skip it. Hooks created before 2021-05-11 default to no cache; append `?buildCache=true` or recreate the hook.
+- **Duplicates:** repeated requests for the same version cancel the earlier deployments of that hook.
+- **Off switch:** hooks do nothing when `vercel.json` contains `"github": { "enabled": false }`.
 
 ### Wire to a Headless CMS
 
@@ -100,7 +118,7 @@ Point your CMS webhook at the deploy hook URL. Examples:
 
 | Approach | When to use |
 |----------|-------------|
-| **Deploy Hook** (full rebuild) | Static sites, infrequent content updates, need guaranteed fresh build |
+| **Deploy Hook** (full rebuild; 60 triggers per hour per project) | Static sites, infrequent content updates, need guaranteed fresh build |
 | **ISR on-demand revalidation** (`revalidateTag`/`revalidatePath`) | Dynamic sites, frequent updates, instant refresh without full rebuild |
 
 For most Next.js App Router projects, **ISR revalidation is preferred** — it's faster (seconds vs minutes) and doesn't burn a build. Deploy hooks are simpler but trigger a full redeploy. You can use both: ISR for instant cache invalidation + deploy hook as a safety net for daily full rebuilds.
@@ -110,6 +128,9 @@ For most Next.js App Router projects, **ISR revalidation is preferred** — it's
 ```bash
 # Trigger a deploy hook from CLI or CI
 curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_xxx/xxx"
+
+# Same, without the build cache
+curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_xxx/xxx?buildCache=false"
 ```
 
-No authentication needed — the URL itself is the secret. Keep it private.
+No authentication needed — the URL itself is the secret. Keep it private (a CI secret, never the repository) and revoke it in Settings → Git if it leaks. Source: https://vercel.com/docs/deploy-hooks.

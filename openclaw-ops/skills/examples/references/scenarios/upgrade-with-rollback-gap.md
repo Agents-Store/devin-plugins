@@ -49,15 +49,18 @@ around is worse than no gate (`fleet.upgrade.new-lint-findings`).
 | Layer | Protects | Note |
 |---|---|---|
 | config snapshot outside the `.bak` ring | the human's own last-known-good | four automatic edits evict the ring |
-| the runtime's own backup, **verified** | catalogued content | verification must have **passed**; an unverified backup rejects the upgrade (`fleet.upgrade.no-verified-backup`, red line `upgrade-without-verified-backup`) |
-| stop the gateway, **then** archive the state directory | the only real rollback | stopping is what quiesces the writers; archiving a live state directory copies a torn moment |
+| the runtime's own backup, **verified** — `backup create --verify` | catalogued content in a WAL-aware archive | verification must have **passed**; an unverified backup rejects the upgrade (`fleet.upgrade.no-verified-backup`, red line `upgrade-without-verified-backup`) |
+| stop the gateway, **then** archive the state directory, with the `.bak` group Doctor saved | the only real rollback | stopping is what quiesces the writers; archiving a live state directory copies a torn moment. The archive carries working credentials (current OAuth tokens sit in the state database in plaintext), so it is a credential artefact: owner-only, private directory, never shared |
 
 The `ROLLBACK` block of the plan must be an **executable command**, not a description — a validator
 rejects prose (`gate.Plan.validate`). Here it reads: stop the gateway, restore the archive into a
 clean state directory, start the pinned digest. And it carries the cost out loud, because that is the
 gap in the title:
 
-- the schema migration is in place, with no pre-migration backup taken for you;
+- the schema migration is in place: Doctor keeps verified pre-migration copies beside the databases
+  (`<database>.pre-startup-migration-<id>.bak`) and a package update keeps snapshots until activation
+  is verified, but a package rollback cannot undo migrated state and an older release cannot open a
+  newer schema — only a backup you took yourself restores the full state;
 - restore works into a **clean** target, not over a half-migrated one;
 - everything written between the archive and the failure is gone.
 
@@ -83,14 +86,16 @@ is described by no document (`gate.batch_policy`).
 | version and the running **digest** | you upgraded the tag, not the artefact |
 | the readiness endpoint **with the bearer** | without it the answer is a bare negative with no list of what failed |
 | the health document | a top-level success does **not** mean every delivery queue is clear (`fleet.liveness.queue-backlog`) |
-| the post-upgrade lint | any error-level entry exits non-zero — that is the contract |
+| `doctor --post-upgrade` and the lint | post-upgrade exits 1 only for a `level: "error"` finding — a plugin version-drift **warning** exits 0, so read the findings. The lint exits 1 for any finding at the threshold you pinned (`--severity-min info`) and **2 for a failed run**, which is not "warnings only" |
 | schedule inventory vs the baseline | the upgrade **duplicates schedules**: copies arrive enabled, fire two or three times per tick, and lose their agent binding. Dedupe by keeping, in each `(name, schedule)` group, the row whose agent binding is non-empty (`fleet.cron.duplicates-after-upgrade`). Extra care where the money schedule lives |
 | the runtime override on each model entry | config migration silently rewrites a CLI-backed primary into a provider reference and drops the override. Nothing fails now; a session-expired error arrives later. Restore it from the snapshot (`fleet.model.primary-overwritten`) |
 
 **A gateway that stays stopped after the upgrade is the design, not a fault.** If startup repairs
-cannot complete safely it exits instead of reporting healthy. Retry budget is zero
-(`fleet.upgrade.gateway-stopped`): do not restart in a loop — that spins the backoff and overwrites
-the log lines holding the cause. One failure means the restore path, and only the restore path.
+cannot complete safely it exits instead of reporting healthy (exit code 78 when state cannot be
+migrated safely). Retry budget is zero (`fleet.upgrade.gateway-stopped`): do not restart in a loop —
+that spins the backoff and overwrites the log lines holding the cause, and do not delete the `.bak`
+group or a lock to quiet it. One failure means the recovery path: the same image once with
+`doctor --fix` against the same mounts (a planned, cold R4), or the restore — and nothing else.
 
 ## Step 6 — the wave gate
 

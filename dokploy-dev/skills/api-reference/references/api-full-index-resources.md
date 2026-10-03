@@ -1,15 +1,24 @@
 # Dokploy API — Complete Operation Index: Resources
 
-Auto-generated from the Dokploy v0.29.14 OpenAPI schema — the **exhaustive** list of resource/deployment operations. Every row maps 1:1 to an MCP tool `mcp__dokploy__<operation>` and a REST endpoint `{METHOD} /api/<operation-with-dots>` (`x-api-key` auth). `*` marks required params. For curated usage patterns and gotchas see the `mcp-patterns` skill and the themed `api-*` references; this file is the complete coverage index.
+Auto-generated from the live **REST** OpenAPI document of Dokploy v0.30.7 (`GET /api/settings.getOpenApiDocument`, `x-api-key`) — the **exhaustive** list of resource/deployment operations (338 operations in 33 categories). Every row maps 1:1 to an MCP tool `mcp__plugin_dokploy-dev_dokploy__<operation>` and a REST endpoint `{METHOD} /api/<operation-with-dots>` (`x-api-key` auth). `*` marks required params; only top-level body/query fields are listed (nested objects are not expanded; lists over 16 fields show the first 14 plus `…(+N)`). For curated usage patterns and gotchas see the `mcp-patterns` skill and the themed `api-*` references; this file is the complete coverage index.
+
+> Multipart operations (`application-dropDeployment`, `docker-uploadFileToContainer`) list their form fields, but their MCP tools have an empty schema and the CLI commands declare no options — upload with REST `curl -F`.
+
+> Regenerate from REST, never through MCP: with `DOKPLOY_REDACT_ENV` on (the default since `@dokploy/mcp` 0.30.0) the MCP `settings-getOpenApiDocument` tool returns 27 operations as bare `[REDACTED]` (every `*-saveEnvironment`, `*-changePassword`, `*-refreshToken`, `user-createApiKey` …) and strips the schema of secret-named fields (`env`, `password`, `token`, …) from 73 more.
 
 ## Contents
-- [project](#project) — Projects (top-level grouping) (9)
+- [project](#project) — Projects (top-level grouping) (11)
+- [overview](#overview) — Project overview dashboard (3)
 - [environment](#environment) — Per-project environments (7)
 - [tag](#tag) — Resource tags (8)
-- [application](#application) — Applications (31)
+- [application](#application) — Applications (32)
 - [compose](#compose) — Docker Compose stacks (31)
-- [docker](#docker) — Raw Docker introspection/control (12)
-- [domain](#domain) — Domains / Traefik routing (9)
+- [docker](#docker) — Raw Docker introspection/control (containers, events, server health) (18)
+- [dockerVolume](#dockervolume) — Docker volumes (8)
+- [dockerImage](#dockerimage) — Docker images (3)
+- [dockerDiskUsage](#dockerdiskusage) — Docker disk usage / build cache (3)
+- [network](#network) — Docker networks (9)
+- [domain](#domain) — Domains / Traefik routing (10)
 - [port](#port) — Exposed host ports (4)
 - [redirects](#redirects) — HTTP redirect rules (4)
 - [security](#security) — Per-app security / basic-auth (4)
@@ -23,29 +32,40 @@ Auto-generated from the Dokploy v0.29.14 OpenAPI schema — the **exhaustive** l
 - [redis](#redis) — Redis (16)
 - [libsql](#libsql) — LibSQL (14)
 - [deployment](#deployment) — Deployment history (9)
-- [previewDeployment](#previewDeployment) — Preview (per-PR) deployments (4)
+- [previewDeployment](#previewdeployment) — Preview (per-PR) deployments (4)
 - [rollback](#rollback) — Rollback to a previous image (2)
 - [schedule](#schedule) — Cron schedules (6)
 - [patch](#patch) — Deploy-time file patches (12)
 - [backup](#backup) — Resource-aware (DB-dump) backups (12)
-- [volumeBackups](#volumeBackups) — Raw volume backups (6)
+- [volumeBackups](#volumebackups) — Raw volume backups (6)
 - [destination](#destination) — S3/R2 backup destinations (6)
 - [ai](#ai) — AI router (log analysis) (14)
 
 ## project
-_Projects (top-level grouping) — 9 operations._
+_Projects (top-level grouping) — 11 operations._
 
 | Method | Operation | Params (`*`=required) |
 |---|---|---|
 | GET | `project-all` | — |
 | GET | `project-allForPermissions` | — |
+| POST | `project-completeOnboarding` | — |
 | POST | `project-create` | name*, description, env |
 | POST | `project-duplicate` | sourceEnvironmentId*, name*, description, includeServices, selectedServices, duplicateInSameProject |
 | GET | `project-homeStats` | — |
+| GET | `project-onboardingStatus` | — |
 | GET | `project-one` | projectId* |
 | POST | `project-remove` | projectId* |
 | GET | `project-search` | q, name, description, limit, offset |
 | POST | `project-update` | projectId*, name, description, createdAt, organizationId, env |
+
+## overview
+_Project overview dashboard (services / backups / domains) — 3 operations._
+
+| Method | Operation | Params (`*`=required) |
+|---|---|---|
+| GET | `overview-backups` | — |
+| GET | `overview-domains` | — |
+| GET | `overview-services` | — |
 
 ## environment
 _Per-project environments — 7 operations._
@@ -75,18 +95,19 @@ _Resource tags — 8 operations._
 | POST | `tag-update` | tagId*, name, color, createdAt, organizationId |
 
 ## application
-_Applications — 31 operations._
+_Applications — 32 operations._
 
 | Method | Operation | Params (`*`=required) |
 |---|---|---|
 | POST | `application-cancelDeployment` | applicationId* |
 | POST | `application-cleanQueues` | applicationId* |
 | POST | `application-clearDeployments` | applicationId* |
-| POST | `application-create` | name*, appName, description, environmentId*, serverId |
+| POST | `application-create` | name*, appName, description, environmentId*, serverId, sourceType |
 | POST | `application-delete` | applicationId* |
 | POST | `application-deploy` | applicationId*, title, description |
+| POST | `application-deployNginxQuickstart` | environmentId*, serverId |
 | POST | `application-disconnectGitProvider` | applicationId* |
-| POST | `application-dropDeployment` | — |
+| POST | `application-dropDeployment` | applicationId*, zip*, dropBuildPath |
 | POST | `application-killBuild` | applicationId* |
 | POST | `application-markRunning` | applicationId* |
 | POST | `application-move` | applicationId*, targetEnvironmentId* |
@@ -108,7 +129,7 @@ _Applications — 31 operations._
 | GET | `application-search` | q, name, appName, description, repository, owner, dockerImage, projectId, environmentId, limit, offset |
 | POST | `application-start` | applicationId* |
 | POST | `application-stop` | applicationId* |
-| POST | `application-update` | applicationId*, name, appName, description, env, previewEnv, watchPaths, previewBuildArgs, previewBuildSecrets, previewLabels, previewWildcard, previewPort, previewHttps, previewPath, …(+84) |
+| POST | `application-update` | applicationId*, name, appName, description, env, previewEnv, watchPaths, previewBuildArgs, previewBuildSecrets, previewLabels, previewWildcard, previewPort, previewHttps, previewPath, …(+86) |
 | POST | `application-updateTraefikConfig` | applicationId*, traefikConfig* |
 
 ## compose
@@ -119,9 +140,9 @@ _Docker Compose stacks — 31 operations._
 | POST | `compose-cancelDeployment` | composeId* |
 | POST | `compose-cleanQueues` | composeId* |
 | POST | `compose-clearDeployments` | composeId* |
-| POST | `compose-create` | name*, description, environmentId*, composeType, appName, serverId, composeFile |
+| POST | `compose-create` | name*, description, environmentId*, composeType, appName, serverId, composeFile, sourceType |
 | POST | `compose-delete` | composeId*, deleteVolumes* |
-| POST | `compose-deploy` | composeId*, title, description |
+| POST | `compose-deploy` | composeId*, title, description, freshVolumes |
 | POST | `compose-deployTemplate` | environmentId*, serverId, id*, baseUrl |
 | POST | `compose-disconnectGitProvider` | composeId* |
 | POST | `compose-fetchSourceType` | composeId* |
@@ -139,35 +160,90 @@ _Docker Compose stacks — 31 operations._
 | POST | `compose-processTemplate` | base64*, composeId* |
 | POST | `compose-randomizeCompose` | composeId*, suffix |
 | GET | `compose-readLogs` | composeId*, containerId*, tail, since, search |
-| POST | `compose-redeploy` | composeId*, title, description |
+| POST | `compose-redeploy` | composeId*, title, description, freshVolumes |
 | POST | `compose-refreshToken` | composeId* |
-| POST | `compose-saveEnvironment` | composeId*, env* |
+| POST | `compose-saveEnvironment` | composeId*, env*, createEnvFile |
 | GET | `compose-search` | q, name, appName, description, projectId, environmentId, limit, offset |
 | POST | `compose-start` | composeId* |
 | POST | `compose-stop` | composeId* |
 | GET | `compose-templates` | baseUrl |
-| POST | `compose-update` | composeId*, name, appName, description, env, composeFile, refreshToken, sourceType, composeType, repository, owner, branch, autoDeploy, gitlabProjectId, …(+30) |
+| POST | `compose-update` | composeId*, name, appName, description, env, composeFile, refreshToken, sourceType, composeType, repository, owner, branch, autoDeploy, gitlabProjectId, …(+33) |
 
 ## docker
-_Raw Docker introspection/control — 12 operations._
+_Raw Docker introspection/control (containers, events, server health) — 18 operations._
 
 | Method | Operation | Params (`*`=required) |
 |---|---|---|
+| POST | `docker-deleteContainerFile` | containerId*, path*, serverId |
 | GET | `docker-getConfig` | containerId*, serverId |
 | GET | `docker-getContainers` | serverId |
 | GET | `docker-getContainersByAppLabel` | appName*, serverId, type* |
 | GET | `docker-getContainersByAppNameMatch` | appType, appName*, serverId |
+| GET | `docker-getEvents` | serverId, minutes |
+| GET | `docker-getServerHealth` | serverId, sinceHours |
 | GET | `docker-getServiceContainersByAppName` | appName*, serverId |
 | GET | `docker-getStackContainersByAppName` | appName*, serverId |
 | POST | `docker-killContainer` | containerId*, serverId |
+| GET | `docker-listContainerFiles` | containerId*, path*, serverId |
+| GET | `docker-readContainerFile` | containerId*, path*, serverId |
 | POST | `docker-removeContainer` | containerId*, serverId |
 | POST | `docker-restartContainer` | containerId*, serverId |
 | POST | `docker-startContainer` | containerId*, serverId |
 | POST | `docker-stopContainer` | containerId*, serverId |
-| POST | `docker-uploadFileToContainer` | — |
+| POST | `docker-uploadFileToContainer` | containerId*, file*, destinationPath*, serverId |
+| POST | `docker-writeContainerFile` | containerId*, path*, content*, serverId |
+
+## dockerVolume
+_Docker volumes (list, size, file explorer) — 8 operations._
+
+| Method | Operation | Params (`*`=required) |
+|---|---|---|
+| POST | `dockerVolume-deleteVolumeFile` | volumeName*, path*, serverId |
+| GET | `dockerVolume-getVolumeConfig` | volumeName*, serverId |
+| GET | `dockerVolume-getVolumes` | serverId |
+| GET | `dockerVolume-getVolumesSize` | serverId |
+| GET | `dockerVolume-listVolumeFiles` | volumeName*, path*, serverId |
+| GET | `dockerVolume-readVolumeFile` | volumeName*, path*, serverId |
+| POST | `dockerVolume-removeVolume` | volumeName*, serverId |
+| POST | `dockerVolume-writeVolumeFile` | volumeName*, path*, content*, serverId |
+
+## dockerImage
+_Docker images (list, inspect, remove) — 3 operations._
+
+| Method | Operation | Params (`*`=required) |
+|---|---|---|
+| GET | `dockerImage-getImageConfig` | imageRef*, serverId |
+| GET | `dockerImage-getImages` | serverId |
+| POST | `dockerImage-removeImage` | repository*, tag*, id*, force, serverId |
+
+## dockerDiskUsage
+_Docker disk usage and build cache — 3 operations._
+
+| Method | Operation | Params (`*`=required) |
+|---|---|---|
+| GET | `dockerDiskUsage-getBuildCache` | serverId |
+| GET | `dockerDiskUsage-getDiskUsage` | serverId |
+| POST | `dockerDiskUsage-pruneBuildCache` | serverId |
+
+## network
+_Docker networks (bridge/overlay) and per-service attachment — 9 operations._
+
+_Note: services attach networks per service — `networkIds` + `detachDokployNetwork` on `application-update` and the six database `*-update` tools, `serviceNetworks` (per service name) on `compose-update`. Replaces the deprecated Isolated Deployment._
+
+| Method | Operation | Params (`*`=required) |
+|---|---|---|
+| GET | `network-all` | serverId |
+| POST | `network-create` | name*, driver, internal, attachable, enableIPv4, enableIPv6, mtu, ipam, serverId |
+| POST | `network-import` | serverId, names* |
+| GET | `network-inspect` | networkId* |
+| GET | `network-networksToSync` | serverId |
+| GET | `network-one` | networkId* |
+| POST | `network-recreate` | networkId* |
+| POST | `network-remove` | networkId* |
+| POST | `network-resync` | networkId* |
 
 ## domain
-_Domains / Traefik routing — 9 operations._
+_Domains / Traefik routing — 10 operations._
 
 | Method | Operation | Params (`*`=required) |
 |---|---|---|
@@ -178,8 +254,9 @@ _Domains / Traefik routing — 9 operations._
 | POST | `domain-delete` | domainId* |
 | POST | `domain-generateDomain` | appName*, serverId |
 | GET | `domain-one` | domainId* |
-| POST | `domain-update` | host*, path, port, customEntrypoint, https, certificateType, customCertResolver, serviceName, domainType, internalPath, stripPath, middlewares, forwardAuthEnabled, domainId* |
-| POST | `domain-validateDomain` | domain*, serverIp |
+| POST | `domain-toggleEnable` | domainId* |
+| POST | `domain-update` | host*, path, port, customEntrypoint, https, certificateType, customCertResolver, serviceName, domainType, internalPath, stripPath, middlewares, forwardAuthEnabled, enabled, domainId* |
+| POST | `domain-validateDomain` | domain*, serverId |
 
 ## port
 _Exposed host ports — 4 operations._
@@ -232,7 +309,7 @@ _File/volume mounts — 6 operations._
 | GET | `mounts-listByServiceId` | serviceType*, serviceId* |
 | GET | `mounts-one` | mountId* |
 | POST | `mounts-remove` | mountId* |
-| POST | `mounts-update` | mountId*, type, hostPath, volumeName, filePath, content, serviceType, mountPath, applicationId, composeId, libsqlId, mariadbId, mongoId, mysqlId, …(+2) |
+| POST | `mounts-update` | mountId*, type, hostPath, volumeName, filePath, content, serviceType, mountPath, applicationId, composeId, libsqlId, mariadbId, mongoId, mysqlId, postgresId, redisId |
 
 ## registry
 _Private Docker registry credentials — 7 operations._
@@ -267,7 +344,7 @@ _PostgreSQL — 16 operations._
 | GET | `postgres-search` | q, name, appName, description, projectId, environmentId, limit, offset |
 | POST | `postgres-start` | postgresId* |
 | POST | `postgres-stop` | postgresId* |
-| POST | `postgres-update` | postgresId*, name, appName, databaseName, databaseUser, databasePassword, description, dockerImage, command, args, env, memoryReservation, externalPort, memoryLimit, …(+17) |
+| POST | `postgres-update` | postgresId*, name, appName, databaseName, databaseUser, databasePassword, description, dockerImage, command, args, env, memoryReservation, externalPort, memoryLimit, …(+19) |
 
 ## mysql
 _MySQL — 16 operations._
@@ -289,7 +366,7 @@ _MySQL — 16 operations._
 | GET | `mysql-search` | q, name, appName, description, projectId, environmentId, limit, offset |
 | POST | `mysql-start` | mysqlId* |
 | POST | `mysql-stop` | mysqlId* |
-| POST | `mysql-update` | mysqlId*, name, appName, description, databaseName, databaseUser, databasePassword, databaseRootPassword, dockerImage, command, args, env, memoryReservation, memoryLimit, …(+18) |
+| POST | `mysql-update` | mysqlId*, name, appName, description, databaseName, databaseUser, databasePassword, databaseRootPassword, dockerImage, command, args, env, memoryReservation, memoryLimit, …(+20) |
 
 ## mariadb
 _MariaDB — 16 operations._
@@ -311,7 +388,7 @@ _MariaDB — 16 operations._
 | GET | `mariadb-search` | q, name, appName, description, projectId, environmentId, limit, offset |
 | POST | `mariadb-start` | mariadbId* |
 | POST | `mariadb-stop` | mariadbId* |
-| POST | `mariadb-update` | mariadbId*, name, appName, description, databaseName, databaseUser, databasePassword, databaseRootPassword, dockerImage, command, args, env, memoryReservation, memoryLimit, …(+18) |
+| POST | `mariadb-update` | mariadbId*, name, appName, description, databaseName, databaseUser, databasePassword, databaseRootPassword, dockerImage, command, args, env, memoryReservation, memoryLimit, …(+20) |
 
 ## mongo
 _MongoDB — 16 operations._
@@ -333,7 +410,7 @@ _MongoDB — 16 operations._
 | GET | `mongo-search` | q, name, appName, description, projectId, environmentId, limit, offset |
 | POST | `mongo-start` | mongoId* |
 | POST | `mongo-stop` | mongoId* |
-| POST | `mongo-update` | mongoId*, name, appName, description, databaseUser, databasePassword, dockerImage, command, args, env, memoryReservation, memoryLimit, cpuReservation, cpuLimit, …(+17) |
+| POST | `mongo-update` | mongoId*, name, appName, description, databaseUser, databasePassword, dockerImage, command, args, env, memoryReservation, memoryLimit, cpuReservation, cpuLimit, …(+19) |
 
 ## redis
 _Redis — 16 operations._
@@ -355,7 +432,7 @@ _Redis — 16 operations._
 | GET | `redis-search` | q, name, appName, description, projectId, environmentId, limit, offset |
 | POST | `redis-start` | redisId* |
 | POST | `redis-stop` | redisId* |
-| POST | `redis-update` | redisId*, name, appName, description, databasePassword, dockerImage, command, args, env, memoryReservation, memoryLimit, cpuReservation, cpuLimit, externalPort, …(+15) |
+| POST | `redis-update` | redisId*, name, appName, description, databasePassword, dockerImage, command, args, env, memoryReservation, memoryLimit, cpuReservation, cpuLimit, externalPort, …(+17) |
 
 ## libsql
 _LibSQL — 14 operations._
@@ -375,7 +452,7 @@ _LibSQL — 14 operations._
 | POST | `libsql-saveExternalPorts` | libsqlId*, externalPort, externalGRPCPort, externalAdminPort |
 | POST | `libsql-start` | libsqlId* |
 | POST | `libsql-stop` | libsqlId* |
-| POST | `libsql-update` | libsqlId*, name, appName, description, databaseUser, databasePassword, sqldNode, sqldPrimaryUrl, enableNamespaces, dockerImage, command, env, memoryReservation, memoryLimit, …(+19) |
+| POST | `libsql-update` | libsqlId*, name, appName, description, databaseUser, databasePassword, sqldNode, sqldPrimaryUrl, enableNamespaces, dockerImage, command, env, memoryReservation, memoryLimit, …(+21) |
 
 ## deployment
 _Deployment history — 9 operations._
@@ -415,14 +492,12 @@ _Cron schedules — 6 operations._
 
 | Method | Operation | Params (`*`=required) |
 |---|---|---|
-| POST | `schedule-create` | scheduleId, name*, description, cronExpression*, appName, serviceName, shellType, scheduleType, command*, script, applicationId, composeId, serverId, organizationId, timezone, …(+2) |
+| POST | `schedule-create` | scheduleId, name*, description, cronExpression*, appName, serviceName, shellType, scheduleType, command*, script, applicationId, composeId, serverId, organizationId, …(+3) |
 | POST | `schedule-delete` | scheduleId* |
 | GET | `schedule-list` | id*, scheduleType* |
 | GET | `schedule-one` | scheduleId* |
 | POST | `schedule-runManually` | scheduleId* |
-| POST | `schedule-update` | scheduleId*, name*, description, cronExpression*, appName, serviceName, shellType, scheduleType, command*, script, applicationId, composeId, serverId, organizationId, timezone, …(+2) |
-
-_v0.29.8 rescoped Dokploy-host schedules from user to organization (`organizationId`, formerly `userId`) and added a `timezone` field._
+| POST | `schedule-update` | scheduleId*, name*, description, cronExpression*, appName, serviceName, shellType, scheduleType, command*, script, applicationId, composeId, serverId, organizationId, …(+3) |
 
 ## patch
 _Deploy-time file patches — 12 operations._
@@ -447,7 +522,7 @@ _Resource-aware (DB-dump) backups — 12 operations._
 
 | Method | Operation | Params (`*`=required) |
 |---|---|---|
-| POST | `backup-create` | schedule*, enabled, prefix*, destinationId*, keepLatestCount, database*, mariadbId, mysqlId, postgresId, mongoId, libsqlId, databaseType*, userId, backupType, …(+3) |
+| POST | `backup-create` | schedule*, enabled, prefix*, destinationId*, keepLatestCount, database*, mariadbId, mysqlId, postgresId, mongoId, libsqlId, databaseType*, userId, backupType, …(+4) |
 | GET | `backup-listBackupFiles` | destinationId*, search*, serverId |
 | POST | `backup-manualBackupCompose` | backupId* |
 | POST | `backup-manualBackupLibsql` | backupId* |
@@ -458,7 +533,7 @@ _Resource-aware (DB-dump) backups — 12 operations._
 | POST | `backup-manualBackupWebServer` | backupId* |
 | GET | `backup-one` | backupId* |
 | POST | `backup-remove` | backupId* |
-| POST | `backup-update` | schedule*, enabled*, prefix*, backupId*, destinationId*, database*, keepLatestCount*, serviceName*, metadata*, databaseType* |
+| POST | `backup-update` | schedule*, enabled*, prefix*, backupId*, destinationId*, database*, keepLatestCount*, serviceName*, metadata*, databaseType*, includeEncryptionKey |
 
 ## volumeBackups
 _Raw volume backups — 6 operations._
@@ -503,4 +578,3 @@ _AI router (log analysis) — 14 operations._
 | POST | `ai-suggest` | aiId*, input*, serverId |
 | POST | `ai-testConnection` | apiUrl*, apiKey*, model* |
 | POST | `ai-update` | aiId*, name, apiUrl, apiKey, model, isEnabled, createdAt |
-

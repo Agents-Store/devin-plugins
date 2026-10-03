@@ -13,13 +13,20 @@ entry. Asking "what is the current stable" is therefore one lookup: read the dis
 | Channel | Behaviour | Use here |
 |---|---|---|
 | stable | the promoted line | the default target for a production gateway |
-| trailing / extended stable | the stable line held back by roughly a month; fail-closed by design | deliberate conservatism only, never as an accident of sorting |
-| pre-release (beta) | where a build lands **before** promotion | never a fleet target; a build here may later be promoted with no version change |
-| development | unstable head | explicitly not for production gateways |
+| trailing / extended stable | a package-only line held back by roughly a month, installed in the foreground only, **fail-closed** — no fallback to another channel when it cannot resolve | deliberate conservatism only, never as an accident of sorting |
+| pre-release (beta) | the **newer** of the beta and latest tags, so an older beta never replaces a newer stable build | never a fleet target; a build here may later be promoted with no version change |
+| development | the moving head of the git main branch — **not a package**, no registry tag is read for it | explicitly not for production gateways; `versions.py` reports it as having no target |
 
 The channel **names** above are families, not literals: read the actual dist-tag set from the
 registry (`versions.py --json` reports `all_tags`) rather than assuming a spelling. A channel name
-that resolves to nothing is a finding, not a fallback opportunity.
+that resolves to nothing is a finding, not a fallback opportunity. Two names are not a single-tag
+lookup, which is why `versions.py` resolves them in one function (`channel_target`) and prints the
+reason beside the result:
+
+- `beta` reads the beta **and** latest tags and takes the newer by version order; when the beta tag is
+  missing or older, beta *is* latest, and the output says so.
+- `dev` has no tag to read. A registry may carry an optional dev tag; it is not consulted, because the
+  channel is a git checkout, not a build.
 
 **A channel name is not the dist-tag it resolves through, and the two must never be swapped.** The
 operator-facing names are `stable`, `extended-stable`, `beta`, `dev` — exactly the values
@@ -54,9 +61,18 @@ all-numeric suffix is a correction and ranks above the bare version. Alphabetic 
 ### 2. Newest release entry with "pre-release = false", sorted by date
 
 The trailing channel is published the same way the stable line is: as a normal, non-pre-release
-entry. Sorted by date, the first non-pre-release you meet may belong to either line, and **no
-machine-readable field says which**. Taking it hands the whole fleet a month-long rollback that
-looks like an upgrade — including a state-schema migration you cannot reverse.
+entry. Sorted by date, the first non-pre-release you meet may belong to either line, and **no release
+field says which**. Taking it hands the whole fleet a month-long rollback that looks like an upgrade —
+including a state-schema migration you cannot reverse.
+
+What does say which line a build was cut for is its **monthly patch number**: the high patch numbers
+are reserved for the extended line and the low ones are regular stable, so a build's line can be read
+off its version. A numeric correction suffix keeps the line of the version it corrects — for the
+regular line the legacy numeric corrections are still recognised, for the reserved numbers they are
+never a regular stable or beta target. `versions.py` carries the split as one constant
+(`EXTENDED_STABLE_MIN_PATCH`, source: upstream "Tagging best practices"), reports `line` for the
+channel and for the target, and rejects a build on the wrong line for the channel being used. Re-read
+the upstream section when a month's numbering looks wrong; do not infer the line from dates.
 
 ### 3. Comparing registry publish dates with release dates
 
@@ -80,13 +96,17 @@ started.
 - not older than the version already installed anywhere in the selection;
 - promoted at least `policy.soak_days` ago, measured by **release** date;
 - no correction release on the same line published after it;
+- on the release line the channel is for (regular stable for `stable` and `beta`, the extended line
+  for `extended-stable`);
+- not routed through the bridge: when an installed version is older than the cut-off, the verdict is
+  `bridge-required` instead of `accepted` — the target is fine, the route to it is not;
 - when a digest check is requested, the digest resolved for the pinned reference equals the digest
   of the channel's current build.
 
 `versions.py [selector] [--channel …] [--target …] [--soak-days N] [--image REF] [--json|--table]`.
 Exit codes: `0` no drift and the target passes · `1` runtime error · `2` fleet config missing or
-invalid · `3` target rejected by the gate · `4` selector matched nothing · `5` version drift across
-the selection. `--no-net` reports installed versions and drift only — useful on a host without
+invalid · `3` target not accepted by the gate (rejected, unverified or `bridge-required`) · `4` selector
+matched nothing · `5` version drift across the selection. `--no-net` reports installed versions and drift only — useful on a host without
 egress, and honest about what it cannot verify.
 
 ## Image tags and digests
@@ -114,3 +134,8 @@ not get written down as knowledge. The procedure to obtain it is the durable par
 literals allowed in this repository sit inside an `<!-- example-only -->` block, and are obviously
 synthetic so nobody can mistake one for a recommendation. The same rule applies with more force to
 model identifiers: those are echoed from the instance's own catalogue or they do not enter a diff.
+
+The code is the one place that carries real version values: the bridge release, the month before which
+an installation must cross it, and the first patch number of the extended line are named constants in
+`versions.py`, each with its upstream source beside it, because a gate cannot decide without them. Text
+points at those constants instead of repeating them.

@@ -1,9 +1,13 @@
 ---
 title: "Webhook Trigger"
-description: "Trigger flows via external HTTP POST calls, supporting request parsing and custom responses."
+description: "Use when an external system should start a workflow by calling an HTTP endpoint, such as payment callbacks, message pushes, or integrations."
 ---
 
 # Webhook Trigger
+
+## Commercial Plugin Prerequisite
+
+This trigger requires the commercial plugin `@nocobase/plugin-workflow-webhook` to be installed and activated in the target application. Apply the [Commercial Workflow Plugin Gate](../commercial-plugin-gate.md) before creating or updating a `webhook` workflow. If the plugin is missing or disabled, do not use this trigger or its Webhook response node, and do not silently replace it with another trigger type.
 
 ## Trigger Type
 
@@ -75,10 +79,20 @@ description: "Trigger flows via external HTTP POST calls, supporting request par
 }
 ```
 
+## Modeling Extracted JSON Objects
+
+The request extraction list models only the configured item itself. If a configured header, query, or body item resolves to an object or array, its nested structure is still unmodeled.
+
+- Extract scalar leaf paths directly when possible, for example `data.id`.
+- If downstream nodes need several fields from an extracted object/array, add `json-variable-mapping` or `json-query` immediately after the trigger.
+- Pass the extracted root such as `{{$context.body.body_$0}}` into the JSON node, define the required fields, and use only the JSON node's outputs afterward.
+- Do not write deeper paths such as `{{$context.body.body_$0.order.id}}` directly in later nodes unless that path was explicitly modeled by the JSON node. A server-resolvable path is not enough for frontend display and editing.
+
 ## Output Variables
 The variable selector for this trigger is a tree array of `{ label, value, children? }`. At runtime, join the `value` segments with `.` and prepend `$context`.
 
 - Exposed roots are created only from the configured request extraction items: `headers`, `query`, and `body`.
 - Each child node uses `alias` for display, but the runtime path uses `_var` when present; otherwise it falls back to `key`.
 - That means a configured query item may display as `Event` while the actual expression is still `{{$context.query.query_$0}}`.
+- An extracted scalar can be used directly. An extracted object/array must be passed through `json-variable-mapping` or `json-query` before any nested child field is used downstream.
 - Example references for the sample configuration above: `{{$context.query.query_$0}}`, `{{$context.body.body_$0}}`, `{{$context.headers.x-signature}}`.

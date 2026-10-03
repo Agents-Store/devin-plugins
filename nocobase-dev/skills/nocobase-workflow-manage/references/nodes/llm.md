@@ -1,6 +1,6 @@
 ---
 title: "LLM"
-description: "Invoke a configured LLM service from an asynchronous workflow, including text, multimodal messages, model options, and structured output."
+description: "Use when a workflow should call a configured LLM directly to summarize, classify, extract, analyze text or images, or produce structured output."
 ---
 
 # LLM
@@ -165,4 +165,4 @@ Example references:
 - `{{$jobsMapByNodeKey.llm_summary.structuredContent}}`
 - `{{$jobsMapByNodeKey.llm_summary.additionalKwargs}}`
 
-Use `json-query` or `json-variable-mapping` downstream if you need to reshape nested structured content.
+These roots do not automatically expose every nested response field. If a downstream node needs a child inside `structuredContent` or `additionalKwargs` that is absent from the variable tree, you must follow the LLM node with `json-variable-mapping` or `json-query`, model the required fields, and make later nodes use only that JSON node's outputs. Do not manually append unmodeled child paths to the LLM result.

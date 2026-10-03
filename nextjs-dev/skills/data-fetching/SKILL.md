@@ -7,6 +7,8 @@ description: Next.js data fetching, caching, and mutation patterns. This skill s
 
 Next.js App Router provides multiple approaches to fetch, cache, and mutate data. Server Components fetch data on the server by default. Server Actions handle mutations. The `use cache` directive (Next.js 16+) provides fine-grained caching control.
 
+> **Two caching models — check `next.config.ts` first.** With `cacheComponents: true` (Cache Components) caching is opt-in per function or component via `'use cache'` + `cacheLife()` / `cacheTag()`, and the route segment config options `dynamic`, `dynamicParams`, `revalidate` and `fetchCache` are **removed** (`dynamicParams` fails the build). Without `cacheComponents` (the "previous model", still the default) those options and `fetch` cache options are how you control caching. Examples below are labelled with the model they belong to; the full migration table is in [references/cache-components.md](references/cache-components.md#route-segment-config-under-cache-components).
+
 ## Server Component Data Fetching
 
 Fetch data directly in async Server Components. No `useEffect` or `getServerSideProps` needed:
@@ -218,14 +220,27 @@ export async function updatePost(id: string, data: FormData) {
 
 ### Tag-based Revalidation
 
-Revalidate specific data across multiple routes. Tag-based revalidation is more precise than path-based or time-based approaches — it invalidates exactly the cached entries you need without re-rendering unrelated content:
+Revalidate specific data across multiple routes. Tag-based revalidation is more precise than path-based or time-based approaches — it invalidates exactly the cached entries you need without re-rendering unrelated content.
+
+Previous model (without `cacheComponents`): `fetch` requests are not cached by default (caching is opt-in), so a tag only does something when the request also sets `cache: 'force-cache'`:
 
 ```tsx
-// lib/data.ts — tag each fetch with a resource-specific tag
+// lib/data.ts — tag each fetch with a resource-specific tag (previous model, cacheComponents off)
 export async function getPost(id: string) {
-  const res = await fetch(`https://api.example.com/posts/${id}`, {
-    next: { tags: [`post-${id}`, 'posts'] },
-  })
+  const res = await fetch(`https://api.example.com/posts/${id}`, { cache: 'force-cache', next: { tags: [`post-${id}`, 'posts'] } })
+  return res.json()
+}
+```
+
+With `cacheComponents: true`, tag the cached function itself instead (no `next.tags` needed):
+
+```tsx
+import { cacheTag } from 'next/cache'
+
+export async function getPost(id: string) {
+  'use cache'
+  cacheTag(`post-${id}`, 'posts')
+  const res = await fetch(`https://api.example.com/posts/${id}`)
   return res.json()
 }
 ```
@@ -265,16 +280,18 @@ export async function updatePost(id: string, formData: FormData) {
 - `revalidateTag(tag, profile)` — surgical SWR invalidation of specific data across all routes that use it
 - `refresh()` — re-fetch uncached data from a Server Action without touching the cache
 - `revalidatePath()` — broader, invalidates all cached data for a specific URL path
-- `export const revalidate = N` — background regeneration on a timer (ISR), no mutation trigger needed
+- `export const revalidate = N` — background regeneration on a timer (ISR), no mutation trigger needed; works only without `cacheComponents` — with `cacheComponents: true` use `cacheLife(...)` inside a `'use cache'` scope
 
 Prefer tag-based revalidation for mutations because it's precise. Use `revalidatePath` when you need to refresh an entire page. Use ISR when data changes externally (not via your app's mutations).
 
 ### Time-based Revalidation (ISR)
 
-Automatically regenerate pages at a set interval:
+Automatically regenerate pages at a set interval.
+
+> **Previous model — works only without `cacheComponents`.** With `cacheComponents: true` the `revalidate` segment option is removed; use `'use cache'` + `cacheLife()` (next snippet). Guide: [Caching and Revalidating (Previous Model)](https://nextjs.org/docs/app/guides/caching-without-cache-components).
 
 ```tsx
-// app/posts/page.tsx
+// app/posts/page.tsx — previous model: cacheComponents must be off
 export const revalidate = 60  // Revalidate every 60 seconds
 
 export default async function PostsPage() {
@@ -282,6 +299,22 @@ export default async function PostsPage() {
   return <PostList posts={posts} />
 }
 ```
+
+The same behavior with `cacheComponents: true` — the lifetime moves from the route to the cached function (`'minutes'` revalidates after 1 minute, `'hours'` after 1 hour; use an object such as `{ stale: 60, revalidate: 60, expire: 3600 }` for exact values):
+
+```tsx
+// app/posts/page.tsx — Cache Components
+import { cacheLife } from 'next/cache'
+
+export default async function PostsPage() {
+  'use cache'
+  cacheLife('minutes')
+  const posts = await getPosts()
+  return <PostList posts={posts} />
+}
+```
+
+Remember that anything inside `'use cache'` cannot read `cookies()`, `headers()` or `searchParams`; wrap request-dependent parts in `<Suspense>` and keep them outside the cached scope.
 
 ## `use cache` Directive (Next.js 16+)
 
@@ -300,7 +333,7 @@ export default nextConfig
 
 Constraints: all cached functions/components must be `async`, and `cookies()`/`headers()`/`searchParams` cannot be read inside a cached scope (read them outside and pass the values as arguments — otherwise you get a `next-request-in-use-cache` error).
 
-Variants: `'use cache: remote'` stores entries in the platform cache handler (e.g. Redis/KV) so they survive across serverless instances; `'use cache: private'` is a rare variant for runtime request data. The default in-memory runtime cache does **not** persist across serverless requests.
+Variants: `'use cache: remote'` stores entries in the platform cache handler (e.g. Redis/KV) so they survive across serverless instances; `'use cache: private'` is a rare variant for functions that read runtime data such as `cookies()`/`headers()` — the result is cached in the browser only (never on the server) and can never be part of the static shell; to ride along in the App Shell its `cacheLife` `stale` must be at least 5 minutes. The default in-memory runtime cache does **not** persist across serverless requests.
 
 > For the full Cache Components model — cache keys, profiles, Partial Prefetching, new ISR behavior, and migration — see [references/cache-components.md](references/cache-components.md).
 
@@ -443,12 +476,16 @@ function TodoList({ todos, addTodo }: { todos: Todo[]; addTodo: (text: string) =
 }
 ```
 
+## Pages Backed by a Headless CMS
+
+When content lives in another system (Directus, Contentful, Strapi): one content module with `cache()`, `generateStaticParams` from CMS slugs, a webhook Route Handler that expires tags (secret in a header, tag allow-list, `revalidateTag(tag, { expire: 0 })`), Server Actions that authenticate and authorize, and `next/image` configuration that never carries a token in the URL. See [references/headless-cms.md](references/headless-cms.md).
+
 ## Rendering Strategy Summary
 
 | Strategy | When | How |
 |----------|------|-----|
 | Static (SSG) | Content rarely changes | Default for pages without dynamic data |
-| ISR | Semi-dynamic content | `export const revalidate = 60` |
+| ISR | Semi-dynamic content | `export const revalidate = 60` — only without `cacheComponents`; with `cacheComponents: true`: `'use cache'` + `cacheLife('minutes')` |
 | Dynamic (SSR) | Per-request data | Use `cookies()`, `headers()`, or `searchParams` |
 | Streaming | Progressive loading | `<Suspense>` boundaries or `loading.tsx` |
 | Cache Components (`use cache`, 16+) | Fine-grained cache control | Opt in via `cacheComponents: true`, then `'use cache'` + `cacheLife()` + `cacheTag()` |

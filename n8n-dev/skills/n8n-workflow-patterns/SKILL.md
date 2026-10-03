@@ -1,6 +1,6 @@
 ---
 name: n8n-workflow-patterns
-description: Proven workflow architectural patterns from real n8n workflows. Use when building new workflows, designing workflow structure, choosing workflow patterns, planning workflow architecture, or asking about webhook processing, HTTP API integration, database operations, AI agent workflows, or scheduled tasks.
+description: Proven workflow architectural patterns from real n8n workflows. Use when building new workflows, designing workflow structure, choosing workflow patterns, planning workflow architecture, or asking about webhook processing, HTTP API integration, database operations, AI agent workflows, batch processing, or scheduled tasks. Always consult this skill when the user asks to create, build, or design an n8n workflow, automate a process, or connect services — even if they don't explicitly mention 'patterns'. Covers webhook, API, database, AI, batch processing, and scheduled automation architectures. Also use when optimizing a slow workflow or speeding up large-item-count processing (node count, batchSize, all-items vs per-item).
 ---
 
 # n8n Workflow Patterns
@@ -9,29 +9,33 @@ Proven architectural patterns for building n8n workflows.
 
 ---
 
-## The 5 Core Patterns
+## The 6 Core Patterns
 
 Based on analysis of real workflow usage:
 
-1. **[Webhook Processing](references/webhook_processing.md)** (Most Common)
+1. **[Webhook Processing](webhook_processing.md)** (Most Common)
    - Receive HTTP requests → Process → Output
    - Pattern: Webhook → Validate → Transform → Respond/Notify
 
-2. **[HTTP API Integration](references/http_api_integration.md)**
+2. **[HTTP API Integration](http_api_integration.md)**
    - Fetch from REST APIs → Transform → Store/Use
    - Pattern: Trigger → HTTP Request → Transform → Action → Error Handler
 
-3. **[Database Operations](references/database_operations.md)**
+3. **[Database Operations](database_operations.md)**
    - Read/Write/Sync database data
    - Pattern: Schedule → Query → Transform → Write → Verify
 
-4. **[AI Agent Workflow](references/ai_agent_workflow.md)**
+4. **[AI Agent Workflow](ai_agent_workflow.md)**
    - AI agents with tools and memory
    - Pattern: Trigger → AI Agent (Model + Tools + Memory) → Output
 
-5. **[Scheduled Tasks](references/scheduled_tasks.md)**
+5. **[Scheduled Tasks](scheduled_tasks.md)**
    - Recurring automation workflows
    - Pattern: Schedule → Fetch → Process → Deliver → Log
+
+6. **Batch Processing** (below)
+   - Process large datasets in chunks with API rate limits
+   - Pattern: Prepare → SplitInBatches → Process per batch → Accumulate → Aggregate
 
 ---
 
@@ -69,6 +73,12 @@ Based on analysis of real workflow usage:
 - Maintenance tasks
 - Example: "Daily: Fetch analytics → Generate report → Email team"
 
+**Batch Processing** - Use when:
+- Processing large datasets that exceed API batch limits
+- Need to accumulate results across multiple API calls
+- Nested loops (e.g., multiple categories × paginated API calls per category)
+- Example: "Fetch products for 4 markets × 1000 per API call → Aggregate all results"
+
 ---
 
 ## Common Workflow Components
@@ -92,6 +102,8 @@ All patterns share these building blocks:
 - **Code** - Complex logic
 - **IF/Switch** - Conditional routing
 - **Merge** - Combine data streams
+
+Reading a filtered/projected slice of a nested API response for one field or payload? A single `{{ $jmespath($json, "…") }}` replaces a Split Out → Filter → Aggregate chain (quoting rules in n8n-expression-syntax).
 
 ### 4. Outputs
 - **HTTP Request** - Call APIs
@@ -139,6 +151,19 @@ When building ANY workflow, follow this checklist:
 
 ---
 
+## Workflow lifecycle: validate, verify, test before activating
+
+Building the nodes is the start, not the finish. Before a workflow goes live, run it through four gates — and remember the headline rule: **validation passing is necessary, not sufficient.** A workflow can validate clean and still drop items, pick the wrong Merge input, or post Slack messages as plain text. Clean validation means the *shapes* are right, not that the *logic* is.
+
+1. **Validate.** Run `validate_workflow` on the full JSON during build, or `n8n_validate_workflow({ id })` once the workflow exists on the instance. Fix every error and re-validate. This catches schema, node-config, expression, and reference errors — the structural layer.
+2. **Verify the connections.** Pull the workflow with `n8n_get_workflow({ id })` and read the `connections` object directly. Validation confirms connections aren't *broken*; it doesn't confirm they're *correct*. This is where you catch the valid-but-wrong wiring: a Merge whose `useDataOfInput` doesn't line up with the connection slot, a Switch fallback that connects to nothing, a fan-out branch that was never wired onward, an error output that goes nowhere. (See the n8n Node Configuration skill's NODE_FAMILY_GOTCHAS.md for the silent ones.)
+3. **Test.** Run `n8n_test_workflow` and inspect the output via `n8n_executions`. Confirm the output shape matches what consumers expect, fan-outs all produced data, and (for webhook APIs) the status/body/headers are right. **Real side effects fire during a test** — writes commit, messages send, external APIs are called. If any node has a user-visible side effect, confirm with the user before running, or test against safe data first.
+4. **Activate** only after the first three pass — using `n8n_update_partial_workflow` with the `activateWorkflow` operation. Don't activate straight off a clean validation; an active workflow that drops data or double-sends is worse than one that never started.
+
+Skipping any gate trades a few minutes now for debugging a live, possibly stateful, possibly traffic-bearing workflow later. The trade is never worth it.
+
+---
+
 ## Data Flow Patterns
 
 ### Linear Flow
@@ -173,6 +198,117 @@ Main Flow → [Success Path]
          └→ [Error Trigger → Error Handler]
 ```
 **Use when**: Need separate error handling workflow
+
+---
+
+## Batch Processing Pattern
+
+### SplitInBatches Loop
+
+The SplitInBatches node splits a large dataset into smaller chunks for processing. Understanding its outputs is critical:
+
+- `main[0]` = **done** — fires ONCE after all batches complete
+- `main[1]` = **each batch** — fires per batch (this is the loop body)
+
+```
+Prepare Items → SplitInBatches → [main[1]: Process Batch] → (loops back)
+                                  [main[0]: Done] → Limit 1 → Aggregate
+```
+
+Always add a **Limit 1** node after the done output.
+
+### Choosing batchSize (the cost lever)
+
+A SplitInBatches loop re-runs its whole body once per iteration — ~0.8 ms/iteration of engine overhead plus the body's own cost — so total ≈ `⌈items / batchSize⌉ × (overhead + body)`. batchSize is a direct speed dial:
+
+- Pick the **largest batch your real constraint allows** (API page size, rate limit, memory). Bigger batches = fewer iterations = less overhead; the body still sees every item.
+- `batchSize: 1` is the expensive extreme — one full engine pass per item. Use it only when you must act on a single item at a time (nested-loop control, or an API that takes exactly one id).
+- If you're looping only to "go over the items" with no external constraint, you usually don't need the loop — a single All Items Code node processes the whole set far cheaper.
+
+### Cross-Iteration Data
+
+After the loop, `$('Node Inside Loop').all()` returns **ONLY the last batch's items**. To accumulate across all iterations, use `$getWorkflowStaticData('global')` in a Code node inside the loop. See the n8n Code JavaScript skill for the full pattern.
+
+### Nested Loops
+
+When processing N categories × M items per category (where an API has a batch limit):
+
+```
+Define Categories (N items)
+  → Outer Loop (SplitInBatches, batchSize=1)
+    → Prepare category data
+    → Inner Loop (SplitInBatches, batchSize=1000)
+      → API Call → Verify → (loops back to Inner Loop via main[1])
+    → Inner done[0] → Rate Limit Delay → back to Outer Loop
+  → Outer done[0] → Limit 1 → Final Aggregate
+```
+
+**Wiring gotcha**: The inner done[0] must connect back to the OUTER loop input, not to the aggregate. The outer done[0] feeds the final aggregate.
+
+### API Pagination
+
+For APIs without multi-ID filtering, use `id_from` + date windowing for efficient pagination:
+
+```
+Schedule → Set Date Window → Fetch Page → Process
+  → IF has more? → [true] Update id_from → Fetch Page (loop)
+                  → [false] → Aggregate → Output
+```
+
+### Dry-Run / Verification Tolerance
+
+When testing with API write nodes disabled (for dry runs), downstream verification nodes receive the request body instead of the response. Make verification tolerant:
+
+```javascript
+// In verification Code node
+const body = $input.first().json;
+const looksLikeRequest = body.method && body.parameters && !body.status;
+if (looksLikeRequest) {
+  return [{ json: { status: 'SKIPPED', message: 'Upstream disabled for testing' }}];
+}
+// Normal response verification below...
+```
+
+---
+
+## Performance on the hot path
+
+When a workflow processes **thousands of items** with little I/O, its speed is set by how many times n8n crosses a per-item / per-iteration boundary — each crossing sets up an execution context and copies the items. Four architecture choices dominate:
+
+1. **Prefer fewer, fatter All-Items nodes over long transform chains.** Every node→node hop re-copies all items (~0.05 ms/item per hop), so six chained Code/Set nodes cost ~7× one All-Items Code node doing the same steps. Consolidate the hot path.
+2. **Use Code "Run Once for All Items," not "Each Item"** — ~0.02 ms/item vs ~0.6 ms/item (≈25–30×). A chain of *Each-Item* Code nodes is the worst case; the per-item tax multiplies by node count.
+3. **Maximize batchSize** in SplitInBatches loops (see the Batch Processing pattern above) — iterations are the cost.
+4. **Don't micro-optimize expressions** — complexity is free; node and iteration count are what you pay for.
+
+**But profile first.** Most production workflows are I/O-bound — sequential HTTP / DB / Sheets calls (hundreds of ms each) dwarf all of the above. These rules matter when transform work is the floor, or when an anti-pattern (Each-Item Code, batchSize 1, long per-item chains) turns a cheap operation into a slow one. Below a few hundred items, none of it matters. The **n8n Code JavaScript** skill has the full measured model.
+
+---
+
+## Integration-Specific Gotchas
+
+### Google Sheets
+
+- **NEVER use `append`** on sheets with formula columns — it breaks formulas. Use Google Sheets API `values.update` (PUT) via HTTP Request node with a `googleApi` credential
+- **Write numbers, not strings** for formula-dependent columns — string "4.98" breaks `ADD()` formulas. Use `parseFloat()` in a Code node
+- **Per-item execution trap**: Google Sheets nodes execute once per input item. If you need a single bulk write, aggregate items into one in a Code node first
+- **UNFORMATTED_VALUE returns numbers**, not text like "N/A" — filter explicitly in Code nodes
+
+### Google Drive
+
+- **`convertToGoogleDocument: true` creates a Google Doc (text)**, NOT a Google Sheet — to upload a CSV for download, omit this option entirely
+- **CSV download link format**: `https://drive.google.com/uc?id={fileId}&export=download` — use instead of `/view` links
+
+### Bidirectional Threshold Checking
+
+When comparing values (prices, quantities, metrics), always check both directions:
+
+```javascript
+// ❌ Only catches increases
+if (diff > threshold) { flag(); }
+
+// ✅ Catches both spikes AND crashes — both are data-quality signals
+if (Math.abs(diff) > threshold) { flag(); }
+```
 
 ---
 
@@ -228,8 +364,9 @@ These skills work together with Workflow Patterns:
 - Understand node operations (get_node)
 - Create workflows (n8n_create_workflow)
 - Deploy templates (n8n_deploy_template)
-- Use `ai_agents_guide()` for AI pattern guidance
+- Use `tools_documentation({topic: "ai_agents_guide", depth: "full"})` for AI pattern guidance
 - Manage data tables with `n8n_manage_datatable`
+- Organize workflows into folders with `n8n_manage_folders`
 
 **n8n Expression Syntax** - Use to:
 - Write expressions in transformation nodes
@@ -330,11 +467,11 @@ Common workflow patterns:
 
 For comprehensive guidance on each pattern:
 
-- **[webhook_processing.md](references/webhook_processing.md)** - Webhook patterns, data structure, response handling
-- **[http_api_integration.md](references/http_api_integration.md)** - REST APIs, authentication, pagination, retries
-- **[database_operations.md](references/database_operations.md)** - Queries, sync, transactions, batch processing
-- **[ai_agent_workflow.md](references/ai_agent_workflow.md)** - AI agents, tools, memory, langchain nodes
-- **[scheduled_tasks.md](references/scheduled_tasks.md)** - Cron schedules, reports, maintenance tasks
+- **[webhook_processing.md](webhook_processing.md)** - Webhook patterns, data structure, response handling
+- **[http_api_integration.md](http_api_integration.md)** - REST APIs, authentication, pagination, retries
+- **[database_operations.md](database_operations.md)** - Queries, sync, transactions, batch processing
+- **[ai_agent_workflow.md](ai_agent_workflow.md)** - AI agents, tools, memory, langchain nodes
+- **[scheduled_tasks.md](scheduled_tasks.md)** - Cron schedules, reports, maintenance tasks
 
 ---
 
@@ -392,7 +529,7 @@ Use `search_templates` and `get_template` from n8n-mcp tools to find examples!
 ## Summary
 
 **Key Points**:
-1. **5 core patterns** cover 90%+ of workflow use cases
+1. **6 core patterns** cover 90%+ of workflow use cases
 2. **Webhook processing** is the most common pattern
 3. Use the **workflow creation checklist** for every workflow
 4. **Plan pattern** → **Select nodes** → **Build** → **Validate** → **Deploy**

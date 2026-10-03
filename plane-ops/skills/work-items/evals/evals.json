@@ -4,61 +4,87 @@
     {
       "id": 1,
       "prompt": "Create a work item in project TaskFlow: 'Fix login 500 on Safari', high priority, 3 points, assigned to Alice, labeled 'bug'.",
-      "expected_output": "Resolves project_id, state_id, assignee UUID, label UUID, then calls create_work_item with description including acceptance criteria.",
+      "expected_output": "Resolves project_id, state UUID, assignee UUID, label UUID, then calls workitem(action=create) with description_html including acceptance criteria.",
       "files": [],
       "expectations": [
         "Consults connector-bootstrap before probing tools",
-        "Calls list_projects, list_states, list_labels, get_project_members to resolve UUIDs",
+        "Calls project(action=list), state(action=list), label(action=list), member(action=list_project) to resolve UUIDs",
         "Generates an HTML description with an Acceptance Criteria section",
-        "Sets priority=high, point=3, correct assignee and label"
+        "Sets priority=high, point=3, assignees=[<uuid>] and labels=[<uuid>] with the fixed parameter names of the workitem tool"
       ]
     },
     {
       "id": 2,
       "prompt": "Mark PROJ-148 as blocked by PROJ-140.",
-      "expected_output": "Resolves both item UUIDs and calls create_work_item_relation with relation_type blocked_by.",
+      "expected_output": "Resolves both item UUIDs and calls workitem_relation(action=create) with relation_type blocked_by.",
       "files": [],
       "expectations": [
-        "Uses retrieve_work_item_by_identifier to resolve both items",
-        "Calls create_work_item_relation with relation_type=blocked_by",
+        "Uses workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-148\") (one full identifier string) to resolve both items",
+        "Calls workitem_relation(action=create, workitem_ids=[<PROJ-140 uuid>], relation_type=blocked_by) on PROJ-148",
         "Confirms the dependency was created"
       ]
     },
     {
       "id": 3,
       "prompt": "Log 2 hours 30 minutes of work on PROJ-148 with description 'Debug + fix'.",
-      "expected_output": "Calls create_work_log with duration as integer minutes (150) after verifying the schema type.",
+      "expected_output": "Calls work_log(action=create) with duration as integer minutes (150) after checking that time tracking is enabled.",
       "files": [],
       "expectations": [
         "Converts 2h 30m to integer minutes (150) — not ISO 8601 string",
-        "Resolves work_item_id via retrieve_work_item_by_identifier with split project_identifier + issue_identifier",
-        "Verifies is_time_tracking_enabled on the project before logging",
-        "Calls create_work_log with the correct description and integer duration"
+        "Resolves workitem_id via workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-148\")",
+        "Verifies is_time_tracking_enabled with project(action=retrieve) before logging",
+        "Calls work_log(action=create, project_id, workitem_id, description, duration=150)"
       ]
     },
     {
       "id": 4,
       "prompt": "Find all work items in TaskFlow that mention 'webhook' in title or description.",
-      "expected_output": "Calls search_work_items with query 'webhook' (workspace-scoped) and filters results to the TaskFlow project client-side.",
+      "expected_output": "Calls workitem(action=search, query='webhook') (workspace-scoped) and filters results to the TaskFlow project client-side, or lists the project with a pql text filter.",
       "files": [],
       "expectations": [
-        "Resolves project_id via list_projects (for client-side filtering)",
-        "Calls search_work_items with query='webhook' (parameter name is 'query', not 'q')",
-        "Recognizes search is workspace-scoped and filters results to the TaskFlow project client-side",
+        "Resolves project_id via project(action=list) (for filtering the results to the project)",
+        "Calls workitem(action=search, query='webhook') (parameter name is 'query', not 'q') or workitem(action=list, project_id, pql='text ~ \"webhook\"') (text searches title and description)",
+        "Recognizes search is workspace-scoped (no project_id) and filters results to the TaskFlow project, or uses the project-scoped pql list; notes that pql title ~ matches titles only while text ~ matches title and description (the prompt asks for both)",
         "Presents results as a table with identifier, title, state, assignee"
       ]
     },
     {
       "id": 5,
       "prompt": "Add a comment to PROJ-148: 'Reproduced on Safari 17.4, root cause is the Set-Cookie SameSite flag'.",
-      "expected_output": "Resolves work item by identifier and calls create_work_item_comment with HTML body.",
+      "expected_output": "Resolves work item by identifier and calls workitem_comment(action=create) with an HTML comment_html body.",
       "files": [],
       "expectations": [
-        "Uses retrieve_work_item_by_identifier to resolve PROJ-148",
-        "Calls create_work_item_comment",
+        "Uses workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-148\") to resolve PROJ-148",
+        "Calls workitem_comment(action=create) with comment_html (not description_html)",
         "Wraps the comment text in valid HTML",
         "Confirms the comment was posted"
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "Show me every urgent or high priority item assigned to me in TaskFlow that is still open, and how many items each person has in progress.",
+      "expected_output": "PQL-filtered workitem list with assignee = currentUser(), plus a count grouped by assignee; no client-side filtering of a full listing.",
+      "expectations": [
+        "Filters server-side: workitem(action=list, project_id, pql='assignee = currentUser() AND priority IN (\"urgent\",\"high\") AND stateGroup IN openStates()') or equivalent",
+        "Counts per person with workitem(action=count, project_id, pql='stateGroup = \"started\"', group_by=assignees__id)",
+        "Uses stateGroup in the filter, and state__group only as a group_by key if at all",
+        "Keeps the query within 5 conditions and mentions get_pql_reference for the full syntax",
+        "Follows next_cursor when the first page is not the last"
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Set the 'RICE score' custom property on PROJ-148 to 42.",
+      "expected_output": "Resolves the property id through workitem_property list and writes the value with workitem_property(action=set_value); does not try to pass it through workitem update.",
+      "expectations": [
+        "Resolves PROJ-148 with workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-148\")",
+        "Finds the property id with workitem_property(action=list) (type-scoped or project-scoped)",
+        "Writes the value with workitem_property(action=set_value, project_id, workitem_id, property_id, value=42) and passes 42 as a number for a DECIMAL property",
+        "Does not pass a properties dictionary to workitem(action=update)",
+        "Reads the value back with workitem_property(action=get_value) or says it did"
+      ],
+      "files": []
     }
   ]
 }

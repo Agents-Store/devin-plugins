@@ -92,8 +92,9 @@ table, per role: `references/provider-matrix.md`.
 
 - **Mount the directory, not the file** — the CLI rewrites credentials atomically, replacing the inode,
   and a single-file mount freezes on the old one. Persist every path the CLI owns, not just this one.
-- **Per instance regardless:** project state, registrations, onboarding flags, and the key that
-  encrypts stored profiles — sharing those leaks state, copying them clones OAuth material.
+- **Per instance regardless:** project state, registrations, onboarding flags, the state directory
+  itself (auth profiles are rows in its database, in plaintext) and the legacy key directory where one
+  is mounted — sharing those leaks state, copying them clones OAuth material.
 - **Isolation is not violated:** uniqueness is required on config path, state directory, workspace and
   gateway port; credential directories are deliberately not on that list.
 - **The cost, said out loud:** one blast radius, one rate limit. Revoking that session logs out the

@@ -1,11 +1,13 @@
 # MCP Tool Call Patterns
 
+All tools return text, not JSON; the `→` lines summarise what the text contains. Names are shown bare; in a Claude Code session they carry the `mcp__<server>__` prefix of the user's MCP server.
+
 ## Check Available Tasks
 
 ```
 Tool: get_current_worker
 Input: { "environment": "dev" }
-→ Returns worker version, task list with IDs, payload schemas, machine presets
+→ Worker version, SDK version, task slugs (agents marked [agent]) with file paths. No payload schemas: use get_task_schema
 ```
 
 ## Trigger a Task
@@ -17,7 +19,7 @@ Input: {
   "payload": { "orderId": "ORD-123", "items": ["item-1"] },
   "environment": "dev"
 }
-→ { id: "run_abc123", status: "QUEUED" }
+→ "Task process-order triggered and run with ID created: run_abc123" + dashboard URL
 ```
 
 ## Trigger with Full Options
@@ -33,7 +35,8 @@ Input: {
     "idempotencyKey": "order-ORD-123",
     "machine": "medium-1x",
     "maxAttempts": 5,
-    "delay": "5m"
+    "delay": "5m",
+    "region": "us-east-1"
   }
 }
 ```
@@ -43,7 +46,7 @@ Input: {
 ```
 Tool: wait_for_run_to_complete
 Input: { "runId": "run_abc123", "timeoutInSeconds": 120 }
-→ { status: "COMPLETED", output: { processed: true } }
+→ Final run state and output (or the current state after the timeout)
 ```
 
 ## List Failed Runs
@@ -63,7 +66,7 @@ Input: {
 ```
 Tool: get_run_details
 Input: { "runId": "run_abc123", "environment": "prod", "maxTraceLines": 500 }
-→ { status, error, trace: [...], output: {...} }
+→ Run details, then "Run Trace (lines 1-500 of N)"; when more exists, call again with the `cursor` the text gives
 ```
 
 ## Deploy to Staging
@@ -71,7 +74,7 @@ Input: { "runId": "run_abc123", "environment": "prod", "maxTraceLines": 500 }
 ```
 Tool: deploy
 Input: { "environment": "staging" }
-→ { status: "DEPLOYED", version: "20250225.2" }
+→ The CLI deploy log (build, push, "Version 20250225.2 deployed with N detected tasks")
 ```
 
 ## Search Documentation
@@ -114,32 +117,32 @@ Input: { "query": "wait for token human in the loop" }
 
 ```
 Tool: whoami
-→ { profile: "default", user: {...}, apiUrl: "https://api.trigger.dev" }
+→ Active profile, user, email and API URL
 
 Tool: list_profiles
-→ { active: "default", profiles: [{ name, apiUrl }, ...] }
+→ Every profile with its API URL; the active one is marked
 
 Tool: switch_profile
 Input: { "profile": "self-hosted-prod" }
-→ { active: "self-hosted-prod", apiUrl: "https://trigger.example.com" }
+→ Confirms the new active profile; later calls use its account and API URL
 ```
 
 ## Get Task Schema
 
 ```
 Tool: get_task_schema
-Input: { "taskIdentifier": "process-order", "environment": "dev" }
-→ { payloadSchema: { type: "object", properties: {...}, required: [...] } }
+Input: { "taskSlug": "process-order", "environment": "dev" }
+→ The payload schema (JSON Schema) of that task
 ```
 
-Note: v4.4.4 removed inlined payload schemas from `get_current_worker` — always call this before `trigger_task`.
+Note: `get_current_worker` returns task slugs only, never payload schemas — call this before `trigger_task`.
 
 ## Run TRQL Query
 
 ```
 Tool: get_query_schema
 Input: { "table": "runs" }
-→ { table: "runs", columns: [...] }
+→ Columns, types, descriptions and allowed values of the runs table
 
 Tool: query
 Input: {
@@ -154,10 +157,10 @@ Input: {
 
 ```
 Tool: list_dashboards
-→ [{ dashboardId: "overview", widgets: [{ widgetId: "failure-rate", title: "Failure rate" }] }]
+→ Per dashboard: title and key (`overview` = run metrics, `llm` = AI metrics), then a table of widget IDs, titles and types
 
 Tool: run_dashboard_query
-Input: { "dashboardId": "overview", "widgetId": "failure-rate", "period": "30d" }
+Input: { "dashboardKey": "llm", "widgetId": "llm-cost", "period": "30d" }
 → (text table)
 ```
 
@@ -166,14 +169,14 @@ Input: { "dashboardId": "overview", "widgetId": "failure-rate", "period": "30d" 
 ```
 Tool: start_dev_server
 Input: { "configPath": "./packages/jobs/trigger.config.ts" }
-→ { status: "ready", pid: 12345 }
+→ "Dev server is ready." plus recent log lines (or the build errors / a still-starting note)
 
 Tool: dev_server_status
 Input: { "lines": 50 }
-→ { status: "ready", recentLogs: [...] }
+→ "Dev Server Status: ready", the directory, and the last 50 log lines
 
 Tool: stop_dev_server
-→ { status: "stopped" }
+→ "Dev server stopped."
 ```
 
 ## Managed Prompts — Hotfix Workflow
@@ -181,11 +184,11 @@ Tool: stop_dev_server
 ```
 Tool: list_prompts
 Input: { "environment": "prod" }
-→ [{ slug: "customer-reply", currentVersion: 4, overrideActive: false, versionCount: 7 }]
+→ Per prompt: slug, current version, override status, version count
 
 Tool: get_prompt_versions
 Input: { "slug": "customer-reply", "environment": "prod" }
-→ [{ version: 4, labels: ["current", "latest"], source: "code", ... }]
+→ Per version: number, labels (current / override / latest), source (code / dashboard), model, content
 
 Tool: create_prompt_override
 Input: {
@@ -194,9 +197,59 @@ Input: {
   "commitMessage": "Hotfix tone OPS-1234",
   "environment": "prod"
 }
-→ { slug: "customer-reply", overrideVersion: 8, source: "dashboard" }
+→ Confirms the new dashboard-sourced override version
 
 Tool: remove_prompt_override
 Input: { "slug": "customer-reply", "environment": "prod" }
-→ { slug: "customer-reply", overrideActive: false }
+→ Confirms the override is gone; the current code version applies again
 ```
+
+## Health Report
+
+```
+Tool: get_report
+Input: { "key": "health", "environment": "prod", "period": "24h" }
+→ Verdict (flow / execution / liveness), sparklines and a suggested next action. Show it to the user as-is.
+```
+
+## Chat With a chat.agent (server ≥ 4.5.0)
+
+```
+Tool: list_agents
+Input: { "environment": "dev" }
+→ Agent slugs with file paths
+
+Tool: start_agent_chat
+Input: { "agentId": "support-chat", "chatId": "conversation-123", "clientData": { "userId": "user_123" } }
+→ Chat ID, session ID, agent, run ID
+
+Tool: send_agent_message
+Input: { "chatId": "conversation-123", "message": "Where is my order?" }
+→ The agent's full response text, then "Run: run_xxx"
+
+Tool: close_agent_chat
+Input: { "chatId": "conversation-123" }
+→ "Chat conversation-123 closed."
+```
+
+## Session Side Channel (server ≥ 4.5.0)
+
+```
+Tool: read_session_channel
+Input: { "sessionId": "session_xxx", "channel": "control", "io": "in", "maxRecords": 50 }
+→ Records after the cursor, plus a nextCursor to pass as afterEventId
+
+Tool: write_session_channel
+Input: { "sessionId": "session_xxx", "channel": "control", "value": { "paused": true } }
+→ "Wrote 1 record to session session_xxx channel "control" .in. This does not wake or trigger a run."
+```
+
+## Read-Only and Dev-Only Servers
+
+These are server flags, set in the MCP config `args`, not tool inputs:
+
+```json
+{ "command": "npx", "args": ["trigger.dev@latest", "mcp", "--readonly", "--dev-only", "--project-ref", "proj_abc123"] }
+```
+
+With `--readonly` the 15 write tools (deploy, trigger_task, cancel_run, prompt writers, agent chat, write_session_channel, ...) do not exist for the model.

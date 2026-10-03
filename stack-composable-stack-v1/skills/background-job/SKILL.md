@@ -1,11 +1,11 @@
 ---
 name: background-job
-description: This skill should be used when the user wants to "create a background job", "run async task", "process data in background", "schedule recurring task", "set up a queue", or needs patterns for background processing using Trigger.dev and n8n in the Composable Stack.
+description: This skill should be used when the user wants to "create a background job", "run async task", "process data in background", "schedule recurring task", "set up a queue", "choose between n8n and Trigger.dev", or needs to decide how background processing is split between Trigger.dev and n8n in the Composable Stack.
 ---
 
 # Background Job Patterns
 
-Patterns for background processing in the Composable Stack using Trigger.dev (durable tasks) and n8n (workflow automation).
+How background processing is divided between Trigger.dev (durable tasks) and n8n (workflow automation) in the Composable Stack, and how a job reports its state. The code and node-level detail live in the technology plugins; this skill is the decision and the contract between them.
 
 ## Choosing the Right Service
 
@@ -19,130 +19,19 @@ Patterns for background processing in the Composable Stack using Trigger.dev (du
 | Queue-based processing | Trigger.dev | Rate limiting, ordered execution, concurrency control |
 | Simple notification relay | n8n | Quick webhook → email/Slack |
 
-## Trigger.dev Task Patterns
+## Where the Patterns Live
 
-### Basic Background Task
-
-```typescript
-import { task } from "@trigger.dev/sdk/v3";
-
-export const processOrder = task({
-  id: "process-order",
-  retry: { maxAttempts: 3 },
-  run: async (payload: { orderId: number }) => {
-    // 1. Fetch order data from NocoDB
-    // 2. Process payment
-    // 3. Update order status
-    // 4. Return result
-    return { success: true, orderId: payload.orderId };
-  },
-});
-```
-
-### Queue-Based Processing
-
-```typescript
-import { task } from "@trigger.dev/sdk/v3";
-
-export const sendEmail = task({
-  id: "send-email",
-  queue: { name: "email-queue", concurrencyLimit: 5 },
-  retry: { maxAttempts: 3 },
-  run: async (payload: { to: string; subject: string; body: string }) => {
-    // Send email with rate limiting via queue
-  },
-});
-```
-
-### Scheduled Task
-
-```typescript
-import { schedules } from "@trigger.dev/sdk/v3";
-
-export const dailyReport = schedules.task({
-  id: "daily-report",
-  cron: "0 9 * * *", // 9 AM daily
-  run: async () => {
-    // 1. Query NocoDB for daily stats
-    // 2. Generate report
-    // 3. Send via n8n webhook or email
-  },
-});
-```
-
-### Orchestrator Pattern
-
-```typescript
-import { task } from "@trigger.dev/sdk/v3";
-
-export const processNewUser = task({
-  id: "process-new-user",
-  run: async (payload: { userId: number }) => {
-    // Run subtasks in parallel
-    const [profile, welcome, sync] = await Promise.all([
-      createUserProfile.triggerAndWait({ userId: payload.userId }),
-      sendWelcomeEmail.triggerAndWait({ userId: payload.userId }),
-      syncToCRM.triggerAndWait({ userId: payload.userId }),
-    ]);
-
-    return { profile, welcome, sync };
-  },
-});
-```
-
-## n8n Workflow Patterns
-
-### Scheduled Data Sync
-
-```
-[Schedule Trigger] → [Query NocoDB] → [Transform Data] → [HTTP: External API] → [Update NocoDB Status]
-```
-
-### Webhook-Triggered Processing
-
-```
-[Webhook] → [Validate Payload] → [Switch: Event Type] →
-  ├─ [Create Path] → [Process New Record] → [Respond 200]
-  ├─ [Update Path] → [Sync Changes] → [Respond 200]
-  └─ [Delete Path] → [Cleanup] → [Respond 200]
-```
-
-### Error Recovery Workflow
-
-```
-[Error Trigger] → [Log to NocoDB Error Table] → [Check Retry Count] →
-  ├─ [< Max Retries] → [Wait 5min] → [Retry Original Workflow]
-  └─ [>= Max Retries] → [Send Alert Notification]
-```
-
-## Triggering Tasks via MCP
-
-### Start a Trigger.dev Task
-
-```
-Tool: mcp__trigger-dev__trigger_task
-Input: {
-  "taskId": "process-order",
-  "payload": { "orderId": 123 }
-}
-```
-
-### Monitor a Run
-
-```
-Tool: mcp__trigger-dev__get_run_details
-Input: { "runId": "run_xxx" }
-```
-
-### Execute an n8n Workflow
-
-Use the n8n native MCP or call a webhook directly.
+- Trigger.dev tasks — basic task, queues with `queue()`, cron schedules, fan-out with `batchTriggerAndWait`, record-driven tasks: see `trigger-dev:task-development` (and its `references/record-driven-tasks.md`)
+- Start and watch a task from the agent (`trigger_task`, `get_run_details`, `list_runs`): see `trigger-dev:mcp-patterns`; in this stack the tools are named `mcp__plugin_stack-composable-stack-v1_trigger-dev__<tool>`, and `trigger_task` runs in `dev` unless you pass `environment`
+- n8n workflow shapes — scheduled sync, webhook-triggered processing, error recovery: see `n8n-dev:examples` (`references/background-processing-patterns.md`)
+- Run a workflow from the agent: the n8n native MCP (`mcp__plugin_stack-composable-stack-v1_n8n-native-mcp__execute_workflow`, which needs `executionMode`) or the workflow's webhook — see `n8n-dev:n8n-native-mcp`
+- Which service starts which: `nocodb-to-n8n`, `nocodb-to-trigger`, `nocobase-to-n8n` in this plugin
 
 ## Error Handling Strategy
 
-1. **Task-level retries** — Trigger.dev `retry.maxAttempts` for transient failures
+1. **Task-level retries** — Trigger.dev `retry.maxAttempts` for transient failures, `onFailure` to record the final failure
 2. **Workflow-level error trigger** — n8n Error Trigger node for workflow failures
-3. **Dead letter queue** — store failed jobs in NocoDB `failed_jobs` table
+3. **Dead letter queue** — store failed jobs in a NocoDB `failed_jobs` table
 4. **Status tracking** — update a `job_status` field: `queued` → `running` → `completed` / `failed`
 5. **Alerting** — notify via n8n on critical failures (Slack, email)
 

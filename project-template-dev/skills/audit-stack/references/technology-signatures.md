@@ -40,6 +40,7 @@ How to detect technologies in a project. Scan these sources in order.
 | `sequelize` | Sequelize | Data |
 | `mongoose` | Mongoose (MongoDB) | Data |
 | `@directus/sdk` | Directus SDK | Data |
+| `payload` / `@payloadcms/*` | Payload CMS | Data |
 | `nocodb-sdk` | NocoDB SDK | Data |
 | `@supabase/supabase-js` | Supabase | Data |
 | `firebase` / `firebase-admin` | Firebase | Data |
@@ -47,6 +48,9 @@ How to detect technologies in a project. Scan these sources in order.
 | `redis` / `ioredis` | Redis | Data |
 | `bullmq` | BullMQ | Logic |
 | `@trigger.dev/sdk` | Trigger.dev | Logic |
+| `grammy` / `@grammyjs/*` | grammY (Telegram bot framework) | Logic |
+| `@mattermost/client` / `@mattermost/types` | Mattermost | Logic |
+| `@infisical/sdk` | Infisical SDK (secrets) | — |
 | `inngest` | Inngest | Logic |
 | `next-auth` / `@auth/core` | NextAuth / Auth.js | Logic |
 | `better-auth` | Better Auth | Logic |
@@ -183,6 +187,7 @@ How to detect technologies in a project. Scan these sources in order.
 | `tailwind.config.*` | Tailwind CSS | Interface |
 | `postcss.config.*` | PostCSS | Interface |
 | `tsconfig.json` | TypeScript | Logic |
+| `payload.config.*` | Payload CMS | Data |
 | `vite.config.*` | Vite | Interface |
 | `webpack.config.*` | Webpack | Interface |
 | `turbo.json` | Turborepo | Logic |
@@ -192,6 +197,12 @@ How to detect technologies in a project. Scan these sources in order.
 | `trigger.config.*` | Trigger.dev | Logic |
 | `.env.example` / `.env.local` | Environment config | — |
 | `.mcp.json` | MCP server integration | — |
+| `.infisical.json` | Infisical (secrets management) | — |
+| `RESTIC_REPOSITORY` / `RESTIC_PASSWORD` in `.env*`, or `restic ` calls in `scripts/*.sh` / crontab | restic (encrypted backups) | — |
+| `pnpm-lock.yaml` | pnpm (package manager) | — |
+| `bun.lock` / `bun.lockb` | Bun (package manager) | — |
+| `uv.lock` | uv (Python package manager) | — |
+| `package-lock.json` / `yarn.lock` / `poetry.lock` | npm / Yarn / Poetry (package manager) | — |
 | `docker-compose.yml` / `docker-compose.yaml` | Docker Compose | — |
 | `Dockerfile` / `Dockerfile.*` | Docker | — |
 | `.github/workflows/*.yml` | GitHub Actions CI/CD | — |
@@ -237,6 +248,12 @@ Parse `docker-compose.yml` for `image:` or `build:` directives:
 | `nocobase/nocobase:*` | NocoBase | Data |
 | `supabase/*` | Supabase | Data |
 | `n8nio/n8n:*` | n8n | Logic |
+| `chatwoot/chatwoot:*` | Chatwoot | Logic |
+| `mattermost/mattermost-*` | Mattermost | Logic |
+| `makeplane/plane-*` | Plane | Logic |
+| `infisical/infisical:*` | Infisical | — |
+| `restic/restic:*` | restic | — |
+| `dokploy/dokploy:*` / external network `dokploy-network` in `networks:` | Dokploy (self-hosted PaaS) | — |
 | `nginx:*` / `traefik:*` / `caddy:*` | Reverse Proxy | Logic |
 | `grafana/grafana:*` | Grafana | Interface |
 | `prom/prometheus:*` | Prometheus | Logic |
@@ -252,6 +269,10 @@ Grep source files (`src/**/*.{ts,tsx,js,jsx,py,go,rs}`) for distinctive imports:
 | Pattern (regex) | Technology |
 |----------------|-----------|
 | `from ['"]@directus/sdk['"]` | Directus SDK |
+| `from ['"]payload['"]` / `from ['"]@payloadcms/` | Payload CMS |
+| `from ['"]grammy['"]` / `from ['"]@grammyjs/` | grammY |
+| `from ['"]@mattermost/` | Mattermost |
+| `from ['"]@infisical/` | Infisical SDK |
 | `from ['"]nocodb-sdk['"]` | NocoDB SDK |
 | `from ['"]@supabase/` | Supabase |
 | `from ['"]firebase/` / `from ['"]firebase-admin` | Firebase |
@@ -286,4 +307,5 @@ Grep source files (`src/**/*.{ts,tsx,js,jsx,py,go,rs}`) for distinctive imports:
 | `k8s/` / `kubernetes/` / `helm/` | Kubernetes |
 | `.github/workflows/` | GitHub Actions |
 | `trigger/` / `src/trigger/` | Trigger.dev |
+| `src/collections/` + `payload.config.ts` | Payload CMS |
 | `jobs/` + trigger imports | Trigger.dev |

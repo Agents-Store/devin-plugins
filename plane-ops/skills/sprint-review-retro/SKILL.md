@@ -7,28 +7,30 @@ description: Sprint review and retrospective — completion metrics, previous re
 
 This skill covers sprint review (what was built), retrospective (how to improve), and sprint close (cleanup and transfer).
 
-> **Page formatting:** when saving retro notes via `create_project_page`, follow the HTML rules in [`examples/references/page-formatting.md`](../examples/references/page-formatting.md). Plane pages use `description_html` — wrap every text block in `<p>`, use `<h2>`/`<h3>` for sections, and prefer `<details>` for long raw notes.
+> **Page formatting:** when saving retro notes via `page(action=create)`, follow the HTML rules in [`examples/references/page-formatting.md`](../examples/references/page-formatting.md). Plane pages use `description_html` — wrap every text block in `<p>`, use `<h2>`/`<h3>` for sections, and prefer `<details>` for long raw notes.
 
 ## Tool Name Resolution
 
-Tools below are referenced by their **action name** only (e.g., `list_cycle_work_items`). Resolve the real tool names for your current Plane MCP server or connector through the `connector-bootstrap` skill. Match by action suffix — never assume a prefix.
+Plane MCP exposes one tool per resource and the operation goes into the `action` parameter: `cycle(action=list, ...)`. This skill writes calls in that form. Resolve the real tool names (`mcp__<server>__<resource>`) for your current Plane connection through the `connector-bootstrap` skill - never assume a server prefix.
 
 ## Available Tools
 
-| Tool | Description |
+| Call | Description |
 |------|-------------|
-| `list_cycles` | Find active/current cycle |
-| `retrieve_cycle` | Get cycle details (dates, owner) |
-| `list_cycle_work_items` | Get all work items in sprint |
-| `list_archived_cycles` | Find recently completed sprints |
-| `archive_cycle` | Archive completed sprint |
-| `transfer_cycle_work_items` | Move incomplete items to next cycle |
-| `create_cycle` | Create next sprint cycle |
-| `create_work_item` | Create action items from retro |
-| `create_work_item_comment` | Add retro notes to items |
-| `create_project_page` | Save retro notes as a page |
-| `list_labels` | Get labels for "retro-action" tag |
-| `create_label` | Create "retro-action" label if needed |
+| `cycle(action=list)` | Find the active (`status=current`) or recently completed (`status=completed`) cycle; `archived=true` lists archived ones |
+| `cycle(action=retrieve)` | Get cycle details (dates, owner) |
+| `cycle(action=list_workitems)` | Get all work items in sprint (`pql` filter) |
+| `cycle(action=complete)` | End the sprint: sets `end_date` to today |
+| `cycle(action=transfer_workitems)` | Move the unfinished items of a finished cycle to the next cycle (`new_cycle_id`) |
+| `cycle(action=manage_workitems)` | Take items out of the cycle (`remove_ids`) so they return to the backlog |
+| `cycle(action=archive)` | Archive the sprint |
+| `cycle(action=create)` | Create next sprint cycle |
+| `workitem(action=count)` | Sprint totals per state group in one call |
+| `workitem(action=create)` | Create action items from retro |
+| `workitem_comment(action=create)` | Add retro notes to items |
+| `page(action=create)` | Save retro notes as a page |
+| `label(action=list)` | Get labels for "retro-action" tag |
+| `label(action=create)` | Create "retro-action" label if needed |
 
 ## Sprint Review
 
@@ -39,15 +41,17 @@ Demo completed work, gather feedback, measure what was accomplished vs planned.
 
 ```
 1. Get sprint data:
-   list_cycles({ project_id })
-   → Find active or most recent cycle
+   cycle(action=list, project_id=<id>, status=current)
+   → Find the active cycle; for a sprint that just ended use status=completed
 
-   retrieve_cycle({ project_id, cycle_id })
+   cycle(action=retrieve, project_id=<id>, cycle_id=<cycle_id>)
    → Get sprint name, dates, description (goal)
 
 2. Get sprint items:
-   list_cycle_work_items({ project_id, cycle_id })
-   → Categorize by state group:
+   cycle(action=list_workitems, project_id=<id>, cycle_id=<cycle_id>)
+   workitem(action=count, project_id=<id>, pql='cycle = "<cycle_id>"', group_by=state__group)
+   → The count gives the item totals per state group in one call; the list gives
+     the points and the item table. Categorize by state group:
      completed  → items in "completed" state group
      in_progress → items in "started" state group
      not_started → items in "unstarted" or "backlog" state group
@@ -118,12 +122,13 @@ LONGED FOR — What do we wish we had?
 
 ```
 1. Review previous retro actions:
-   list_labels({ project_id })
+   label(action=list, project_id=<id>)
    → Find label with name "retro-action" → get label_id
 
-   list_work_items({ project_id })
-   → Filter items with "retro-action" label_id
+   workitem(action=list, project_id=<id>, pql='label = "<retro-action-label-id>"')
+   → Items carrying the "retro-action" label, server-side
    → Check which are completed vs still open
+     (workitem(action=count, ..., group_by=state__group) gives the split in one call)
    → Present status:
      "[DONE] Every PR reviewed within 4 hours — completed"
      "[OPEN] Set up staging deploy pipeline — still in progress"
@@ -145,22 +150,20 @@ LONGED FOR — What do we wish we had?
 
 6. Create action items in Plane:
    For each action:
-   create_work_item({
-     project_id: "<id>",
-     name: "[RETRO] <action item description>",
-     description_html: "<p>From Sprint N retrospective. <details></p>",
-     priority: "high",
-     labels: ["<retro-action-label-id>"],
-     assignees: ["<owner_id>"],
-     target_date: "<next_sprint_end_date>"
-   })
+   workitem(action=create,
+            project_id=<id>,
+            name="[RETRO] <action item description>",
+            description_html="<p>From Sprint N retrospective. <details></p>",
+            priority="high",
+            labels=["<retro-action-label-id>"],
+            assignees=["<owner_id>"],
+            target_date="<next_sprint_end_date>")
 
 7. Save retro notes:
-   create_project_page({
-     project_id: "<id>",
-     name: "Retro — Sprint N (YYYY-MM-DD)",
-     description_html: "<h2>Sprint Metrics</h2>...<h2>Start</h2>...<h2>Stop</h2>...<h2>Continue</h2>...<h2>Action Items</h2>..."
-   })
+   page(action=create,
+        project_id=<id>,
+        name="Retro — Sprint N (YYYY-MM-DD)",
+        description_html="<h2>Sprint Metrics</h2>...<h2>Start</h2>...<h2>Stop</h2>...<h2>Continue</h2>...<h2>Action Items</h2>...")
 ```
 
 ## Sprint Close Workflow
@@ -170,28 +173,28 @@ LONGED FOR — What do we wish we had?
 ```
 1. Complete the sprint review (above)
 
-2. Handle incomplete items:
-   Option A: Transfer to next sprint
-     - Create next cycle first (if not exists):
-       create_cycle({
-         project_id, name, owned_by, start_date, end_date
-       })
-     - Transfer:
-       transfer_cycle_work_items({
-         project_id,
-         cycle_id: "<current_cycle_id>",
-         new_cycle_id: "<next_cycle_id>"
-       })
-
-   Option B: Move back to backlog
-     - Remove from cycle (items return to backlog)
+2. Handle incomplete items. Decide per item first (see the table below):
+   Option B: Move back to backlog (do this BEFORE the transfer)
+     - cycle(action=manage_workitems, project_id=<id>, cycle_id=<current_cycle_id>,
+             remove_ids=[<item ids>])
+       Items leave the cycle and return to the backlog (a removal: the permission
+       dialog asks first)
      - Don't carry over items that weren't started — reprioritize
 
+   Option A: Transfer the rest to the next sprint
+     - Create next cycle first (if not exists):
+       cycle(action=create, project_id=<id>, name=..., owned_by=<member_id>,
+             start_date=..., end_date=...)
+     - End the sprint (the server rejects a transfer from a cycle that has not ended):
+       cycle(action=complete, project_id=<id>, cycle_id=<current_cycle_id>)
+     - Transfer (moves only the UNFINISHED items):
+       cycle(action=transfer_workitems, project_id=<id>,
+             cycle_id=<current_cycle_id>, new_cycle_id=<next_cycle_id>)
+
 3. Archive the sprint:
-   archive_cycle({
-     project_id: "<id>",
-     cycle_id: "<current_cycle_id>"
-   })
+   cycle(action=archive, project_id=<id>, cycle_id=<current_cycle_id>)
+   (archive ends a still-running cycle first, which is why complete and transfer
+    come before it)
 
 4. Record velocity:
    Note completed_points for velocity tracking

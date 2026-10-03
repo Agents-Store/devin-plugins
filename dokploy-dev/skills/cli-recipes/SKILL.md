@@ -7,7 +7,7 @@ description: "This skill should be used when running Dokploy operations from the
 
 Common commands and workflows for the official Dokploy CLI (`@dokploy/cli`). Use these when operating Dokploy from a terminal or CI, alongside the MCP tools.
 
-> **The CLI was completely rewritten (0.29.x):** it is now **auto-generated 1:1 from the OpenAPI spec** — 546 commands in 50 kebab-case groups, in the shape `dokploy <group> <action> [--param value…]`. It version-locks to Dokploy releases (e.g. CLI 0.29.14 ↔ Dokploy v0.29.14). The old `dokploy authenticate`, `dokploy verify`, `dokploy app *`, `dokploy project list/info`, `dokploy env pull/push`, and `dokploy database postgresql *` commands are **gone**.
+> **The CLI was completely rewritten (0.29.x) and is current at 0.30.x:** it is **auto-generated 1:1 from the OpenAPI spec** — 604 commands in 57 kebab-case groups, in the shape `dokploy <group> <action> [--param value…]`. It version-locks to Dokploy releases (CLI 0.30.7 ↔ Dokploy v0.30.7; the CLI's own readme still says "449 commands" — ignore that). The old `dokploy authenticate`, `dokploy verify`, `dokploy app *`, `dokploy project list/info`, `dokploy env pull/push`, and `dokploy database postgresql *` commands are **gone**.
 
 > **The CLI now READS LOGS.** Every `read-logs` operation from the API is a CLI command (`dokploy deployment read-logs`, `dokploy application read-logs`, `dokploy compose read-logs`, all six `{db} read-logs` — including `dokploy libsql read-logs`). For guided multi-container debugging still prefer `/dokploy-dev:logs`, `/dokploy-dev:compose-logs`, `/dokploy-dev:debug`.
 
@@ -17,7 +17,7 @@ Common commands and workflows for the official Dokploy CLI (`@dokploy/cli`). Use
 
 ```bash
 npm install -g @dokploy/cli
-dokploy --version        # versions in lockstep with Dokploy, e.g. 0.29.14
+dokploy --version        # versions in lockstep with Dokploy, e.g. 0.30.7
 ```
 
 ---
@@ -49,7 +49,7 @@ dokploy --version        # versions in lockstep with Dokploy, e.g. 0.29.14
 dokploy <group> <action> [--param value…] [--json]
 ```
 
-- **546 commands** auto-generated 1:1 from the OpenAPI spec across **50 kebab-case groups**: `admin`, `ai`, `application`, `audit-log`, `backup`, `bitbucket`, `certificates`, `cluster`, `compose`, `custom-role`, `deployment`, `destination`, `docker`, `domain`, `environment`, `forward-auth`, `gitea`, `github`, `gitlab`, `git-provider`, `libsql`, `license-key`, `mariadb`, `mongo`, `mounts`, `mysql`, `notification`, `organization`, `patch`, `port`, `postgres`, `preview-deployment`, `project`, `redirects`, `redis`, `registry`, `rollback`, `schedule`, `scim`, `security`, `server`, `settings`, `ssh-key`, `sso`, `stripe`, `swarm`, `tag`, `user`, `volume-backups`, `whitelabeling` — plus `auth`.
+- **604 commands** auto-generated 1:1 from the OpenAPI spec across **57 kebab-case groups**: `admin`, `ai`, `application`, `audit-log`, `backup`, `bitbucket`, `certificates`, `cluster`, `compose`, `custom-role`, `deployment`, `destination`, `dns-provider`, `docker`, `docker-disk-usage`, `docker-image`, `docker-volume`, `domain`, `environment`, `forward-auth`, `gitea`, `github`, `gitlab`, `git-provider`, `libsql`, `license-key`, `mariadb`, `mongo`, `mounts`, `mysql`, `network`, `notification`, `organization`, `overview`, `patch`, `port`, `postgres`, `preview-deployment`, `project`, `redirects`, `redis`, `registry`, `rollback`, `schedule`, `scim`, `security`, `server`, `settings`, `ssh-key`, `sso`, `stripe`, `swarm`, `tag`, `user`, `vault-provider`, `volume-backups`, `whitelabeling` — plus `auth`. New in 0.30: `network`, `vault-provider`, `dns-provider`, `docker-volume`, `docker-image`, `docker-disk-usage`, `overview`.
 - **Actions** are the kebab-cased operation names: `read-logs`, `save-build-type`, `get-containers-by-app-label`, …
 - **Flags** are the API params: `--applicationId`, `--tail`, `--environmentId`, …
 - `--help` works at every level; `--json` on every command for raw machine-readable output.
@@ -74,9 +74,10 @@ dokploy application create --name web --environmentId <envId>
 # Deploy it
 dokploy application deploy --applicationId <id>
 
-# Set environment variables (all four companion flags required by the API)
+# Set environment variables (all four companion flags required by the API;
+# --createEnvFile is a bare boolean flag — the CLI can only send true, use MCP/REST to send false)
 dokploy application save-environment --applicationId <id> \
-  --env "KEY=VALUE" --buildArgs "" --buildSecrets "" --createEnvFile false
+  --env "KEY=VALUE" --buildArgs "" --buildSecrets "" --createEnvFile
 
 # Provision + start a PostgreSQL database
 dokploy postgres create --name main-db --databaseName main --databaseUser postgres \
@@ -110,6 +111,34 @@ Same filter model as the API: `tail` 1–10000 (default 100), `since` `all` or `
 
 ---
 
+## v0.30 recipes
+
+```bash
+# Host diagnostics (read-only) — replaces SSH for most "deploy stalls" checks
+dokploy docker get-server-health --sinceHours 1 --json
+dokploy docker get-events --minutes 30 --json
+dokploy docker-disk-usage get-disk-usage --json
+
+# Docker networks: list / create (per-service attach sends array fields — use MCP or REST, see below)
+dokploy network all --json
+dokploy network create --name backend --driver bridge --internal
+
+# DESTRUCTIVE — compose "Deploy with Fresh Volumes": runs docker compose down --volumes first (stack volumes are deleted)
+dokploy compose deploy --composeId <id> --freshVolumes
+
+# Secrets providers and DNS (names/zones only — credentials are masked in responses)
+dokploy vault-provider all --json
+dokploy vault-provider list-secret-names --vaultProviderId <id> --projectId <pid>
+dokploy dns-provider list-zones --dnsProviderId <id>
+
+# Switch a domain off without deleting it
+dokploy domain toggle-enable --domainId <id>
+```
+
+Boolean fields are bare flags (`--internal`, `--freshVolumes`, `--createEnvFile`): present means `true`, omit them to leave the field unset (the CLI cannot send `false`). Object/array fields (`config`, `assignments`, `networkIds`, `ipam`, `serviceNetworks`) cannot be sent correctly: the CLI forwards the flag value as a plain string and the API rejects a string where it expects an array/object — use MCP or REST for `vault-provider create`, `network` attachment via `{type} update`, etc. The multipart commands `application drop-deployment` and `docker upload-file-to-container` declare no options and send no file; use REST `curl -F`. The CLI is **not** redacted — everything it prints is real, so avoid `--json` on `*-one` calls in shared logs.
+
+---
+
 ## Workflow Recipes
 
 ### Deploy an app
@@ -119,7 +148,7 @@ dokploy auth -u https://dokploy.example.com -t <API_KEY>   # one-time (or export
 dokploy project create --name my-saas
 dokploy project one --projectId <id> --json                # → environmentId
 dokploy application create --name web --environmentId <envId>
-dokploy application save-environment --applicationId <appId> --env "NODE_ENV=production" --buildArgs "" --buildSecrets "" --createEnvFile false
+dokploy application save-environment --applicationId <appId> --env "NODE_ENV=production" --buildArgs "" --buildSecrets "" --createEnvFile
 dokploy application deploy --applicationId <appId>
 dokploy deployment read-logs --deploymentId <deployId> --tail 500   # watch the build
 ```
@@ -138,7 +167,7 @@ dokploy postgres deploy --postgresId <pgId>
 dokploy postgres create --name main-db --databaseName main --databaseUser postgres --databasePassword <pw> --environmentId <envId>
 dokploy postgres deploy --postgresId <pgId>
 dokploy application create --name web --environmentId <envId>
-dokploy application save-environment --applicationId <appId> --env "DATABASE_URL=postgres://…" --buildArgs "" --buildSecrets "" --createEnvFile false
+dokploy application save-environment --applicationId <appId> --env "DATABASE_URL=postgres://…" --buildArgs "" --buildSecrets "" --createEnvFile
 dokploy application deploy --applicationId <appId>
 ```
 

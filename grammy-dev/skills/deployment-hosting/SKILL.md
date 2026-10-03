@@ -36,21 +36,28 @@ Built-in adapters (string names):
 | `"hono"` | Hono |
 | `"koa"` | Koa |
 | `"oak"` | Oak (Deno) |
-| `"http"` / `"https"` | Node's `http`/`https` |
-| `"std/http"` | Deno `std/http` |
+| `"http"` / `"https"` | Node's `http`/`https` — also **Vercel Node.js functions** |
+| `"std/http"` | Deno `std/http` (and Vercel Edge functions) |
+| `"serveHttp"` | Deno `serveHttp` request events (`respondWith` style) |
 | `"cloudflare-mod"` | Cloudflare Workers (modules) |
 | `"cloudflare"` | Cloudflare Workers (service worker) |
-| `"aws-lambda-async"` | AWS Lambda |
-| `"vercel"` | Vercel functions |
+| `"aws-lambda"` | AWS Lambda (callback style) |
+| `"aws-lambda-async"` | AWS Lambda (async handler) |
+| `"azure"` | Azure Functions (classic `(context, req)` model) |
+| `"azure-v4"` | Azure Functions (v4 programming model) |
 | `"sveltekit"` | SvelteKit |
 | `"next-js"` | Next.js |
 | `"nhttp"` | nhttp |
 | `"elysia"` | Elysia |
 | `"bun"` | Bun.serve |
 | `"worktop"` | Worktop |
-| `"azure"` | Azure Functions |
+| `"callback"` | Bring your own glue: `(update, callback, secretHeader)` |
+
+**grammY has no Vercel adapter** — passing the string `vercel` as the adapter is a TypeScript error and fails at runtime. Vercel Node.js functions use `"https"`; Vercel Edge functions use `"std/http"` (see the Vercel recipe below).
 
 If your framework isn't in the list, the `"http"` adapter works for any Node HTTP server.
+
+`webhookCallback(bot, adapter, options?)` takes an optional third argument: `{ secretToken, onTimeout, timeoutMilliseconds }`. `secretToken` makes grammY verify the `X-Telegram-Bot-Api-Secret-Token` header for you; `timeoutMilliseconds` defaults to 10 000 and `onTimeout` to `"throw"` (`"return"` answers the request early instead).
 
 ## Setting the webhook URL
 
@@ -69,7 +76,13 @@ await bot.api.setWebhook("https://your-domain.com/<BOT_TOKEN>", {
 });
 ```
 
-Setting `secret_token` makes Telegram send an `X-Telegram-Bot-Api-Secret-Token` header — verify it in your webhook handler.
+Setting `secret_token` makes Telegram send an `X-Telegram-Bot-Api-Secret-Token` header. You do not have to check it by hand — pass the same value to `webhookCallback` and grammY rejects mismatching requests with `401`:
+
+```typescript
+const handler = webhookCallback(bot, "express", {
+  secretToken: process.env.WEBHOOK_SECRET,
+});
+```
 
 ## Recipe: VPS with Express + webhooks
 
@@ -82,10 +95,13 @@ const app = express();
 app.use(express.json());
 
 const secretPath = String(process.env.BOT_TOKEN);
-app.use(`/${secretPath}`, webhookCallback(bot, "express"));
+const secretToken = process.env.WEBHOOK_SECRET;
+app.use(`/${secretPath}`, webhookCallback(bot, "express", { secretToken }));
 
 app.listen(Number(process.env.PORT) || 3000, async () => {
-  await bot.api.setWebhook(`https://${process.env.DOMAIN}/${secretPath}`);
+  await bot.api.setWebhook(`https://${process.env.DOMAIN}/${secretPath}`, {
+    secret_token: secretToken,
+  });
 });
 ```
 
@@ -136,8 +152,8 @@ Set the env vars with `wrangler secret put BOT_TOKEN` and `wrangler secret put B
 ## Recipe: Cloudflare Workers (Deno)
 
 ```typescript
-import { Bot, webhookCallback } from "https://deno.land/x/grammy/mod.ts";
-import type { UserFromGetMe } from "https://deno.land/x/grammy/types.ts";
+import { Bot, webhookCallback } from "npm:grammy";
+import type { UserFromGetMe } from "npm:grammy/types";
 
 interface Env { BOT_TOKEN: string }
 
@@ -158,16 +174,23 @@ export default {
 
 ## Recipe: Vercel (Node.js)
 
-`/api/bot.ts`:
+`/api/bot.ts` — Vercel Node.js functions receive Node's `(req, res)` pair, so use the `"https"` adapter:
 
 ```typescript
 import { Bot, webhookCallback } from "grammy";
 
-const bot = new Bot(process.env.BOT_TOKEN!);
+const token = process.env.BOT_TOKEN;
+if (!token) throw new Error("BOT_TOKEN is unset");
+
+const bot = new Bot(token);
 bot.command("start", (ctx) => ctx.reply("Hello from Vercel"));
 
-export default webhookCallback(bot, "vercel");
+export default webhookCallback(bot, "https", {
+  secretToken: process.env.WEBHOOK_SECRET,
+});
 ```
+
+Edge functions are a different runtime: add `export const config = { runtime: "edge" };` and switch the adapter to `"std/http"`. Only the core package and edge-compatible plugins work there — test every plugin you use.
 
 After `vercel deploy`, set the webhook:
 
@@ -179,7 +202,7 @@ https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://<your-app>.vercel
 
 ```typescript
 // main.ts
-import { Bot, webhookCallback } from "https://deno.land/x/grammy/mod.ts";
+import { Bot, webhookCallback } from "npm:grammy";
 
 const bot = new Bot(Deno.env.get("BOT_TOKEN")!);
 bot.command("start", (ctx) => ctx.reply("Hi from Deno Deploy"));
@@ -188,11 +211,13 @@ const handler = webhookCallback(bot, "std/http");
 Deno.serve(handler);
 ```
 
+Deno Deploy Classic (the old dashboard and `deployctl`) was shut down on 2026-07-20. Create an organization in the new Deno Deploy console, connect the repository or run `deno deploy`, and keep `Deno.serve` (the old `std/http` `serve()` is not supported there). Classic projects are not migrated automatically — see the Deno Deploy migration guide in the Deno docs.
+
 ## Recipe: Supabase Edge Functions
 
 ```typescript
 // supabase/functions/bot/index.ts
-import { Bot, webhookCallback } from "https://deno.land/x/grammy/mod.ts";
+import { Bot, webhookCallback } from "npm:grammy";
 
 const bot = new Bot(Deno.env.get("BOT_TOKEN")!);
 bot.command("start", (ctx) => ctx.reply("Hi from Supabase"));
@@ -207,7 +232,7 @@ Deploy with `supabase functions deploy bot --no-verify-jwt`, then point Telegram
 A `Dockerfile` for a polling bot:
 
 ```dockerfile
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
@@ -215,7 +240,7 @@ COPY . .
 CMD ["node", "src/bot.js"]
 ```
 
-Then `fly launch`. Fly auto-scales horizontally — switch to webhooks once you have more than one machine.
+Node 18 and 20 are end-of-life — use `node:22-alpine` or `node:24-alpine`. Then `fly launch`. Fly auto-scales horizontally — switch to webhooks once you have more than one machine.
 
 ## Recipe: Heroku (Express + webhooks)
 
@@ -274,8 +299,10 @@ This plugin ships a script that emits the right webhook adapter for your platfor
 
 ```bash
 ${CLAUDE_PLUGIN_ROOT}/scripts/generate-webhook-adapter.sh <framework> <out-file>
-# framework ∈ {express, fastify, hono, cloudflare, vercel}
+# framework ∈ {express, fastify, hono, cloudflare, https}   (vercel = alias of https)
 ```
+
+The generated adapters read an optional `WEBHOOK_SECRET` and pass it as `secretToken`.
 
 ## Debug a deploy
 

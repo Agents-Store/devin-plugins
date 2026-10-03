@@ -5,7 +5,7 @@
 ### Deploy to Preview
 
 ```bash
-npx trigger.dev@latest deploy --env preview --branch feature/new-task
+npx trigger.dev@<version> deploy --env preview --branch feature/new-task
 ```
 
 ### Test Preview
@@ -30,7 +30,7 @@ list_preview_branches()
 Always pass `configPath` for monorepo setups:
 
 ```bash
-npx trigger.dev@latest deploy --config ./packages/jobs/trigger.config.ts
+npx trigger.dev@<version> deploy --config ./packages/jobs/trigger.config.ts
 ```
 
 ## Deploy without Promoting
@@ -38,10 +38,10 @@ npx trigger.dev@latest deploy --config ./packages/jobs/trigger.config.ts
 Canary/blue-green deployment pattern:
 
 ```bash
-npx trigger.dev@latest deploy --skip-promotion
+npx trigger.dev@<version> deploy --skip-promotion
 ```
 
-The new version is deployed but does NOT become the active version. Use this to test before promoting.
+The new version is deployed but does NOT become the active version. Use this to test before promoting, then run `npx trigger.dev@<version> promote <version>`.
 
 ## Deploy Filters (MCP)
 
@@ -57,7 +57,7 @@ list_deploys(
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `environment` | enum | staging, prod, preview |
-| `status` | enum | PENDING, BUILDING, DEPLOYED, FAILED, etc. |
+| `status` | enum | PENDING, BUILDING, DEPLOYING, DEPLOYED, FAILED, CANCELED, TIMED_OUT |
 | `period` | string | "1d", "7d", "30d" |
 | `limit` | number | Max 100 |
 
@@ -68,6 +68,6 @@ list_deploys(
 2. deploy --env staging                  → staging deploy
 3. trigger_task(env="staging", ...)      → smoke test
 4. list_runs(env="staging", period="1h") → verify
-5. deploy --env production               → ship it
+5. deploy --env prod                     → ship it
 6. list_deploys(env="prod", limit=1)     → confirm
 ```

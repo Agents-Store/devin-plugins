@@ -28,7 +28,7 @@ N8N_BASE="${N8N_API_URL%/}"; N8N_BASE="${N8N_BASE%/api/v1}"
 - Cause: Invalid or expired API key
 - Fix:
   1. Verify `N8N_API_KEY` is set correctly
-  2. Regenerate the API key in n8n: Settings → API → Create API Key
+  2. Regenerate the API key in n8n: Settings → n8n API → Create an API key
   3. Check that the key has not been revoked
   4. Test directly: `curl -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_BASE/api/v1/workflows?limit=1"`
 
@@ -42,18 +42,27 @@ N8N_BASE="${N8N_API_URL%/}"; N8N_BASE="${N8N_BASE%/api/v1}"
 ### Native MCP Server (n8n-native-mcp)
 
 **"Failed to connect" or "Connection error"**
-- Cause: Wrong URL format for the native MCP endpoint
+- Cause: Wrong URL format for the native MCP endpoint, or MCP is not enabled
 - Fix:
-  1. URL must end with `/mcp-server/http` (e.g., `https://n8n.example.com/mcp-server/http`)
+  1. URL must end with `/mcp-server/http` (e.g., `https://n8n.example.com/mcp-server/http`) — copy it from Settings → Instance-level MCP → Connect → Server URL
   2. Do NOT include `/api/v1` in the native MCP URL
-  3. Verify the MCP server feature is enabled in your n8n instance
+  3. Verify MCP is enabled: Settings → Instance-level MCP → Enable MCP access (instance owner or admin). `N8N_DISABLED_MODULES=mcp` removes the feature entirely.
 
 **"Invalid token" or "Authentication failed"**
 - Cause: Wrong or missing MCP token
 - Fix:
   1. Check `N8N_MCP_TOKEN` environment variable
-  2. Regenerate the token in n8n MCP settings
+  2. Regenerate the token: Settings → Instance-level MCP → Connect → **API key** tab (generating a new one revokes the old one; update every client)
   3. Ensure the token is passed in the Authorization header as `Bearer <token>`
+  4. Or switch to OAuth: `claude mcp add --transport http n8n-native-mcp https://<n8n-host>/mcp-server/http`, then `/mcp`
+
+**A tool answers for some workflows but refuses others**
+- Cause: instance-level MCP is per workflow — a workflow must be **Available in MCP**, and only published workflows with a webhook, form, schedule or chat trigger are eligible. `search_workflows` is the exception: it shows previews of every workflow the user can see.
+- Fix: enable the workflow (workflow menu → Settings → Available in MCP, or Settings → Instance-level MCP → Workflows exposed). Agents are exposed the same way (**Agents exposed**).
+
+**`NOT_CONFIGURED` from `n8n_test_workflow`, `n8n_manage_agents`, `n8n_explore_node_resources` or `n8n_workflow_versions` (`source: "native"`)**
+- Cause: these external tools go through the instance-level MCP and need `N8N_MCP_ACCESS_TOKEN` in the `n8n-mcp-external` server's `env` (n8n 2.34+)
+- Fix: set it (Settings → Instance-level MCP → Connect → API key); it is a separate secret from `N8N_API_KEY`
 
 ### Diagnostic Steps
 
@@ -66,8 +75,10 @@ mcp__n8n-mcp-external__n8n_health_check({mode: "diagnostic"})
 This will test:
 - API connectivity
 - Authentication
-- Available endpoints
-- n8n version information
+- Available features and tool status
+- `mcpVersion` and `versionCheck` (is `n8n-mcp` itself up to date)
+
+`n8nVersion` is usually absent from the answer — n8n stopped exposing its version to API clients in 1.119.0, and `n8nVersionNote` says so. That is not an error.
 
 ---
 
@@ -128,7 +139,7 @@ See the `n8n-expression-syntax` skill for detailed expression guidance.
 When a workflow references a node version that does not exist:
 - Use `n8n_autofix_workflow` with typeversion correction
 - Manually update the `typeVersion` field in the workflow JSON
-- Check available versions: `mcp__n8n-mcp-external__get_node({nodeType: "n8n-nodes-base.httpRequest"})`
+- Check available versions: `mcp__n8n-mcp-external__get_node({nodeType: "nodes-base.httpRequest", mode: "versions"})`
 
 ### Connection Errors in Workflow Definition
 
@@ -177,7 +188,7 @@ When a workflow references a node version that does not exist:
 - Different operations require different fields
 - Check the node documentation or use `get_node` to see required parameters:
   ```
-  mcp__n8n-mcp-external__get_node({nodeType: "n8n-nodes-base.httpRequest", detail: "full"})
+  mcp__n8n-mcp-external__get_node({nodeType: "nodes-base.httpRequest", detail: "full"})
   ```
 - Required fields change based on the selected operation/resource
 
@@ -254,7 +265,7 @@ mcp__n8n-mcp-external__n8n_executions({action: "get", id: "exec-id", mode: "erro
 | Error Message | Cause | Fix |
 |---------------|-------|-----|
 | "Node not found" | Wrong nodeType prefix in tool calls | Use `nodes-base.*` for search/validate tools, `n8n-nodes-base.*` in workflow JSON |
-| "Workflow could not be activated" | No trigger node in workflow | Add a trigger node (Webhook, Schedule Trigger, etc.) as the entry point |
+| "Workflow could not be activated" (n8n 2.x calls it publishing) | No trigger node in workflow, or the publish permission is missing (`PUBLISH_FORBIDDEN`, n8n 2.39+) | Add a trigger node (Webhook, Schedule Trigger, etc.) as the entry point; for the permission, the API key needs the `workflow:activate` scope and the user `workflow:publish` |
 | "Invalid expression" | Syntax error inside `{{ }}` | Check brackets, quotes, variable names. Validate with expression tester. |
 | "Credential not found" | Missing or wrong credential ID | List credentials first with API or MCP tool. Use the correct ID. |
 | "Connection refused" | n8n instance not reachable | Check `N8N_API_URL`, firewall, container status, DNS |
@@ -273,6 +284,9 @@ mcp__n8n-mcp-external__n8n_executions({action: "get", id: "exec-id", mode: "erro
 ```
 # Full health check
 mcp__n8n-mcp-external__n8n_health_check({mode: "diagnostic"})
+
+# Native MCP: is the server reachable and the token valid?
+mcp__n8n-native-mcp__search_workflows({limit: 1})
 
 # Quick connectivity test — list a few workflows
 mcp__n8n-mcp-external__n8n_list_workflows({limit: 5})
@@ -325,3 +339,6 @@ For deeper investigation of specific issue categories:
 - **n8n-setup** (setup skill) — MCP connection configuration, initial setup troubleshooting
 - **n8n-api-reference** — Full API endpoint reference for direct curl-based debugging
 - **n8n-cli-recipes** — CLI commands for server-side diagnostics and management
+- **n8n-native-mcp** — Native MCP gating ("Available in MCP"), tool behaviour and Agents
+- **n8n-error-handling** — Wiring error outputs, error workflows and retries in the workflow itself
+- **n8n-self-hosting** — Docker Compose, queue mode, task runners, upgrades and backups

@@ -7,7 +7,6 @@ Complete walkthrough: setting up a fresh Next.js project with shadcn/ui, shadcn 
 - Node.js 20+ installed
 - Package manager: pnpm (recommended), npm, yarn, or bun
 - Optional: shadcn studio license for premium content
-- Optional: GitHub token for MCP server rate limits
 
 ## Step 1: Create Next.js Project
 
@@ -41,26 +40,29 @@ Verify:
 # Should show components.json
 cat components.json
 
-# Should show cn() helper
+# Should show the cn() helper: export { cn } from "cn"
 cat src/lib/utils.ts
 ```
 
 ## Step 3: Configure shadcn studio Registries
 
-Edit `components.json` to add studio registries:
+Edit `components.json` to add studio registries. Keep the `style` that `init` wrote (`base-nova`, or `radix-nova` with `-b radix`) — the studio `{style}` URLs resolve for those values, not for the legacy `new-york`:
 
 ```json
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "new-york",
+  "style": "base-nova",
   "rsc": true,
   "tsx": true,
   "tailwind": {
     "config": "",
     "css": "src/app/globals.css",
     "baseColor": "neutral",
-    "cssVariables": true
+    "cssVariables": true,
+    "prefix": ""
   },
+  "iconLibrary": "lucide",
+  "rtl": false,
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
@@ -68,6 +70,8 @@ Edit `components.json` to add studio registries:
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
+  "menuColor": "default",
+  "menuAccent": "subtle",
   "registries": {
     "@shadcn-studio": "https://shadcnstudio.com/r/{style}/{name}.json",
     "@ss-components": "https://shadcnstudio.com/r/components/{style}/{name}.json",
@@ -162,8 +166,9 @@ npx shadcn@latest add sidebar sheet dropdown-menu avatar separator breadcrumb
 # Data display
 npx shadcn@latest add card table badge skeleton
 
-# Forms
-npx shadcn@latest add button input form label select checkbox
+# Forms (field + React Hook Form — there is no working `form` item)
+npx shadcn@latest add button input field label select checkbox
+npm install react-hook-form @hookform/resolvers zod
 
 # Feedback
 npx shadcn@latest add dialog alert-dialog sonner tooltip
@@ -184,7 +189,7 @@ Expected: ~20+ component files.
 ```bash
 # Dashboard blocks (namespaced addresses — CLI v4 has no --registry flag)
 npx shadcn@latest add @ss-blocks/dashboard-shell-01
-npx shadcn@latest add @ss-blocks/stat-card-01
+npx shadcn@latest add @ss-blocks/statistics-component-01
 
 # Move to components directory
 mv src/components/shadcn-studio/blocks/* src/components/blocks/ 2>/dev/null
@@ -240,11 +245,9 @@ export default function Dashboard() {
 For AI-assisted component discovery:
 
 ```bash
-# Official shadcn MCP
+# Official shadcn MCP (reads the registries configured in components.json,
+# including the studio ones from Step 3)
 pnpm dlx shadcn@latest mcp init --client claude
-
-# OR Jpisnice community MCP (more browsing tools)
-claude mcp add shadcn -- bunx -y @jpisnice/shadcn-ui-mcp-server
 ```
 
 ## Step 10: Verify Everything Works

@@ -9,57 +9,67 @@ This skill covers the complete sprint planning ceremony — from capacity calcul
 
 ## Tool Name Resolution
 
-Tools below are referenced by their **action name** only (e.g., `create_cycle`). Resolve the real tool names for your current Plane MCP server or connector through the `connector-bootstrap` skill. Match by action suffix — never assume a prefix.
+Plane MCP exposes one tool per resource (`project`, `member`, `cycle`, `workitem`, ...) and the operation goes into the `action` parameter: `cycle(action=create, ...)`. This skill writes calls in that form. Resolve the real tool names (`mcp__<server>__<resource>`) for your current Plane connection through the `connector-bootstrap` skill - never assume a server prefix.
 
 ## Available Tools
 
-| Tool | Description |
+| Call | Description |
 |------|-------------|
-| `list_projects` | List all projects in workspace |
-| `get_project_members` | Get team members for capacity calculation |
-| `list_cycles` | List current/active cycles (sprints) |
-| `list_archived_cycles` | List completed sprints for velocity data |
-| `list_cycle_work_items` | Get work items in a specific cycle |
-| `create_cycle` | Create a new sprint cycle |
-| `update_cycle` | Update sprint details |
-| `add_work_items_to_cycle` | Add items to sprint (bulk) |
-| `list_work_items` | List backlog items for selection |
-| `list_states` | Get project states for filtering |
-| `get_me` | Get current user info (for owned_by field) |
+| `project(action=list)` | List projects in the workspace (paginated: follow `next_cursor`) |
+| `member(action=list_project)` | Team members for the capacity calculation |
+| `member(action=me)` | Current user (for the `owned_by` field) |
+| `cycle(action=list)` | List sprints: `status=current\|upcoming\|completed\|draft\|incomplete`, or `archived=true` |
+| `cycle(action=list_workitems)` | Work items of one sprint, filterable with `pql` |
+| `cycle(action=create)` / `cycle(action=update)` | Create or change a sprint (`owned_by` is required on create) |
+| `cycle(action=manage_workitems)` | Add or remove work items in bulk: `add_ids`, `remove_ids` |
+| `workitem(action=list)` | Backlog items for selection, filterable with `pql` |
+| `workitem(action=count)` | Aggregates without listing: `group_by`, `pql` |
+| `state(action=list)` | Project states (names to UUIDs, state groups) |
+| `get_pql_reference` | Syntax of the `pql` filter (call it before composing a complex query) |
 
 ## Sprint Planning Ceremony (Step-by-Step)
 
 ### Step 1: Resolve Project Context
 
 ```
-1. list_projects()
-   → Find project by name, get project_id
+1. project(action=list)
+   → Find project by name, get project_id (follow next_cursor if the workspace has many projects)
 
-2. get_project_members({ project_id })
+2. member(action=list_project, project_id=<project_id>)
    → Get team roster, count team_size
 
-3. list_states({ project_id })
-   → Map state names to UUIDs (needed for filtering)
+3. state(action=list, project_id=<project_id>)
+   → Map state names to UUIDs. State GROUPS need no UUIDs in PQL
+     (stateGroup = "started"); a single state does (state = "<uuid>")
 
-4. get_me()
+4. member(action=me)
    → Get current user UUID (for cycle owned_by)
 ```
 
 ### Step 2: Calculate Historical Velocity
 
 ```
-1. list_archived_cycles({ project_id })
-   → Get last 3-5 completed sprints
+1. cycle(action=list, project_id=<project_id>, status=completed)
+   → Last 3-5 completed sprints, newest end_date first
+   → Sprints already archived: cycle(action=list, project_id=<project_id>, archived=true)
+     (status is ignored when archived=true)
 
-2. For each archived cycle:
-   list_cycle_work_items({ project_id, cycle_id })
-   → Sum story points of items in "completed" state group
-   → Record: cycle_name, completed_points, total_planned_points
+2. For each completed cycle:
+   cycle(action=list_workitems, project_id=<project_id>, cycle_id=<cycle_id>,
+         pql='stateGroup = "completed"', fields="id,name,point,estimate_point")
+   → Sum `point` of the results → completed_points
+   cycle(action=list_workitems, project_id=<project_id>, cycle_id=<cycle_id>,
+         fields="id,point,estimate_point")
+   → Sum `point` → total_planned_points (follow next_cursor on both)
+   → Estimate-system fallback: if `point` is empty on the items and the project has an estimate system (`project_estimate(action=retrieve, project_id)`), sum the `value` of each item's `estimate_point` instead (ids and values from `project_estimate(action=list_points, project_id, estimate_id)`).
+   Record: cycle_name, completed_points, total_planned_points
 
 3. Calculate:
    average_velocity = sum(completed_points) / number_of_sprints
    completion_rate = sum(completed_points) / sum(total_planned_points)
 ```
+
+Points are summed from the listed items: `workitem(action=count)` counts items, not points, so use it for throughput (items finished per sprint) and the `point` sum for velocity.
 
 ### Step 3: Calculate Capacity
 
@@ -84,9 +94,13 @@ capacity = effective_days × 0.85       (15% buffer)
 ### Step 4: Select Work Items
 
 ```
-1. list_work_items({ project_id })
-   → Filter: items where state group is "backlog" or "unstarted"
-   → Filter: items where point is not null (estimated items only)
+1. workitem(action=list, project_id=<project_id>,
+            pql='stateGroup IN ("backlog","unstarted")',
+            fields="id,name,point,estimate_point,priority,assignees,sequence_id", per_page=100)
+   → Backlog candidates (follow next_cursor). PQL has no estimate field, so
+     keep only items where `point` is not null on the client side.
+   → Quick sizing before listing: workitem(action=count, project_id=<project_id>,
+     pql='stateGroup IN ("backlog","unstarted")', group_by=priority)
 
 2. Sort by priority:
    urgent (1st) → high (2nd) → medium (3rd) → low (4th)
@@ -94,9 +108,9 @@ capacity = effective_days × 0.85       (15% buffer)
 3. For each candidate item, validate Definition of Ready:
    [OK] Has story points assigned (point field is set)
    [OK] Has description with acceptance criteria
-   [OK] No "blocked_by" relations (check list_work_item_relations if needed)
+   [OK] No "blocked_by" relations: workitem_relation(action=list, project_id, workitem_id)
    [OK] Points ≤ 8 (if > 8, flag for decomposition)
-   [OK] Has assignee or can be assigned
+   [OK] Has assignee or can be assigned (PQL: hasNoAssignee() finds the gaps)
 
 4. Add items to sprint until:
    sum(selected_points) ≤ capacity
@@ -111,30 +125,28 @@ capacity = effective_days × 0.85       (15% buffer)
 
 ### Caveats
 
-- `archive_cycle` typically rejects active cycles (HTTP 400). Archive is only allowed after the cycle is completed or its `end_date` is in the past. To remove an active cycle, use `delete_cycle` directly.
-- `add_work_items_to_cycle` uses `issue_ids` (plural, array). Some MCP bridges have issues serializing list parameters — see the Known Limitations section in the `work-items` skill for workarounds.
+- `cycle(action=archive)` ends a still-running cycle first instead of failing, which cuts the sprint short: complete the sprint and move unfinished items before archiving (see `/close-sprint`). To remove an active cycle entirely, use `cycle(action=delete)` directly, after confirmation.
+- `cycle(action=manage_workitems)` takes `add_ids` (an array of work item UUIDs), returns nothing, and is read back with `cycle(action=list_workitems)`. If an MCP bridge rejects the array, see the Known Limitations section of the `work-items` skill.
 
 ### Step 5: Create the Sprint
 
 ```
-1. create_cycle({
-     project_id: "<project_id>",
-     name: "Sprint N — <sprint goal summary>",
-     owned_by: "<current_user_id>",
-     description: "<sprint goal>",
-     start_date: "YYYY-MM-DD",
-     end_date: "YYYY-MM-DD"
-   })
+1. cycle(action=create,
+         project_id=<project_id>,
+         name="Sprint N — <sprint goal summary>",
+         owned_by=<current_user_id>,
+         description="<sprint goal>",
+         start_date="YYYY-MM-DD",
+         end_date="YYYY-MM-DD")
    → Get cycle_id
 
-2. add_work_items_to_cycle({
-     project_id: "<project_id>",
-     cycle_id: "<cycle_id>",
-     issue_ids: ["<item1_id>", "<item2_id>", ...]
-   })
+2. cycle(action=manage_workitems,
+         project_id=<project_id>,
+         cycle_id=<cycle_id>,
+         add_ids=["<item1_id>", "<item2_id>", ...])
 
 3. Confirm sprint is created:
-   list_cycle_work_items({ project_id, cycle_id })
+   cycle(action=list_workitems, project_id=<project_id>, cycle_id=<cycle_id>)
    → Verify all items are in the sprint
 ```
 
@@ -157,7 +169,7 @@ Before a work item enters a sprint:
 |-----------|-----------------|
 | Clear title and description | `name` is descriptive, `description_html` has acceptance criteria |
 | Estimated | `point` field is set (1-8 range) |
-| Dependencies identified | `list_work_item_relations` shows no unresolved `blocked_by` |
+| Dependencies identified | `workitem_relation(action=list)` shows no unresolved `blocked_by` |
 | No unresolved blockers | No items in blocking state |
 | Small enough | `point` ≤ 8 (flag > 8 for decomposition) |
 | Assignee identified | `assignees` field is set or can be set |

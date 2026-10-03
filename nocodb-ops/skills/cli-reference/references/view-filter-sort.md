@@ -1,92 +1,59 @@
-# Views, Filters, Sorts, Enterprise Features
+# Views, Filters, Sorts -- curl Recipes (read side)
 
-Imported from the official NocoDB agent-skills CLI.
+Recipes on the Meta API v3 for **reading** views and their saved filters and sorts. The view APIs are available on cloud-hosted Enterprise and licensed self-hosted deployments (Business plan and above); filter and sort reads work on every plan. The `nocodb_api METHOD /path ['body']` wrapper is defined in `../SKILL.md`.
+
+Creating and changing views (all nine types), their filters, sorts and field lists is the job of the **nocodb-dev** plugin (`view-management`), on MCP (`createView`, `createFilter`, `addSort`, ... via `listTools` / `callTool`) or REST.
 
 ## Views
 
-**Note:** View APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.
-
 ```bash
-nc view:list pdef5678uvw mghi9012rst                                            # → vwmno7890abc
-nc view:get pdef5678uvw mghi9012rst vwmno7890abc
-nc view:create pdef5678uvw mghi9012rst '{"title":"Active Users","type":"grid"}'
-nc view:update pdef5678uvw mghi9012rst vwmno7890abc '{"title":"Renamed"}'
-nc view:delete pdef5678uvw mghi9012rst vwmno7890abc
+nocodb_api GET /meta/bases/$BASE_ID/tables/$TABLE_ID/views              # → vwmno7890abc
+nocodb_api GET /meta/bases/$BASE_ID/views/$VIEW_ID
 ```
 
-View types: grid, gallery, kanban, calendar, form
+View types: `grid`, `gallery`, `kanban`, `calendar`, `form`, `map`, `gantt`, `timeline`, `list`.
 
-## Filters (View-level)
+Pass a view's ID as `viewId` to the record endpoints (`GET /data/{baseId}/{tableId}/records?viewId=...`, MCP `queryRecords` / `countRecords`) to get exactly the rows, order and fields that view shows; a `sort` or `where` you add on top takes precedence over the view's own sorting and is applied over its filters.
+
+## Filters (per view)
 
 ```bash
-nc filter:list pdef5678uvw mghi9012rst vwmno7890abc
-nc filter:create pdef5678uvw mghi9012rst vwmno7890abc '{"field_id":"cjkl3456opq","operator":"eq","value":"active"}'
-nc filter:replace pdef5678uvw mghi9012rst vwmno7890abc '...'
-nc filter:update pdef5678uvw FILTER_ID '{"operator":"neq","value":"archived"}'
-nc filter:delete pdef5678uvw FILTER_ID
+nocodb_api GET /meta/bases/$BASE_ID/views/$VIEW_ID/filters
 ```
 
-### filter:create JSON Format
+A saved filter looks like this -- `field_id`, `operator`, `value`, plus a `sub_operator` on date fields:
 
 ```json
-{
-  "field_id": "cjkl3456opq",
-  "operator": "eq",
-  "value": "active"
-}
+{ "field_id": "cjkl3456opq", "operator": "eq", "value": "active" }
+{ "field_id": "cdue123abcd", "operator": "gte", "sub_operator": "exactDate", "value": "2026-06-01" }
 ```
 
-Operators: eq, neq, gt, lt, gte, lte, like, nlike, is, isnot, empty, notempty, null, notnull
+Groups use `group_operator` (`AND` | `OR`) with a nested `filters` array.
 
-For grouped filters, use `group_operator` with nested `filters` array.
+Operators: `eq`, `neq`, `gt`, `lt`, `gte`, `lte`, `like`, `nlike`, `in`, `blank`, `notblank`, `null`, `notnull`, `empty`, `notempty`, `checked`, `notchecked`, `allof`, `anyof`, `nallof`, `nanyof`, `isWithin`. `btw` / `nbtw` exist but the record tools reject them on numeric, date, rating, duration and checkbox fields -- prefer two bounds with `gte` and `lte`.
 
-## Sorts (View-level)
+The string grammar used by `where` in record queries is in `filter-syntax.md`.
+
+## Sorts (per view)
 
 ```bash
-nc sort:list pdef5678uvw mghi9012rst vwmno7890abc
-nc sort:create pdef5678uvw mghi9012rst vwmno7890abc '{"field_id":"cjkl3456opq","direction":"desc"}'
-nc sort:update pdef5678uvw SORT_ID '{"direction":"asc"}'
-nc sort:delete pdef5678uvw SORT_ID
+nocodb_api GET /meta/bases/$BASE_ID/views/$VIEW_ID/sorts
 ```
 
-### sort:create JSON Format
+A saved sort looks like this:
 
 ```json
-{
-  "field_id": "cjkl3456opq",
-  "direction": "desc"
-}
+{ "field_id": "cjkl3456opq", "direction": "desc" }
 ```
 
-Direction: `asc` (default) or `desc`.
+`direction` is `asc` (default) or `desc`. (Record queries use the same object with a field **name**: `{"field": "Name", "direction": "desc"}`.)
 
-## Scripts (Enterprise only)
+## Scripts, Teams, API Tokens (Enterprise only)
 
 ```bash
-nc script:list pdef5678uvw
-nc script:get pdef5678uvw SCRIPT_ID
-nc script:create pdef5678uvw '{"title":"My Script"}'
-nc script:update pdef5678uvw SCRIPT_ID '{"title":"Updated"}'
-nc script:delete pdef5678uvw SCRIPT_ID
+nocodb_api GET /meta/bases/$BASE_ID/scripts
+nocodb_api GET /meta/workspaces/$WORKSPACE_ID/teams
+nocodb_api GET /meta/tokens
 ```
 
-## Teams (Enterprise only)
-
-```bash
-nc team:list wabc1234xyz
-nc team:get wabc1234xyz TEAM_ID
-nc team:create wabc1234xyz '{"title":"Engineering"}'
-nc team:update wabc1234xyz TEAM_ID '{"title":"Updated"}'
-nc team:delete wabc1234xyz TEAM_ID
-nc team:members:add wabc1234xyz TEAM_ID '{"email":"user@example.com"}'
-nc team:members:update wabc1234xyz TEAM_ID '{"email":"user@example.com"}'
-nc team:members:remove wabc1234xyz TEAM_ID '{"email":"user@example.com"}'
-```
-
-## API Tokens (Enterprise only)
-
-```bash
-nc token:list
-nc token:create '{"title":"CI Token"}'
-nc token:delete tkn1a2b3c4d5e6f7g
-```
+Creating or deleting these is an administrator task.

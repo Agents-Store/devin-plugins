@@ -9,18 +9,44 @@ This skill covers story point estimation techniques — Fibonacci scale, t-shirt
 
 ## Tool Name Resolution
 
-Tools below are referenced by their **action name** only (e.g., `update_work_item`). Resolve the real tool names for your current Plane MCP server or connector through the `connector-bootstrap` skill. Match by action suffix — never assume a prefix.
+Plane MCP exposes one tool per resource and the operation goes into the `action` parameter: `workitem(action=update, ...)`. This skill writes calls in that form. Resolve the real tool names (`mcp__<server>__<resource>`) for your current Plane connection through the `connector-bootstrap` skill - never assume a server prefix.
 
 ## Available Tools
 
-| Tool | Description |
+| Call | Description |
 |------|-------------|
-| `list_work_items` | List items to find unestimated ones |
-| `retrieve_work_item` | Get item details for estimation context |
-| `update_work_item` | Set story points (`point` field) |
-| `list_cycle_work_items` | Get sprint items for estimation |
-| `search_work_items` | Find reference stories |
-| `list_work_item_relations` | Check dependencies that affect estimates |
+| `workitem(action=list)` | List items to find candidates for estimation (`pql` filter) |
+| `workitem(action=retrieve)` | Get item details for estimation context |
+| `workitem(action=update)` | Set story points (`point`, or `estimate_point` when the project has an estimate system) |
+| `cycle(action=list_workitems)` | Get sprint items for estimation |
+| `workitem(action=search)` | Find reference stories |
+| `workitem_relation(action=list)` | Check dependencies that affect estimates |
+| `project_estimate(action=retrieve\|list_points\|create\|create_points\|link)` | The project's estimate system and its allowed values |
+
+## Where the Estimate Lives
+
+Check once per project whether it uses an estimate system:
+
+```
+project_estimate(action=retrieve, project_id=<id>)      → a project has at most one estimate (type: categories | points | time)
+project_estimate(action=list_points, project_id=<id>, estimate_id=<estimate_id>)
+                                                        → the allowed values and their ids
+```
+
+- **No estimate system:** write the number to `point` on the work item.
+- **With an estimate system:** pass the id of the chosen estimate point as `estimate_point` (`workitem(action=update, ..., estimate_point=<estimate_point_id>)`), taken from `list_points`; the display label is the point's `value` ("5", "XL").
+
+Create a Fibonacci scale for a new project (the estimate first, then its values, then make it active):
+
+```
+project_estimate(action=create, project_id=<id>, name="Fibonacci", type="points")
+project_estimate(action=create_points, project_id=<id>, estimate_id=<estimate_id>,
+                 points=[{"value": "1", "key": 0}, {"value": "2", "key": 1}, {"value": "3", "key": 2},
+                         {"value": "5", "key": 3}, {"value": "8", "key": 4}, {"value": "13", "key": 5}])
+project_estimate(action=link, project_id=<id>, estimate_id=<estimate_id>)   // makes it the project's active estimate
+```
+
+In the other skills "points" means whichever of the two the project uses: the `point` number, or the `value` of the work item's estimate point.
 
 ## Fibonacci Story Point Scale
 
@@ -77,11 +103,10 @@ For each unestimated work item:
 5. RE-VOTE after discussion (if needed)
 
 6. ASSIGN the agreed estimate:
-   update_work_item({
-     project_id: "<id>",
-     work_item_id: "<id>",
-     point: <agreed_points>
-   })
+   workitem(action=update,
+            project_id=<id>,
+            workitem_id=<id>,
+            point=<agreed_points>)      // or estimate_point=<estimate_point_id> with an estimate system
 ```
 
 ### AI-Assisted Estimation (When Team Not Available)
@@ -112,8 +137,9 @@ When estimating solo or with AI assistance:
 ### Setting Up Reference Stories
 
 ```
-1. search_work_items({ query: "<find a well-understood completed item>" })
+1. workitem(action=search, query="<find a well-understood completed item>")
    → Pick 1-3 completed items as references
+   (or filter server-side: workitem(action=list, project_id=<id>, pql='stateGroup = "completed" AND title ~ "login"'))
 
 2. Establish baseline:
    "Login with email" = 3 points (reference)
@@ -140,9 +166,11 @@ Create a team-specific reference table:
 For estimating multiple backlog items at once:
 
 ```
-1. Get unestimated items:
-   list_work_items({ project_id: "<id>" })
-   → Filter where point is null/0
+1. Get candidates:
+   workitem(action=list, project_id=<id>, pql='stateGroup IN ("backlog","unstarted")',
+            fields="id,name,point,estimate_point,priority", per_page=100)
+   → Follow next_cursor; keep the items where point is null/0 (PQL has no estimate field,
+     so the unestimated filter runs on the listed fields)
 
 2. Sort by priority (estimate high-priority first)
 
@@ -153,11 +181,10 @@ For estimating multiple backlog items at once:
    d. Suggest estimate with reasoning:
       "Suggested: 5 points — touches frontend + API, clear approach, similar to [reference]"
    e. On confirmation:
-      update_work_item({
-        project_id: "<id>",
-        work_item_id: "<item_id>",
-        point: 5
-      })
+      workitem(action=update,
+               project_id=<id>,
+               workitem_id=<item_id>,
+               point=5)
 
 4. Summary:
    | Item | Points | Rationale |

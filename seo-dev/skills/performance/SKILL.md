@@ -21,23 +21,26 @@ Core Web Vitals are Google's ranking signals measuring real user experience. Opt
 
 LCP measures how quickly the largest above-the-fold element renders.
 
-### Preload LCP Images
+### Prioritize the LCP Image
 
 ```tsx
 import Image from 'next/image'
 
-// Mark the hero/banner image as priority — preloads it, disables lazy loading
+// The hero/banner image is the LCP element: load it eagerly at high fetch priority
 <Image
   src="/hero.jpg"
   alt="Hero banner"
   width={1200}
   height={630}
-  priority                    // Critical: preloads for LCP
+  loading="eager"             // Critical: never lazy-load the LCP image
+  fetchPriority="high"        // Critical: tell the browser to fetch it first
   sizes="100vw"               // Full-width image
 />
 ```
 
-Only one image per page should have `priority` — the LCP element.
+Mark only the LCP element this way — one image per page. If different images are the LCP element at different viewport sizes (a mobile hero and a desktop hero), do **not** use `loading="eager"` or `preload` on them: both images would download on every device. Keep the default lazy loading and set `fetchPriority="high"` only — the Next.js docs' recommendation for that case. Prioritizing everything prioritizes nothing.
+
+**`priority` was replaced in Next.js 16.** The `priority` prop of `next/image` is deprecated since 16.0 in favor of `preload`, which inserts a `<link rel="preload">` for the image in `<head>`. The Next.js docs recommend `loading="eager"` or `fetchPriority="high"` in most cases; use `preload={true}` only when one image is the LCP element at every viewport size and you do not also set `loading` or `fetchPriority`. Do not use `preload` or `loading="eager"` when different images win LCP on different screens (both would download); use `fetchPriority="high"` alone. On Next.js 15 and earlier the prop is still `priority`, and `fetchPriority="high"` works there too.
 
 ### Optimize Image Formats
 
@@ -61,8 +64,8 @@ Always provide `sizes` — without it, the browser downloads the largest image:
 
 ```tsx
 // Full-width hero
-<Image src="/hero.jpg" alt="Hero" width={1920} height={1080} priority
-  sizes="100vw" />
+<Image src="/hero.jpg" alt="Hero" width={1920} height={1080}
+  loading="eager" fetchPriority="high" sizes="100vw" />
 
 // Grid of 3 columns on desktop, full-width on mobile
 <Image src="/card.jpg" alt="Card" width={400} height={300}
@@ -85,8 +88,8 @@ export default async function Home() {
   return (
     <section>
       <h1>{hero.title}</h1>
-      <Image src={hero.image} alt={hero.title} priority sizes="100vw"
-        width={1200} height={630} />
+      <Image src={hero.image} alt={hero.title} loading="eager" fetchPriority="high"
+        sizes="100vw" width={1200} height={630} />
     </section>
   )
 }
@@ -247,16 +250,32 @@ Never insert banners, cookie notices, or ads above existing content. Reserve spa
 
 ### Incremental Static Regeneration
 
-Serve static pages, revalidate in the background:
+Serve static pages, revalidate in the background. Check `next.config.ts` for `cacheComponents` first — the two caching models use different APIs.
+
+Previous model (`cacheComponents` off, still the default):
 
 ```tsx
-// app/blog/[slug]/page.tsx
+// app/blog/[slug]/page.tsx — works only without cacheComponents
 export const revalidate = 3600 // Revalidate every hour
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const post = await getPost(slug)
   return <article>{/* content */}</article>
+}
+```
+
+With `cacheComponents: true`, the segment config `revalidate` is removed. Cache the data function instead and set its lifetime with `cacheLife`:
+
+```tsx
+// lib/posts.ts — Cache Components (cacheComponents: true)
+import { cacheLife, cacheTag } from 'next/cache'
+
+export async function getPost(slug: string) {
+  'use cache'
+  cacheLife('hours')      // replaces export const revalidate = 3600
+  cacheTag(`post:${slug}`) // lets a webhook invalidate this post on demand
+  return fetchPostFromCms(slug)
 }
 ```
 
@@ -271,10 +290,15 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 export async function POST(request: Request) {
   const { path, tag } = await request.json()
   if (path) revalidatePath(path)
-  if (tag) revalidateTag(tag)
+  // The one-argument revalidateTag(tag) is deprecated: pass a profile.
+  // 'max' = stale-while-revalidate (recommended). For a webhook that must expire
+  // the data immediately, use revalidateTag(tag, { expire: 0 }).
+  if (tag) revalidateTag(tag, 'max')
   return Response.json({ revalidated: true })
 }
 ```
+
+In a Server Action, prefer `updateTag(tag)` when the user must see their own change immediately (read-your-own-writes). Protect the route with a shared secret before exposing it.
 
 ## Measurement Tools
 
@@ -290,11 +314,11 @@ export async function POST(request: Request) {
 
 | Action | Metric Impact | Effort |
 |--------|---------------|--------|
-| Add `priority` to LCP image | LCP -500ms+ | Low |
+| `fetchPriority="high"` + `loading="eager"` on the LCP image (`fetchPriority` alone if the LCP image differs per viewport) | LCP -500ms+ | Low |
 | Add `sizes` to all images | LCP, bandwidth | Low |
 | Use `next/font` | CLS elimination | Low |
 | Set image width/height | CLS elimination | Low |
 | `dynamic()` for heavy components | INP, bundle size | Medium |
 | Enable AVIF format | LCP, bandwidth | Low |
 | Use `startTransition` for non-urgent updates | INP | Medium |
-| ISR with `revalidate` | TTFB | Medium |
+| ISR (`revalidate`, or `'use cache'` + `cacheLife` with Cache Components) | TTFB | Medium |

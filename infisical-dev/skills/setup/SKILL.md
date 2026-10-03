@@ -15,6 +15,13 @@ Pick the matching platform. Pin a version in production (`github.com/Infisical/c
 # macOS (Homebrew)
 brew install infisical/get-cli/infisical
 
+# Windows (winget)
+winget install infisical
+
+# Windows (Scoop)
+scoop bucket add org https://github.com/Infisical/scoop-infisical.git
+scoop install infisical
+
 # npm (any OS with Node)
 npm install -g @infisical/cli
 
@@ -31,13 +38,17 @@ apk add --no-cache bash sudo wget
 wget -qO- 'https://artifacts-cli.infisical.com/setup.apk.sh' | sudo sh
 apk update && sudo apk add infisical
 
-# Windows (Scoop)
-scoop bucket add org https://github.com/Infisical/scoop-infisical.git
-scoop install infisical
-
 # Arch (AUR)
 yay -S infisical-bin
 ```
+
+> **Linux repository moved.** If the CLI was installed from the Cloudsmith package repository, move to `artifacts-cli.infisical.com` — Cloudsmith stopped serving the CLI on 2026-09-16, so `apt-get update` fails outright (apt) or the Infisical repo warns (yum/apk) on machines still pointed at it. Remove the old source, then re-run the setup script above (details: https://infisical.com/docs/cli/cloudsmith-migration):
+>
+> ```bash
+> grep -rlE 'cloudsmith.*infisical' /etc/apt/sources.list.d/ 2>/dev/null | xargs -r sudo rm -f      # Debian / Ubuntu
+> grep -rlE 'cloudsmith.*infisical' /etc/yum.repos.d/ 2>/dev/null | xargs -r sudo rm -f              # RHEL family
+> sed -i '/cloudsmith.*infisical/d' /etc/apk/repositories                                             # Alpine, as root
+> ```
 
 Confirm the binary is on PATH:
 
@@ -47,12 +58,18 @@ infisical --version
 
 ## 2. Point at the right instance (self-hosted / EU)
 
-The CLI defaults to US Cloud (`https://app.infisical.com`). For self-hosted or EU, set the API URL **once** in the environment so every command uses it — this avoids passing `--domain` on each call.
+The CLI defaults to US Cloud (`https://app.infisical.com`). For EU Cloud, a dedicated or a self-hosted instance, set the domain **once** in the environment so every command uses it — this avoids passing `--domain` on each call.
 
 ```bash
-export INFISICAL_API_URL="https://your-instance.example.com"   # self-hosted
-export INFISICAL_API_URL="https://eu.infisical.com"            # EU Cloud
+export INFISICAL_DOMAIN="https://your-instance.example.com"   # self-hosted
+export INFISICAL_DOMAIN="https://eu.infisical.com"            # EU Cloud
 ```
+
+The instance is chosen in this order: `--domain` flag, then `INFISICAL_DOMAIN`, then `domain` in `.infisical.json`, then US Cloud. `--domain` is a global flag, so `infisical login --domain=https://eu.infisical.com` works as well.
+
+To pin the instance for one repository instead, put it in `.infisical.json` (`"domain": "https://your-instance.example.com"`, must start with `https://` or `http://`). Only do this for an instance you trust: the file is committed, and the CLI sends every request and credential to the host it names (it prints a warning naming the host each time).
+
+After a user login, commands go to the instance of the logged-in profile, and a `--domain` / `INFISICAL_DOMAIN` that names a **different** instance makes the command fail — use a second profile instead (step 3).
 
 If a reverse proxy (e.g. Cloudflare Access) fronts the instance, add its headers:
 
@@ -74,8 +91,27 @@ For CI/CD and automation, use a machine identity instead of a user login — see
 On headless Linux where no system keyring exists, switch the credential store to an encrypted file before logging in (this is the standard fix for keyring errors):
 
 ```bash
-infisical vault set file
+infisical vault set file     # backends: file (encrypted file) | auto (system keyring, the default)
 ```
+
+`auto` already falls back to `file` by itself when the CLI cannot write to the keyring the first time. Switching backends removes every stored profile, so log in again afterwards. There is no `keychain` value.
+
+### Several organizations or instances (named profiles, CLI >= 0.43.134)
+
+Every user login is a **profile**: one account on one instance plus the organization it uses. Work in several organizations without logging in again:
+
+```bash
+infisical profile list                                  # what exists
+infisical profile current                               # which profile applies here, and why
+infisical profile create client-b --org <org-slug>      # second org, same login (>= 0.43.135; `profile new` in 0.43.134)
+infisical login --save-as work-eu --domain=https://eu.infisical.com   # another account or instance
+eval "$(infisical profile pin client-b)"                # this terminal only
+infisical profile bind client-b ~/work/client-b         # every command under that directory
+infisical profile use client-b                          # default for the machine
+infisical secrets --profile client-b --env=dev          # one command only (or --org <org>)
+```
+
+A command uses the first that is set: `--profile`, then `INFISICAL_PROFILE` (what `pin` sets), then a bound directory, then the default profile. In CI set `INFISICAL_PROFILE` or pass `--profile`. `infisical logout` ends a session but keeps the profile; `infisical profile delete <name>` removes it.
 
 ## 4. Link a project
 
@@ -104,6 +140,7 @@ Check the current session and credential store at any time:
 
 ```bash
 infisical login status     # session validity
+infisical profile current  # which login profile is in effect (>= 0.43.134)
 infisical vault            # active credential backend
 ```
 

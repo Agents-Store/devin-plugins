@@ -8,9 +8,11 @@ disable-model-invocation: true
 
 Complete catalog for the Jira Cloud platform REST API v3 and the Confluence Cloud REST API v2, split by domain. Official docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/ and https://developer.atlassian.com/cloud/confluence/rest/v2/
 
-The **exhaustive source of truth** is the two bundled OpenAPI specs:
-- `references/jira-openapi-v3.json` — 420 paths, 99 tags (OpenAPI 3.0.1).
-- `references/confluence-openapi-v2.json` — 147 paths, 29 tags (OpenAPI 3.0.3).
+The **exhaustive source of truth** is the two bundled OpenAPI specs (re-downloaded 2026-10-03):
+- `references/jira-openapi-v3.json` — 423 paths, 620 operations, 100 tags (OpenAPI 3.0.1). Source: https://developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json
+- `references/confluence-openapi-v2.json` — 151 paths, 218 operations, 30 tags (OpenAPI 3.0.3). Source: https://dac-static.atlassian.com/cloud/confluence/openapi-v2.v3.json
+
+Paths = keys of `paths`; operations = HTTP-method entries under them; tags = the top-level `tags` array. Refresh both with `curl -o … <source URL>` and recount (`python3 -c` over `d['paths']`).
 
 The curated `references/jira/*.md` and `references/confluence/*.md` files below cover the common operations in plain, copy-pasteable form.
 
@@ -18,7 +20,7 @@ Load the `setup` skill first for authentication and the global conventions (Basi
 
 ## Global recap
 
-- **Jira** base: `${ATLASSIAN_SITE_URL%/}/rest/api/3`. **Confluence** base: `${ATLASSIAN_SITE_URL%/}/wiki/api/v2`.
+- **Jira** base: `${ATLASSIAN_SITE_URL%/}/rest/api/3`. **Confluence** base: `${ATLASSIAN_SITE_URL%/}/wiki/api/v2`. With a **scoped API token** the bases move to the gateway — `https://api.atlassian.com/ex/jira/${ATLASSIAN_CLOUD_ID}/rest/api/3` and `https://api.atlassian.com/ex/confluence/${ATLASSIAN_CLOUD_ID}/wiki/api/v2` (see the `setup` skill).
 - Auth: `-u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}"`, `-H "Accept: application/json"` (+ `-H "Content-Type: application/json"` on writes).
 - **Jira rich text = ADF JSON** (`description`, comment `body`). **Confluence body** = `{representation, value}`; update needs the next `version.number`.
 - **Jira users = `accountId`** (resolve via `GET /user/search`). Paths in the Jira files below are written **relative to the `/rest/api/3` base**; Confluence paths are relative to the `/wiki/api/v2` base.
@@ -27,13 +29,13 @@ Load the `setup` skill first for authentication and the global conventions (Basi
 
 | Domain | File | Covers |
 |--------|------|--------|
-| Issues | `references/jira/issues.md` | createIssue, getIssue, editIssue, deleteIssue, assignIssue, getTransitions/doTransition, createmeta/editmeta, notify, changelog, archive/unarchive, bulk create/edit/move/delete/transition/watch |
-| Search & JQL | `references/jira/search-jql.md` | search/jql (GET+POST), search/approximate-count, jql/parse, jql/autocompletedata, jql/match, issue/picker, JQL syntax primer |
+| Issues | `references/jira/issues.md` | createIssue, getIssue, bulkfetch (up to 1000 issues), editIssue, deleteIssue, assignIssue, getTransitions/doTransition, createmeta/editmeta, notify, changelog, archive/unarchive, bulk create/edit/move/delete/transition/watch |
+| Search & JQL | `references/jira/search-jql.md` | search/jql (GET+POST; bounded JQL only, `reconcileIssues`), search/approximate-count, jql/parse, jql/autocompletedata, jql/match, issue/picker, JQL syntax primer |
 | Comments, worklogs & properties | `references/jira/comments-worklogs.md` | issue comments CRUD, worklogs CRUD + move + deleted/updated, issue properties |
 | Attachments & links | `references/jira/attachments-links.md` | add/get/delete attachments (multipart), issue links + link types, remote links |
 | Projects, versions & components | `references/jira/projects-versions-components.md` | projects CRUD + search + archive/restore, versions, components, roles & actors, categories, features, templates |
 | Fields & screens | `references/jira/fields-screens.md` | issue fields, custom field contexts & options, field configurations (+schemes), screens, screen tabs, screen schemes, issue type screen schemes |
-| Workflows, types & statuses | `references/jira/workflows-types-statuses.md` | workflows (read/create/update/search), workflow schemes (+drafts), statuses, issue types, issue type schemes, transition rules |
+| Workflows, types & statuses | `references/jira/workflows-types-statuses.md` | workflows (read/create/update/copy/search via `/workflows/search`), workflow schemes (+drafts), statuses, issue types, issue type schemes, transition rules |
 | Users & groups | `references/jira/users-groups.md` | users CRUD, user search (accountId), groups + members, myself + preferences, avatars |
 | Permissions & schemes | `references/jira/permissions-schemes.md` | permission schemes + grants, my/all permissions, issue security schemes & levels, notification schemes, priorities + priority schemes, resolutions |
 | Dashboards & filters | `references/jira/dashboards-filters.md` | dashboards + gadgets + item properties, filters CRUD + columns + favourite + owner, filter sharing |
@@ -43,8 +45,8 @@ Load the `setup` skill first for authentication and the global conventions (Basi
 
 | Domain | File | Covers |
 |--------|------|--------|
-| Pages & blog posts | `references/confluence/pages-blogposts.md` | pages CRUD (versioned), blog posts, body-format, ancestors/children/descendants, custom content, whiteboards, databases, folders, smart links |
-| Spaces | `references/confluence/spaces.md` | spaces list/get/create, space properties, space permissions, space roles |
+| Pages & blog posts | `references/confluence/pages-blogposts.md` | pages CRUD (versioned; `409` rules incl. approval spaces), blog posts, body-format, ancestors/direct-children/descendants, custom content, whiteboards, databases, folders, smart links |
+| Spaces | `references/confluence/spaces.md` | spaces list/get/create, space properties, space permissions (+ bulk permission-to-role transition), space roles |
 | Comments & attachments | `references/confluence/comments-attachments.md` | footer + inline comments CRUD, attachments, versions, likes, tasks, operations |
 | Labels & content properties | `references/confluence/labels-content-properties.md` | labels, content properties, classification levels, data policies, redactions, admin key, app properties |
 
@@ -53,7 +55,7 @@ Load the `setup` skill first for authentication and the global conventions (Basi
 Each file lists endpoints as `METHOD /path` (relative to the product base) with purpose and key fields. To run one, wrap it with auth and `jq`:
 
 ```bash
-# Jira example
+# Jira example (unscoped token; for a scoped token use $JIRA / $CONF from the setup skill)
 curl -s -u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" -H "Accept: application/json" \
   "${ATLASSIAN_SITE_URL%/}/rest/api/3/<path>" | jq '.'
 # Confluence example
@@ -77,7 +79,7 @@ User: "What's the endpoint to create a Jira issue?"
 
 <example>
 User: "How do I search issues with JQL?"
-→ Open `references/jira/search-jql.md`. `POST /search/jql` with `{"jql":"project = PROJ ORDER BY created DESC","fields":["summary","status"],"maxResults":50}`. Page with the returned `nextPageToken`.
+→ Open `references/jira/search-jql.md`. `POST /search/jql` with `{"jql":"project = PROJ ORDER BY created DESC","fields":["summary","status"],"maxResults":50}`. The JQL must be bounded (a bare `ORDER BY …` returns `400`); page with the returned `nextPageToken`.
 </example>
 
 <example>

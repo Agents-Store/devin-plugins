@@ -1,0 +1,43 @@
+{
+  "skill_name": "scheduled-tasks",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I defined a schedules.task with a cron and deployed it to production on our self-hosted Trigger.dev server. How do I attach the schedule to the production environment? Is there a schedules:attach command?",
+      "expected_output": "No attach step: the declarative cron syncs on dev and deploy; the CLI has no such command; limit environments with the environments option",
+      "files": [],
+      "expectations": [
+        "States that a declarative schedule (cron on schedules.task) is synced by dev and deploy and needs no attach step",
+        "States that the CLI has no schedules:attach command",
+        "Mentions the environments option of the cron object to limit where it fires, and that without it every environment fires it",
+        "Explains that in staging and production only the task in the current deployment fires, and in dev only while the dev CLI runs",
+        "Imports from @trigger.dev/sdk, not @trigger.dev/sdk/v3"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "My daily cron '0 9 * * *' on a self-hosted 4.7 server starts around 09:20, not 09:00. Why, and how do I make it start on time?",
+      "expected_output": "Server 4.6.0+ spreads new schedules over a window; set window to 0m; payload.timestamp is the nominal time",
+      "files": [],
+      "expectations": [
+        "Explains that since server 4.6.0 new schedules are spread over a window after the cron time",
+        "Sets window: \"0m\" (or \"0%\") on the cron object for an exact start",
+        "Notes that payload.timestamp and upcoming show the nominal cron time, not the assigned start",
+        "Describes the window formats (whole minutes or hours up to 24h, or a percentage)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Each user of my app should get a weekly report at the hour and timezone they choose, created from a Server Action. How do I create, pause and remove those schedules without duplicates?",
+      "expected_output": "A schedules.task without cron, schedules.create with externalId, deduplicationKey and timezone, deactivate and del, key scoped per project",
+      "files": [],
+      "expectations": [
+        "Defines the task with schedules.task and no cron, reading payload.externalId in run",
+        "Calls schedules.create with task, cron, timezone, externalId and a required deduplicationKey built from the user",
+        "Uses schedules.deactivate to pause, schedules.activate to resume and schedules.del to remove, keeping the schedule id next to the user",
+        "Warns that the deduplicationKey is scoped to the project, not the environment",
+        "Treats externalId as an untrusted lookup key and validates the user in the run"
+      ]
+    }
+  ]
+}

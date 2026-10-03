@@ -143,7 +143,8 @@ export async function generateStaticParams() {
 ## Server Lifecycle & Auth Interrupts
 
 - **`after(callback)`** from `next/server` (stable since 15.1) — run work after the response (or prerender) finishes. Usable in Server Components, Server Actions, Route Handlers, and Proxy. In Server Components, read `cookies()`/`headers()` **before** calling `after()` and close over the values — they cannot be read inside the callback.
-- **`connection()`** from `next/server` — `await connection()` to mark rendering as dynamic before non-API dynamic work (e.g. `Math.random()`, `Date.now()`).
+- **`connection()`** from `next/server` — `await connection()` to mark rendering as dynamic before non-API dynamic work (e.g. `Math.random()`, `Date.now()`). It waits for a real user request, so it also blocks prefetches.
+- **`io()`** from `next/cache` (16.3) — `await io()` before `new Date()`, `Math.random()`, `crypto.randomUUID()` or a synchronous database driver to keep that value out of the static shell when `cacheComponents` is on (use `use(io())` in Client Components). Unlike `connection()`, code after `io()` can still sit inside `'use cache'` and be prefetched, so prefer it; it is a no-op inside cached scopes, in the browser, and without Cache Components. Pair it with a `<Suspense>` boundary, or capture the value once by wrapping it in `'use cache'`.
 - **`forbidden()` / `unauthorized()`** from `next/navigation` with `forbidden.tsx`/`unauthorized.tsx` — render 403/401 pages. **Experimental** — require `experimental: { authInterrupts: true }` (still not stable in 16.3).
 
 ## Root Params (16.3)

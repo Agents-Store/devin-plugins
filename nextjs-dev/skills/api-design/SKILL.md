@@ -360,22 +360,59 @@ export async function GET(
 
 ## Caching Route Handlers
 
+`GET` Route Handlers are **not cached by default**; other HTTP methods are never cached. How you opt in depends on the caching model.
+
+Previous model (without `cacheComponents`) — route segment config and `fetch` options:
+
 ```typescript
-// Static (cached at build time) — only GET with no dynamic inputs
+// app/api/config/route.ts — previous model: cacheComponents must be off
+// Static: cached at build time (GET only, no dynamic inputs)
+export const dynamic = 'force-static'
+
 export async function GET() {
   const data = await fetch('https://api.example.com/data')
   return Response.json(await data.json())
 }
+```
 
+```typescript
+// app/api/feed/route.ts — previous model: cacheComponents must be off
+// Time-based revalidation of a cached GET
+export const revalidate = 3600 // Revalidate every hour
+
+export async function GET() {
+  const data = await fetch('https://api.example.com/feed')
+  return Response.json(await data.json())
+}
+```
+
+With `cacheComponents: true`, `dynamic` and `revalidate` are removed. A `GET` handler runs at request time by default and is prerendered only if it touches no uncached or runtime data. Cache data with `'use cache'` in a helper (it cannot go directly in the handler body) and set the lifetime with `cacheLife`:
+
+```typescript
+// app/api/products/route.ts — Cache Components (cacheComponents: true)
+import { cacheLife } from 'next/cache'
+
+export async function GET() {
+  const products = await getProducts()
+  return Response.json(products)
+}
+
+async function getProducts() {
+  'use cache'
+  cacheLife('hours')
+  return db.product.findMany()
+}
+```
+
+Handlers that read `cookies()`, `headers()` or the `request` object are dynamic in both models:
+
+```typescript
 // Dynamic (never cached) — uses cookies, headers, or request object
 export async function GET(request: NextRequest) {
   const cookieStore = await cookies()
   // This is dynamic because it reads cookies
   return Response.json({ data: 'dynamic' })
 }
-
-// Revalidation
-export const revalidate = 3600 // Revalidate every hour
 ```
 
 ## What This Skill Does NOT Cover

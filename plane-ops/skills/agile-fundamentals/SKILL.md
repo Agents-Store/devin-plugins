@@ -69,7 +69,7 @@ A work item may enter a sprint only if **all** of these hold:
 |---|-----------|-----------------------|
 | 1 | Clear title and description with acceptance criteria | `name` is descriptive, `description_html` has AC |
 | 2 | Estimated (Fibonacci 1, 2, 3, 5, 8) | `point` field is set and ≤ 8 |
-| 3 | Dependencies identified, no unresolved blockers | `list_work_item_relations` — no active `blocked_by` |
+| 3 | Dependencies identified, no unresolved blockers | `workitem_relation(action=list)` — no active `blocked_by` |
 | 4 | Small enough to complete in one sprint | `point` ≤ 8 (else decompose) |
 | 5 | Assignee identified or assignable | `assignees` is set or can be set |
 | 6 | Testable | Acceptance criteria are verifiable |

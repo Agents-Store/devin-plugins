@@ -97,7 +97,7 @@ export const Users: CollectionConfig = {
     maxLoginAttempts: 5,
     lockTime: 600 * 1000,           // 10 min lockout
     cookies: { secure: true, sameSite: 'Strict' },
-    useAPIKey: false,
+    useAPIKey: false,               // true => per-user API keys; since 3.90 shown once — `{ reveal: true }` lets admins re-read
   },
   admin: { useAsTitle: 'email' },
   fields: [
@@ -119,7 +119,7 @@ export const Users: CollectionConfig = {
 }
 ```
 
-Payload auto-generates `email`, `password`, `resetPasswordToken`, `loginAttempts`, `lockUntil`, etc. Set `admin.user: 'users'` in `payload.config.ts` so the admin panel signs in against this collection.
+Payload auto-generates `email`, `password`, `resetPasswordToken`, `resetPasswordRequestedAt` (3.90+), `loginAttempts`, `lockUntil`, etc. Set `admin.user: 'users'` in `payload.config.ts` so the admin panel signs in against this collection.
 
 ## Upload Collections
 
@@ -148,6 +148,26 @@ export const Media: CollectionConfig = {
 ```
 
 Payload auto-adds `filename`, `mimeType`, `filesize`, `width`, `height`, `url`, and per-size variants. For production, swap `staticDir` for a storage adapter (S3, R2, Vercel Blob) — see the `adapters` skill.
+
+**Upload hardening (3.90.0)** — defaults changed in the security release; the `adapters` skill has the full table. The ones that surface in a collection config:
+
+```ts
+export const Media: CollectionConfig = {
+  slug: 'media',
+  upload: {
+    mimeTypes: ['image/*', 'application/pdf'],
+    // SVG / XHTML / XML are validated strictly. Restore the old behaviour only if you must:
+    // allowRestrictedFileTypes: true,
+    // Trusted hosts for server-side fetches of external files (never `true` for untrusted input):
+    // skipSafeFetch: [{ hostname: 'cdn.example.com' }],
+  },
+  fields: [{ name: 'alt', type: 'text', required: true }],   // don't add a custom top-level `prefix` field
+}
+```
+
+- Multipart requests are capped by default and oversize ones get HTTP 413: 50 MiB per request (`upload.requestSizeLimit`) **and** 20 MiB per file (`upload.limits.fileSize`; also `files: 3`, `fields: 20`, `fieldSize` 1 MiB). Raise both in the root `buildConfig` — `upload: { requestSizeLimit, limits: { fileSize } }` — if you accept larger files through Payload.
+- External files (pasted URLs, `disableLocalStorage`) need a trusted origin: set `serverURL` or add the app origin to CORS/CSRF. `externalFileHeaderFilter(headers, context)` receives `context.isSameOrigin` — strip cookies for foreign hosts.
+- `prefix` on an upload collection is a storage field now; a custom top-level field named `prefix` can no longer carry ordinary data — rename it.
 
 ## Versions & Drafts
 

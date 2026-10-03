@@ -8,7 +8,7 @@
       "files": [],
       "expectations": [
         "Identifies this as structured queryable data → property",
-        "Recommends select type with fixed options",
+        "Recommends a select-type property (property_type OPTION) with fixed options created with workitem_property(action=create)",
         "Scopes the property to the Bug work item type",
         "Mentions filtering and reporting use cases"
       ]
@@ -20,7 +20,7 @@
       "files": [],
       "expectations": [
         "Recommends prefixed namespaces (type/, area/, priority/, status/)",
-        "Suggests dropping low-use labels",
+        "Suggests dropping low-use labels and measures the use of every label in one call with workitem(action=count, group_by=labels__id) after label(action=list)",
         "Mentions quarterly audit cadence",
         "Provides concrete consolidation examples"
       ]
@@ -34,7 +34,7 @@
         "Maps states to the correct Plane state groups",
         "Stays within 6 active states",
         "Distinguishes Resolved (completed) from Closed (cancelled)",
-        "Mentions sequence ordering"
+        "Mentions sequence ordering (state(action=update, sequence=...)) and state groups (group=...)"
       ]
     },
     {

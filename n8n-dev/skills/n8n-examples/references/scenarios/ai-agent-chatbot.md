@@ -60,6 +60,9 @@ get_node({nodeType: "nodes-langchain.lmChatOpenAi", detail: "standard"})
 
 ## Step 3: Create Workflow
 
+The model name below is **an illustration only**. Take the real one from the `@builderHint` of `get_node_types` (native MCP) or from `get_node` and `n8n_explore_node_resources` (external MCP) — model names change faster than this document.
+
+<!-- example-only -->
 ```javascript
 n8n_create_workflow({
   name: "AI Chat Agent",
@@ -68,7 +71,7 @@ n8n_create_workflow({
       id: "webhook-1",
       name: "Chat Input",
       type: "n8n-nodes-base.webhook",
-      typeVersion: 2,
+      typeVersion: 2.1,
       position: [250, 300],
       parameters: {
         path: "chat",
@@ -80,9 +83,10 @@ n8n_create_workflow({
       id: "agent-1",
       name: "AI Agent",
       type: "@n8n/n8n-nodes-langchain.agent",
-      typeVersion: 1.7,
+      typeVersion: 3.1,
       position: [500, 300],
       parameters: {
+        promptType: "define",
         text: "={{$json.body.message}}",
         options: {
           systemMessage: "You are a helpful assistant. Answer questions clearly and concisely."
@@ -93,10 +97,10 @@ n8n_create_workflow({
       id: "openai-1",
       name: "OpenAI Model",
       type: "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      typeVersion: 1.2,
+      typeVersion: 1.3,
       position: [500, 100],
       parameters: {
-        model: "gpt-4o-mini",
+        model: { __rl: true, mode: "id", value: "gpt-5-mini" },
         options: {
           temperature: 0.7
         }
@@ -133,7 +137,7 @@ n8n_create_workflow({
       id: "memory-1",
       name: "Chat Memory",
       type: "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      typeVersion: 1.3,
+      typeVersion: 1.4,
       position: [500, 500],
       parameters: {
         sessionIdType: "customKey",
@@ -145,7 +149,7 @@ n8n_create_workflow({
       id: "respond-1",
       name: "Reply",
       type: "n8n-nodes-base.respondToWebhook",
-      typeVersion: 1.1,
+      typeVersion: 1.5,
       position: [750, 300],
       parameters: {
         respondWith: "json",
@@ -175,6 +179,7 @@ n8n_create_workflow({
   }
 })
 ```
+<!-- /example-only -->
 
 ## Step 4: Test
 
@@ -189,7 +194,9 @@ n8n_test_workflow({
 })
 ```
 
-## Step 5: Validate and Activate
+## Step 5: Validate and Publish
+
+The webhook only answers in production once the workflow is **published**. Publish when the owner wants the chat endpoint live (in n8n 2.x the `activateWorkflow` operation publishes the workflow).
 
 ```javascript
 n8n_validate_workflow({id: "<workflow-id>"})
@@ -206,7 +213,10 @@ n8n_update_partial_workflow({
 - AI connection direction is FROM the sub-node TO the agent (reversed from main flow)
 - Webhook data for chat message: `$json.body.message`
 - Memory `sessionKey` enables per-user conversation tracking
-- Agent `text` parameter is the user's input message
+- Agent `text` parameter is the user's input message; with a Webhook trigger set `promptType: "define"` (the default `auto` reads `chatInput` from a connected Chat Trigger)
+- The AI Agent node is the **Tools Agent**: the old `agent` modes (Conversational, OpenAI Functions, ReAct, SQL) belong to node version 1, which n8n 3.0 removes — wire tools, memory and the model through the `ai_*` connections instead
+- This is an AI Agent node in a workflow, not a first-class n8n Agent (see the **n8n-native-mcp** skill for those)
+- Model names are placeholders — take them from `@builderHint` / `get_node`, never from memory
 - Agent output is in `$json.output`
 - LLM credentials (OpenAI key) are configured via n8n credential system, not in node parameters
 - Use `get_node({nodeType: "nodes-langchain.agent", mode: "docs"})` for comprehensive AI Agent documentation

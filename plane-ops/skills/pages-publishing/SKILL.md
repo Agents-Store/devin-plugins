@@ -9,16 +9,18 @@ Plane pages are rich HTML documents attached to a project or the workspace. Use 
 
 ## Tool Name Resolution
 
-Resolve real tool names via the `connector-bootstrap` skill.
+Plane MCP exposes one `page` tool and the operation goes into the `action` parameter. Resolve the real tool name (`mcp__<server>__page`) through the `connector-bootstrap` skill - never assume a server prefix. An omitted `project_id` means a workspace page.
 
-## Available Actions
+## Available Calls
 
-| Action | Purpose |
-|--------|---------|
-| `create_workspace_page` | Create a page at the workspace level |
-| `retrieve_workspace_page` | Get a workspace page |
-| `create_project_page` | Create a page inside a project |
-| `retrieve_project_page` | Get a project page |
+| Call | Purpose |
+|------|---------|
+| `page(action=create, name, description_html)` | Create a page at the workspace level |
+| `page(action=create, project_id, name, description_html)` | Create a page inside a project |
+| `page(action=retrieve, page_id)` / `page(action=retrieve, project_id, page_id)` | Get a workspace / project page |
+| `page(action=list)` / `page(action=list, project_id)` | List workspace / project pages (paginated) |
+| `page(action=update\|archive\|delete\|set_collection\|attach_to_workitem\|detach_from_workitem)` | Edit and manage existing pages (see "Updating, Archiving and Deleting Pages") |
+| `release(action=list\|retrieve\|get_changelog\|update_changelog\|list_workitems)` | Source data and a home for release notes (see "Release Notes from Plane Releases") |
 
 ## HTML Formatting Rules
 
@@ -127,16 +129,54 @@ Before publishing any generated HTML:
 5. Nested lists use at most 3 levels (deeper works but is hard to read)
 6. `<ol start="N">` is preserved if you need numbered lists starting mid-sequence
 
-## Cleanup Limitation — Write-Once Pages
+## Updating, Archiving and Deleting Pages
 
-Many Plane MCP connectors expose **only `create_*_page` and `retrieve_*_page`** — no `update_*_page`, no `delete_*_page`, no `archive_*_page`. Pages published through this plugin are effectively **write-once via the API**: to edit or delete, users must open the page in the Plane web UI and do it manually.
+The `page` tool covers the whole page lifecycle, at workspace scope (omit `project_id`) or project scope (pass it):
 
-Consequences:
-- Do not use `/publish-report` in a loop that overwrites the same target — each run creates a new page.
-- Roadmap pages that the team edits weekly are best **created once** and then updated manually in the Plane UI, not regenerated every week.
-- When testing publishing flows, use a throwaway project (like a "Sandbox") because the test pages will remain until manually cleaned up.
+| Need | Call |
+|------|------|
+| Edit a published report | `page(action=retrieve, page_id)` first, then `page(action=update, page_id, description_html, name?)` |
+| Hide a page | `page(action=archive, page_id)`; `archive=false` restores it |
+| Remove a page | `page(action=archive, ...)` first, then `page(action=delete, page_id)` — delete is refused for a page that is not archived, and it needs the user's confirmation |
+| File a workspace page | `page(action=set_collection, page_id, collection_id)` (collections are managed with the `collection` tool) |
+| Tie a page to a work item | `page(action=attach_to_workitem, project_id, workitem_id, page_id)`; undo with `detach_from_workitem` (needs the `workitem_page_id` from `page(action=list_workitem_pages)`) |
 
-If your specific connector does expose update or delete, you can use it — but do not assume it is available.
+Rules to follow:
+- `update` **replaces the whole body**: `description_html` overwrites everything, so retrieve the page first and send the full edited HTML, not a fragment. A locked or archived page is refused.
+- A page's parent is fixed at creation (`parent_id` on `create`); nothing can reparent it later, so decide the hierarchy before publishing.
+- Prefer `update` over creating a duplicate: regenerate-and-update keeps one page per report. Roadmap pages that the team refreshes weekly are a good fit.
+- When testing publishing flows, still use a throwaway project: archived pages remain until deleted.
+- `update` refuses a locked or archived page; unlock or restore it first (the `page` tool has no unlock action, so a locked page is unlocked in the Plane UI).
+
+## Release Notes from Plane Releases
+
+When the team tracks releases in Plane (the `release`, `release_tag` and `release_label` tools), build the release notes from the release itself instead of asking the user to list what shipped:
+
+```
+1. release(action=list)
+   → Find the release by name; status is unreleased | released | cancelled
+   (release_tag(action=list) maps a version string such as "v2.0.0" to the tag a release points at)
+
+2. release(action=retrieve, release_id=<id>)
+   → name, status, release_date, tag
+
+3. release(action=list_workitems, release_id=<id>)
+   → The work items shipped in the release (follow next_cursor);
+     group them by type or label into New Features / Improvements / Bug Fixes
+
+4. release(action=get_changelog, release_id=<id>)
+   → The stored changelog (every release has one, created empty with the release);
+     read it first so a rewrite does not drop hand-written notes
+
+5. Render the Release Notes template with the grouped items.
+
+6. Publish and store:
+   page(action=create, project_id=<id>, name="Release v2.0 — YYYY-MM-DD", description_html="<…>")
+   release(action=update_changelog, release_id=<id>, description_html="<…>")
+   → the page is the stakeholder-facing copy, the changelog keeps the notes with the release
+```
+
+Other release calls: `release(action=create, name, status, release_date, tag_id, lead_id, is_prerelease)`, `release(action=update, ...)`, `release(action=manage_workitems, release_id, add_ids|remove_ids)` and `release_label(action=attach|detach, release_id, label_ids)`. `release_date` is what the Plane UI labels "Target date" (`YYYY-MM-DD`). `description_html` of the changelog follows the same HTML rules as any page.
 
 ## HTML Templates
 
@@ -265,14 +305,13 @@ Each template uses `{{PLACEHOLDER}}` tokens. Render by replacing tokens with con
 
 ```
 1. connector-bootstrap → resolve tools
-2. list_projects       → pick project_id
-3. Gather data from Plane (cycle data, work items, metrics)
+2. project(action=list) → pick project_id
+3. Gather data from Plane (cycle data, work items, metrics; counts with workitem(action=count, pql=..., group_by=...))
 4. Render HTML using a template above
-5. create_project_page({
-     project_id,
-     name: "Sprint 14 Report",
-     description_html: "<...>"
-   })
+5. page(action=create,
+        project_id=<id>,
+        name="Sprint 14 Report",
+        description_html="<...>")
 6. Share the page URL with stakeholders
 ```
 

@@ -13,10 +13,12 @@ Practical scraping patterns for building applications — extracting content, da
 |------|------|------|
 | Single page content | `read_url` (Jina) | Fast markdown extraction, no JS needed |
 | Single page with JS | `firecrawl_scrape` | SPA, dynamic content, needs rendering |
-| Multiple pages | `parallel_read_url` (Jina) | Batch reading known URLs |
+| Multiple pages | `read_url` with a `url` array (Jina, up to 5 per call) | Batch reading known URLs |
+| One answer from a long page | `read_url` with `question` (Jina) | Returns only the relevant passages — cheap |
 | Entire site | `firecrawl_crawl` | Full site crawl with depth control |
 | Site URL discovery | `firecrawl_map` | Find all URLs before selective scraping |
-| Structured data | `firecrawl_extract` | Extract to JSON schema (LLM-powered) |
+| Structured data, one URL | `firecrawl_scrape` with `formats: ["json"]` | Extract to a JSON schema (LLM-powered) |
+| Structured data, unknown URLs | `firecrawl_agent` + `firecrawl_agent_status` | Research across sites, returns JSON |
 | Interactive pages | `firecrawl_interact` | Login, click, scroll before extraction |
 | Screenshots | `capture_screenshot_url` (Jina) | Visual snapshots |
 
@@ -47,40 +49,61 @@ Use `waitFor` for SPAs and pages that load content dynamically.
 
 ## Pattern 2: Extract Structured Data
 
-Turn unstructured web pages into structured JSON for your app:
+Turn unstructured web pages into structured JSON for your app. For one known URL use `firecrawl_scrape` with the `json` format — the prompt and schema go into `jsonOptions`:
 
 ```
-Tool: firecrawl_extract
+Tool: firecrawl_scrape
 Input: {
-  "urls": ["https://example.com/products/item-1"],
-  "prompt": "Extract the product details",
-  "schema": {
-    "type": "object",
-    "properties": {
-      "name": { "type": "string" },
-      "price": { "type": "number" },
-      "description": { "type": "string" },
-      "specs": { "type": "object" },
-      "images": { "type": "array", "items": { "type": "string" } }
+  "url": "https://example.com/products/item-1",
+  "formats": ["json"],
+  "jsonOptions": {
+    "prompt": "Extract the product details",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "description": { "type": "string" },
+        "specs": { "type": "object" },
+        "images": { "type": "array", "items": { "type": "string" } }
+      }
     }
   }
 }
 ```
 
-Use for: product catalogs, pricing pages, directory listings, event data.
+Use for: product catalogs, pricing pages, directory listings, event data. Run one call per URL (loop over a mapped URL list).
+
+When the URLs are **not known** or the data is spread over several sites, use the research agent instead — it returns only a job ID, so poll it:
+
+```
+Tool: firecrawl_agent
+Input: {
+  "prompt": "Find the pricing plans of the top 5 headless CMS vendors",
+  "schema": { "type": "object", "properties": { "vendors": { "type": "array", "items": { "type": "object" } } } },
+  "maxCredits": 500
+}
+
+Tool: firecrawl_agent_status
+Input: { "id": "<job id from the previous call>" }   # repeat every 15-30 s until completed
+```
 
 ## Pattern 3: Batch Scrape Multiple Pages
 
 ### Known URL List
 
+`read_url` accepts up to 5 URLs per call and reads them concurrently. Add `question` to get only the relevant passages instead of the full pages.
+
 ```
-Tool: parallel_read_url
-Input: { "urls": [
+Tool: read_url
+Input: { "url": [
   "https://docs.example.com/page-1",
   "https://docs.example.com/page-2",
   "https://docs.example.com/page-3"
 ]}
 ```
+
+For more than 5 URLs, split them into chunks of 5.
 
 ### Discover Then Scrape
 
@@ -89,9 +112,9 @@ Step 1 — Map the site:
 Tool: firecrawl_map
 Input: { "url": "https://example.com", "limit": 100 }
 
-Step 2 — Scrape selected URLs:
-Tool: parallel_read_url
-Input: { "urls": [<selected URLs from step 1>] }
+Step 2 — Read selected URLs (5 per call):
+Tool: read_url
+Input: { "url": [<up to 5 selected URLs from step 1>] }
 ```
 
 ## Pattern 4: Full Site Crawl
@@ -113,7 +136,7 @@ Input: {
 }
 ```
 
-Check progress with `firecrawl_check_crawl_status` using the returned job ID.
+`firecrawl_crawl` polls the job itself and returns the final status with the collected pages, so keep `limit` conservative — large crawls produce large responses. Use `firecrawl_check_crawl_status` with a crawl ID only to pick up a job that was started earlier or cut off.
 
 ## Pattern 5: Interactive Scraping (Login Required)
 
@@ -127,9 +150,12 @@ Input: {
   "prompt": "Log in with email user@example.com and password from my credentials, then navigate to the dashboard and return its content"
 }
 
-Step 2 — Clean up:
+Step 2 — Clean up (use the scrapeId returned by step 1):
 Tool: firecrawl_interact_stop
+Input: { "scrapeId": "<scrapeId from step 1>" }
 ```
+
+To continue on the same page, call `firecrawl_interact` again with `scrapeId` instead of `url`.
 
 For lighter interactions (click, type, scroll before extraction), the `actions` array on `firecrawl_scrape` is a simpler alternative — no session to manage.
 
@@ -138,7 +164,7 @@ For lighter interactions (click, type, scroll before extraction), the `actions` 
 Generate a script that scrapes and imports content into your app:
 
 1. **Identify source URLs** — use `firecrawl_map` or manual list
-2. **Extract structured data** — use `firecrawl_extract` with app-specific schema
+2. **Extract structured data** — use `firecrawl_scrape` with `formats: ["json"]` and an app-specific schema
 3. **Transform data** — map scraped fields to your app's data model
 4. **Upload** — use your app's API/SDK to create records
 
@@ -163,18 +189,18 @@ async function scrapeProducts(baseUrl: string) {
   const map = await firecrawl.map(baseUrl, { limit: 200 });
   const productUrls = map.links.map(l => l.url).filter(u => u.includes('/product'));
 
-  // 2. Extract structured data
+  // 2. Extract structured data — one scrape per URL with the json format
+  const schema = { type: 'object', properties: {
+    name: { type: 'string' },
+    price: { type: 'number' },
+    description: { type: 'string' }
+  }};
   const results = [];
-  for (const batch of chunk(productUrls, 10)) {
-    const extracted = await firecrawl.extract({
-      urls: batch,
-      schema: { type: 'object', properties: {
-        name: { type: 'string' },
-        price: { type: 'number' },
-        description: { type: 'string' }
-      }}
+  for (const url of productUrls) {
+    const doc = await firecrawl.scrape(url, {
+      formats: [{ type: 'json', prompt: 'Extract the product details', schema }],
     });
-    results.push(extracted);
+    results.push(doc.json);
     await sleep(1000); // Rate limit respect
   }
   return results;
@@ -203,7 +229,7 @@ Use this pattern when the user says "build me a scraper," "create a script," or 
 
 ## Best Practices
 
-- Start with `read_url` (fastest), escalate to `firecrawl_scrape` only if needed
+- Start with `read_url` (fastest; pass `question` when you need one answer, not the whole page), escalate to `firecrawl_scrape` only if needed
 - Use `firecrawl_map` before crawling to estimate scope
 - Set reasonable `limit` and `maxDiscoveryDepth` to avoid excessive crawling
 - Use `includePaths`/`excludePaths` to focus on relevant content

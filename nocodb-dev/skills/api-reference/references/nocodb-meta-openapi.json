@@ -4,8 +4,8 @@
     "id": "qiz1rcfqd2jy6"
   },
   "info": {
-    "title": "NocoDB",
-    "version": null,
+    "title": "NocoDB v3",
+    "version": "",
     "description": "NocoDB API Documentation"
   },
   "x-tagGroups": [
@@ -44,7 +44,7 @@
       "get": {
         "summary": "List workspaces",
         "operationId": "workspace-list",
-        "description": "Retrieve a list of all workspaces accessible to the user.\n\n**Note**: Workspace APIs are available only with self-hosted **Enterprise** plans and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve a list of all workspaces accessible to the user.\n\n**Note**: Listing and creating workspaces is available on all cloud-hosted plans and on all self-hosted deployments. Reading, updating, and deleting a specific workspace requires cloud-hosted **Business** plans and above, or a licensed self-hosted deployment (**Business** plan and above). Unlicensed self-hosted deployments are limited to the default workspace.",
         "tags": [
           "Workspaces"
         ],
@@ -85,7 +85,7 @@
       "post": {
         "summary": "Create workspace",
         "operationId": "workspace-create",
-        "description": "Create a new workspace with the specified title and optional organization ID.\n\n**Note**: Workspace APIs are available only with self-hosted **Enterprise** plans and cloud-hosted **Enterprise** plans.",
+        "description": "Create a new workspace with the specified title and optional organization ID.\n\n**Note**: Listing and creating workspaces is available on all cloud-hosted plans and on all self-hosted deployments. Reading, updating, and deleting a specific workspace requires cloud-hosted **Business** plans and above, or a licensed self-hosted deployment (**Business** plan and above). Unlicensed self-hosted deployments are limited to the default workspace.",
         "tags": [
           "Workspaces"
         ],
@@ -147,7 +147,7 @@
       "get": {
         "summary": "Get workspace",
         "operationId": "workspace-read",
-        "description": "Retrieve details of a specific workspace.\n\n**Note**: Workspace APIs are available only with self-hosted **Enterprise** plans and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve details of a specific workspace.\n\n**Note**: This endpoint is available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above). Listing and creating workspaces is available on all plans; unlicensed self-hosted deployments are limited to the default workspace.",
         "tags": [
           "Workspaces"
         ],
@@ -208,7 +208,7 @@
       "patch": {
         "summary": "Update workspace",
         "operationId": "workspace-update",
-        "description": "Update workspace details.\n\n**Note**: Workspace APIs are available only with self-hosted **Enterprise** plans and cloud-hosted **Enterprise** plans.",
+        "description": "Update workspace details.\n\n**Note**: This endpoint is available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above). Listing and creating workspaces is available on all plans; unlicensed self-hosted deployments are limited to the default workspace.",
         "tags": [
           "Workspaces"
         ],
@@ -276,7 +276,7 @@
       "delete": {
         "summary": "Delete workspace",
         "operationId": "workspace-delete",
-        "description": "Delete a workspace.\n\n**Note**: Workspace APIs are available only with self-hosted **Enterprise** plans and cloud-hosted **Enterprise** plans.",
+        "description": "Delete a workspace.\n\n**Note**: This endpoint is available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above). Listing and creating workspaces is available on all plans; unlicensed self-hosted deployments are limited to the default workspace.",
         "tags": [
           "Workspaces"
         ],
@@ -462,7 +462,7 @@
       "get": {
         "summary": "List workspace members",
         "operationId": "workspace-members-read",
-        "description": "Retrieve details of a specific workspace, including its members.\n\nNotes:\n- To include member details, use the query parameter `include[]=members`.\n- Workspace collaboration APIs are available only with self-hosted Enterprise plans and cloud-hosted Enterprise plans.",
+        "description": "Retrieve details of a specific workspace, including its members.\n\nNotes:\n- To include member details, use the query parameter `include[]=members`.\n- Workspace collaboration APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "tags": [
           "Workspace Members"
         ],
@@ -547,7 +547,7 @@
     "/api/v3/meta/workspaces/{workspaceId}/members": {
       "post": {
         "summary": "Add workspace members",
-        "description": "Add new members to a workspace. The request requires the workspace identifier in the path and member details in the request body.\n\nNotes: Workspace collaboration APIs are available only with self-hosted Enterprise plans and cloud-hosted Enterprise plans.",
+        "description": "Add new members to a workspace. The request requires the workspace identifier in the path and member details in the request body.\n\nNotes: Workspace collaboration APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "workspace-members-invite",
         "tags": [
           "Workspace Members"
@@ -619,7 +619,7 @@
       },
       "patch": {
         "summary": "Update workspace members",
-        "description": "Update roles of existing workspace members. The request requires the workspace identifier in the path and member update details in the request body.\n\nNotes: Workspace collaboration APIs are available only with self-hosted Enterprise plans and cloud-hosted Enterprise plans.",
+        "description": "Update roles of existing workspace members. The request requires the workspace identifier in the path and member update details in the request body.\n\nNotes: Workspace collaboration APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "workspace-members-update",
         "tags": [
           "Workspace Members"
@@ -691,7 +691,7 @@
       },
       "delete": {
         "summary": "Delete workspace members",
-        "description": "Remove members from a workspace. The request requires the workspace identifier in the path and member details in the request body.\n\nNotes: Workspace collaboration APIs are available only with self-hosted Enterprise plans and cloud-hosted Enterprise plans.",
+        "description": "Remove members from a workspace. The request requires the workspace identifier in the path and member details in the request body.\n\nNotes: Workspace collaboration APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "workspace-members-delete",
         "tags": [
           "Workspace Members"
@@ -1070,7 +1070,7 @@
                         "type": "Number",
                         "default_value": "34",
                         "options": {
-                          "locale_string": true
+                          "separator": "comma_period"
                         }
                       },
                       {
@@ -1282,7 +1282,7 @@
                           "type": "Number",
                           "default_value": "34",
                           "options": {
-                            "locale_string": true
+                            "separator": "comma_period"
                           }
                         },
                         {
@@ -1572,7 +1572,7 @@
                           "type": "Number",
                           "default_value": "34",
                           "options": {
-                            "locale_string": true
+                            "separator": "comma_period"
                           }
                         },
                         {
@@ -1912,7 +1912,7 @@
         "tags": [
           "Views"
         ],
-        "description": "Retrieve a list of all views for a specific table.\n\n**Note**: View APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve a list of all views for a specific table.\n\n**Note**: View APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "parameters": [
           {
             "name": "baseId",
@@ -2022,7 +2022,7 @@
       },
       "post": {
         "summary": "Create view",
-        "description": "Create a view for table.\n\n**Note**: View APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Create a view for table.\n\n**Note**: View APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "view-create",
         "tags": [
           "Views"
@@ -2439,6 +2439,152 @@
         }
       }
     },
+    "/api/v3/meta/bases/{baseId}/fields/{fieldId}/options": {
+      "post": {
+        "summary": "Add field options",
+        "description": "Add one or more choices (options) to a SingleSelect or MultiSelect field. Existing choices are kept. Choices whose `title` already exists on the field are skipped (idempotent). Returns the updated field.",
+        "operationId": "field-options-create",
+        "tags": [
+          "Fields"
+        ],
+        "parameters": [
+          {
+            "name": "baseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the base."
+          },
+          {
+            "name": "fieldId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the field."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldOptionsAddReq"
+              },
+              "examples": {
+                "Add choices": {
+                  "value": {
+                    "choices": [
+                      {
+                        "title": "In Progress"
+                      },
+                      {
+                        "title": "Done",
+                        "color": "#36BFFF"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Choices were added. Returns the updated field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Field"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body, or the field is not a select field."
+          },
+          "422": {
+            "description": "Field not found."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove field options",
+        "description": "Remove one or more choices (options) from a SingleSelect or MultiSelect field, addressed by `id`. Ids not present on the field are ignored (idempotent). Removing a choice clears that value from existing records. At least one choice must remain. Returns the updated field.",
+        "operationId": "field-options-delete",
+        "tags": [
+          "Fields"
+        ],
+        "parameters": [
+          {
+            "name": "baseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the base."
+          },
+          {
+            "name": "fieldId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the field."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FieldOptionsDeleteReq"
+              },
+              "examples": {
+                "Remove choices": {
+                  "value": {
+                    "choices": [
+                      {
+                        "id": "sl_xxxxxxxxxxxxxx"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Choices were removed. Returns the updated field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Field"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body, the field is not a select field, or the request would remove the last remaining choice."
+          },
+          "422": {
+            "description": "Field not found."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        }
+      }
+    },
     "/api/v3/meta/bases/{baseId}/tables/{tableId}/hooks": {
       "get": {
         "summary": "List hooks",
@@ -2446,7 +2592,7 @@
         "tags": [
           "Hooks"
         ],
-        "description": "Retrieve a list of all hooks for a specific table.\n\n**Note**: Hook APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve a list of all hooks for a specific table.\n\n**Note**: Hook APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "parameters": [
           {
             "name": "baseId",
@@ -2515,7 +2661,7 @@
       },
       "post": {
         "summary": "Create hook",
-        "description": "Create a new hook for a table.\n\n**Note**: Hook APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Create a new hook for a table.\n\n**Note**: Hook APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "hook-create",
         "tags": [
           "Hooks"
@@ -2634,7 +2780,7 @@
     "/api/v3/meta/bases/{baseId}/hooks/{hookId}": {
       "get": {
         "summary": "Get hook",
-        "description": "Retrieve the details of a specific hook.\n\n**Note**: Hook APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve the details of a specific hook.\n\n**Note**: Hook APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "hook-read",
         "tags": [
           "Hooks"
@@ -2706,7 +2852,7 @@
       },
       "patch": {
         "summary": "Update hook",
-        "description": "Update the details of a specific hook.\n\n**Note**: Hook APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Update the details of a specific hook.\n\n**Note**: Hook APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "hook-update",
         "tags": [
           "Hooks"
@@ -2827,7 +2973,7 @@
       },
       "delete": {
         "summary": "Delete hook",
-        "description": "Delete a specific hook.\n\n**Note**: Hook APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Delete a specific hook.\n\n**Note**: Hook APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "hook-delete",
         "tags": [
           "Hooks"
@@ -2868,7 +3014,7 @@
     "/api/v3/meta/bases/{baseId}/views/{viewId}": {
       "get": {
         "summary": "Get view schema",
-        "description": "Retrieve the details of a specific view.\n\n**Note**: View APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve the details of a specific view.\n\n**Note**: View APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "view-read",
         "tags": [
           "Views"
@@ -2969,7 +3115,7 @@
       },
       "patch": {
         "summary": "Update view",
-        "description": "Update the details of a specific view. The request body should contain the fields to be updated. Fields not included in the request body will remain unchanged. Fields included will overwrite the existing values. There is no provision for partial updates of fields, sort or filter using this PATCH request.\n\n**Note**: View APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Update the details of a specific view. The request body should contain the fields to be updated. Fields not included in the request body will remain unchanged. Fields included will overwrite the existing values. There is no provision for partial updates of fields, sort or filter using this PATCH request.\n\n**Note**: View APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "view-update",
         "tags": [
           "Views"
@@ -3090,7 +3236,7 @@
       },
       "delete": {
         "summary": "Delete view",
-        "description": "Delete a specific view.\n\n**Note**: View APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Delete a specific view.\n\n**Note**: View APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "view-delete",
         "tags": [
           "Views"
@@ -3670,7 +3816,7 @@
     "/api/v3/meta/bases/{baseId}?include[]=members": {
       "get": {
         "summary": "List base members",
-        "description": "Retrieve all details of a specific base, including its members.\n\nNotes: Base collaboration APIs are available only with self-hosted Enterprise plans and cloud-hosted Enterprise plans.",
+        "description": "Retrieve all details of a specific base, including its members.\n\nNotes: Base collaboration APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "base-members-list",
         "tags": [
           "Base Members"
@@ -3745,7 +3891,7 @@
     "/api/v3/meta/bases/{base_id}/members": {
       "post": {
         "summary": "Invite base members",
-        "description": "Invite new members to a specific base using their User ID or Email address.\n\nNotes: Base collaboration APIs are available only with self-hosted Enterprise plans and cloud-hosted Enterprise plans.",
+        "description": "Invite new members to a specific base using their User ID or Email address.\n\nNotes: Base collaboration APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "base-members-invite",
         "parameters": [
           {
@@ -3799,7 +3945,7 @@
       },
       "patch": {
         "summary": "Update base members",
-        "description": "Update roles for existing members in a base.\n\nNotes: Base collaboration APIs are available only with self-hosted Enterprise plans and cloud-hosted Enterprise plans.",
+        "description": "Update roles for existing members in a base.\n\nNotes: Base collaboration APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "base-members-update",
         "parameters": [
           {
@@ -3853,7 +3999,7 @@
       },
       "delete": {
         "summary": "Delete base members",
-        "description": "Remove members from a specific base using their IDs.\n\nNotes: Base collaboration APIs are available only with self-hosted Enterprise plans and cloud-hosted Enterprise plans.",
+        "description": "Remove members from a specific base using their IDs.\n\nNotes: Base collaboration APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "base-members-delete",
         "parameters": [
           {
@@ -3898,7 +4044,7 @@
     "/api/v3/meta/bases/{base_id}/scripts": {
       "get": {
         "summary": "List Scripts",
-        "description": "Retrieve a list of scripts associated with a specific base.\n\n**Note**: Script APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve a list of scripts associated with a specific base.\n\n**Note**: Script APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "scripts-list",
         "tags": [
           "Scripts"
@@ -3957,7 +4103,7 @@
       },
       "post": {
         "summary": "Create script",
-        "description": "Create a new script within the specified base by providing the required script details in the request body.\n\n**Note**: Script APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Create a new script within the specified base by providing the required script details in the request body.\n\n**Note**: Script APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "script-create",
         "parameters": [
           {
@@ -4029,7 +4175,7 @@
     "/api/v3/meta/bases/{base_id}/scripts/{script_id}": {
       "get": {
         "summary": "Get Script Info",
-        "description": "Retrieve the details of a specific script.\n\n**Note**: Script APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve the details of a specific script.\n\n**Note**: Script APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "script-read",
         "tags": [
           "Scripts"
@@ -4085,7 +4231,7 @@
       },
       "patch": {
         "summary": "Update script",
-        "description": "Update the script.\n\n**Note**: Script APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Update the script.\n\n**Note**: Script APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "script-update",
         "tags": [
           "Scripts"
@@ -4135,7 +4281,7 @@
       },
       "delete": {
         "summary": "Delete script",
-        "description": "Delete the script.\n\n**Note**: Script APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Delete the script.\n\n**Note**: Script APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "script-delete",
         "tags": [
           "Scripts"
@@ -4170,7 +4316,7 @@
     "/api/v3/meta/bases/{base_id}/dashboards": {
       "get": {
         "summary": "List Dashboards",
-        "description": "Retrieve a list of dashboards in the specified base.\n\n**Note**: Dashboard APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve a list of dashboards in the specified base.\n\n**Note**: Dashboard APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "dashboards-list",
         "tags": [
           "Dashboards"
@@ -4207,7 +4353,7 @@
       },
       "post": {
         "summary": "Create Dashboard",
-        "description": "Create a new dashboard within the specified base.\n\n**Note**: Dashboard APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Create a new dashboard within the specified base.\n\n**Note**: Dashboard APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "dashboard-create",
         "tags": [
           "Dashboards"
@@ -4253,7 +4399,7 @@
     "/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}": {
       "get": {
         "summary": "Get Dashboard",
-        "description": "Retrieve details of a specific dashboard. Optionally include widgets by setting the `includeWidgets` query parameter to `true`.\n\n**Note**: Dashboard APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve details of a specific dashboard. Optionally include widgets by setting the `includeWidgets` query parameter to `true`.\n\n**Note**: Dashboard APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "dashboard-read",
         "tags": [
           "Dashboards"
@@ -4312,7 +4458,7 @@
       },
       "patch": {
         "summary": "Update Dashboard",
-        "description": "Update the specified dashboard.\n\n**Note**: Dashboard APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Update the specified dashboard.\n\n**Note**: Dashboard APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "dashboard-update",
         "tags": [
           "Dashboards"
@@ -4368,7 +4514,7 @@
       },
       "delete": {
         "summary": "Delete Dashboard",
-        "description": "Delete the specified dashboard.\n\n**Note**: Dashboard APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Delete the specified dashboard.\n\n**Note**: Dashboard APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "dashboard-delete",
         "tags": [
           "Dashboards"
@@ -4403,7 +4549,7 @@
     "/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/data": {
       "get": {
         "summary": "Get Dashboard Data",
-        "description": "Retrieve data for all widgets in the specified dashboard. Returns a map of widget IDs to their data.\n\n**Note**: Dashboard APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve data for all widgets in the specified dashboard. Returns a map of widget IDs to their data.\n\n**Note**: Dashboard APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "dashboard-data-read",
         "tags": [
           "Dashboards"
@@ -4451,7 +4597,7 @@
     "/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets": {
       "get": {
         "summary": "List Widgets",
-        "description": "Retrieve a list of widgets in the specified dashboard.\n\n**Note**: Widget APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve a list of widgets in the specified dashboard.\n\n**Note**: Widget APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "widgets-list",
         "tags": [
           "Dashboards"
@@ -4497,7 +4643,7 @@
       },
       "post": {
         "summary": "Create Widget",
-        "description": "Create a new widget within the specified dashboard.\n\n**Note**: Widget APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Create a new widget within the specified dashboard.\n\n**Note**: Widget APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "widget-create",
         "tags": [
           "Dashboards"
@@ -4555,7 +4701,7 @@
     "/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}": {
       "get": {
         "summary": "Get Widget",
-        "description": "Retrieve details of a specific widget.\n\n**Note**: Widget APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve details of a specific widget.\n\n**Note**: Widget APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "widget-read",
         "tags": [
           "Dashboards"
@@ -4610,7 +4756,7 @@
       },
       "patch": {
         "summary": "Update Widget",
-        "description": "Update the specified widget.\n\n**Note**: Widget APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Update the specified widget.\n\n**Note**: Widget APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "widget-update",
         "tags": [
           "Dashboards"
@@ -4675,7 +4821,7 @@
       },
       "delete": {
         "summary": "Delete Widget",
-        "description": "Delete the specified widget.\n\n**Note**: Widget APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Delete the specified widget.\n\n**Note**: Widget APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "widget-delete",
         "tags": [
           "Dashboards"
@@ -4719,7 +4865,7 @@
     "/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}/data": {
       "get": {
         "summary": "Get Widget Data",
-        "description": "Retrieve data for a specific widget.\n\n**Note**: Widget APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve data for a specific widget.\n\n**Note**: Widget APIs are available on cloud-hosted **Enterprise** plans, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "widget-data-read",
         "tags": [
           "Dashboards"
@@ -4777,7 +4923,7 @@
     "/api/v3/meta/bases/{base_id}/workflows": {
       "get": {
         "summary": "List Workflows",
-        "description": "Retrieve a list of workflows associated with a specific base.\n\n**Note**: Workflow APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve a list of workflows associated with a specific base.\n\n**Note**: Workflow APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "workflows-list",
         "tags": [
           "Workflows"
@@ -4810,7 +4956,7 @@
     "/api/v3/meta/bases/{base_id}/workflows/{workflow_id}": {
       "get": {
         "summary": "Get Workflow",
-        "description": "Retrieve the details of a specific workflow.\n\n**Note**: Workflow APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve the details of a specific workflow.\n\n**Note**: Workflow APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "workflow-read",
         "tags": [
           "Workflows"
@@ -4852,7 +4998,7 @@
     "/api/v3/meta/bases/{base_id}/workflows/{workflow_id}/execute": {
       "post": {
         "summary": "Execute Workflow",
-        "description": "Manually trigger a workflow execution. This endpoint only works for workflows whose trigger type is `manual-trigger`.\n\n**Note**: Workflow APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Manually trigger a workflow execution. This endpoint only works for workflows whose trigger type is `manual-trigger`.\n\n**Note**: Workflow APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "workflow-execute",
         "tags": [
           "Workflows"
@@ -4909,7 +5055,7 @@
     "/api/v3/meta/bases/{base_id}/workflows/{workflow_id}/executions": {
       "get": {
         "summary": "List Workflow Executions",
-        "description": "Retrieve a list of executions for a specific workflow.\n\n**Note**: Workflow APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve a list of executions for a specific workflow.\n\n**Note**: Workflow APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "workflow-execution-list",
         "tags": [
           "Workflows"
@@ -4969,7 +5115,7 @@
     "/api/v3/meta/bases/{base_id}/workflows/{workflow_id}/executions/{execution_id}": {
       "get": {
         "summary": "Get Workflow Execution",
-        "description": "Retrieve the details of a specific workflow execution.\n\n**Note**: Workflow APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve the details of a specific workflow execution.\n\n**Note**: Workflow APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "operationId": "workflow-execution-read",
         "tags": [
           "Workflows"
@@ -5462,10 +5608,612 @@
         }
       }
     },
+    "/api/v3/meta/workspaces/{workspaceId}/environments": {
+      "get": {
+        "summary": "List Environments",
+        "operationId": "environments-list-v3",
+        "description": "Retrieve the effective environment set for a workspace: the built-in `production` and `staging` environments (virtual, locked — present for every workspace with no stored row), plus the organization’s shared environments and the workspace’s own custom environments. Environments resolve per-environment integration configuration.\n\nRequires **Workspace Owner** or **Workspace Creator** role.\n\n**Note**: Environment APIs are available only with self-hosted **Enterprise** plans and cloud-hosted plans. Creating custom environments requires a plan that includes the custom-environments feature.",
+        "tags": [
+          "Environments"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Workspace ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of environments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EnvironmentV3"
+                      }
+                    }
+                  },
+                  "required": [
+                    "list"
+                  ]
+                },
+                "examples": {
+                  "Environments List": {
+                    "value": {
+                      "list": [
+                        {
+                          "id": "production",
+                          "key": "production",
+                          "title": "Production",
+                          "description": "The default. Your live apps and automations always run on this configuration.",
+                          "color": "#17803d",
+                          "is_default": true,
+                          "is_locked": true
+                        },
+                        {
+                          "id": "staging",
+                          "key": "staging",
+                          "title": "Staging",
+                          "description": "Pick this while building apps or opening an environment instance, to test against non-production data.",
+                          "color": "#c2410c",
+                          "is_default": false,
+                          "is_locked": true
+                        },
+                        {
+                          "id": "envabc12345",
+                          "key": "qa",
+                          "title": "QA",
+                          "description": "Pre-release verification",
+                          "color": "#6A7184",
+                          "is_default": false,
+                          "is_locked": false,
+                          "workspace_id": "w6dw3fo0",
+                          "created_at": "2026-07-01T06:04:18.000Z",
+                          "updated_at": "2026-07-01T06:04:18.000Z",
+                          "created_by": "usr1234567"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "500": {
+            "description": "The server encountered an unexpected error while processing the request."
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Environment",
+        "operationId": "environments-create-v3",
+        "description": "Create a custom environment in a workspace. The stable `key` slug is auto-derived from the title server-side (lowercased, non-alphanumeric runs collapsed to `-`, capped at 50 characters) and frozen thereafter — clients never send a key. Titles that collide with a built-in environment name (Production / Staging) or derive to a key already in use are rejected.\n\nRequires **Workspace Owner** or **Workspace Creator** role. Plan-gated: the plan must include the custom-environments feature and the workspace must be within its custom-environment limit.\n\n**Note**: Environment APIs are available only with self-hosted **Enterprise** plans and cloud-hosted plans. Creating custom environments requires a plan that includes the custom-environments feature.",
+        "tags": [
+          "Environments"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Workspace ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnvironmentCreateV3Req"
+              },
+              "examples": {
+                "Create Environment": {
+                  "value": {
+                    "title": "QA",
+                    "description": "Pre-release verification",
+                    "color": "#6A7184"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created environment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentV3"
+                },
+                "examples": {
+                  "Environment": {
+                    "value": {
+                      "id": "envabc12345",
+                      "key": "qa",
+                      "title": "QA",
+                      "description": "Pre-release verification",
+                      "color": "#6A7184",
+                      "is_default": false,
+                      "is_locked": false,
+                      "workspace_id": "w6dw3fo0",
+                      "created_at": "2026-07-01T06:04:18.000Z",
+                      "updated_at": "2026-07-01T06:04:18.000Z",
+                      "created_by": "usr1234567"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "404": {
+            "description": "Environment not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected error while processing the request."
+          }
+        }
+      }
+    },
+    "/api/v3/meta/workspaces/{workspaceId}/environments/{environmentId}": {
+      "patch": {
+        "summary": "Update Environment",
+        "operationId": "environments-update-v3",
+        "description": "Update a custom environment’s title, description, color or order. The `key` slug is frozen at create time — renaming the title never re-derives it, so references to the environment stay valid. The built-in environments (`production` / `staging`) cannot be edited, and org-scoped environments cannot be edited from the workspace routes.\n\nRequires **Workspace Owner** or **Workspace Creator** role.\n\n**Note**: Environment APIs are available only with self-hosted **Enterprise** plans and cloud-hosted plans. Creating custom environments requires a plan that includes the custom-environments feature.",
+        "tags": [
+          "Environments"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Workspace ID"
+          },
+          {
+            "name": "environmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Environment ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnvironmentUpdateV3Req"
+              },
+              "examples": {
+                "Rename Environment": {
+                  "value": {
+                    "title": "QA Renamed",
+                    "color": "#c2410c"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated environment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentV3"
+                },
+                "examples": {
+                  "Environment": {
+                    "value": {
+                      "id": "envabc12345",
+                      "key": "qa",
+                      "title": "QA Renamed",
+                      "description": "Pre-release verification",
+                      "color": "#c2410c",
+                      "is_default": false,
+                      "is_locked": false,
+                      "workspace_id": "w6dw3fo0",
+                      "created_at": "2026-07-01T06:04:18.000Z",
+                      "updated_at": "2026-07-01T06:04:18.000Z",
+                      "created_by": "usr1234567"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "404": {
+            "description": "Environment not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected error while processing the request."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Environment",
+        "operationId": "environments-delete-v3",
+        "description": "Delete a custom environment. All per-environment integration configuration overrides bound to it are removed as well. The built-in environments (`production` / `staging`) cannot be deleted, and org-scoped environments cannot be deleted from the workspace routes.\n\nRequires **Workspace Owner** or **Workspace Creator** role.\n\n**Note**: Environment APIs are available only with self-hosted **Enterprise** plans and cloud-hosted plans. Creating custom environments requires a plan that includes the custom-environments feature.",
+        "tags": [
+          "Environments"
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Workspace ID"
+          },
+          {
+            "name": "environmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Environment ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Environment deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "404": {
+            "description": "Environment not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected error while processing the request."
+          }
+        }
+      }
+    },
+    "/api/v3/meta/orgs/{orgId}/environments": {
+      "get": {
+        "summary": "List Organization Environments",
+        "operationId": "org-environments-list-v3",
+        "description": "Retrieve the organization-level environment set: the built-in `production` and `staging` environments (virtual, locked) plus the organization’s own environments. Organization environments are shared by every workspace under the organization; workspace-scoped environments are not included here.\n\nRequires organization membership (**Org Viewer** or above). Available on cloud-hosted plans with organizations.\n\n**Note**: Environment APIs are available only with self-hosted **Enterprise** plans and cloud-hosted plans. Creating custom environments requires a plan that includes the custom-environments feature.",
+        "tags": [
+          "Environments"
+        ],
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Organization ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of environments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EnvironmentV3"
+                      }
+                    }
+                  },
+                  "required": [
+                    "list"
+                  ]
+                },
+                "examples": {
+                  "Environments List": {
+                    "value": {
+                      "list": [
+                        {
+                          "id": "production",
+                          "key": "production",
+                          "title": "Production",
+                          "description": "The default. Your live apps and automations always run on this configuration.",
+                          "color": "#17803d",
+                          "is_default": true,
+                          "is_locked": true
+                        },
+                        {
+                          "id": "staging",
+                          "key": "staging",
+                          "title": "Staging",
+                          "description": "Pick this while building apps or opening an environment instance, to test against non-production data.",
+                          "color": "#c2410c",
+                          "is_default": false,
+                          "is_locked": true
+                        },
+                        {
+                          "id": "envabc12345",
+                          "key": "qa",
+                          "title": "QA",
+                          "description": "Pre-release verification",
+                          "color": "#6A7184",
+                          "is_default": false,
+                          "is_locked": false,
+                          "created_at": "2026-07-01T06:04:18.000Z",
+                          "updated_at": "2026-07-01T06:04:18.000Z",
+                          "created_by": "usr1234567",
+                          "org_id": "org123"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "500": {
+            "description": "The server encountered an unexpected error while processing the request."
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Organization Environment",
+        "operationId": "org-environments-create-v3",
+        "description": "Create a custom environment at the organization level, shared by all of the organization’s workspaces. The stable `key` slug is auto-derived from the title server-side and frozen thereafter — clients never send a key. Titles that collide with a built-in environment name (Production / Staging) or derive to a key already in use are rejected.\n\nRequires **Org Owner** role. Available on cloud-hosted plans with organizations.\n\n**Note**: Environment APIs are available only with self-hosted **Enterprise** plans and cloud-hosted plans. Creating custom environments requires a plan that includes the custom-environments feature.",
+        "tags": [
+          "Environments"
+        ],
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Organization ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnvironmentCreateV3Req"
+              },
+              "examples": {
+                "Create Organization Environment": {
+                  "value": {
+                    "title": "QA",
+                    "description": "Pre-release verification",
+                    "color": "#6A7184"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created environment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentV3"
+                },
+                "examples": {
+                  "Environment": {
+                    "value": {
+                      "id": "envabc12345",
+                      "key": "qa",
+                      "title": "QA",
+                      "description": "Pre-release verification",
+                      "color": "#6A7184",
+                      "is_default": false,
+                      "is_locked": false,
+                      "created_at": "2026-07-01T06:04:18.000Z",
+                      "updated_at": "2026-07-01T06:04:18.000Z",
+                      "created_by": "usr1234567",
+                      "org_id": "org123"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "404": {
+            "description": "Environment not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected error while processing the request."
+          }
+        }
+      }
+    },
+    "/api/v3/meta/orgs/{orgId}/environments/{environmentId}": {
+      "patch": {
+        "summary": "Update Organization Environment",
+        "operationId": "org-environments-update-v3",
+        "description": "Update an organization environment’s title, description, color or order. The `key` slug is frozen at create time — renaming the title never re-derives it. The built-in environments (`production` / `staging`) cannot be edited.\n\nRequires **Org Owner** role. Available on cloud-hosted plans with organizations.\n\n**Note**: Environment APIs are available only with self-hosted **Enterprise** plans and cloud-hosted plans. Creating custom environments requires a plan that includes the custom-environments feature.",
+        "tags": [
+          "Environments"
+        ],
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Organization ID"
+          },
+          {
+            "name": "environmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Environment ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnvironmentUpdateV3Req"
+              },
+              "examples": {
+                "Rename Organization Environment": {
+                  "value": {
+                    "title": "QA Renamed",
+                    "color": "#c2410c"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated environment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentV3"
+                },
+                "examples": {
+                  "Environment": {
+                    "value": {
+                      "id": "envabc12345",
+                      "key": "qa",
+                      "title": "QA Renamed",
+                      "description": "Pre-release verification",
+                      "color": "#c2410c",
+                      "is_default": false,
+                      "is_locked": false,
+                      "created_at": "2026-07-01T06:04:18.000Z",
+                      "updated_at": "2026-07-01T06:04:18.000Z",
+                      "created_by": "usr1234567",
+                      "org_id": "org123"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "404": {
+            "description": "Environment not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected error while processing the request."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Organization Environment",
+        "operationId": "org-environments-delete-v3",
+        "description": "Delete an organization environment. All per-environment integration configuration overrides bound to it — across every workspace under the organization — are removed as well. The built-in environments (`production` / `staging`) cannot be deleted.\n\nRequires **Org Owner** role. Available on cloud-hosted plans with organizations.\n\n**Note**: Environment APIs are available only with self-hosted **Enterprise** plans and cloud-hosted plans. Creating custom environments requires a plan that includes the custom-environments feature.",
+        "tags": [
+          "Environments"
+        ],
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Organization ID"
+          },
+          {
+            "name": "environmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Environment ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Environment deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "404": {
+            "description": "Environment not found."
+          },
+          "500": {
+            "description": "The server encountered an unexpected error while processing the request."
+          }
+        }
+      }
+    },
     "/api/v3/meta/tokens": {
       "get": {
         "summary": "List API tokens",
-        "description": "Retrieve a list of all API tokens for the organization.\n\n**Note**: \nAPI Token APIs are available only with self-hosted **Enterprise** plans and cloud-hosted **Enterprise** plans.\n> **Beta**: These APIs are currently in beta and subject to change in future releases.",
+        "description": "Retrieve a list of all API tokens for the organization.\n\n**Note**: \nAPI Token APIs are available on all cloud-hosted plans, and on licensed self-hosted deployments (**Business** plan and above).\n> **Beta**: These APIs are currently in beta and subject to change in future releases.",
         "tags": [
           "API Tokens"
         ],
@@ -5506,7 +6254,7 @@
       },
       "post": {
         "summary": "Create API token",
-        "description": "Create a new API token for the organization.\n\n**Note**: API Token APIs are available only with self-hosted **Enterprise** plans and cloud-hosted **Enterprise** plans.\n> **Beta**: These APIs are currently in beta and subject to change in future releases.",
+        "description": "Create a new API token for the organization.\n\n**Note**: API Token APIs are available on all cloud-hosted plans, and on licensed self-hosted deployments (**Business** plan and above).\n> **Beta**: These APIs are currently in beta and subject to change in future releases.",
         "tags": [
           "API Tokens"
         ],
@@ -5575,7 +6323,7 @@
     "/api/v3/meta/tokens/{tokenId}": {
       "delete": {
         "summary": "Delete API token",
-        "description": "Delete an API token by its ID.\n\n**Note**: API Token APIs are available only with self-hosted **Enterprise** plans and cloud-hosted **Enterprise** plans.\n> **Beta**: These APIs are currently in beta and subject to change in future releases.",
+        "description": "Delete an API token by its ID.\n\n**Note**: API Token APIs are available on all cloud-hosted plans, and on licensed self-hosted deployments (**Business** plan and above).\n> **Beta**: These APIs are currently in beta and subject to change in future releases.",
         "tags": [
           "API Tokens"
         ],
@@ -5622,6 +6370,774 @@
         }
       }
     },
+    "/api/v3/docs/{baseId}": {
+      "get": {
+        "summary": "List documents",
+        "operationId": "document-list",
+        "description": "Retrieve a list of documents in a base. Documents are returned without content for lightweight listing.\n\nUse the `parent_id` query parameter to navigate the document hierarchy:\n- `parent_id=null` or omitted — returns root-level documents\n- `parent_id={docId}` — returns children of the specified document\n\nDocuments APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "baseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the base.",
+            "example": "p_abc123def456"
+          },
+          {
+            "name": "parent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": "Parent document ID. Use `null` (or omit) for root-level documents, or a document ID to list its children.",
+            "example": "null"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Documents retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentListResponse"
+                },
+                "examples": {
+                  "Root Documents": {
+                    "value": {
+                      "list": [
+                        {
+                          "id": "dc_r1a2b3c4d5e6f",
+                          "base_id": "p_abc123def456",
+                          "title": "Project Overview",
+                          "meta": {
+                            "icon": "📋"
+                          },
+                          "order": 1,
+                          "parent_id": null,
+                          "has_children": true,
+                          "version": 3,
+                          "comment_count": 2,
+                          "created_by": "us_abc123",
+                          "updated_by": "us_abc123",
+                          "created_at": "2026-03-01T10:00:00.000Z",
+                          "updated_at": "2026-03-08T14:30:00.000Z"
+                        },
+                        {
+                          "id": "dc_r7h8i9j0k1l2m",
+                          "base_id": "p_abc123def456",
+                          "title": "Meeting Notes",
+                          "meta": {
+                            "icon": "📝"
+                          },
+                          "order": 2,
+                          "parent_id": null,
+                          "has_children": false,
+                          "version": 1,
+                          "comment_count": 0,
+                          "created_by": "us_abc123",
+                          "updated_by": "us_abc123",
+                          "created_at": "2026-03-05T09:00:00.000Z",
+                          "updated_at": "2026-03-05T09:00:00.000Z"
+                        }
+                      ]
+                    }
+                  },
+                  "Child Documents": {
+                    "value": {
+                      "list": [
+                        {
+                          "id": "dc_c1n2o3p4q5r6s",
+                          "base_id": "p_abc123def456",
+                          "title": "Q1 Goals",
+                          "meta": {},
+                          "order": 1,
+                          "parent_id": "dc_r1a2b3c4d5e6f",
+                          "has_children": false,
+                          "version": 2,
+                          "comment_count": 0,
+                          "created_by": "us_abc123",
+                          "updated_by": "us_def456",
+                          "created_at": "2026-03-01T11:00:00.000Z",
+                          "updated_at": "2026-03-06T16:00:00.000Z"
+                        }
+                      ]
+                    }
+                  },
+                  "Empty List": {
+                    "value": {
+                      "list": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestV3"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedV3"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenV3"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundV3"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorV3"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create document",
+        "operationId": "document-create",
+        "description": "Create a new document in a base. If no `title` is provided, defaults to \"Untitled\". If no `content` is provided, defaults to an empty document.\n\nTo create a child document, pass the `parent_id` of the parent document.\n\nDocuments APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "baseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the base.",
+            "example": "p_abc123def456"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentCreate"
+              },
+              "examples": {
+                "Minimal (empty document)": {
+                  "value": {}
+                },
+                "With Title": {
+                  "value": {
+                    "title": "Weekly Standup Notes"
+                  }
+                },
+                "With Rich Content": {
+                  "value": {
+                    "title": "Architecture Decision Record",
+                    "content": {
+                      "type": "doc",
+                      "content": [
+                        {
+                          "type": "heading",
+                          "attrs": {
+                            "level": 1
+                          },
+                          "content": [
+                            {
+                              "type": "text",
+                              "text": "ADR-001: Document Storage Format"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            {
+                              "type": "text",
+                              "text": "We decided to use rich-text JSON as the canonical storage format for document content."
+                            }
+                          ]
+                        },
+                        {
+                          "type": "heading",
+                          "attrs": {
+                            "level": 2
+                          },
+                          "content": [
+                            {
+                              "type": "text",
+                              "text": "Context"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            {
+                              "type": "text",
+                              "text": "Content is stored as rich-text JSON, a structured document format that preserves rich-text formatting without lossy conversions."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "meta": {
+                      "icon": "📐"
+                    }
+                  }
+                },
+                "Child Document": {
+                  "value": {
+                    "title": "Q1 Goals",
+                    "parent_id": "dc_r1a2b3c4d5e6f"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Document created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                },
+                "examples": {
+                  "Created Document": {
+                    "value": {
+                      "id": "dc_n3w1d2o3c4u5m",
+                      "base_id": "p_abc123def456",
+                      "title": "Weekly Standup Notes",
+                      "content": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph"
+                          }
+                        ]
+                      },
+                      "meta": {},
+                      "order": 3,
+                      "parent_id": null,
+                      "has_children": false,
+                      "version": 1,
+                      "comment_count": 0,
+                      "created_by": "us_abc123",
+                      "updated_by": "us_abc123",
+                      "created_at": "2026-03-09T12:00:00.000Z",
+                      "updated_at": "2026-03-09T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestV3"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedV3"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenV3"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundV3"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorV3"
+          }
+        }
+      }
+    },
+    "/api/v3/docs/{baseId}/{docId}": {
+      "get": {
+        "summary": "Get document",
+        "operationId": "document-read",
+        "description": "Retrieve a single document with its full content (rich-text JSON).\n\nDocuments APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "baseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the base.",
+            "example": "p_abc123def456"
+          },
+          {
+            "name": "docId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the document.",
+            "example": "dc_r1a2b3c4d5e6f"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                },
+                "examples": {
+                  "Document with Content": {
+                    "value": {
+                      "id": "dc_r1a2b3c4d5e6f",
+                      "base_id": "p_abc123def456",
+                      "title": "Project Overview",
+                      "content": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "heading",
+                            "attrs": {
+                              "level": 1
+                            },
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "Project Overview"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "paragraph",
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "This document describes the "
+                              },
+                              {
+                                "type": "text",
+                                "marks": [
+                                  {
+                                    "type": "bold"
+                                  }
+                                ],
+                                "text": "project goals"
+                              },
+                              {
+                                "type": "text",
+                                "text": " and timeline."
+                              }
+                            ]
+                          },
+                          {
+                            "type": "bulletList",
+                            "content": [
+                              {
+                                "type": "listItem",
+                                "content": [
+                                  {
+                                    "type": "paragraph",
+                                    "content": [
+                                      {
+                                        "type": "text",
+                                        "text": "Phase 1: Research"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "listItem",
+                                "content": [
+                                  {
+                                    "type": "paragraph",
+                                    "content": [
+                                      {
+                                        "type": "text",
+                                        "text": "Phase 2: Implementation"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "meta": {
+                        "icon": "📋",
+                        "cover_image": "/api/v1/attachments/cover_abc.jpg"
+                      },
+                      "order": 1,
+                      "parent_id": null,
+                      "has_children": true,
+                      "version": 3,
+                      "comment_count": 2,
+                      "created_by": "us_abc123",
+                      "updated_by": "us_abc123",
+                      "created_at": "2026-03-01T10:00:00.000Z",
+                      "updated_at": "2026-03-08T14:30:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedV3"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenV3"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundV3"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorV3"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update document",
+        "operationId": "document-update",
+        "description": "Update a document's title, content, or metadata.\n\n**Optimistic concurrency control**: You must include the current `version` of the document. If the version does not match the server's version (i.e., someone else edited it), the request will be rejected with a 422 error. This prevents silent overwrites.\n\nAfter a successful update, the returned document will have `version` incremented by 1.\n\nDocuments APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "baseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the base.",
+            "example": "p_abc123def456"
+          },
+          {
+            "name": "docId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the document.",
+            "example": "dc_r1a2b3c4d5e6f"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentUpdate"
+              },
+              "examples": {
+                "Update Title Only": {
+                  "value": {
+                    "title": "Updated Project Overview",
+                    "version": 3
+                  }
+                },
+                "Update Content": {
+                  "value": {
+                    "content": {
+                      "type": "doc",
+                      "content": [
+                        {
+                          "type": "heading",
+                          "attrs": {
+                            "level": 1
+                          },
+                          "content": [
+                            {
+                              "type": "text",
+                              "text": "Updated Heading"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            {
+                              "type": "text",
+                              "text": "New paragraph content added via API."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "version": 3
+                  }
+                },
+                "Update Metadata (icon and cover)": {
+                  "value": {
+                    "meta": {
+                      "icon": "🚀",
+                      "cover_image": "/api/v1/attachments/new_cover.jpg"
+                    },
+                    "version": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Document updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                },
+                "examples": {
+                  "Updated Document": {
+                    "value": {
+                      "id": "dc_r1a2b3c4d5e6f",
+                      "base_id": "p_abc123def456",
+                      "title": "Updated Project Overview",
+                      "content": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph"
+                          }
+                        ]
+                      },
+                      "meta": {
+                        "icon": "📋"
+                      },
+                      "order": 1,
+                      "parent_id": null,
+                      "has_children": true,
+                      "version": 4,
+                      "comment_count": 2,
+                      "created_by": "us_abc123",
+                      "updated_by": "us_def456",
+                      "created_at": "2026-03-01T10:00:00.000Z",
+                      "updated_at": "2026-03-09T15:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestV3"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedV3"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenV3"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundV3"
+          },
+          "422": {
+            "description": "Version conflict — the document has been modified since it was last fetched. Fetch the latest version and retry."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorV3"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete document",
+        "operationId": "document-delete",
+        "description": "Soft-delete a document. All child documents are also deleted (cascade).\n\nAttachments (images, files) referenced by the document are also cleaned up.\n\nDocuments APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "baseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the base.",
+            "example": "p_abc123def456"
+          },
+          {
+            "name": "docId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the document to delete.",
+            "example": "dc_r1a2b3c4d5e6f"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                },
+                "examples": {
+                  "Deleted": {
+                    "value": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedV3"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenV3"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundV3"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorV3"
+          }
+        }
+      }
+    },
+    "/api/v3/docs/{baseId}/{docId}/reorder": {
+      "patch": {
+        "summary": "Reorder or move document",
+        "operationId": "document-reorder",
+        "description": "Update a document's sort order among its siblings, and optionally move it to a different parent.\n\n**Order**: Pass a float value. To insert between two siblings with orders 2.0 and 3.0, use 2.5 (midpoint).\n\n**Move**: Include `parent_id` to re-parent the document. Pass `null` to move to root level. Circular moves (moving a document under itself or its descendants) are rejected.\n\nDocuments APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
+        "tags": [
+          "Documents"
+        ],
+        "parameters": [
+          {
+            "name": "baseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the base.",
+            "example": "p_abc123def456"
+          },
+          {
+            "name": "docId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the document to reorder.",
+            "example": "dc_r1a2b3c4d5e6f"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentReorder"
+              },
+              "examples": {
+                "Change Sort Order": {
+                  "description": "Move the document to position 2.5 (between siblings at 2.0 and 3.0).",
+                  "value": {
+                    "order": 2.5
+                  }
+                },
+                "Move to Different Parent": {
+                  "description": "Move the document under a different parent and set its order.",
+                  "value": {
+                    "order": 1,
+                    "parent_id": "dc_n3w1p2a3r4e5n"
+                  }
+                },
+                "Move to Different Parent Only": {
+                  "description": "Move a document under a different parent (server assigns order).",
+                  "value": {
+                    "parent_id": "dc_n3w1p2a3r4e5n"
+                  }
+                },
+                "Move to Root": {
+                  "description": "Move a child document to the root level.",
+                  "value": {
+                    "order": 4,
+                    "parent_id": null
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Document reordered/moved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                },
+                "examples": {
+                  "Reordered Document": {
+                    "value": {
+                      "id": "dc_r1a2b3c4d5e6f",
+                      "base_id": "p_abc123def456",
+                      "title": "Project Overview",
+                      "content": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph"
+                          }
+                        ]
+                      },
+                      "meta": {
+                        "icon": "📋"
+                      },
+                      "order": 2.5,
+                      "parent_id": null,
+                      "has_children": true,
+                      "version": 3,
+                      "comment_count": 2,
+                      "created_by": "us_abc123",
+                      "updated_by": "us_abc123",
+                      "created_at": "2026-03-01T10:00:00.000Z",
+                      "updated_at": "2026-03-09T15:30:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestV3"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedV3"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenV3"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundV3"
+          },
+          "422": {
+            "description": "Invalid move — cannot move document under itself or its own descendant."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorV3"
+          }
+        }
+      }
+    },
     "/api/v3/meta/bases/{baseId}/tables/{tableId}/records/{recordId}/comments": {
       "get": {
         "summary": "List comments",
@@ -5629,7 +7145,7 @@
         "tags": [
           "Comments"
         ],
-        "description": "Retrieve all comments for a specific record.\n\n**Note**: Comment APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Retrieve all comments for a specific record.\n\n**Note**: Comment APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "parameters": [
           {
             "name": "baseId",
@@ -5693,7 +7209,7 @@
         "tags": [
           "Comments"
         ],
-        "description": "Create a new comment on a record.\n\n**Note**: Comment APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Create a new comment on a record.\n\n**Note**: Comment APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "parameters": [
           {
             "name": "baseId",
@@ -5768,7 +7284,7 @@
         "tags": [
           "Comments"
         ],
-        "description": "Update the text of an existing comment. Only the comment creator can update.\n\n**Note**: Comment APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Update the text of an existing comment. Only the comment creator can update.\n\n**Note**: Comment APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "parameters": [
           {
             "name": "baseId",
@@ -5832,7 +7348,7 @@
         "tags": [
           "Comments"
         ],
-        "description": "Soft-delete a comment. Only the comment creator can delete.\n\n**Note**: Comment APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Soft-delete a comment. Only the comment creator can delete.\n\n**Note**: Comment APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "parameters": [
           {
             "name": "baseId",
@@ -5887,7 +7403,7 @@
         "tags": [
           "Comments"
         ],
-        "description": "Toggle the resolved state of a comment. If already resolved, unresolves it.\n\n**Note**: Comment APIs are available only on self-hosted and cloud-hosted **Enterprise** plans.",
+        "description": "Toggle the resolved state of a comment. If already resolved, unresolves it.\n\n**Note**: Comment APIs are available on cloud-hosted **Business** plans and above, and on licensed self-hosted deployments (**Business** plan and above).",
         "parameters": [
           {
             "name": "baseId",
@@ -5937,235 +7453,6 @@
   },
   "components": {
     "schemas": {
-      "0": {
-        "title": "Formula Button",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "formula"
-            ],
-            "description": "Button type: formula"
-          },
-          "formula": {
-            "type": "string",
-            "description": "Formula to execute"
-          },
-          "label": {
-            "type": "string",
-            "description": "Label of the button"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Icon of the button"
-          },
-          "color": {
-            "type": "string",
-            "enum": [
-              "brand",
-              "red",
-              "green",
-              "maroon",
-              "blue",
-              "orange",
-              "pink",
-              "purple",
-              "yellow",
-              "gray"
-            ],
-            "description": "Color of the button"
-          },
-          "theme": {
-            "type": "string",
-            "enum": [
-              "solid",
-              "light",
-              "text"
-            ],
-            "description": "Theme of the button"
-          }
-        },
-        "required": [
-          "type",
-          "formula"
-        ],
-        "additionalProperties": false
-      },
-      "1": {
-        "title": "Webhook Button",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "webhook"
-            ],
-            "description": "Button type: webhook"
-          },
-          "button_hook_id": {
-            "type": "string",
-            "description": "ID of the webhook to trigger"
-          },
-          "label": {
-            "type": "string",
-            "description": "Label of the button"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Icon of the button"
-          },
-          "color": {
-            "type": "string",
-            "enum": [
-              "brand",
-              "red",
-              "green",
-              "maroon",
-              "blue",
-              "orange",
-              "pink",
-              "purple",
-              "yellow",
-              "gray"
-            ],
-            "description": "Color of the button"
-          },
-          "theme": {
-            "type": "string",
-            "enum": [
-              "solid",
-              "light",
-              "text"
-            ],
-            "description": "Theme of the button"
-          }
-        },
-        "required": [
-          "type",
-          "button_hook_id"
-        ],
-        "additionalProperties": false
-      },
-      "2": {
-        "title": "AI Button",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "ai"
-            ],
-            "description": "Button type: AI"
-          },
-          "prompt": {
-            "type": "string",
-            "description": "AI prompt to execute"
-          },
-          "integration_id": {
-            "type": "string",
-            "description": "Integration ID for AI service"
-          },
-          "theme": {
-            "type": "string",
-            "enum": [
-              "solid",
-              "light",
-              "text"
-            ],
-            "description": "Theme of the button"
-          },
-          "output_column_ids": {
-            "type": "string",
-            "description": "IDs of columns where AI output should be stored"
-          },
-          "label": {
-            "type": "string",
-            "description": "Label of the button"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Icon of the button"
-          },
-          "color": {
-            "type": "string",
-            "enum": [
-              "brand",
-              "red",
-              "green",
-              "maroon",
-              "blue",
-              "orange",
-              "pink",
-              "purple",
-              "yellow",
-              "gray"
-            ],
-            "description": "Color of the button"
-          }
-        },
-        "required": [
-          "type",
-          "prompt",
-          "integration_id"
-        ],
-        "additionalProperties": false
-      },
-      "3": {
-        "title": "Script Button",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "script"
-            ],
-            "description": "Button type: script"
-          },
-          "script_id": {
-            "type": "string",
-            "description": "ID of the script to trigger"
-          },
-          "label": {
-            "type": "string",
-            "description": "Label of the button"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Icon of the button"
-          },
-          "color": {
-            "type": "string",
-            "enum": [
-              "brand",
-              "red",
-              "green",
-              "maroon",
-              "blue",
-              "orange",
-              "pink",
-              "purple",
-              "yellow",
-              "gray"
-            ],
-            "description": "Color of the button"
-          },
-          "theme": {
-            "type": "string",
-            "enum": [
-              "solid",
-              "light",
-              "text"
-            ],
-            "description": "Theme of the button"
-          }
-        },
-        "required": [
-          "type",
-          "script_id"
-        ],
-        "additionalProperties": false
-      },
       "DataUpsertRecordRequest": {
         "type": "object",
         "required": [
@@ -6577,6 +7864,11 @@
               "enum": [
                 "SingleLineText"
               ]
+            },
+            "options": {
+              "type": "object",
+              "description": "SingleLineText takes no options.",
+              "additionalProperties": false
             }
           }
         },
@@ -6795,6 +8087,9 @@
               "enum": [
                 "Attachment"
               ]
+            },
+            "options": {
+              "$ref": "#/components/schemas/FieldOptions_Attachment"
             }
           }
         },
@@ -6805,6 +8100,11 @@
               "enum": [
                 "Geometry"
               ]
+            },
+            "options": {
+              "type": "object",
+              "description": "Geometry takes no options.",
+              "additionalProperties": false
             }
           }
         },
@@ -6893,6 +8193,26 @@
               "enum": [
                 "Year"
               ]
+            },
+            "options": {
+              "type": "object",
+              "description": "Year takes no options.",
+              "additionalProperties": false
+            }
+          }
+        },
+        "AutoNumber": {
+          "title": "AutoNumber",
+          "properties": {
+            "type": {
+              "enum": [
+                "AutoNumber"
+              ]
+            },
+            "options": {
+              "type": "object",
+              "description": "AutoNumber takes no options.",
+              "additionalProperties": false
             }
           }
         },
@@ -6942,6 +8262,9 @@
               "enum": [
                 "CreatedBy"
               ]
+            },
+            "options": {
+              "$ref": "#/components/schemas/FieldOptions_CreatedBy"
             }
           }
         },
@@ -6952,6 +8275,9 @@
               "enum": [
                 "LastModifiedBy"
               ]
+            },
+            "options": {
+              "$ref": "#/components/schemas/FieldOptions_LastModifiedBy"
             }
           }
         },
@@ -6988,6 +8314,11 @@
               "enum": [
                 "JSON"
               ]
+            },
+            "options": {
+              "type": "object",
+              "description": "JSON takes no options.",
+              "additionalProperties": false
             }
           }
         }
@@ -7504,7 +8835,6 @@
           },
           "field_id": {
             "type": "string",
-            "format": "uuid",
             "description": "Identifier for the field being sorted."
           },
           "direction": {
@@ -7551,7 +8881,6 @@
           },
           "field_id": {
             "type": "string",
-            "format": "uuid",
             "description": "Identifier for the field being sorted."
           },
           "direction": {
@@ -7561,6 +8890,11 @@
               "desc"
             ],
             "description": "Sorting direction, either 'asc' (ascending) or 'desc' (descending)."
+          },
+          "enabled": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether this sort is enabled. Disabled sorts are skipped during evaluation."
           }
         },
         "required": [
@@ -8053,7 +9387,6 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
             "description": "Unique identifier for the view."
           },
           "title": {
@@ -8068,7 +9401,9 @@
               "kanban",
               "calendar",
               "form",
-              "map"
+              "map",
+              "timeline",
+              "gantt"
             ],
             "description": "Type of the view."
           }
@@ -8138,7 +9473,9 @@
                     "kanban",
                     "calendar",
                     "form",
-                    "map"
+                    "map",
+                    "timeline",
+                    "gantt"
                   ],
                   "description": "Type of the view."
                 },
@@ -8201,7 +9538,10 @@
               "kanban",
               "calendar",
               "map",
-              "form"
+              "form",
+              "timeline",
+              "gantt",
+              "list"
             ],
             "description": "Type of the view."
           },
@@ -8275,7 +9615,7 @@
             "show"
           ]
         },
-        "description": "List of fields to be displayed in the view. \n\n- If not specified, all fields are displayed by default.\n- If an empty array is provided, only the display value field will be shown.\n- In case of partial list, fields not included in the list will be excluded from the view."
+        "description": "List of fields to be displayed in the view. \n\n- If not specified, all fields are displayed by default.\n- If an empty array is provided, only the display value field will be shown.\n- In case of partial list, fields not included in the list will be excluded from the view.\n- A `field_id` that does not exist on the table is rejected with `404`."
       },
       "ViewRowColour": {
         "type": "object",
@@ -8446,6 +9786,166 @@
           "date_ranges"
         ]
       },
+      "ViewOptionsTimeline": {
+        "type": "object",
+        "description": "Timeline view configuration. A timeline may have multiple date ranges (e.g. \"planned\" vs \"actual\"); each range has a required start field and an optional end field.",
+        "additionalProperties": false,
+        "properties": {
+          "date_ranges": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "start_date_field_id": {
+                  "type": "string",
+                  "description": "Field ID of the start date column."
+                },
+                "end_date_field_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Field ID of the end date column. Null means the range is a single point in time."
+                }
+              },
+              "required": [
+                "start_date_field_id"
+              ]
+            }
+          }
+        }
+      },
+      "ViewOptionsTimelineCreate": {
+        "description": "Timeline view configuration on create — same shape as ViewOptionsTimeline but requires date_ranges. Update (PATCH) uses the base schema so partial updates are allowed.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ViewOptionsTimeline"
+          },
+          {
+            "required": [
+              "date_ranges"
+            ]
+          }
+        ]
+      },
+      "ViewOptionsGantt": {
+        "type": "object",
+        "description": "Gantt view configuration. Bundles the per-view DateDependency rule with presentation settings stored on the view's meta JSON.",
+        "additionalProperties": false,
+        "properties": {
+          "date_dependency": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DateDependency"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The view-owned date dependency rule. When null, the gantt falls back to the table-level default rule (if any). PATCH replaces the entire object — no partial updates."
+          }
+        }
+      },
+      "ViewOptionsGanttCreate": {
+        "description": "Gantt view configuration on create — same shape as ViewOptionsGantt but requires date_dependency. Update (PATCH) uses the base schema so partial updates are allowed.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ViewOptionsGantt"
+          },
+          {
+            "required": [
+              "date_dependency"
+            ]
+          }
+        ]
+      },
+      "DateDependency": {
+        "type": "object",
+        "description": "Date dependency rule for a gantt view. Top-level properties are all optional; supplying a child object (`dates`, `dependency`) commits to providing every property inside it.",
+        "additionalProperties": false,
+        "properties": {
+          "dates": {
+            "type": "object",
+            "description": "Date column pair. Atomic — supply both or omit the block entirely.",
+            "additionalProperties": false,
+            "properties": {
+              "start_field_id": {
+                "type": "string",
+                "description": "Field ID of the start date column."
+              },
+              "end_field_id": {
+                "type": "string",
+                "description": "Field ID of the end date column."
+              }
+            },
+            "required": [
+              "start_field_id",
+              "end_field_id"
+            ]
+          },
+          "duration_field_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional standalone duration field; independent of the `dates` block."
+          },
+          "dependency": {
+            "type": "object",
+            "description": "Predecessor/successor link configuration. Atomic — supply all five properties or omit the block entirely.",
+            "additionalProperties": false,
+            "properties": {
+              "linkrow_field_id": {
+                "type": "string",
+                "description": "Link-to-another-record field that connects predecessor/successor records."
+              },
+              "linkrow_role": {
+                "type": "string",
+                "enum": [
+                  "predecessors",
+                  "successors"
+                ]
+              },
+              "connection_type": {
+                "type": "string",
+                "enum": [
+                  "end-to-start",
+                  "end-to-end",
+                  "start-to-end",
+                  "start-to-start"
+                ]
+              },
+              "buffer_type": {
+                "type": "string",
+                "enum": [
+                  "flexible",
+                  "fixed",
+                  "none"
+                ]
+              },
+              "buffer_days": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Buffer in days. Meaningful when `buffer_type` is `fixed`; pass 0 when buffer_type is `flexible` or `none`."
+              }
+            },
+            "required": [
+              "linkrow_field_id",
+              "linkrow_role",
+              "connection_type",
+              "buffer_type",
+              "buffer_days"
+            ]
+          },
+          "include_weekends": {
+            "type": "boolean",
+            "default": true
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true,
+            "description": "Soft-disable the rule without deleting it."
+          }
+        }
+      },
       "ViewOptionsGallery": {
         "type": "object",
         "properties": {
@@ -8457,10 +9957,75 @@
       },
       "ViewOptionsMap": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
-          "fk_geo_data_col_id": {
+          "geo_data_field_id": {
             "type": "string",
-            "description": "Foreign Key to GeoData Column to be used for the map view."
+            "description": "Field ID of the GeoData column plotted on the map."
+          }
+        }
+      },
+      "ViewOptionsList": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "List view configuration. Records are organised into a hierarchy of levels; each level is a table linked to its parent through a link field.",
+        "properties": {
+          "levels": {
+            "type": "array",
+            "description": "Ordered levels of the list. Level 1 is the root table; deeper levels connect to their parent via link_field_id.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "level": {
+                  "type": "number",
+                  "description": "1-based depth of this level (1 = root)."
+                },
+                "table_id": {
+                  "type": "string",
+                  "description": "Table shown at this level."
+                },
+                "link_field_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Link field connecting this level to its parent. Omitted/null for the root level."
+                },
+                "filters": {
+                  "$ref": "#/components/schemas/FilterCreate",
+                  "description": "Filters applied at this level."
+                },
+                "sorts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SortCreate"
+                  },
+                  "description": "Sorts applied at this level."
+                },
+                "fields": {
+                  "$ref": "#/components/schemas/ViewFields",
+                  "description": "Field visibility/order at this level. Listed fields are shown in order; unlisted fields are hidden (same semantics as top-level fields)."
+                }
+              },
+              "required": [
+                "level",
+                "table_id"
+              ]
+            }
+          },
+          "show_empty_parents": {
+            "type": "boolean",
+            "description": "Show parent rows that have no child records."
+          },
+          "row_height": {
+            "type": "string",
+            "enum": [
+              "short",
+              "medium",
+              "tall",
+              "extra"
+            ],
+            "description": "Height of the rows in the list view.",
+            "default": "short"
           }
         }
       },
@@ -8500,19 +10065,39 @@
             "description": "Whether to hide branding on the form."
           },
           "banner": {
-            "type": "string",
-            "format": "uri",
-            "description": "URL of the banner image for the form."
+            "description": "Banner image for the form. A bare URL string is accepted and normalized into an attachment object.",
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "$ref": "#/components/schemas/FormImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "logo": {
-            "type": "string",
-            "format": "uri",
-            "description": "URL of the logo for the form."
+            "description": "Logo for the form. A bare URL string is accepted and normalized into an attachment object.",
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "$ref": "#/components/schemas/FormImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "form_background_color": {
             "type": "string",
-            "description": "Background color for the form.",
-            "pattern": "^#[0-9A-Fa-f]{6}$"
+            "description": "Background color for the form. 3-, 6- and 8-digit (with alpha) forms are accepted.",
+            "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
           },
           "redirect_url": {
             "type": "string",
@@ -8534,7 +10119,8 @@
               "$ref": "#/components/schemas/FormFieldConfig"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "ViewCreate": {
         "type": "object",
@@ -8680,6 +10266,76 @@
               },
               {
                 "type": "object",
+                "title": "timeline",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "timeline"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsTimelineCreate"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                },
+                "required": [
+                  "options"
+                ]
+              },
+              {
+                "type": "object",
+                "title": "gantt",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "gantt"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsGanttCreate"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                },
+                "required": [
+                  "options"
+                ]
+              },
+              {
+                "type": "object",
                 "title": "map",
                 "properties": {
                   "type": {
@@ -8725,6 +10381,21 @@
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "title": "list",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "list"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsList"
                   }
                 }
               }
@@ -8855,6 +10526,58 @@
               },
               {
                 "type": "object",
+                "title": "timeline",
+                "properties": {
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsTimeline"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "title": "gantt",
+                "properties": {
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsGantt"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                }
+              },
+              {
+                "type": "object",
                 "title": "map",
                 "properties": {
                   "options": {
@@ -8888,6 +10611,15 @@
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "title": "list",
+                "properties": {
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsList"
                   }
                 }
               }
@@ -9085,6 +10817,73 @@
               },
               {
                 "type": "object",
+                "title": "timeline",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "timeline"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsTimeline"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                },
+                "required": [
+                  "options"
+                ]
+              },
+              {
+                "type": "object",
+                "title": "gantt",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "gantt"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsGantt"
+                  },
+                  "sorts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SortCreate"
+                    },
+                    "description": "List of sorts to be applied to the view."
+                  },
+                  "filters": {
+                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/ViewFields"
+                  },
+                  "row_coloring": {
+                    "$ref": "#/components/schemas/ViewRowColour",
+                    "description": "Row colour configuration for the the view."
+                  }
+                }
+              },
+              {
+                "type": "object",
                 "title": "map",
                 "properties": {
                   "type": {
@@ -9112,6 +10911,21 @@
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
                     "description": "Row colour configuration for the the view."
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "title": "list",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "list"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/ViewOptionsList"
                   }
                 }
               }
@@ -9174,7 +10988,8 @@
               "LastModifiedBy",
               "LinkToAnotherRecord",
               "User",
-              "JSON"
+              "JSON",
+              "AutoNumber"
             ],
             "description": "Field data type."
           },
@@ -9252,7 +11067,8 @@
                   "CreatedBy",
                   "LastModifiedBy",
                   "User",
-                  "JSON"
+                  "JSON",
+                  "AutoNumber"
                 ],
                 "description": "Field data type."
               }
@@ -9277,6 +11093,10 @@
           "generate_text_using_ai": {
             "type": "boolean",
             "description": "Enable text generation for this field using NocoAI."
+          },
+          "smart_mode": {
+            "type": "boolean",
+            "description": "Enable smart text mode."
           }
         },
         "additionalProperties": false
@@ -9285,7 +11105,7 @@
         "type": "object",
         "title": "PhoneNumber",
         "properties": {
-          "validation": {
+          "validate": {
             "type": "boolean",
             "description": "Enable validation for phone numbers."
           }
@@ -9296,7 +11116,7 @@
         "type": "object",
         "title": "URL",
         "properties": {
-          "validation": {
+          "validate": {
             "type": "boolean",
             "description": "Enable validation for URL."
           }
@@ -9307,7 +11127,7 @@
         "type": "object",
         "title": "Email",
         "properties": {
-          "validation": {
+          "validate": {
             "type": "boolean",
             "description": "Enable validation for Email."
           }
@@ -9318,9 +11138,18 @@
         "type": "object",
         "title": "Number",
         "properties": {
-          "locale_string": {
-            "type": "boolean",
-            "description": "Show thousand separator on the UI."
+          "separator": {
+            "type": "string",
+            "description": "Thousand/decimal separator style. `locale` uses the runtime locale, `none_period` / `none_comma` disable thousand grouping.",
+            "enum": [
+              "locale",
+              "none_period",
+              "none_comma",
+              "comma_period",
+              "period_comma",
+              "space_period",
+              "space_comma"
+            ]
           }
         },
         "additionalProperties": false
@@ -9334,6 +11163,19 @@
             "description": "Decimal field precision. Defaults to 0",
             "minimum": 0,
             "maximum": 5
+          },
+          "separator": {
+            "type": "string",
+            "description": "Thousand/decimal separator style. `locale` uses the runtime locale, `none_period` / `none_comma` disable thousand grouping.",
+            "enum": [
+              "locale",
+              "none_period",
+              "none_comma",
+              "comma_period",
+              "period_comma",
+              "space_period",
+              "space_comma"
+            ]
           }
         },
         "additionalProperties": false
@@ -9341,13 +11183,19 @@
       "FieldOptions_Currency": {
         "type": "object",
         "title": "Currency",
-        "description": "Currency settings for this column. Locale defaults to `en-US` and currency code defaults to `USD`",
+        "description": "Currency settings for this column. `currency_locale` defaults to `en-US` and `currency_code` defaults to `USD`",
         "properties": {
-          "locale": {
+          "currency_locale": {
             "type": "string",
             "description": "Locale for currency formatting. Refer https://simplelocalize.io/data/locales/"
           },
-          "code": {
+          "precision": {
+            "type": "number",
+            "description": "Number of decimal places. Defaults to 2.",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "currency_code": {
             "type": "string",
             "description": "Currency code. Refer https://simplelocalize.io/data/locales/",
             "enum": [
@@ -9546,6 +11394,20 @@
           "show_as_progress": {
             "type": "boolean",
             "description": "Display as a progress bar."
+          },
+          "shape": {
+            "type": "string",
+            "enum": [
+              "bar",
+              "circle"
+            ],
+            "description": "Progress bar shape. Only applies when `show_as_progress` is enabled.\n- `bar` (default)\n- `circle`"
+          },
+          "precision": {
+            "type": "number",
+            "description": "Number of decimal places. Defaults to 2.",
+            "minimum": 0,
+            "maximum": 5
           }
         },
         "additionalProperties": false
@@ -9567,7 +11429,7 @@
         "properties": {
           "date_format": {
             "type": "string",
-            "description": "Date format. Supported options are listed below\n- `YYYY/MM/DD`\n- `YYYY-MM-DD`\n- `YYYY MM DD`\n- `DD/MM/YYYY`\n- `DD-MM-YYYY`\n- `DD MM YYYY`\n- `MM/DD/YYYY`\n- `MM-DD-YYYY`\n- `MM DD YYYY`\n- `YYYY-MM`\n- `YYYY MM`"
+            "description": "Date format. Supported options are listed below\n- `YYYY/MM/DD`\n- `YYYY-MM-DD`\n- `YYYY MM DD`\n- `DD/MM/YYYY`\n- `DD-MM-YYYY`\n- `DD MM YYYY`\n- `MM/DD/YYYY`\n- `MM-DD-YYYY`\n- `MM DD YYYY`\n- `YYYY-MM`\n- `YYYY MM`\n- `dddd YYYY-MM-DD`\n- `ddd YYYY-MM-DD`\n- `dddd DD/MM/YYYY`\n- `ddd DD/MM/YYYY`\n- `dddd MM/DD/YYYY`\n- `ddd MM/DD/YYYY`"
           },
           "time_format": {
             "type": "string",
@@ -9598,7 +11460,7 @@
         "properties": {
           "date_format": {
             "type": "string",
-            "description": "Date format. Supported options are listed below\n- `YYYY/MM/DD`\n- `YYYY-MM-DD`\n- `YYYY MM DD`\n- `DD/MM/YYYY`\n- `DD-MM-YYYY`\n- `DD MM YYYY`\n- `MM/DD/YYYY`\n- `MM-DD-YYYY`\n- `MM DD YYYY`\n- `YYYY-MM`\n- `YYYY MM`"
+            "description": "Date format. Supported options are listed below\n- `YYYY/MM/DD`\n- `YYYY-MM-DD`\n- `YYYY MM DD`\n- `DD/MM/YYYY`\n- `DD-MM-YYYY`\n- `DD MM YYYY`\n- `MM/DD/YYYY`\n- `MM-DD-YYYY`\n- `MM DD YYYY`\n- `YYYY-MM`\n- `YYYY MM`\n- `dddd YYYY-MM-DD`\n- `ddd YYYY-MM-DD`\n- `dddd DD/MM/YYYY`\n- `ddd DD/MM/YYYY`\n- `dddd MM/DD/YYYY`\n- `ddd MM/DD/YYYY`"
           }
         },
         "additionalProperties": false
@@ -9665,8 +11527,8 @@
           },
           "color": {
             "type": "string",
-            "description": "Specifies icon color using a hexadecimal color code (e.g., `#36BFFF`).",
-            "pattern": "^#[0-9A-Fa-f]{6}$"
+            "description": "Specifies icon color using a hexadecimal color code (e.g., `#36BFFF`). 3-, 6- and 8-digit (with alpha) forms are accepted.",
+            "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
           }
         },
         "additionalProperties": false
@@ -9690,8 +11552,8 @@
           },
           "color": {
             "type": "string",
-            "description": "Specifies icon color using a hexadecimal color code (e.g., `#36BFFF`).",
-            "pattern": "^#[0-9A-Fa-f]{6}$"
+            "description": "Specifies icon color using a hexadecimal color code (e.g., `#36BFFF`). 3-, 6- and 8-digit (with alpha) forms are accepted.",
+            "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
           }
         },
         "additionalProperties": false
@@ -9700,7 +11562,7 @@
         "type": "object",
         "title": "Barcode",
         "properties": {
-          "format": {
+          "barcode_format": {
             "type": "string",
             "description": "Barcode format (e.g., CODE128)."
           },
@@ -9729,6 +11591,71 @@
           "formula": {
             "type": "string",
             "description": "Formula expression."
+          },
+          "display_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Field type the formula result is rendered as. Null renders the raw result."
+          },
+          "display_column_meta": {
+            "type": "object",
+            "description": "Field options applied to the rendered result, shaped like the `display_type` field's own options."
+          }
+        },
+        "additionalProperties": false
+      },
+      "FieldOptions_Attachment": {
+        "type": "object",
+        "title": "Attachment",
+        "properties": {
+          "max_number_of_attachments": {
+            "type": "integer",
+            "description": "Maximum number of files per cell.",
+            "minimum": 1
+          },
+          "max_attachment_size": {
+            "type": "integer",
+            "description": "Maximum size per file, in megabytes.",
+            "minimum": 1
+          },
+          "supported_attachment_mime_types": {
+            "type": "array",
+            "description": "Allowed MIME types. `*` allows everything.",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "FieldOptions_CreatedBy": {
+        "type": "object",
+        "title": "CreatedBy",
+        "properties": {
+          "allow_multiple_users": {
+            "type": "boolean",
+            "description": "Allow selecting multiple users."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Notify the user when they are assigned to a record."
+          }
+        },
+        "additionalProperties": false
+      },
+      "FieldOptions_LastModifiedBy": {
+        "type": "object",
+        "title": "LastModifiedBy",
+        "properties": {
+          "allow_multiple_users": {
+            "type": "boolean",
+            "description": "Allow selecting multiple users."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Notify the user when they are assigned to a record."
           }
         },
         "additionalProperties": false
@@ -9740,6 +11667,10 @@
           "allow_multiple_users": {
             "type": "boolean",
             "description": "Allow selecting multiple users."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Notify the user when they are assigned to a record."
           }
         },
         "additionalProperties": false
@@ -9759,6 +11690,29 @@
           "error": {
             "type": "string",
             "description": "Error message when dependent field is deleted"
+          },
+          "enable_conditions": {
+            "type": "boolean",
+            "description": "Apply the linked field's filters when resolving the lookup."
+          },
+          "lookup_limit": {
+            "type": "number",
+            "description": "Maximum number of linked records to resolve."
+          },
+          "use_recursive_evaluation": {
+            "type": "boolean",
+            "description": "Resolve lookups of lookups recursively."
+          },
+          "display_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Field type the looked-up value is rendered as. Null renders the raw value."
+          },
+          "display_column_meta": {
+            "type": "object",
+            "description": "Field options applied to the rendered value, shaped like the `display_type` field's own options."
           }
         },
         "required": [
@@ -9796,6 +11750,29 @@
           "error": {
             "type": "string",
             "description": "Error message when dependent field is deleted"
+          },
+          "precision": {
+            "type": "number",
+            "description": "Number of decimal places for numeric rollups. Defaults to 0.",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "enable_conditions": {
+            "type": "boolean",
+            "description": "Apply the linked field's filters when computing the rollup."
+          },
+          "separator": {
+            "type": "string",
+            "description": "Thousand/decimal separator style for numeric rollups. `locale` uses the runtime locale, `none_period` / `none_comma` disable thousand grouping.",
+            "enum": [
+              "locale",
+              "none_period",
+              "none_comma",
+              "comma_period",
+              "period_comma",
+              "space_period",
+              "space_comma"
+            ]
           }
         },
         "required": [
@@ -9875,9 +11852,14 @@
                 ],
                 "description": "Button type: webhook"
               },
-              "button_hook_id": {
+              "webhook_id": {
                 "type": "string",
                 "description": "ID of the webhook to trigger"
+              },
+              "button_hook_id": {
+                "type": "string",
+                "deprecated": true,
+                "description": "Deprecated alias of `webhook_id`, accepted on write and normalised to it. Responses always use `webhook_id`."
               },
               "label": {
                 "type": "string",
@@ -9915,7 +11897,7 @@
             },
             "required": [
               "type",
-              "button_hook_id"
+              "webhook_id"
             ],
             "additionalProperties": false
           },
@@ -10037,6 +12019,61 @@
               "script_id"
             ],
             "additionalProperties": false
+          },
+          {
+            "title": "URL Button",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "url"
+                ],
+                "description": "Button type: url"
+              },
+              "formula": {
+                "type": "string",
+                "description": "Formula that produces the URL to open"
+              },
+              "label": {
+                "type": "string",
+                "description": "Label of the button"
+              },
+              "icon": {
+                "type": "string",
+                "description": "Icon of the button"
+              },
+              "color": {
+                "type": "string",
+                "enum": [
+                  "brand",
+                  "red",
+                  "green",
+                  "maroon",
+                  "blue",
+                  "orange",
+                  "pink",
+                  "purple",
+                  "yellow",
+                  "gray"
+                ],
+                "description": "Color of the button"
+              },
+              "theme": {
+                "type": "string",
+                "enum": [
+                  "solid",
+                  "light",
+                  "text"
+                ],
+                "description": "Theme of the button"
+              }
+            },
+            "required": [
+              "type",
+              "formula"
+            ],
+            "additionalProperties": false
           }
         ],
         "errorMessage": {
@@ -10045,10 +12082,11 @@
         "discriminator": {
           "propertyName": "type",
           "mapping": {
-            "formula": "#/components/schemas/0",
-            "webhook": "#/components/schemas/1",
-            "ai": "#/components/schemas/2",
-            "script": "#/components/schemas/3"
+            "formula": "#/components/schemas/FieldOptions_Button/oneOf/0",
+            "webhook": "#/components/schemas/FieldOptions_Button/oneOf/1",
+            "ai": "#/components/schemas/FieldOptions_Button/oneOf/2",
+            "script": "#/components/schemas/FieldOptions_Button/oneOf/3",
+            "url": "#/components/schemas/FieldOptions_Button/oneOf/4"
           }
         }
       },
@@ -10058,11 +12096,23 @@
         "properties": {
           "relation_type": {
             "type": "string",
-            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one"
+            "enum": [
+              "om",
+              "mo",
+              "mm",
+              "oo",
+              "hm",
+              "bt"
+            ],
+            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one\n- `hm` has-many\n- `bt` belongs-to"
           },
           "related_table_id": {
             "type": "string",
             "description": "Identifier of the linked table."
+          },
+          "enable_conditions": {
+            "type": "boolean",
+            "description": "Apply the link's configured filters when resolving linked records."
           }
         },
         "required": [
@@ -10077,11 +12127,23 @@
         "properties": {
           "relation_type": {
             "type": "string",
-            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one"
+            "enum": [
+              "om",
+              "mo",
+              "mm",
+              "oo",
+              "hm",
+              "bt"
+            ],
+            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one\n- `hm` has-many\n- `bt` belongs-to"
           },
           "related_table_id": {
             "type": "string",
             "description": "Identifier of the linked table."
+          },
+          "enable_conditions": {
+            "type": "boolean",
+            "description": "Apply the link's configured filters when resolving linked records."
           }
         },
         "required": [
@@ -10321,6 +12383,72 @@
         "errorMessage": {
           "oneOf": "Must match either a Filter or a FilterGroup schema."
         }
+      },
+      "FieldOptionAddItem": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Choice title."
+          },
+          "color": {
+            "type": "string",
+            "description": "Tile color for the choice as a hex code (e.g. `#36BFFF`). Defaults to a palette color when omitted.",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "FieldOptionDeleteItem": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the choice to remove. Must match an existing choice title exactly."
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "FieldOptionsAddReq": {
+        "type": "object",
+        "description": "Add choices (options) to a SingleSelect/MultiSelect field. Titles that already exist on the field are skipped (idempotent).",
+        "properties": {
+          "choices": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/FieldOptionAddItem"
+            }
+          }
+        },
+        "required": [
+          "choices"
+        ],
+        "additionalProperties": false
+      },
+      "FieldOptionsDeleteReq": {
+        "type": "object",
+        "description": "Remove choices (options) from a SingleSelect/MultiSelect field by title. Titles not present on the field are ignored (idempotent).",
+        "properties": {
+          "choices": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/FieldOptionDeleteItem"
+            }
+          }
+        },
+        "required": [
+          "choices"
+        ],
+        "additionalProperties": false
       },
       "FieldUpdate": {
         "allOf": [
@@ -11498,6 +13626,10 @@
             "type": "boolean",
             "description": "Whether the requesting user is a member of this team."
           },
+          "scim_managed": {
+            "type": "boolean",
+            "description": "Whether the team is provisioned by SCIM from an identity provider."
+          },
           "managers": {
             "type": "array",
             "description": "List of user IDs who are owners/managers of this team.",
@@ -11619,6 +13751,147 @@
             "description": "Updated team badge color (hex code)",
             "example": "#00AEEF",
             "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        }
+      },
+      "EnvironmentV3": {
+        "type": "object",
+        "description": "Environment for v3 API — a named stage (production / staging / custom) that resolves per-environment integration configuration. The built-in `production` and `staging` environments are virtual: they exist for every workspace and organization without a stored row, are locked, and use their reserved key as `id`.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Environment ID. Custom environments use a generated ID; the built-in environments use their reserved key (`production` / `staging`).",
+            "example": "envabc12345"
+          },
+          "key": {
+            "type": "string",
+            "description": "Stable slug auto-derived from the title at create time and frozen thereafter — renaming the title never changes it. Used to reference the environment.",
+            "example": "qa",
+            "maxLength": 50
+          },
+          "title": {
+            "type": "string",
+            "description": "Human-readable environment name",
+            "example": "QA",
+            "maxLength": 255
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional description shown on the environment card / editor",
+            "example": "Pre-release verification"
+          },
+          "color": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Solid color (hex) used for the environment’s dot / badge",
+            "example": "#6A7184",
+            "maxLength": 20
+          },
+          "is_default": {
+            "type": "boolean",
+            "description": "True only for the built-in `production` environment — the fallback whose configuration is the integration’s own config."
+          },
+          "is_locked": {
+            "type": "boolean",
+            "description": "True for the built-in environments (`production` / `staging`) — they cannot be renamed or deleted."
+          },
+          "workspace_id": {
+            "type": "string",
+            "description": "Present on workspace-scoped custom environments. At most one of `workspace_id` / `org_id` is set; both are absent on the virtual built-in environments.",
+            "example": "w6dw3fo0"
+          },
+          "org_id": {
+            "type": "string",
+            "description": "Present on organization-scoped environments, which are shared by all of the organization’s workspaces.",
+            "example": "org123"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp (absent on the virtual built-in environments)"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp (absent on the virtual built-in environments)"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "ID of the user who created the environment (absent on the virtual built-in environments)",
+            "example": "usr1234567"
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "title",
+          "is_default",
+          "is_locked"
+        ]
+      },
+      "EnvironmentCreateV3Req": {
+        "type": "object",
+        "description": "Environment creation request for v3 API. Creates a CUSTOM environment — the built-in `production` and `staging` environments always exist and cannot be created. The stable `key` slug is auto-derived from the title server-side; clients never send a key.",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Environment name. Must contain at least one letter or number, must not collide with a built-in environment name (Production / Staging), and must derive to a key not already in use in the scope.",
+            "example": "QA",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description shown on the environment card / editor",
+            "example": "Pre-release verification"
+          },
+          "color": {
+            "type": "string",
+            "description": "Solid color (hex) used for the environment’s dot / badge",
+            "example": "#6A7184",
+            "maxLength": 20
+          },
+          "order": {
+            "type": "number",
+            "description": "Display position among environments; defaults to the end of the list",
+            "example": 1
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "EnvironmentUpdateV3Req": {
+        "type": "object",
+        "description": "Environment update request for v3 API. Only `title`, `description`, `color` and `order` are editable — the `key` slug is frozen at create time and renaming the title never re-derives it. The built-in environments (`production` / `staging`) cannot be updated.",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "New environment name. The `key` slug is NOT re-derived on rename.",
+            "example": "QA Renamed",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description shown on the environment card / editor",
+            "example": "Pre-release verification"
+          },
+          "color": {
+            "type": "string",
+            "description": "Solid color (hex) used for the environment’s dot / badge",
+            "example": "#c2410c",
+            "maxLength": 20
+          },
+          "order": {
+            "type": "number",
+            "description": "Display position among environments",
+            "example": 1
           }
         }
       },
@@ -12018,12 +14291,13 @@
           },
           "base_role": {
             "type": "string",
-            "description": "Base role to assign to the team (creator or lower only)",
+            "description": "Base role to assign to the team (creator or lower only). app-user is the base standing of an app-attached team.",
             "enum": [
               "creator",
               "editor",
               "viewer",
               "commenter",
+              "app-user",
               "no-access"
             ],
             "example": "editor"
@@ -12072,12 +14346,13 @@
           },
           "base_role": {
             "type": "string",
-            "description": "New base role for the team (creator or lower only)",
+            "description": "New base role for the team (creator or lower only). app-user is the base standing of an app-attached team.",
             "enum": [
               "creator",
               "editor",
               "viewer",
               "commenter",
+              "app-user",
               "no-access"
             ],
             "example": "viewer"
@@ -12574,6 +14849,11 @@
                 "type": "string",
                 "enum": [
                   "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
                   "custom"
                 ]
               },
@@ -12701,6 +14981,11 @@
                 "type": "string",
                 "enum": [
                   "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
                   "custom"
                 ]
               },
@@ -12853,6 +15138,11 @@
                 "type": "string",
                 "enum": [
                   "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
                   "custom"
                 ]
               }
@@ -12992,6 +15282,147 @@
                 "type": "string",
                 "enum": [
                   "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
+                  "custom"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "chart_type"
+        ]
+      },
+      "WidgetOptionsScatter": {
+        "type": "object",
+        "description": "Options for a scatter plot widget (type=chart, chart_type=scatter). Same data structure as bar chart.",
+        "properties": {
+          "chart_type": {
+            "type": "string",
+            "enum": [
+              "scatter"
+            ]
+          },
+          "data_source": {
+            "type": "string",
+            "enum": [
+              "table",
+              "view",
+              "filter"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "x_axis": {
+                "type": "object",
+                "properties": {
+                  "field_id": {
+                    "type": "string"
+                  },
+                  "sort_by": {
+                    "type": "string",
+                    "enum": [
+                      "x_axis",
+                      "y_axis"
+                    ]
+                  },
+                  "order_by": {
+                    "type": "string",
+                    "enum": [
+                      "default",
+                      "asc",
+                      "desc"
+                    ]
+                  },
+                  "include_empty_records": {
+                    "type": "boolean"
+                  },
+                  "include_others": {
+                    "type": "boolean"
+                  },
+                  "category_limit": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "field_id"
+                ]
+              },
+              "y_axis": {
+                "type": "object",
+                "properties": {
+                  "start_at_zero": {
+                    "type": "boolean"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "field_id": {
+                          "type": "string"
+                        },
+                        "aggregation": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "field_id",
+                        "aggregation"
+                      ]
+                    }
+                  },
+                  "group_by": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "appearance": {
+            "type": "object",
+            "properties": {
+              "size": {
+                "type": "string",
+                "enum": [
+                  "small",
+                  "medium",
+                  "large"
+                ]
+              },
+              "show_count_in_legend": {
+                "type": "boolean"
+              },
+              "show_value_in_chart": {
+                "type": "boolean"
+              },
+              "legend_position": {
+                "type": "string",
+                "enum": [
+                  "top",
+                  "right",
+                  "bottom",
+                  "left",
+                  "none"
+                ]
+              },
+              "color_schema": {
+                "type": "string",
+                "enum": [
+                  "default",
+                  "classic",
+                  "vibrant",
+                  "pastel",
+                  "earth",
+                  "monoBlue",
                   "custom"
                 ]
               }
@@ -13159,6 +15590,9 @@
                 "$ref": "#/components/schemas/WidgetOptionsLineChart"
               },
               {
+                "$ref": "#/components/schemas/WidgetOptionsScatter"
+              },
+              {
                 "$ref": "#/components/schemas/WidgetOptionsText"
               },
               {
@@ -13273,6 +15707,7 @@
       "DashboardUpdateReq": {
         "description": "Dashboard update request body",
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "title": {
             "type": "string",
@@ -13333,6 +15768,9 @@
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsLineChart"
+              },
+              {
+                "$ref": "#/components/schemas/WidgetOptionsScatter"
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsText"
@@ -13412,6 +15850,9 @@
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsLineChart"
+              },
+              {
+                "$ref": "#/components/schemas/WidgetOptionsScatter"
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsText"
@@ -13753,7 +16194,7 @@
             "type": "string",
             "description": "Comment text (supports markdown).",
             "example": "This is a comment",
-            "maxLength": 3000
+            "maxLength": 10000
           },
           "created_by": {
             "type": "string",
@@ -13798,7 +16239,7 @@
             "type": "string",
             "description": "Comment text (supports markdown).",
             "example": "This is a comment",
-            "maxLength": 3000
+            "maxLength": 10000
           }
         },
         "required": [
@@ -13813,7 +16254,7 @@
             "type": "string",
             "description": "Updated comment text.",
             "example": "Updated comment",
-            "maxLength": 3000
+            "maxLength": 10000
           }
         },
         "required": [
@@ -13834,6 +16275,46 @@
         "required": [
           "list"
         ]
+      },
+      "FormImage": {
+        "type": "object",
+        "description": "An image attached to a form (banner or logo).",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Publicly reachable image URL."
+          },
+          "path": {
+            "type": "string",
+            "description": "Storage path, for images already uploaded to this instance."
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title."
+          },
+          "mimetype": {
+            "type": "string",
+            "description": "MIME type of the image."
+          },
+          "size": {
+            "type": "number",
+            "description": "Size in bytes."
+          },
+          "icon": {
+            "type": "string",
+            "description": "Icon name shown in place of a thumbnail."
+          },
+          "signedUrl": {
+            "type": "string",
+            "description": "Read-only. Signed URL generated on read; ignored on write."
+          },
+          "signedPath": {
+            "type": "string",
+            "description": "Read-only. Signed path generated on read; ignored on write."
+          }
+        },
+        "additionalProperties": false
       },
       "FormFieldConfig": {
         "type": "object",
@@ -13865,49 +16346,78 @@
           },
           "validators": {
             "type": "array",
-            "description": "List of validators for the field.",
+            "description": "List of validators for the field. Evaluated by the Enterprise form renderer only; the community edition ignores them.",
             "items": {
               "$ref": "#/components/schemas/FormFieldValidator"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
       "FormFieldValidator": {
         "type": "object",
-        "description": "Validator configuration for a form field.",
+        "description": "One validation rule on a form field. The renderer matches on `type` with no fallback branch, so a type outside this enum is dropped silently — the enum is kept in sync with `nocodb-sdk`'s validation type unions (`src/lib/form.ts`).\n\nNote `required` is NOT a validator type: use the sibling `required` boolean on the field config. Option limiting is not a validator either: use `is_limit_option`.\n\nCustom validators are evaluated by the Enterprise form renderer only.",
         "properties": {
           "type": {
             "type": "string",
             "enum": [
-              "required",
-              "regex",
-              "minValue",
-              "maxValue",
               "minLength",
               "maxLength",
+              "startsWith",
+              "endsWith",
+              "includes",
+              "notIncludes",
+              "regex",
               "email",
+              "businessEmail",
+              "phoneNumber",
               "url",
-              "custom"
+              "min",
+              "max",
+              "minDate",
+              "maxDate",
+              "minTime",
+              "maxTime",
+              "minYear",
+              "maxYear",
+              "minSelected",
+              "maxSelected",
+              "fileTypes",
+              "fileSize",
+              "fileCount"
             ],
-            "description": "Type of validation to apply."
+            "description": "Type of validation to apply. Applicable field types:\n- text: `minLength`, `maxLength`, `startsWith`, `endsWith`, `includes`, `notIncludes`, `regex`\n- Email / PhoneNumber / URL: `email`, `businessEmail`, `phoneNumber`, `url`\n- numeric: `min`, `max`\n- Date / DateTime: `minDate`, `maxDate`\n- Time: `minTime`, `maxTime`\n- Year: `minYear`, `maxYear`\n- MultiSelect / User: `minSelected`, `maxSelected`\n- Attachment: `fileTypes`, `fileSize`, `fileCount`"
           },
           "value": {
             "type": [
               "string",
-              "integer",
+              "number",
+              "array",
               "null"
             ],
-            "description": "Validator parameter value (e.g., min/max number, pattern string)."
+            "description": "Validator parameter. Number for `minLength`, `maxLength`, `min`, `max`, `minYear`, `maxYear`, `minSelected`, `maxSelected`, `fileCount`, `fileSize` (kilobytes, whatever `unit` says). String for `startsWith`, `endsWith`, `includes`, `notIncludes`, `minDate`, `maxDate`, `minTime`, `maxTime`. Array of MIME patterns (`image/*`, `application/pdf`) for `fileTypes`. Omitted for `email`, `businessEmail`, `phoneNumber`, `url`, which are presence toggles, and for `regex`, which reads `regex` instead.\n\nAn empty string or explicit null disables the rule."
           },
           "message": {
             "type": "string",
-            "description": "Custom error message for validation failure."
+            "description": "Error message shown when the rule fails. Falls back to a generated message."
           },
           "regex": {
             "type": "string",
-            "description": "Regular expression pattern (for regex validator type)."
+            "description": "Regular expression pattern. Required when `type` is `regex`, ignored otherwise. Evaluated by the form renderer in the browser only — the submit endpoint does not re-check it, because an author-supplied backtracking pattern would stall the server."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "KB",
+              "MB"
+            ],
+            "description": "`fileSize` only — the unit the limit was authored in. `value` is stored in kilobytes either way; this only controls how the limit is displayed."
           }
-        }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
       },
       "WorkflowList": {
         "type": "object",

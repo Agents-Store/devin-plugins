@@ -9,21 +9,31 @@ This skill covers velocity tracking, sprint burndown analysis, WIP limit managem
 
 ## Tool Name Resolution
 
-Tools below are referenced by their **action name** only (e.g., `list_archived_cycles`). Resolve the real tool names for your current Plane MCP server or connector through the `connector-bootstrap` skill. Match by action suffix — never assume a prefix.
+Plane MCP exposes one tool per resource and the operation goes into the `action` parameter: `cycle(action=list, ...)`. This skill writes calls in that form. Resolve the real tool names (`mcp__<server>__<resource>`) for your current Plane connection through the `connector-bootstrap` skill - never assume a server prefix.
 
 ## Available Tools
 
-| Tool | Description |
+| Call | Description |
 |------|-------------|
-| `list_cycles` | List active cycles |
-| `list_archived_cycles` | List completed sprints for velocity history |
-| `retrieve_cycle` | Get cycle dates and details |
-| `list_cycle_work_items` | Get items in a cycle with states |
-| `list_work_items` | Get all project items for WIP analysis |
-| `list_states` | Get state definitions for grouping |
-| `get_project_members` | Team size for WIP limit calculation |
-| `get_project_worklog_summary` | Aggregated time data |
-| `list_work_logs` | Individual time entries per work item |
+| `cycle(action=list)` | Sprints: `status=current\|upcoming\|completed\|draft\|incomplete`, or `archived=true` |
+| `cycle(action=retrieve)` | Cycle dates and details |
+| `cycle(action=list_workitems)` | Items in a cycle, filterable with `pql` |
+| `workitem(action=count)` | Aggregates without listing: `pql` filter plus `group_by` / `sub_group_by` |
+| `workitem(action=list)` | Project items for WIP analysis, filterable with `pql` |
+| `state(action=list)` | State definitions for grouping |
+| `member(action=list_project)` | Team size for WIP limit calculation |
+| `project(action=worklog_summary)` | Aggregated time data |
+| `work_log(action=list)` | Time entries of one work item (`workitem_id` is required) |
+| `workitem_activity(action=list)` | Audit trail: when an item moved to started / completed |
+| `get_pql_reference` | Syntax of the `pql` filter |
+
+## Counting with PQL and `workitem(action=count)`
+
+`workitem(action=count)` answers "how many" in one call instead of listing every item: it takes the same `pql` filter as `list`, an optional `project_id` (omit it to count the whole workspace), and `group_by` / `sub_group_by`. The result carries `total_count` and `grouped_counts` (key to `{count}`; the key `"None"` means "no value"). Valid `group_by` keys: `state_id`, `state__group`, `priority`, `project_id`, `type_id`, `labels__id`, `assignees__id`, `issue_module__module_id`, `release_work_items__release_id`, `cycle_id`, `milestone_id`, `created_by`, `target_date`, `start_date`.
+
+- It counts **items, not points**. Story points are summed from listed items (`point` and `estimate_point` are fetched together); use `count` for throughput, WIP, distribution and workload. Estimate-system fallback: if `point` is empty on the items and the project has an estimate system (`project_estimate(action=retrieve, project_id)`), sum the `value` of each item's `estimate_point` instead (ids and values from `project_estimate(action=list_points, project_id, estimate_id)`). Every points formula below (velocity, burndown, effort ratios) reads the same way.
+- `state__group` is a grouping key only. To filter by state group in PQL write `stateGroup = "started"` or `stateGroup IN openStates()`.
+- PQL allows at most 5 conditions; call `get_pql_reference` before composing anything beyond the examples in this skill. With `project_id`, `count` adds the condition `project = "<id>"` to your `pql`, so that one counts against the 5.
 
 ## Velocity Calculation
 
@@ -31,15 +41,24 @@ Tools below are referenced by their **action name** only (e.g., `list_archived_c
 
 ```
 1. Get completed sprints:
-   list_archived_cycles({ project_id })
-   → Get last 5 archived cycles (or as many as available)
+   cycle(action=list, project_id=<id>, status=completed)
+   → Get last 5 completed cycles (or as many as available)
+   → Sprints that are already archived: cycle(action=list, project_id=<id>, archived=true)
+     (status is ignored when archived=true)
    → Sort by end_date descending
 
 2. For each cycle, calculate completed points:
-   list_cycle_work_items({ project_id, cycle_id })
-   → Filter items where state group = "completed"
-   → Sum their `point` values
-   → Also sum total planned points (all items)
+   cycle(action=list_workitems, project_id=<id>, cycle_id=<cycle_id>,
+         pql='stateGroup = "completed"', fields="id,point,estimate_point")
+   → Sum their `point` values (follow next_cursor)
+   cycle(action=list_workitems, project_id=<id>, cycle_id=<cycle_id>, fields="id,point,estimate_point")
+   → Sum total planned points (all items)
+
+   Cheap cross-check of item counts for ALL completed sprints in one call:
+   workitem(action=count, project_id=<id>,
+            pql='cycle IN completedCycles() AND stateGroup = "completed"',
+            group_by=cycle_id)
+   → grouped_counts maps each cycle_id to the number of items finished in it
 
 3. Build velocity table:
    | Sprint | Planned | Completed | Rate |
@@ -89,13 +108,21 @@ Declining: last 3 < previous 3
 
 ```
 1. Find active cycle:
-   list_cycles({ project_id })
-   → Find cycle where today is between start_date and end_date
+   cycle(action=list, project_id=<id>, status=current)
+   → The cycle where today is between start_date and end_date
 
-2. Get sprint items:
-   list_cycle_work_items({ project_id, cycle_id })
+2. Count the sprint's items per state group (one call):
+   workitem(action=count, project_id=<id>,
+            pql='cycle = "<cycle_id>"', group_by=state__group)
+   → grouped_counts: backlog / unstarted / started / completed / cancelled
 
-3. Categorize by state group:
+3. Get the sprint's points (counts have no points):
+   cycle(action=list_workitems, project_id=<id>, cycle_id=<cycle_id>,
+         fields="id,name,point,estimate_point,state")
+   → Sum `point` per state group (map `state` ids with state(action=list));
+     or pass pql='stateGroup = "completed"' to sum only the finished items
+
+   State groups:
    backlog    = items in "backlog" group (not started, not planned)
    unstarted  = items in "unstarted" group (planned but not started)
    started    = items in "started" group (in progress)
@@ -157,16 +184,18 @@ Examples:
 
 ```
 1. Get team size:
-   get_project_members({ project_id })
+   member(action=list_project, project_id=<id>)
    → count members
 
 2. Calculate WIP limit:
    wip_limit = floor(team_size × 1.5)
 
 3. Count current WIP:
-   list_work_items({ project_id })
-   → Count items in "started" state group
-   → This is current_wip
+   workitem(action=count, project_id=<id>, pql='stateGroup = "started"')
+   → total_count is current_wip
+   → Per person: add group_by=assignees__id
+   → The items themselves (for the table below):
+     workitem(action=list, project_id=<id>, pql='stateGroup = "started"')
 
 4. Assess:
    current_wip ≤ wip_limit → HEALTHY
@@ -196,8 +225,12 @@ Examples:
 ### Items Completed Per Sprint
 
 ```
-For each archived cycle:
-  count items in "completed" state group
+Items completed per sprint, one call for all completed cycles:
+  workitem(action=count, project_id=<id>,
+           pql='cycle IN completedCycles() AND stateGroup = "completed"',
+           group_by=cycle_id)
+  → grouped_counts[<cycle_id>].count is the throughput of that sprint
+    (map cycle ids to names with cycle(action=list, status=completed))
 
 Track trend:
   Sprint 10: 8 items
@@ -211,6 +244,8 @@ Track trend:
 ```
 For completed items:
   cycle_time = date_moved_to_completed - date_moved_to_started
+  (dates come from workitem_activity(action=list, project_id, workitem_id) -
+   the state-change entries; PQL cannot query history such as wasEver or changedTo)
 
 Average cycle time tells you how long items typically take.
 High cycle time (> sprint_length/2) suggests items are too large.
@@ -224,13 +259,15 @@ Compare estimated effort (story points) with actual time spent (work logs) to im
 
 ```
 1. Get project-level time summary:
-   get_project_worklog_summary({ project_id })
+   project(action=worklog_summary, project_id=<id>)
    → Total logged hours, hours per member, hours per label
 
-2. Get individual time entries for the sprint:
-   list_work_logs({ project_id })
-   → Filter by date range matching the sprint period
-   → Group by work item
+2. Get individual time entries for the sprint's completed items:
+   work_log(action=list, project_id=<id>, workitem_id=<item_id>)
+   → One call per work item (workitem_id is required); take the item ids from
+     cycle(action=list_workitems, ..., pql='stateGroup = "completed"')
+   → Filter entries by date range matching the sprint period
+   → Group by work item (duration is in minutes)
 
 3. Build effort comparison table:
    For each completed item:

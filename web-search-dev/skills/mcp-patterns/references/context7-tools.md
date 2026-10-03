@@ -3,26 +3,27 @@
 Context7 provides **up-to-date documentation** for programming libraries and frameworks. Essential for finding current API references when building apps.
 
 ## resolve-library-id
-Resolve a package/product name to a Context7-compatible library ID. Always call this first before querying docs.
+Resolve a package/product name to a Context7-compatible library ID. Always call this first before querying docs, unless the user already gave an ID in `/org/project` or `/org/project/version` form.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `libraryName` | string | Yes | Package or framework name (e.g., "react", "nextjs", "prisma") |
+| `query` | string | Yes | What you want to look up in the docs — used to rank the candidate libraries |
+| `libraryName` | string | Yes | Official library name **with proper punctuation**: `Next.js` (not `nextjs`), `Three.js`, `Customer.io` |
 
 ```
 Tool: resolve-library-id
-Input: { "libraryName": "nextjs" }
+Input: { "query": "server actions with form validation", "libraryName": "Next.js" }
 ```
 
-Returns a library ID like `/vercel/next.js` that you pass to `query-docs`.
+Returns candidates (library ID, description, snippet count, source reputation, benchmark score, available versions); pick by name match, reputation and snippet coverage. A library ID such as `/vercel/next.js` goes to `query-docs`; for a specific version use `/org/project/version` from the returned version list. Do not call this tool more than 3 times per question — if nothing fits, use the best result you have. Never put secrets or proprietary code in `query` — it is sent to the Context7 API.
 
 ## query-docs
-Query documentation for a specific library. Returns relevant documentation sections. (Replaces the older `get-library-docs` tool.)
+Query documentation for a specific library. Returns relevant documentation sections. (Replaces the older `get-library-docs` tool.) Keep each query to one concept — make a separate call per concept — and do not call it more than 3 times per question.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `libraryId` | string | Yes | Library ID from resolve step (format: `/org/project`) |
-| `query` | string | Yes | Natural language question about the library |
+| `query` | string | Yes | Natural-language question scoped to one concept (specific: "React useEffect cleanup examples", not "hooks") |
 
 ```
 Tool: query-docs
@@ -37,7 +38,7 @@ Input: {
 ```
 Step 1 — Resolve library name:
 Tool: resolve-library-id
-Input: { "libraryName": "prisma" }
+Input: { "query": "many-to-many relations", "libraryName": "Prisma" }
 → Returns: "/prisma/prisma"
 
 Step 2 — Query docs:
@@ -67,7 +68,7 @@ Context7 covers most popular programming libraries and frameworks. If `resolve-l
 - **Testing**: Jest, Vitest, Playwright, Cypress
 - **Tools**: Vite, Webpack, ESBuild, Turbopack
 
-API key optional (context7.com/dashboard) — higher rate limits and private repos; keyless works with low limits.
+API key optional (context7.com/dashboard) — higher rate limits and private repos; keyless works with low limits. The bundled server passes the key as `--api-key` (which takes priority over the `CONTEXT7_API_KEY` environment variable). `@upstash/context7-mcp` 4.x needs Node.js >= 20.18.1.
 
 ## Remote MCP Alternative
 

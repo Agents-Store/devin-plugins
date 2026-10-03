@@ -10,10 +10,16 @@ export const approvalWorkflow = task({
   run: async (payload) => {
     const processed = await processData(payload);
 
+    // Create the token first; its id starts with "waitpoint_".
+    // Give token.id (or token.url / token.publicAccessToken) to the approver.
+    const token = await wait.createToken({
+      timeout: "24h",
+      idempotencyKey: `approval-${payload.id}`,
+    });
+    await notifyApprover({ tokenId: token.id, url: token.url });
+
     // Wait for human approval — returns a Result object
-    const result = await wait.forToken<{ approved: boolean; reason?: string }>(
-      `approval-${payload.id}`
-    );
+    const result = await wait.forToken<{ approved: boolean; reason?: string }>(token.id);
 
     if (result.ok && result.output.approved) {
       return await finalizeData(processed);
@@ -29,8 +35,9 @@ export const approvalWorkflow = task({
 ```ts
 import { wait } from "@trigger.dev/sdk";
 
+// tokenId is the id returned by wait.createToken() (starts with "waitpoint_")
 await wait.completeToken<{ approved: boolean }>(
-  `approval-${payload.id}`,
+  tokenId,
   { approved: true, reason: "Looks good" }
 );
 ```
@@ -38,7 +45,7 @@ await wait.completeToken<{ approved: boolean }>(
 ## Complete Token via REST API
 
 ```bash
-curl -X POST "${TRIGGER_API_URL}/api/v1/waitpoints/tokens/${TOKEN_ID}/complete" \
+curl -X POST "${TRIGGER_API_URL}/api/v1/waitpoints/tokens/${WAITPOINT_ID}/complete" \
   -H "Authorization: Bearer ${TRIGGER_SECRET_KEY}" \
   -H "Content-Type: application/json" \
   -d '{"data": {"approved": true, "reason": "Looks good"}}'
@@ -49,6 +56,7 @@ curl -X POST "${TRIGGER_API_URL}/api/v1/waitpoints/tokens/${TOKEN_ID}/complete" 
 ```tsx
 import { useWaitToken } from "@trigger.dev/react-hooks";
 
+// tokenId = token.id and accessToken = token.publicAccessToken from wait.createToken()
 function ApprovalUI({ tokenId, accessToken }: Props) {
   const { complete } = useWaitToken(tokenId, { accessToken });
 
@@ -72,4 +80,7 @@ Pause a pipeline for review before proceeding to a destructive action.
 Chain multiple wait.forToken calls for multi-level sign-off.
 
 ### Timeout Handling
-The task resumes with an error if the token times out — handle gracefully.
+The task resumes with an error if the token times out (default timeout `10m`) — handle gracefully.
+
+### Self-hosted note
+Waiting on a token does not checkpoint on self-hosted (checkpoints are a Cloud feature): the run stays `EXECUTING` and keeps its slot until the token is completed or times out.

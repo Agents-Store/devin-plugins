@@ -20,6 +20,7 @@ This skill covers chatbot bot management, campaign sending across channels, auto
 | `chatbots_bots_campaigns_wa_send` | Send campaign via WhatsApp |
 | `chatbots_bots_campaigns_i_send` | Send campaign via Instagram |
 | `chatbots_bots_campaigns_v_send` | Send campaign via Viber |
+| `chatbots_bots_campaigns_tt_send` | Run a campaign in a TikTok chatbot |
 | `chatbots_dialogs_list` | List dialogs from all channels |
 | `chatbots_flows_list` | List automation flows for a bot |
 | `chatbots_flows_run` | Run a flow for a specific contact |
@@ -33,6 +34,7 @@ This skill covers chatbot bot management, campaign sending across channels, auto
 | WhatsApp | `_wa` | `chatbots_bots_campaigns_wa_send` |
 | Instagram | `_i` | `chatbots_bots_campaigns_i_send` |
 | Viber | `_v` | `chatbots_bots_campaigns_v_send` |
+| TikTok | `_tt` | `chatbots_bots_campaigns_tt_send` |
 
 ## Viewing Account & Bots
 
@@ -109,6 +111,16 @@ Input: {"bot_id": "<bot-id>", "messages": [...]}
 ```
 Tool: chatbots_bots_campaigns_v_send
 Input: {"bot_id": "<bot-id>", "messages": [...]}
+```
+
+**TikTok:**
+```
+Tool: chatbots_bots_campaigns_tt_send
+Input: the bot and the campaign message text
+
+Runs a campaign in a TikTok chatbot. The vendor's tool list publishes no
+parameter schema for it; the `bot_id` + `messages` shape of the other channels
+is expected but not confirmed, so read the tool's schema before the first send.
 ```
 
 ## Automation Flows

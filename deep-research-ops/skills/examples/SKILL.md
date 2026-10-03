@@ -24,14 +24,16 @@ Patterns and multi-step workflows. All calls use `~~capability` with fallback (s
 
 | Capability | What it does | Fallback order |
 |-----------|-------------|----------------|
-| `~~search` | Find pages on the web | Exa → Perplexity → Jina → Firecrawl |
-| `~~scrape` | Read a single page | Jina → Firecrawl |
-| `~~batch_search` | Search multiple queries | Jina parallel → multiple Exa |
-| `~~batch_scrape` | Read multiple pages | Jina parallel → multiple Firecrawl |
-| `~~crawl` | Crawl entire site | Firecrawl crawl → map + batch_scrape |
-| `~~extract` | Structured data extraction | Firecrawl extract → scrape + JSON |
-| `~~academic_search` | Scientific papers | arXiv → SSRN → Perplexity |
-| `~~code_search` | Code examples | Exa code → search + "github" |
+| `~~search` | Find pages on the web | `web_search_exa` → `perplexity_search` → `search_web` → `firecrawl_search` |
+| `~~answer` | Short AI answer with citations | `perplexity_ask` → `perplexity_reason` → `perplexity_search` / `~~search` results + your own cited synthesis |
+| `~~scrape` | Read a single page (with `question`: only the relevant passages) | `read_url` → `firecrawl_scrape` → `web_fetch_exa` (`maxCharacters: 20000`) |
+| `~~batch_search` | Search multiple queries (≤5 per call) | `search_web` with an array → one `web_search_exa` per query |
+| `~~batch_scrape` | Read multiple pages (≤5 per call) | `read_url` with an array → `web_fetch_exa` (`maxCharacters: 20000`) → one `firecrawl_scrape` per URL (fallbacks return full pages, no `question`) |
+| `~~crawl` | Crawl entire site | `firecrawl_crawl` → `firecrawl_map` + batch scrape |
+| `~~extract` | Structured data extraction | `firecrawl_scrape` (JSON format) → `firecrawl_agent` for unknown URLs |
+| `~~academic_search` | Scientific papers | `firecrawl_research_search_papers` → `search_arxiv` / `search_ssrn` → `perplexity_search` |
+| `~~code_search` | Code examples, issues, docs | `firecrawl_developer_search` → `web_search_advanced_exa` (opt-in) → search + "github" |
+| `~~deep_agent` | Heavy research pass for depth `deep` | `agent_run` → `firecrawl_agent` → `perplexity_research` |
 
 ## Quick Workflow Patterns
 
@@ -45,19 +47,19 @@ Patterns and multi-step workflows. All calls use `~~capability` with fallback (s
 
 ### Parallel Research Batch
 ```
-1. Expand query → related terms
+1. Plan related terms and 3-5 queries yourself
 2. ~~batch_search(queries[]) → batch results
 3. Rank by relevance → top results
-4. ~~batch_scrape(top_5) → content
+4. ~~batch_scrape(top_5, question, topk) → only the relevant passages
 5. Deduplicate → clean data
 ```
 
 ### Full 7-Step Research
 ```
 1. CLASSIFY → research type + depth
-2. PLAN → expand query + 3-7 queries
-3. SEARCH → ~~batch_search / ~~search (with fallback)
-4. READ → ~~batch_scrape top-5 (with fallback)
+2. PLAN → 3-7 queries from different angles
+3. SEARCH → ~~batch_search / ~~search (with fallback); depth deep adds ~~deep_agent
+4. READ → ~~batch_scrape top-5 with a question (with fallback)
 5. EXTRACT → key facts, data, quotes
 6. SYNTHESIZE → deduplicate + cross-check
 7. REPORT → template + methodology

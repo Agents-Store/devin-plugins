@@ -1,106 +1,92 @@
 # Scenario — SSO + Microsoft Graph bot
 
-A bot that signs the user in, then lists their next five calendar events from Microsoft Graph.
+A bot that signs the user in with SSO, then lists the next five calendar events from Microsoft Graph.
 
-## Steps
+## 1. Prerequisites
+
+- Node 22.12 or newer, `teams login` done, Azure CLI (`az`) installed and signed in with the **same** account.
+- An **Azure-managed** bot: a Teams-managed bot cannot do OAuth or SSO. Create it as Azure from the start, or migrate it:
 
 ```bash
-teams project new typescript graph-bot --template graph
-cd graph-bot
-npm install
+teams app create --name "Graph Bot" --azure --subscription <subscription-id> --resource-group <resource-group> \
+  --endpoint "https://<tunnel-host>/api/messages" --env .env --json
+# existing Teams-managed bot instead:
+# teams app bot migrate <teamsAppId> --resource-group <resource-group>
 ```
 
-The `graph` template scaffolds an OAuth-aware bot. Complete the Azure-side setup first — follow `skills/authentication/references/sso-setup.md` end-to-end. You should end up with:
+## 2. Configure SSO (Azure side)
 
-- An AAD app exposing `api://<host>/<APP_ID>/access_as_user`.
-- An OAuth connection on the Bot Service named `GRAPH_CONNECTION` with scopes `access_as_user Calendars.Read`.
-- The manifest's `webApplicationInfo.resource` set to `api://<host>/<APP_ID>`.
+Follow the official CLI-driven guide, which this scenario deliberately does not repeat: `teams-sdk-teams-dev` → `references/guide-setup-sso.md`. It ends with an OAuth connection named **`graph`** on the Azure Bot, an Entra app exposing `access_as_user`, the Teams clients pre-authorised, `webApplicationInfo` on the app, and `teams app doctor <teamsAppId>` green. Give the connection the scopes `User.Read Calendars.Read`.
 
-Edit `src/index.ts`:
+## 3. The bot
+
+```bash
+teams project new typescript graph-bot -t echo --yes
+cd graph-bot
+npm install @microsoft/teams.graph @microsoft/teams.graph-endpoints
+```
+
+Bring the `.env` written by `teams app create` into the project. Replace `src/index.ts`:
 
 ```ts
 import { App } from '@microsoft/teams.apps';
-import { DevtoolsPlugin } from '@microsoft/teams.dev';
-import { MessageActivity, OAuthCard, cardAttachment } from '@microsoft/teams.api';
+import { Client as GraphClient } from '@microsoft/teams.graph';
+import * as endpoints from '@microsoft/teams.graph-endpoints';
 
-const tokens = new Map<string, string>();   // replace with a durable store in prod
+const app = new App();
+const graph = app.addOAuthFlow('graph', { oauthCardText: 'Sign in to view your calendar', signInButtonText: 'Sign in' });
 
-const app = new App({
-  plugins: [new DevtoolsPlugin()],
-});
-
-app.on('message', async ({ send, activity, api }) => {
-  const cached = tokens.get(activity.from.id);
-
-  if (!cached) {
-    await send(
-      new MessageActivity().addAttachment(
-        cardAttachment(
-          'oauth',
-          new OAuthCard({
-            connectionName: 'GRAPH_CONNECTION',
-            text: 'Sign in to view your calendar',
-          }),
-        ),
-      ),
-    );
-    return;
-  }
-
-  const events = await api.graph
-    .withToken(cached)
-    .me.events.list({ $top: 5, $orderby: 'start/dateTime' });
-
-  if (!events.value.length) {
-    await send('No upcoming events.');
-    return;
-  }
-
-  const lines = events.value.map(
-    (e) => `• ${e.start?.dateTime} — ${e.subject}`,
-  );
-  await send(`Next ${events.value.length} events:\n${lines.join('\n')}`);
-});
-
-app.on('signin.token-exchange', async ({ activity, api, send }) => {
-  const token = await api.tokens.exchange({
-    connectionName: 'GRAPH_CONNECTION',
-    userTokenExchangeRequest: activity.value,
+async function sendEvents(ctx: { send: (text: string) => Promise<unknown> }, token: string) {
+  const client = new GraphClient({ token: () => token }, { baseUrlRoot: app.graphBaseUrl });
+  const events = await client.call(endpoints.me.events.list, {
+    $top: 5,
+    $orderby: ['start/dateTime'],
+    $select: ['subject', 'start'],
   });
-  tokens.set(activity.from.id, token.token);
-  await send('Signed in. Ask me again to see your calendar.');
+  const lines = (events.value ?? []).map((e) => `• ${e.start?.dateTime} — ${e.subject}`);
+  await ctx.send(lines.length ? `Next ${lines.length} events:\n${lines.join('\n')}` : 'No upcoming events.');
+}
+
+app.on('message', async (ctx) => {
+  const token = await graph.signIn(ctx);        // cached token, or undefined after an OAuth card was sent
+  if (!token) return;
+  await sendEvents(ctx, token);
 });
 
-app.on('signin.verify-state', async ({ activity, api }) => {
-  await api.tokens.verify({ state: activity.value.state });
+graph.onSignInComplete(async (ctx, token) => {
+  await ctx.send('Signed in. Here is your calendar:');
+  await sendEvents(ctx, token.token);
 });
 
-(async () => {
-  await app.start();
-})();
+graph.onSignInFailure(async (ctx, failure) => {
+  ctx.log.error(`sign-in failed: ${failure?.code} ${failure?.message}`);
+  await ctx.send('Sign-in failed. Ask your admin to check consent for this app.');
+});
+
+app.message('/signout', async (ctx) => {
+  await graph.signOut(ctx);
+  await ctx.send('You have been signed out.');
+});
+
+app.start(process.env.PORT || 3978).catch(console.error);
 ```
 
-## Run
+## 4. Run and verify
 
 ```bash
-devtunnel host -p 3978 --allow-anonymous
-teams app update $(teams app list --json | jq -r '.[0].teamsAppId') --endpoint "https://<tunnel-host>/api/messages"
-npm run dev
+npm run dev          # tunnel running, endpoint registered, unauthenticated flag OFF
 ```
 
-## Verify
+1. Install the app in Teams and open the 1:1 chat. SSO does not run in the Agents Playground.
+2. Send any message. First time: an OAuth card, then a consent prompt for `Calendars.Read`.
+3. After consent the callback sends the calendar. A second message answers directly from the cached token.
+4. `/signout` clears the token; the next message asks again.
 
-1. Sideload the updated manifest with the SSO-enabled `webApplicationInfo`.
-2. Send any message to the bot.
-3. The bot replies with an OAuth card. Click **Sign in** and consent.
-4. The bot replies with "Signed in. Ask me again to see your calendar."
-5. Send another message. The bot replies with up to five upcoming events.
-
-DevTools shows: inbound `message` → outbound OAuth card → inbound `signin.token-exchange` → outbound text → inbound `message` → outbound calendar list.
+`teams app doctor <teamsAppId>` shows the SSO checks (identifier URI, `access_as_user`, pre-authorised clients, redirect URI, OAuth connection) if the card never appears.
 
 ## Common tweaks
 
-- Replace the `Map` with Redis / Postgres for durable token storage keyed on `activity.from.id`.
-- Refresh expired tokens by re-issuing the OAuthCard on a Graph `401`.
-- Add a function tool to a `ChatPrompt` that wraps `api.graph.withToken(...).me.events.list(...)` so an LLM can call it via natural language.
-- For multi-tenant deployments, switch `webApplicationInfo` and the AAD app's `signInAudience` to multi-tenant and use `authority: 'https://login.microsoftonline.com/common'`.
+- A durable store for anything you keep per user; pending sign-ins live in turn state, so give `state.storage` a shared store before scaling out (`sdk-patterns`).
+- Add a function tool to an AI agent that wraps the calendar call, so the model can answer "what is on my calendar" (`ai-agents`).
+- Several providers: one `addOAuthFlow` per connection (`authentication`).
+- Sovereign clouds: the client already follows `app.graphBaseUrl`; set `CLOUD` (`deployment`).

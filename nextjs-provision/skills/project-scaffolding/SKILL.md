@@ -23,12 +23,12 @@ npx shadcn@latest init
 npx shadcn@latest init -t next -n my-app
 
 # 3. Install core components
-npx shadcn@latest add button card input form dialog dropdown-menu toast tabs
+npx shadcn@latest add button card input field dialog dropdown-menu toast tabs
 ```
 
 ## shadcn studio Templates
 
-shadcn studio offers 20+ production-ready templates (requires Pro license). Official templates can also be scaffolded via `npx shadcn create` presets:
+shadcn studio offers 25+ production-ready templates (requires Pro license). Official templates can also be scaffolded via `npx shadcn create` presets:
 
 | Template | Includes |
 |----------|----------|
@@ -90,7 +90,7 @@ src/
 │       ├── user-profile-card.tsx
 │       └── data-table.tsx
 ├── lib/
-│   ├── utils.ts                # cn() helper (created by shadcn init)
+│   ├── utils.ts                # export { cn } from "cn" (created by shadcn init)
 │   └── validations.ts          # Zod schemas for forms
 ├── hooks/                      # Custom React hooks
 │   └── use-media-query.ts
@@ -115,15 +115,18 @@ The `components.json` file controls where components are installed and how paths
 ```json
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "new-york",
+  "style": "base-nova",
   "rsc": true,
   "tsx": true,
   "tailwind": {
     "config": "",
     "css": "src/app/globals.css",
     "baseColor": "neutral",
-    "cssVariables": true
+    "cssVariables": true,
+    "prefix": ""
   },
+  "iconLibrary": "lucide",
+  "rtl": false,
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
@@ -131,6 +134,8 @@ The `components.json` file controls where components are installed and how paths
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
+  "menuColor": "default",
+  "menuAccent": "subtle",
   "registries": {
     "@shadcn-studio": "https://shadcnstudio.com/r/{style}/{name}.json",
     "@ss-components": "https://shadcnstudio.com/r/components/{style}/{name}.json",
@@ -147,11 +152,12 @@ The `components.json` file controls where components are installed and how paths
 
 | Field | Purpose |
 |-------|---------|
-| `style` | `new-york` (default; `default` style deprecated). Visual styles now come from presets (Vega/Nova/Maia/Lyra/Mira/Luma/Rhea/Sera) |
+| `style` | `<base>-<preset>` — `base-nova` (Base UI, the `init` default) or `radix-nova`. Visual styles come from presets (Vega/Nova/Maia/Lyra/Mira/Luma/Rhea/Sera). The legacy `new-york` / `default` values predate the nova presets; shadcn studio `{style}` URLs resolve for `base-nova` / `radix-nova` |
 | `rsc` | Enable React Server Components support |
 | `tsx` | Use TypeScript (`.tsx`) files |
 | `tailwind.config` | Path to Tailwind config (v3); blank for v4 |
 | `tailwind.css` | Path to the CSS file with theme variables |
+| `iconLibrary`, `rtl`, `menuColor`, `menuAccent`, `tailwind.prefix` | Icon set (`lucide`), RTL support, menu appearance, utility class prefix — written by `init` |
 | `aliases.components` | Where components are installed |
 | `aliases.ui` | Shorthand alias for `components/ui` |
 | `registries` | Custom registries (shadcn studio, private, etc.) |

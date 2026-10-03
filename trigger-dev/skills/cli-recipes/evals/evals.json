@@ -7,10 +7,10 @@
       "expected_output": "Should cover: login with --profile, list-profiles, switch command, using profiles with dev and deploy",
       "files": [],
       "expectations": [
-        "Shows login --profile flag', 'type': 'content_check",
-        "Mentions list-profiles command', 'type': 'content_check",
-        "Shows switch command', 'type': 'content_check",
-        "Shows using profile with dev or deploy command', 'type': 'content_check"
+        "Shows login --profile flag",
+        "Mentions list-profiles command",
+        "Shows switch command",
+        "Shows using profile with dev or deploy command"
       ]
     }
   ]

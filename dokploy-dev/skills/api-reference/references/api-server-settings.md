@@ -1,13 +1,13 @@
 # API Reference: Server, Settings, Backup, Notifications, Users
 
 ## Contents
-- [Server (16 endpoints)](#server-16-endpoints)
-- [Settings (49 endpoints)](#settings-49-endpoints)
-- [Backup (11 endpoints)](#backup-11-endpoints)
+- [Server (17 endpoints)](#server-17-endpoints)
+- [Settings (47 endpoints)](#settings-47-endpoints)
+- [Backup (12 endpoints)](#backup-12-endpoints)
 - [Notification (38 endpoints)](#notification-38-endpoints)
-- [User (20 endpoints)](#user-20-endpoints)
+- [User (23 endpoints)](#user-23-endpoints)
 
-## Server (16 endpoints)
+## Server (17 endpoints)
 
 Manage remote servers connected to Dokploy for multi-server deployments.
 
@@ -24,6 +24,7 @@ Manage remote servers connected to Dokploy for multi-server deployments.
 | GET | `/server.getDefaultCommand` | server.getDefaultCommand | Get the default setup command for a server |
 | GET | `/server.getServerMetrics` | server.getServerMetrics | Get CPU, memory, disk metrics |
 | GET | `/server.getServerTime` | server.getServerTime | Get current time on the server |
+| GET | `/server.getServices` | server.getServices | **v0.30.0+** services deployed on one server (`serverId`) |
 | POST | `/server.create` | server.create | Register a new remote server |
 | POST | `/server.remove` | server.remove | Unregister a server |
 | POST | `/server.setup` | server.setup | Run initial setup (install Docker, Traefik) |
@@ -40,7 +41,8 @@ Manage remote servers connected to Dokploy for multi-server deployments.
   "port": "number (default: 22)",
   "username": "string (default: root)",
   "sshKeyId": "string (required — SSH key for connection)",
-  "description": "string"
+  "description": "string",
+  "enableDockerCleanup": "boolean (v0.30+, default true; also on server.update)"
 }
 ```
 
@@ -49,7 +51,7 @@ Manage remote servers connected to Dokploy for multi-server deployments.
 
 ---
 
-## Settings (49 endpoints)
+## Settings (47 endpoints)
 
 Global Dokploy instance configuration, Traefik management, and system operations.
 
@@ -88,12 +90,11 @@ Global Dokploy instance configuration, Traefik management, and system operations
 
 | Method | Path | operationId | Description |
 |--------|------|-------------|-------------|
-| POST | `/settings.cleanAll` | settings.cleanAll | Run all cleanup operations |
+| POST | `/settings.cleanAll` | settings.cleanAll | Background Docker cleanup (containers, `image prune --all`, builder, `system prune --all`; no volumes, no monitoring); returns `{ status: "scheduled" }` |
 | POST | `/settings.cleanAllDeploymentQueue` | settings.cleanAllDeploymentQueue | Clear all deployment queues |
 | POST | `/settings.cleanDockerBuilder` | settings.cleanDockerBuilder | Remove Docker builder cache |
 | POST | `/settings.cleanDockerPrune` | settings.cleanDockerPrune | Docker system prune |
 | POST | `/settings.cleanMonitoring` | settings.cleanMonitoring | Remove monitoring data |
-| POST | `/settings.cleanRedis` | settings.cleanRedis | Flush Redis cache |
 | POST | `/settings.cleanSSHPrivateKey` | settings.cleanSSHPrivateKey | Remove stored SSH keys |
 | POST | `/settings.cleanStoppedContainers` | settings.cleanStoppedContainers | Remove all stopped containers |
 | POST | `/settings.cleanUnusedImages` | settings.cleanUnusedImages | Remove dangling Docker images |
@@ -103,7 +104,6 @@ Global Dokploy instance configuration, Traefik management, and system operations
 
 | Method | Path | operationId | Description |
 |--------|------|-------------|-------------|
-| POST | `/settings.reloadRedis` | settings.reloadRedis | Restart Redis connection |
 | POST | `/settings.reloadServer` | settings.reloadServer | Reload the Dokploy server process |
 | POST | `/settings.reloadTraefik` | settings.reloadTraefik | Reload Traefik configuration |
 | POST | `/settings.assignDomainServer` | settings.assignDomainServer | Assign the dashboard domain |
@@ -129,7 +129,7 @@ Global Dokploy instance configuration, Traefik management, and system operations
 
 ---
 
-## Backup (11 endpoints)
+## Backup (12 endpoints)
 
 Database backup management and manual backup triggers.
 
@@ -145,6 +145,7 @@ Database backup management and manual backup triggers.
 | POST | `/backup.manualBackupMariadb` | backup.manualBackupMariadb | Trigger immediate MariaDB backup |
 | POST | `/backup.manualBackupMongo` | backup.manualBackupMongo | Trigger immediate MongoDB backup |
 | POST | `/backup.manualBackupCompose` | backup.manualBackupCompose | Trigger immediate compose service backup |
+| POST | `/backup.manualBackupLibsql` | backup.manualBackupLibsql | Trigger immediate LibSQL backup (`backupId`) |
 | POST | `/backup.manualBackupWebServer` | backup.manualBackupWebServer | Trigger immediate web server backup |
 
 ### Key parameters
@@ -153,13 +154,17 @@ Database backup management and manual backup triggers.
 ```json
 {
   "schedule": "string (required — cron expression, e.g. '0 2 * * *')",
-  "prefix": "string (backup file prefix)",
-  "destination": "string (required — s3 | local)",
-  "enabled": "boolean (default: true)",
-  "postgresId": "string (for Postgres backups)",
-  "mysqlId": "string (for MySQL backups)",
-  "mariadbId": "string (for MariaDB backups)",
-  "mongoId": "string (for MongoDB backups)"
+  "prefix": "string (required — backup file prefix)",
+  "destinationId": "string (required — from destination.all)",
+  "database": "string (required — database name; for compose backups the database inside the service)",
+  "databaseType": "string (required — postgres | mysql | mariadb | mongo | libsql | web-server)",
+  "backupType": "string (database | compose)",
+  "enabled": "boolean",
+  "keepLatestCount": "number (retention)",
+  "postgresId | mysqlId | mariadbId | mongoId | libsqlId": "string (the database to back up)",
+  "composeId": "string (compose-service backups, with serviceName)",
+  "serviceName": "string",
+  "includeEncryptionKey": "boolean (v0.30+)"
 }
 ```
 
@@ -256,7 +261,7 @@ POST /notification.test{Provider}
 
 ---
 
-## User (20 endpoints)
+## User (23 endpoints)
 
 User management, API keys, permissions, and metrics.
 
@@ -277,6 +282,8 @@ User management, API keys, permissions, and metrics.
 | GET | `/user.getServerMetrics` | user.getServerMetrics | Get server-level metrics for user |
 | GET | `/user.getMetricsToken` | user.getMetricsToken | Get the metrics authentication token |
 | GET | `/user.getUserByToken` | user.getUserByToken | Look up user by API token |
+| GET | `/user.listSessions` | user.listSessions | **v0.30.0+** list your active sessions |
+| GET | `/user.listPasskeys` | user.listPasskeys | **v0.30.0+** list your registered passkeys |
 
 ### Mutations
 
@@ -287,6 +294,7 @@ User management, API keys, permissions, and metrics.
 | POST | `/user.generateToken` | user.generateToken | Generate an auth token |
 | POST | `/user.assignPermissions` | user.assignPermissions | Assign project permissions to a user |
 | POST | `/user.sendInvitation` | user.sendInvitation | Invite a new user |
+| POST | `/user.revokeSession` | user.revokeSession | **v0.30.0+** revoke one session (`sessionId`) |
 | POST | `/user.update` | user.update | Update user profile |
 | POST | `/user.remove` | user.remove | Delete a user |
 

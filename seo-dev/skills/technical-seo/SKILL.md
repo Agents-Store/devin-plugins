@@ -222,22 +222,25 @@ Prefer subdirectories for most Next.js apps.
 
 Google uses the mobile version of your site for indexing. Requirements:
 
-- **Viewport meta tag**: Next.js sets this automatically via `metadata.viewport` or the default
+- **Viewport meta tag**: Next.js sets `width=device-width, initial-scale=1` automatically. Customize it with `export const viewport` or `generateViewport` (Next.js 14+) — not inside the `metadata` object
 - **Responsive design**: All content accessible on mobile
 - **Touch targets**: Minimum 48x48px for interactive elements
 - **No horizontal scroll**: Content fits viewport width
 - **Same content on mobile and desktop**: Google indexes the mobile version
 
 ```tsx
-// Explicit viewport (Next.js sets sensible defaults)
-export const metadata: Metadata = {
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-  },
+// app/layout.tsx — explicit viewport (Next.js sets sensible defaults)
+import type { Viewport } from 'next'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#ffffff',
 }
 ```
+
+Use `generateViewport()` instead only when the value depends on request or fetched data. Do not export both from the same segment, and do not set `maximumScale: 1` or `userScalable: false` — they block zoom and hurt accessibility.
 
 ## Security Headers
 
@@ -253,7 +256,6 @@ const nextConfig = {
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           {
             key: 'Strict-Transport-Security',
@@ -266,7 +268,17 @@ const nextConfig = {
 }
 ```
 
+Do not add `X-XSS-Protection`: MDN marks the header as deprecated and non-standard, and it can create XSS holes in otherwise safe sites. Rely on a `Content-Security-Policy` instead (see the Next.js guide on setting a CSP).
+
 HTTPS is mandatory for SEO — Google confirmed it as a ranking signal.
+
+## Googlebot Fetch Limit (2 MB)
+
+Googlebot crawls the first 2 MB of a supported file, measured on the uncompressed data, and each referenced resource (CSS, JavaScript) is fetched separately under the same limit. When the cutoff is hit it stops the fetch and passes only what it already downloaded to indexing. For Next.js pages this matters because the RSC payload and inline scripts are part of the HTML document:
+
+- Keep `<title>`, meta description, canonical, `hreflang` and JSON-LD high in the document, and do not push them below large inline data
+- Do not embed huge JSON blobs (full CMS responses, long lists) into the page through props; send only what the page renders
+- Paginate or virtualize very long listings so the server-rendered HTML stays small
 
 ## Technical SEO Checklist
 
@@ -276,6 +288,7 @@ HTTPS is mandatory for SEO — Google confirmed it as a ranking signal.
 | **Crawl** | XML sitemap submitted to GSC | Critical |
 | **Crawl** | No orphan pages | High |
 | **Crawl** | Clean URL structure | High |
+| **Crawl** | HTML document under 2 MB uncompressed; metadata and JSON-LD near the top | Medium |
 | **Index** | Canonical tags on all pages | Critical |
 | **Index** | noindex on non-public pages | High |
 | **Index** | No duplicate content | High |

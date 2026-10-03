@@ -11,19 +11,32 @@ description: |
 
 # NocoDB Dev — Worked Examples
 
-Practical end-to-end scenarios. Each example follows the discover → plan → apply → verify loop using MCP for discovery/verification and CLI/API for writes.
+Practical end-to-end scenarios. Each example follows the discover → plan → apply → verify loop using MCP for discovery/verification and REST (`curl`) — or, on Cloud / licensed, the MCP `callTool` schema tools — for writes.
+
+The examples use the small `nocodb_api` wrapper from the **cli-reference** skill (`nocodb_api METHOD /path ['body']`, paths under `${NOCODB_URL}/api/v3`, token from `NOCODB_TOKEN`):
+
+```bash
+nocodb_api() {
+  local m="$1" p="$2" b="${3:-}"
+  if [ -n "$b" ]; then
+    curl -sS -X "$m" -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" -d "$b" "${NOCODB_URL}/api/v3${p}"
+  else
+    curl -sS -X "$m" -H "xc-token: ${NOCODB_TOKEN}" -H "Content-Type: application/json" "${NOCODB_URL}/api/v3${p}"
+  fi
+}
+```
 
 ## Quick Examples
 
 ### Create a table from scratch
 
 ```bash
-nc table:create $BASE_ID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables '{
   "title": "Tasks",
   "fields": [
     { "title": "Title",     "type": "SingleLineText" },
     { "title": "Status",    "type": "SingleSelect",
-      "colOptions": { "options":[
+      "options": { "choices":[
         {"title":"Todo"},{"title":"Doing"},{"title":"Done"}
       ]}},
     { "title": "Due",       "type": "Date" },
@@ -35,52 +48,57 @@ nc table:create $BASE_ID '{
 ### Add a field to an existing table
 
 ```bash
-nc field:create $BASE_ID $TASKS_TABLE_ID '{"title":"Priority","type":"Rating","max":3}'
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TASKS_TABLE_ID/fields '{"title":"Priority","type":"Rating","options":{"max_value":3}}'
 ```
 
 ### Rename a field
 
 ```bash
-nc field:update $BASE_ID $TASKS_TABLE_ID $COLUMN_ID '{"title":"Stars"}'
+nocodb_api PATCH /meta/bases/$BASE_ID/fields/$FIELD_ID '{"title":"Stars"}'
 ```
 
 ### Build a Kanban view
 
 ```bash
-nc view:create:kanban $BASE_ID $TASKS_TABLE_ID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TASKS_TABLE_ID/views '{
   "title": "Board",
-  "fk_grp_col_id": "<statusColumnId>"
+  "type": "kanban",
+  "options": { "stack_by": { "field_id": "<statusFieldId>" } }
 }'
 ```
 
 ### Add a Formula
 
 ```bash
-nc field:create $BASE_ID $TASKS_TABLE_ID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TASKS_TABLE_ID/fields '{
   "title": "Days Until Due",
   "type": "Formula",
-  "formula": "DATETIME_DIFF({Due}, NOW(), \"days\")"
+  "options": { "formula": "DATETIME_DIFF({Due}, NOW(), \"days\")" }
 }'
 ```
 
 ### Wire a Slack webhook on insert
 
 ```bash
-nc hook:create $BASE_ID $TASKS_TABLE_ID '{
+nocodb_api POST /meta/bases/$BASE_ID/tables/$TASKS_TABLE_ID/hooks '{
   "title": "Slack on new task",
-  "event": "after",
-  "operation": "insert",
+  "event": "record",
+  "operation": ["insert"],
   "notification": {
-    "type": "Messaging",
-    "payload": {
-      "channel": "Slack",
-      "webhook_url": "https://hooks.slack.com/services/T0/B0/XXX",
-      "body": ":pencil: New task: {{record.Title}}"
-    }
+    "type": "Slack",
+    "payload": { "body": ":pencil: New task: {{record.Title}}" }
   },
-  "active": true,
-  "version": "v3"
+  "active": true
 }'
+```
+
+### The same on Cloud / licensed, over MCP
+
+```
+mcp__plugin_nocodb-dev_nocodb__listTools  category: "fields"
+mcp__plugin_nocodb-dev_nocodb__callTool   name: "createField"
+  arguments: { tableId: "<tasksTableId>",
+               field: { title: "Priority", type: "Rating", options: { max_value: 3 } } }
 ```
 
 ## Full Scenario Walkthroughs
@@ -96,4 +114,4 @@ See `references/scenarios/`:
 - **Build relations bottom-up.** Create the "many" tables (Orders) before the "one" tables (Customers) only if the link is `bt`. For `hm` and `mm`, either order works.
 - **Lookups need links first.** Don't try to PATCH a Lookup config to point at a not-yet-existing link — NocoDB rejects with 400.
 - **System fields are write-once.** `CreatedTime` etc. populate themselves; don't try to seed them from imports.
-- **Webhook conditions match field titles, case-sensitive.** Mistyped column references render literally instead of erroring.
+- **Webhook templates match field titles, case-sensitive.** Mistyped `{{record.<Field>}}` references render literally instead of erroring.

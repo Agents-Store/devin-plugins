@@ -1,82 +1,85 @@
-# Adaptive Card builders — reference
+# Adaptive Card builders — reference (`@microsoft/teams.cards` 2.1)
 
-Every builder in `@microsoft/teams.cards` follows the same conventions:
+Conventions shared by every element and action:
 
-- `new ClassName(positionalRequired, …)` for the small set of required values (id, text, url).
-- `.withFoo(value)` chainable mutators for optional properties.
-- `.addBar(child)` chainable mutators for child elements.
-- `.toJSON()` returns the raw Adaptive Card JSON the schema expects.
+- Children are **constructor arguments** where the element holds a list: `new AdaptiveCard(...body)`, `new Container(...items)`, `new Column(...items)`, `new ActionSet(...actions)`, `new FactSet(...facts)`, `new ChoiceSetInput(...choices)`.
+- Scalar content comes first, options second: `new TextBlock(text, options?)`, `new Image(url, options?)`, `new OpenUrlAction(url, options?)`, `new ToggleInput(title, options?)`, `new Fact(title, value)`.
+- Elements without a mandatory scalar take only an options object: `new TextInput({ id, label, placeholder, … })`, `new NumberInput(options)`, `new ExecuteAction({ title })`, `new SubmitAction(options)`.
+- Every option also has a chainable setter: `.withId()`, `.withLabel()`, `.withIsRequired()`, `.withStyle()`, … Setters return the element.
+- Types are strict: an invalid enum value (`size: 'huge'`) is a compile error.
+- The raw schema types are exported as `IAdaptiveCard`, `IExecuteAction`, `IOpenUrlAction`, … for hand-written JSON (`as const satisfies IOpenUrlAction`).
 
-The shapes below mirror the Adaptive Card 1.5+ schema; see the [Adaptive Cards schema](https://adaptivecards.io/explorer/) for the underlying contract.
+The shapes follow the Adaptive Cards 1.5+ schema; the [schema explorer](https://adaptivecards.io/explorer/) is the contract.
 
 ## Root
 
-| Builder | Constructor |
+| Builder | Notes |
 |---|---|
-| `AdaptiveCard` | `new AdaptiveCard()` |
-| `AdaptiveCard.fromJSON(json)` | wrap a hand-written or designer-exported card |
-
-Common mutators: `.addBody(child)`, `.addActions(action, …)`, `.withVersion('1.5')`, `.withSpeak(text)`, `.withRefresh({ action, userIds })`, `.withSelectAction(action)`.
+| `new AdaptiveCard(...body)` | The version is set for you. Setters: `.withBody(...elements)`, `.withActions(...actions)`, `.withVersion('1.5')`, `.withSpeak(text)`, `.withRefresh({ … })`, `.withSelectAction(action)`, `.withMinHeight()`, `.withBackgroundImage()`, `.withFallbackText()` |
 
 ## Display elements
 
-| Builder | Constructor | Common mutators |
+| Builder | Constructor | Common setters |
 |---|---|---|
-| `TextBlock` | `new TextBlock(text)` | `.withWeight('Default'\|'Lighter'\|'Bolder')`, `.withSize('Small'\|'Default'\|'Medium'\|'Large'\|'ExtraLarge')`, `.withColor('Default'\|'Accent'\|'Good'\|'Warning'\|'Attention')`, `.withWrap()`, `.withMaxLines(n)` |
-| `RichTextBlock` | `new RichTextBlock()` | `.addInline(TextRun)` |
-| `TextRun` | `new TextRun(text)` | `.withWeight(...)`, `.withColor(...)`, `.withItalic()`, `.withStrikethrough()` |
-| `Image` | `new Image(url)` | `.withSize('Auto'\|'Small'\|'Medium'\|'Large')`, `.withStyle('Default'\|'Person')`, `.withSelectAction(action)` |
-| `Media` | `new Media()` | `.addSource(url, mimeType)`, `.withPoster(url)` |
-| `FactSet` | `new FactSet()` | `.addFact(new Fact(title, value))` |
+| `TextBlock` | `(text, options?)` | `weight` (`Lighter`/`Default`/`Bolder`), `size` (`Small`…`ExtraLarge`), `color` (`Default`, `Accent`, `Good`, `Warning`, `Attention`, …), `wrap`, `maxLines`, `style` (`heading`), `spacing` |
+| `RichTextBlock` | `(options?)` | `.withInlines(new TextRun(text, { italic: true }), …)` |
+| `TextRun` | `(text, options?)` | `weight`, `color`, `italic`, `strikethrough`, `underline` |
+| `Image` | `(url, options?)` | `size` (`Auto`, `Small`, `Medium`, `Large`), `style` (`Person`), `altText`, `.withSelectAction()` |
+| `Media` | `(options?)` | `sources`, `poster` |
+| `FactSet` | `(...facts)` | children are `new Fact('Status', 'open')` |
+| `CodeBlock` | `(options?)` | `codeSnippet`, `language` |
+| `Table` | `(options?)` | rows and columns per the schema |
 
-## Inputs (always require an `id`)
+## Inputs (each needs an id)
 
-| Builder | Constructor | Key mutators |
+| Builder | Constructor | Common setters |
 |---|---|---|
-| `TextInput` | `new TextInput(id)` | `.withPlaceholder(...)`, `.withIsMultiline()`, `.withIsRequired()`, `.withMaxLength(n)`, `.withValue(default)` |
-| `NumberInput` | `new NumberInput(id)` | `.withMin(n)`, `.withMax(n)`, `.withValue(n)` |
-| `DateInput` | `new DateInput(id)` | `.withMin(date)`, `.withMax(date)`, `.withValue(date)` |
-| `TimeInput` | `new TimeInput(id)` | `.withMin(t)`, `.withMax(t)`, `.withValue(t)` |
-| `ToggleInput` | `new ToggleInput(id, title)` | `.withValueOn('yes')`, `.withValueOff('no')` |
-| `ChoiceSetInput` | `new ChoiceSetInput(id)` | `.withChoices([Choice, …])`, `.withStyle('compact'\|'expanded')`, `.withIsMultiSelect()` |
-| `Choice` | `new Choice(title, value)` | — |
+| `TextInput` | `(options?)` | `.withId()`, `.withLabel()`, `.withPlaceholder()`, `.withIsMultiline()`, `.withMaxLength()`, `.withValue()`, `.withIsRequired()`, `.withErrorMessage()` |
+| `NumberInput` | `(options?)` | `.withMin()`, `.withMax()`, `.withValue()` |
+| `DateInput` | `(options?)` | `.withMin()`, `.withMax()`, `.withValue('YYYY-MM-DD')` |
+| `TimeInput` | `(options?)` | `.withMin()`, `.withMax()`, `.withValue('HH:mm')` |
+| `ToggleInput` | `(title, options?)` | `.withValueOn()`, `.withValueOff()`, `.withValue()`; the submitted value is a string |
+| `ChoiceSetInput` | `(...choices)` | choices are `{ title, value }` objects; `.withStyle('compact'\|'expanded'\|'filtered')`, `.withIsMultiSelect()`, `.withPlaceholder()` |
 
 ## Actions
 
 | Builder | Constructor | Notes |
 |---|---|---|
-| `SubmitAction` | `new SubmitAction()` | Generic submit; fires `card.action` if you set a verb, else falls back to legacy invoke |
-| `ExecuteAction` | `new ExecuteAction(verb)` | Adaptive Cards 1.4+; fires `card.action.<verb>` |
-| `OpenUrlAction` | `new OpenUrlAction(url)` | Browser open |
-| `ToggleVisibilityAction` | `new ToggleVisibilityAction()` | `.withTargetElements([id])` |
-| `ShowCardAction` | `new ShowCardAction(card)` | Inline expansion |
+| `ExecuteAction` | `(options?)` | `Action.Execute`; routes to `card.action.<action>` through `.withData(new SubmitData('<action>'))`; `.withAssociatedInputs('auto')`; `.withVerb()` for universal-action verbs |
+| `SubmitAction` | `(options?)` | `Action.Submit`; the one dialogs use: `.withData(new OpenDialogData('<id>'))` opens a dialog, `.withData(new SubmitData('<action>'))` submits one |
+| `OpenUrlAction` | `(url, options?)` | opens in the browser |
+| `ToggleVisibilityAction` | `(options?)` | `.withTargetElements([...])` |
+| `ShowCardAction` | `(options?)` | `.withCard(card)` expands inline |
 
-All actions support `.withTitle(label)`, `.withIconUrl(url)`, `.withStyle('default'\|'positive'\|'destructive')`, `.withData(obj)`.
+Shared setters: `.withTitle()`, `.withIconUrl()`, `.withStyle('default'|'positive'|'destructive')`, `.withMode()`, `.withTooltip()`, `.withIsEnabled()`.
+
+`SubmitData` and `OpenDialogData` come from `@microsoft/teams.cards`. Both take the routing name first and optional static data second.
 
 ## Containers
 
-| Builder | Constructor | Key mutators |
+| Builder | Constructor | Notes |
 |---|---|---|
-| `Container` | `new Container()` | `.addItem(child)`, `.withStyle('default'\|'emphasis'\|'accent'\|'good'\|'warning'\|'attention')` |
-| `ColumnSet` | `new ColumnSet()` | `.addColumn(Column)` |
-| `Column` | `new Column()` | `.addItem(child)`, `.withWidth('auto'\|'stretch'\|number)` |
-| `ActionSet` | `new ActionSet()` | `.addAction(action)` |
+| `Container` | `(...items)` | `.withStyle('default'\|'emphasis'\|'accent'\|'good'\|'warning'\|'attention')`, `.withItems(...)`, `.withSelectAction()` |
+| `ColumnSet` | `(options?)` | `.withColumns(...columns)` |
+| `Column` | `(...items)` | `.withWidth('auto'\|'stretch'\|number)`, `.withItems(...)` |
+| `ActionSet` | `(...actions)` | an inline row of actions inside the body |
 
-## Best practices
+## Practices
 
-- Always set an `id` on inputs; the value will not appear in the submission without one.
-- Use `ExecuteAction` over `SubmitAction` for new cards — it interoperates cleanly with `app.on('card.action.<verb>', …)`.
-- For long forms, group inputs in `Container.withStyle('emphasis')` to break up the visual flow.
-- Mix designer-authored JSON with builder calls via `AdaptiveCard.fromJSON(...)` followed by `.addActions(...)` — best of both worlds.
-- Wrap user-provided text in `TextBlock` with `.withWrap()` — without it, long strings clip.
+- Prefer `ExecuteAction` for new cards; it fits the `card.action.<action>` router and universal actions.
+- Group long forms in `Container(...).withStyle('emphasis')` sections.
+- Give user-provided text `wrap: true`; without it a long string clips.
+- Keep one `SubmitData` name per action and one `card.action.<name>` handler per name.
 
 ## Sending
 
 ```ts
-import { cardAttachment } from '@microsoft/teams.api';
-import { MessageActivity } from '@microsoft/teams.api';
+import { MessageActivityInput } from '@microsoft/teams.api';
+import { AdaptiveCard, TextBlock } from '@microsoft/teams.cards';
 
-await send(new MessageActivity().addAttachment(cardAttachment('adaptive', card)));
+app.on('message', async ({ send }) => {
+  const card = new AdaptiveCard(new TextBlock('Your form:'));
+  await send(card);                                                      // card only
+  await send(new MessageActivityInput('Here is your form:').addCard('adaptive', card));   // text + card
+});
 ```
-
-For a text + card combo: `new MessageActivity('Here is your form:').addAttachment(...)`.

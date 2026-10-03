@@ -1,7 +1,7 @@
 ---
 name: component-search
 description: >
-  Search and install UI components from 260+ registries in the official shadcn directory. This skill should be used when
+  Search and install UI components from the 400+ registries in the official shadcn directory. This skill should be used when
   the user asks to "search for shadcn components", "find a calendar component", "browse community registries",
   "install from magicui", "what shadcn registries are available", "add animated components", "search for a
   date picker", "find UI blocks for landing page", "install from aceternity", "what community components
@@ -11,7 +11,7 @@ description: >
 
 ## How Community Registries Work
 
-shadcn v4 supports custom registries via the `"registries"` field in `components.json`. Any registry that implements the shadcn registry protocol can be added. The official registry directory at `https://ui.shadcn.com/r/registries.json` contains 267 registries (Aug 2026) — always up to date.
+shadcn v4 supports custom registries via the `"registries"` field in `components.json`. Any registry that implements the shadcn registry protocol can be added. The official registry directory at `https://ui.shadcn.com/r/registries.json` held 418 registries on 2026-10-02 (380 not hidden; 326 healthy, 41 degraded, 39 unavailable, 12 observing) — always fetch it instead of trusting a number.
 
 The CLI can install from any registry without configuration:
 
@@ -25,9 +25,11 @@ The CLI also installs straight from public GitHub repos — no build step, just 
 npx shadcn@latest add <user>/<repo>/<item>
 ```
 
-GitHub registries work with `list`, `search`, `view`, and `add`. Registries additionally support server-side dynamic search (`?q=&limit=&offset=`), which powers `shadcn search`.
+GitHub registries work with `list`, `search`, `view`, and `add`, and — since CLI 4.19 — also with **private** repositories: if the repo is not publicly readable the CLI reads it through `gh` (`gh auth login`, nothing else to configure), or through `GH_TOKEN` / `GITHUB_TOKEN` where `gh` is not installed (use a fine-grained token with read-only Contents access). Public repos are always tried anonymously first. Registries additionally support server-side dynamic search (`GET /r/registry.json?q=&limit=&offset=`), which powers `shadcn search`.
 
-But the **official shadcn MCP server** only searches registries listed in `components.json`. To enable MCP-assisted search across all registries, populate them from the official endpoint.
+Registries can be declared in `components.json` or, since CLI 4.18, in `package.json#registries` (the two are merged).
+
+The **official shadcn MCP server** only searches registries listed in the project's `components.json`. To enable MCP-assisted search across the directory, populate them from the official endpoint.
 
 ## Dynamic Registry Source
 
@@ -42,8 +44,21 @@ Returns a JSON array. Each entry has:
 - `url` — Registry endpoint with `{name}` placeholder (e.g., `"https://magicui.design/r/{name}.json"`)
 - `homepage` — Project website
 - `description` — Brief description
+- `health` — `status` (`healthy` | `degraded` | `unavailable` | `observing`), `hidden`, `score`, `statusReason`, availability figures
+- `ranking` — `score` and `itemCount` (missing for registries that are not ranked yet)
 
 Always fetch this endpoint instead of using a hardcoded list — it's maintained by the shadcn team and always current.
+
+**Filter by health before recommending or bulk-adding.** Skip `health.status == "unavailable"` and `health.hidden == true` (39 entries on 2026-10-02: all `unavailable`, 38 of them hidden — they would not install). Say so when you recommend a `degraded` registry (e.g. sampled items failing validation); prefer `healthy` ones with a high `ranking.score`:
+
+```bash
+curl -s https://ui.shadcn.com/r/registries.json | python3 -c '
+import json, sys
+for r in json.load(sys.stdin):
+    h = r.get("health", {})
+    if h.get("status") in ("healthy", "observing") and not h.get("hidden"):
+        print(r["name"], r["url"])'
+```
 
 ## Search Workflow
 
@@ -55,7 +70,9 @@ Always fetch this endpoint instead of using a hardcoded list — it's maintained
 3. Consult references/community-registries.md for category-based recommendations
      ↓
 4. Check user's components.json — are registries configured?
-   If not → run /add-registries to populate all registries
+   If not → run /add-registries to populate the available registries
+   (the CLI can already install @registry/item for any directory entry
+   without it — the bulk step only matters for MCP search)
      ↓
 5. Use MCP tools to search, or install directly via CLI
      ↓
@@ -68,7 +85,7 @@ Always fetch this endpoint instead of using a hardcoded list — it's maintained
 
 ### Add all registries (recommended)
 
-Use the `/add-registries` command to fetch all 260+ registries from the official endpoint and add them to `components.json` automatically.
+Use the `/add-registries` command to fetch the registries from the official endpoint, skip the `unavailable` and hidden ones, and add the rest to `components.json` automatically.
 
 ### Add a handful natively
 
@@ -92,7 +109,7 @@ Or manually:
    {
      "registries": {
        "@magicui": "https://magicui.design/r/{name}.json",
-       "@aceternity": "https://ui.aceternity.com/r/{name}.json"
+       "@aceternity": "https://ui.aceternity.com/registry/{name}.json"
      }
    }
    ```
@@ -129,48 +146,44 @@ The CLI auto-resolves registry URLs. Even without `components.json` configuratio
 
 ## MCP-Assisted Search
 
-Two MCP servers are configured in this plugin's `.mcp.json`:
+This plugin's `.mcp.json` declares one MCP server: the official `shadcn` server (`npx shadcn@latest mcp`). It searches the registries listed in the project's `components.json` — add community registries there to expand its scope. Through this plugin its tools are named `mcp__plugin_nextjs-provision_shadcn__<tool>`:
 
-| Server | What It Searches | Best For |
-|--------|-----------------|----------|
-| `shadcn` (official) | All registries in `components.json` | Finding components across configured registries |
-| `shadcn-community` (Jpisnice) | shadcn/ui GitHub repo via `list_components`, `get_component`, `get_component_demo`, `get_component_metadata`, `list_blocks`, `get_block`, `get_directory_structure`; plus tweakcn theme tools `list_themes`, `get_theme`, `apply_theme` (writes theme files, supports `dryRun`) | Browsing component source code, demos, block implementations; applying tweakcn themes |
+| Tool | Use |
+|------|-----|
+| `get_project_registries` | Which registries `components.json` configures |
+| `search_items_in_registries` | Fuzzy search across (selected) registries |
+| `list_items_in_registries` | Page through a registry's items (`types`, `limit`, `offset`) |
+| `view_items_in_registries` | Item details and file contents — `@registry/item` |
+| `get_item_examples_from_registries` | Demos and usage code (`calendar-demo`, `example-hero`, ...) |
+| `get_add_command_for_items` | The `npx shadcn@latest add ...` command for given `@registry/item` addresses |
+| `get_audit_checklist` | Post-install checklist after adding components |
 
-### Dual search strategy
+Known quirks (shadcn 4.21.1): `search_items_in_registries` prints `Add command: [object Promise]` — build the command yourself (`npx shadcn@latest add @registry/item`) or call `get_add_command_for_items`. A registry that is not in `components.json` (for example `@magicui` in a fresh project) returns `NOT_CONFIGURED` from the MCP even though the CLI installs from it — configure it first (`/add-registries` or `npx shadcn registry add`).
 
-1. **Official MCP** searches all configured registries — add community registries to `components.json` to expand its scope
-2. **Jpisnice MCP** searches the shadcn/ui GitHub repository for component source, demos, and blocks — useful for understanding how components work before installing
+The community MCP server `@jpisnice/shadcn-ui-mcp-server` is no longer shipped with this plugin: its `get_component` returns the Radix variant even with `--ui-library base`, and `get_component_metadata` answers "not found" for common components. For component source and demos use `npx shadcn@latest view @registry/item`, `npx shadcn@latest docs <component>`, or the tools above.
 
-For projects that want both MCPs, copy the template from `references/mcp-config-template.json` to the project's `.mcp.json`.
+Without the MCP, the CLI covers the same ground: `npx shadcn@latest search @registry -q "<term>"`, `npx shadcn@latest view @registry/item`, `npx shadcn@latest add @registry/item --dry-run`.
 
-### Jpisnice MCP rate limits
-
-Without a GitHub token: 60 requests/hour. With a token: 5000/hour.
-
-To add a token:
-
-```bash
-claude mcp add shadcn-community -- npx -y @jpisnice/shadcn-ui-mcp-server --github-api-key ghp_YOUR_TOKEN
-```
-
-Or set `GITHUB_PERSONAL_ACCESS_TOKEN` in the MCP server's env config. Create a fine-grained token with no special permissions (public repo access only).
+To use the server in a user project (not through this plugin), run `npx shadcn@latest mcp init --client claude` — see the `mcp-tools` skill, and `references/mcp-config-template.json` for a ready `.mcp.json`.
 
 ## Registry Categories
 
 | Category | Registries | Component Types |
 |----------|-----------|-----------------|
-| Animation & Motion | @magicui, @aceternity, @animate-ui, @cult-ui, @motion-primitives, @chamaac | Animated buttons, scroll effects, parallax, globe, beams |
+| Animation & Motion | @magicui, @aceternity (degraded), @animate-ui, @cult-ui, @motion-primitives | Animated buttons, scroll effects, parallax, globe, beams |
 | Extended UI | @coss (ex-Origin UI), @diceui, @basecn, @8bitcn, @boldkit, @8starlabs-ui, @cardcn | Extra components, retro/pixel style, card variants, dice rolls |
-| Blocks & Sections | @bundui, @blocks-so, @efferd, @doras-ui, @creative-tim | Landing page sections, marketing blocks, dashboards |
+| Blocks & Sections | @bundui, @blocks-so, @efferd (degraded) | Landing page sections, marketing blocks, dashboards |
 | E-Commerce | @commercn | Product cards, cart, checkout, reviews |
-| AI Components | @ai-elements, @assistant-ui, @tool-ui, @ai-blocks | Chat bubbles, prompt inputs, AI response streams, LLM UIs |
+| AI Components | @ai-elements, @assistant-ui, @tool-ui | Chat bubbles, prompt inputs, AI response streams, LLM UIs |
 | File Upload | @better-upload | Upload components, drag-and-drop, progress indicators |
-| Editors & misc | @plate, @shadcn-editor, @kibo-ui, @kokonutui, @reui, @intentui, @tailark, @retroui, @neobrutalism, @smoothui, @skiper-ui, @hextaui, @paceui, @clerk, @supabase | Rich text editors, design-system kits, auth/backend UIs |
-| Other | @arc, @abui, @aevr, @unlumen-ui, @einui, @billingsdk | Specialized UI, billing forms, misc |
+| Editors & misc | @plate, @shadcn-editor, @kibo-ui, @kokonutui, @reui, @intentui, @tailark (degraded), @retroui, @smoothui, @skiper-ui, @paceui (degraded), @clerk, @supabase | Rich text editors, design-system kits, auth/backend UIs |
+| Other | @arc, @abui (degraded), @aevr, @unlumen-ui (degraded), @einui, @billingsdk | Specialized UI, billing forms, misc |
+
+Also `degraded` on 2026-10-02: @shadcnblocks. `unavailable` (do not recommend): @chamaac, @doras-ui, @creative-tim, @ai-blocks, @hextaui, @neobrutalism. Re-check `health` in the live directory before relying on this table.
 
 See `references/community-registries.md` for the full list with URLs and descriptions.
 
-Full directory (267 registries): https://ui.shadcn.com/docs/directory
+Full directory (418 registries on 2026-10-02): https://ui.shadcn.com/docs/directory
 
 ## CLAUDE.md Section for User Projects
 

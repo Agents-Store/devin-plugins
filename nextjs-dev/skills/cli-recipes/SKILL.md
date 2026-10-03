@@ -5,7 +5,7 @@ description: Next.js CLI commands and common development scripts. This skill sho
 
 # Next.js CLI Recipes
 
-Command-line recipes for creating, developing, building, and deploying Next.js applications. Current as of Next.js 16 (16.3 latest).
+Command-line recipes for creating, developing, building, and deploying Next.js applications. Current as of Next.js 16.3; keep `next` at `^16.3.8` or later for the security fixes (`npm view next@latest version` shows the latest patch).
 
 ## Create a New Project
 

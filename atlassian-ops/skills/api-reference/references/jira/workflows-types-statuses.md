@@ -33,8 +33,9 @@ How issues move (workflows) and how they're classified (types, statuses). Base `
 
 | Method | Purpose & key fields |
 |--------|----------------------|
-| `GET /workflow/search` | Paginated workflow search (`getWorkflowsPaginated`). `?expand=transitions,statuses`. |
+| `GET /workflows/search` | Paginated workflow search (`searchWorkflows`). `?queryString=&orderBy=name&scope=GLOBAL&isActive=true&projectId=&expand=values.transitions&startAt=&maxResults=` (`scope` is `GLOBAL` for company-managed or `PROJECT` for team-managed projects). Needs *Administer Jira*, or *Administer projects* / *View (read-only) workflow* for project-scoped workflows. |
 | `POST /workflows` | Read workflows by id/name with full detail (`readWorkflows`). |
+| `POST /workflows/copy` | Copy a workflow and the statuses it uses into a new workflow in the same scope (`copyWorkflow`). Body `{"workflowId":"<uuid>","workflowName":"Copy of Software workflow","description":"…"?}`. Needs *Administer Jira*, or for a project-scoped workflow *Edit workflows* (or *View workflow* + *Administer projects*). |
 | `POST /workflows/create` | Create workflows (`createWorkflows`); validate first with `POST /workflows/create/validation`. |
 | `POST /workflows/update` | Update workflows (`updateWorkflows`); validate with `POST /workflows/update/validation`. |
 | `GET /workflows/capabilities` | Editor capabilities/rule types available (`workflowCapabilities`). |
@@ -51,6 +52,7 @@ How issues move (workflows) and how they're classified (types, statuses). Base `
 | `PUT /workflowscheme/{id}/issuetype/{issueType}` | Map an issue type to a workflow within the scheme. |
 
 ## Notes
+- **Use `/workflows/search`, not the old path.** The previous paginated-search endpoint (`getWorkflowsPaginated`, singular `workflow` segment) was scheduled for removal on 2026-06-01 (CHANGE-2569). It is still listed as deprecated in the bundled spec; treat it as gone and never call it.
 - **Active workflow schemes can't be edited directly** — create a draft, modify it, then publish. The API enforces this.
 - Status `statusCategory` is one of `TODO`, `IN_PROGRESS`, `DONE` (drives the board columns and `statusCategory` JQL).
 - To delete a status/issue type, first check its `*Usages` endpoints; in-use entities can't be removed.

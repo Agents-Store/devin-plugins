@@ -40,7 +40,7 @@ try {
 
 - **On Vercel** (Functions, Cron, builds): the SDK authenticates automatically via the deployment's OIDC token. No config.
 - **Local dev**: run `vercel link` then `vercel env pull` to get a `VERCEL_OIDC_TOKEN` in `.env.local` (valid ~12h; re-pull when it expires).
-- **External / CI** (no OIDC available): set `VERCEL_TOKEN`, `VERCEL_TEAM_ID`, `VERCEL_PROJECT_ID`. The SDK picks these up automatically.
+- **External / CI** (no OIDC available): set `VERCEL_TOKEN`, `VERCEL_TEAM_ID`, `VERCEL_PROJECT_ID` and pass them as `token`, `teamId`, `projectId` to `Sandbox.create()` (the SDK does not read them from the environment).
 
 This is auth for the process **calling** the SDK. It is separate from any credential you want available **inside** the VM — the sandbox does not automatically carry your `VERCEL_OIDC_TOKEN` (see [Running AI agents](#running-ai-agents-in-a-sandbox)).
 
@@ -145,7 +145,7 @@ The URL is served by the running session. If the sandbox is stopped, nothing is 
 **Persistence is the default.** When a persistent sandbox stops, its **filesystem** is snapshotted automatically; a later call resumes it into a fresh session. Only the filesystem is saved — **running processes do not survive a stop/resume**, so restart long-running servers on resume (see below).
 
 - **Sandbox vs session**: a *sandbox* is a long-lived entity identified by `name`; a *session* is one VM boot. The max session duration caps each session, not the sandbox — resuming starts a new session with a fresh timeout, so a persistent sandbox's total lifetime is effectively unbounded.
-- **Retrieve / resume**: `Sandbox.get({ name })` returns the handle immediately and auto-resumes on the next call that needs a running VM (pass `resume: false` to disable). `getOrCreate` does not resume before returning by default; pass `resume: true` to resume and await `onResume` immediately. `stop()` and `update()` never auto-resume. Use `getOrCreate` when the sandbox may not exist yet, `get` when you know it does.
+- **Retrieve / resume**: `Sandbox.get({ name })` returns the handle immediately and auto-resumes on the next call that needs a running VM (`resume: false` only skips resuming inside `get`; it doesn't disable this). `getOrCreate` does not resume before returning by default; pass `resume: true` to resume and await `onResume` immediately. `stop()` and `update()` never auto-resume. Use `getOrCreate` when the sandbox may not exist yet, `get` when you know it does.
 - **`getOrCreate` accepts the same create options** as `create` (`ports`, `persistent`, `resources`, `networkPolicy`, `env`, …). They apply **only when it creates** the sandbox; if the named sandbox already exists it's returned with its existing config (use `sandbox.update({ … })` to change it).
 - **Hooks are per call**, and fire on mutually exclusive events: `onCreate` runs once, the first time `getOrCreate` creates the sandbox; `onResume` runs on a resume. So to start a service **exactly once per session**, start it in **both** `onCreate` (first boot) and `onResume` (later boots). Hooks are arguments to *this* `getOrCreate` call, not stored on the sandbox — a *different process* resuming via `Sandbox.get` won't run them, so restart what it needs itself.
 - A detached server returns as soon as the process spawns, **not** when it's listening — so after starting it (in `onCreate` for the first boot and `onResume` for later ones) poll until the port answers before treating `domain(port)` as live (see [Ports](#ports-and-preview-urls)).
@@ -222,7 +222,7 @@ const sandbox = await Sandbox.create({ mounts: { "/data": drive } }); // read-wr
 const reader = await Sandbox.create({ mounts: { "/data": drive.snapshot() } });
 ```
 
-Up to 4 drives per run. Default size 1 TiB (1 GiB on Hobby), max 16 TiB. A drive lives in one region; a sandbox mounting it must run in that region and can't use failover regions. Only one sandbox at a time can mount a drive read-write; use `drive.snapshot()` for shared reads.
+Up to 4 drives per run. Default size 1 TiB (1 GiB on Hobby), max 16 TiB. A drive lives in one region; a sandbox mounting it must use that region as its main region (failover regions still load the drive, with higher read latency). Only one sandbox at a time can mount a drive read-write; use `drive.snapshot()` for shared reads.
 
 ## Network policy and credential brokering
 
@@ -230,7 +230,7 @@ The egress firewall is Sandbox's key security control for untrusted code. Set `n
 
 - `"allow-all"` (default) — all egress allowed.
 - `"deny-all"` — blocks all egress, including DNS. Start here for untrusted code.
-- Rule object — an `allow` list restricts egress to **only** the listed domains (everything else is denied); add `subnets.allow`/`subnets.deny` for IP ranges (`deny` wins). Domain matching is SNI-based, so it only applies to TLS traffic — pair with `deny-all`/subnet rules if non-TLS egress must be blocked too.
+- Rule object — an `allow` list restricts egress to **only** the listed domains (everything else is denied); add `subnets.allow`/`subnets.deny` for IP ranges (`deny` wins). Domain matching is SNI-based, so non-TLS traffic is denied unless allowed by IP range (`subnets.allow`) or the policy includes a `*` catch-all (which lets domain-less traffic through); `subnets.deny` only removes access an allow rule granted.
 
 **Credential brokering**: a `transform` rule injects a secret header on egress to an allowed domain, so code inside the VM can call an authenticated API **without the secret ever entering the sandbox**. Because the `allow` list denies everything else, the box can reach only that one domain:
 
@@ -245,9 +245,8 @@ const sandbox = await Sandbox.create({
   },
 });
 // Inside the VM: fetch("https://api.example.com/…") is authenticated by the
-// firewall; the VM never holds API_SECRET and can't reach any other TLS host.
-// Domain rules are SNI-based (TLS only) — add `subnets: { deny: [...] }` to also
-// block non-TLS / raw-IP egress if the code is fully untrusted.
+// firewall; the VM never holds API_SECRET and can't reach any other host
+// (no catch-all `*` rule, so non-TLS / domain-less egress is denied too).
 ```
 
 ## Running AI agents in a sandbox
@@ -268,7 +267,7 @@ const sandbox = await Sandbox.create({
 // come from the AI Gateway model catalog (provider/model, e.g. "anthropic/claude-sonnet-5").
 ```
 
-**Untrusted code — broker the credential, keep it out of the VM.** For code you don't trust, don't put the token in the VM at all. Allow only the gateway and inject the auth header at the firewall so the box holds no credential and can reach no other TLS host (add `subnets.deny` to block non-TLS egress too):
+**Untrusted code — broker the credential, keep it out of the VM.** For code you don't trust, don't put the token in the VM at all. Allow only the gateway and inject the auth header at the firewall so the box holds no credential and can reach no other host (without a `*` catch-all, non-TLS egress is denied too):
 
 ```ts
 const sandbox = await Sandbox.create({

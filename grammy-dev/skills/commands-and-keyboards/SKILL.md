@@ -64,7 +64,7 @@ await bot.api.setMyCommands(
 
 Available scope types: `default`, `all_private_chats`, `all_group_chats`, `all_chat_administrators`, `chat`, `chat_administrators`, `chat_member`.
 
-For larger setups with localization, use the `@grammyjs/commands` plugin (see `plugins-catalog`) — it provides a `Commands` builder, `.localize()`, and one-call sync.
+For larger setups with localization, use the `@grammyjs/commands` plugin (see `plugins-catalog`) — its `CommandGroup` builder registers handlers and menu entries together, adds `.localize()`, per-scope variants and `.ephemeral()` commands (Bot API 10.2+, visible only to the sender), and syncs everything with one `setCommands(bot)` call.
 
 ## Inline keyboards (buttons under a message)
 
@@ -93,10 +93,25 @@ Builder methods:
 | `.login(label, url)` | LoginUrl button (OAuth-style) |
 | `.switchInline(label, query?)` | Switch to inline mode in another chat |
 | `.switchInlineCurrent(label, query?)` | … in the current chat |
+| `.switchInlineChosen(label, query?)` | … in a chat the user picks from the allowed types |
+| `.copyText(label, text)` | Copy `text` to the clipboard |
 | `.game(label)` | Game button |
 | `.pay(label)` | Payment button (only inside an invoice message) |
+| `.disabled(label)` | Disabled button that does nothing (Bot API 10.3) |
 | `.row()` | Start a new row |
 | `.add(...buttons)` | Append raw button objects |
+
+### Button colors and icons (Bot API 9.4+)
+
+`.primary()`, `.success()`, `.danger()` (or `.style("primary")`) color the **last added** button; `.icon(customEmojiId)` puts a custom emoji in front of its label. Both work on `InlineKeyboard` and `Keyboard`:
+
+```typescript
+const confirm = new InlineKeyboard()
+  .text("Confirm", "order:ok").success()
+  .text("Cancel", "order:cancel").danger()
+  .row()
+  .text("Details", "order:info").primary().icon(CUSTOM_EMOJI_ID);   // custom emoji needs a bot that may use them
+```
 
 ### Handle callback_query
 
@@ -158,6 +173,7 @@ new Keyboard()
   .requestPoll("Create poll", "regular")
   .requestUsers("Choose user", 1, { user_is_bot: false })
   .requestChat("Choose chat", 2, { chat_is_channel: true })
+  .requestManagedBot("Create my bot", 3, { suggested_name: "My helper" })   // Bot API 9.6, see api-reference
   .webApp("Open Web App", "https://my.webapp/");
 ```
 

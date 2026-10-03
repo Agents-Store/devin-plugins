@@ -16,18 +16,23 @@ Register a webhook on the account to receive HTTP POSTs when events occur.
 
 ```bash
 curl -s -X POST \
-  -H "api_access_token: ${CHATWOOT_API_KEY}" \
+  -H "api-access-token: ${CHATWOOT_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{"url":"https://example.com/chatwoot/webhook",
        "subscriptions":["conversation_created","message_created","conversation_status_changed"]}' \
   "${CHATWOOT_BASE_URL}/api/v1/accounts/${CHATWOOT_ACCOUNT_ID}/webhooks" | jq .
 ```
 
-Subscribable events:
+Subscribable events documented in the OpenAPI spec:
 
 `conversation_created`, `conversation_updated`, `conversation_status_changed`,
 `contact_created`, `contact_updated`, `message_created`, `message_updated`,
 `webwidget_triggered`, `conversation_typing_on`, `conversation_typing_off`.
+
+The server's allow-list (`Webhook::ALLOWED_WEBHOOK_EVENTS`, `app/models/webhook.rb` on `develop`,
+checked 2026-10-02) also accepts `inbox_created` and `inbox_updated`. They are **not in the
+OpenAPI spec**: verify them on your instance before depending on them (a version that predates
+them rejects the subscription in validation). Any name outside the allow-list is rejected.
 
 ### Verifying webhook signatures
 
@@ -59,7 +64,7 @@ the bot to an inbox.
 ```bash
 # Create a bot (platform token)
 curl -s -X POST \
-  -H "api_access_token: ${CHATWOOT_PLATFORM_TOKEN}" \
+  -H "api-access-token: ${CHATWOOT_PLATFORM_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{"name":"Triage Bot","outgoing_url":"https://example.com/bot","bot_type":"webhook"}' \
   "${CHATWOOT_BASE_URL}/platform/api/v1/agent_bots" | jq .
@@ -84,7 +89,7 @@ def bot():
         conv = e["conversation"]["id"]
         requests.post(
             f"{BASE}/api/v1/accounts/{ACC}/conversations/{conv}/messages",
-            headers={"api_access_token": TOKEN},
+            headers={"api-access-token": TOKEN},
             json={"content": "Thanks! An agent will be with you shortly.",
                   "message_type": "outgoing"},
             timeout=10,
@@ -98,11 +103,12 @@ messages (an infinite loop). Confirm tone/content before enabling auto-replies i
 ## Automation rules
 
 Automation rules run actions when an event matches conditions — no external service needed.
-Event names: `conversation_created`, `conversation_updated`, `message_created`.
+Event names (spec enum): `conversation_created`, `conversation_updated`, `conversation_resolved`,
+`message_created`.
 
 ```bash
 curl -s -X POST \
-  -H "api_access_token: ${CHATWOOT_API_KEY}" \
+  -H "api-access-token: ${CHATWOOT_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
         "name": "Label help requests",

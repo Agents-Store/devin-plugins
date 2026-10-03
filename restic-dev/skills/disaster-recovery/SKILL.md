@@ -35,6 +35,9 @@ restic restore latest --target /restore --include /docker/projectX
 
 # a specific snapshot, with excludes
 restic restore <snapshot-id> --target /restore --exclude '*.log'
+
+# new server with different UIDs/GIDs: restore owners by name (0.19+), and verify file contents
+restic restore latest --target /restore --ownership-by-name --verify
 ```
 
 Prefer restoring to `/restore` (staging) and moving files into place after inspection. Restoring directly with `--target /` or `--overwrite` overwrites live files — only do that deliberately, with the stack stopped.

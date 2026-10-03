@@ -180,14 +180,14 @@ curl 'https://app.example.com/api/media/file/<filename>?size=thumbnail'
 | --- | --- | --- |
 | `GET` | `/api/payload-jobs/run?limit&queue&allQueues` | Process the queue (POST only via the `X-Payload-HTTP-Method-Override: GET` header) |
 | `GET` | `/api/payload-jobs/handle-schedules` | Enqueue due scheduled jobs |
-| `GET` | `/api/payload-jobs` | List jobs (collection CRUD) |
+| `GET` | `/api/payload-jobs` | List jobs (collection CRUD) — **denied by default since 3.89.0** (`create/read/update/delete: () => false`); open read-only via `jobs.jobsCollectionOverrides` |
 
 ```bash
 curl 'https://app.example.com/api/payload-jobs/run?limit=100&queue=nightly' \
   -H "Authorization: Bearer $CRON_SECRET"
 ```
 
-Gate the run endpoint via `jobs.access.run` in config — see the `jobs-queue` skill.
+Gate the run endpoint via `jobs.access.run` in config — see the `jobs-queue` skill. Since 3.89.0 the `payload-jobs` collection itself is closed to REST/GraphQL CRUD (job data can be sensitive); `/run` and `/handle-schedules` are unaffected because they are gated by `jobs.access.run`, not by the collection's access. The `jobs-queue` skill shows how to open read access for administrators with `jobsCollectionOverrides`.
 
 ## Where Encoding
 

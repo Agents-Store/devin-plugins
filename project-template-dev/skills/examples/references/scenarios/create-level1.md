@@ -53,7 +53,7 @@ git remote add origin git@github.com:acme-templates/project-supabase-nuxt.git
     "interface": ["nuxt"]
   },
   "plugins": {
-    "technology": ["trigger-dev-dev"],
+    "technology": ["trigger-dev"],
     "process": [],
     "stack": []
   }
@@ -74,10 +74,10 @@ Level 1 stack template. Fork this for client projects (Level 2).
 
 ## Installed Plugins
 ### Technology
-- trigger-dev-dev — task definitions, SDK patterns, deployment
+- trigger-dev — task definitions, SDK patterns, deployment
 
 ### Stack
-- (none yet — create with /plugin-creator:create)
+- (none yet — author one as a Claude Code plugin, for example with /plugin-dev:create-plugin)
 
 ## Gotchas
 - Supabase RLS: always enable Row Level Security on tables — open tables are a security risk
@@ -102,12 +102,14 @@ TRIGGER_DEV_API_KEY=
 
 ```
 Plugins found:
-  technology: trigger-dev-dev
+  technology: trigger-dev
 
 Plugins NOT found:
-  supabase — no plugin found. Create with: /plugin-creator:create
-  nuxt — no plugin found. Create with: /plugin-creator:create
+  supabase — no plugin found. Author one, for example with /plugin-dev:create-plugin
+  nuxt — no plugin found. Author one, for example with /plugin-dev:create-plugin
 ```
+
+The plugin also writes `.claude/settings.json`: `extraKnownMarketplaces` for the marketplace plus `"trigger-dev@agents-store-claude-plugins": true` under `enabledPlugins`.
 
 ### 9. Plugin validates
 
@@ -121,7 +123,7 @@ git commit -m "feat: scaffold project-supabase-nuxt from project-template
 
 Level 1 template for Supabase + Nuxt projects.
 Technologies: Supabase + Nuxt + Trigger.dev.
-Plugins: trigger-dev-dev (2 missing: supabase, nuxt)."
+Plugins: trigger-dev (2 missing: supabase, nuxt)."
 ```
 
 ### 11. Summary

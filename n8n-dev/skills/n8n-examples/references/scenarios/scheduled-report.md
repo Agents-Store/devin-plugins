@@ -43,7 +43,7 @@ n8n_create_workflow({
       id: "schedule-1",
       name: "Daily 9 AM",
       type: "n8n-nodes-base.scheduleTrigger",
-      typeVersion: 1.2,
+      typeVersion: 1.4,
       position: [250, 300],
       parameters: {
         rule: {
@@ -58,7 +58,7 @@ n8n_create_workflow({
       id: "http-1",
       name: "Fetch Analytics",
       type: "n8n-nodes-base.httpRequest",
-      typeVersion: 4.2,
+      typeVersion: 4.5,
       position: [450, 300],
       parameters: {
         method: "GET",
@@ -88,8 +88,8 @@ n8n_create_workflow({
         fromEmail: "reports@example.com",
         toEmail: "team@example.com",
         subject: "={{$json.subject}}",
-        emailType: "text",
-        message: "={{$json.body}}"
+        emailFormat: "text",
+        text: "={{$json.body}}"
       }
     },
     {
@@ -104,7 +104,7 @@ n8n_create_workflow({
       id: "slack-error",
       name: "Notify Failure",
       type: "n8n-nodes-base.slack",
-      typeVersion: 2.2,
+      typeVersion: 2.7,
       position: [450, 500],
       parameters: {
         resource: "message",
@@ -149,7 +149,9 @@ n8n_update_partial_workflow({
 })
 ```
 
-## Step 4: Validate and Activate
+## Step 4: Validate and Publish
+
+A schedule trigger only fires once the workflow is **published**. Publish when the owner wants the report to start running (in n8n 2.x the `activateWorkflow` operation publishes the workflow).
 
 ```javascript
 n8n_validate_workflow({id: "<workflow-id>"})
@@ -167,3 +169,5 @@ n8n_update_partial_workflow({
 - Error Trigger node catches workflow failures — place in same workflow
 - Set `errorWorkflow` in settings to route errors to the Error Trigger
 - HTTP Request v4 uses `authentication` and `genericAuthType` for auth config
+- Send Email v2 takes `emailFormat` (`text`, `html` or `both`) with `text` / `html` for the body
+- Error handling and the failure alert only fire for production (published) executions, not for manual test runs

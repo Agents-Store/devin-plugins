@@ -1,196 +1,185 @@
 ---
 name: media-search
-description: This skill should be used when the user asks to "find images", "search photos", "find stock photos", "search videos", "find media for app", "get stock images", "find pictures for website", or needs to find images, videos, or other media content for their application or website.
+description: This skill should be used when the user asks to "find images", "search photos", "find stock photos", "search videos", "find media for app", "get stock images", "find pictures for website", "Pexels API", "Unsplash API", or needs to find images, videos, or other media content for their application or website.
 ---
 
 # Media Search for Development
 
-Find images, videos, and visual content for applications using Pexels, Unsplash, and Jina image search.
+Find images, videos and visual content for applications with the **Pexels REST API**, the **Unsplash REST API** and Jina web image search. Pexels and Unsplash are called with `curl` (or any HTTP client) — there is no bundled MCP server for them. Full parameter tables: `mcp-patterns/references/media-tools.md`.
 
 ## Service Comparison
 
-| Service | Content | License | MCP Tools | Best For |
-|---------|---------|---------|-----------|----------|
-| **Pexels** | Photos + Videos | Free commercial, attribution appreciated | 9 tools | Stock photos and videos |
-| **Unsplash** | Photos only | Free commercial (Unsplash License) | 4 tools | High-quality editorial photos |
-| **Jina** | Web images | Varies by source | `search_images` | Finding images from any website |
+| Service | Content | Licence | Access | Best For |
+|---------|---------|---------|--------|----------|
+| **Pexels** | Photos + videos | Free commercial use; link to Pexels and photographer credit required for API use | REST, `PEXELS_API_KEY` | Stock photos and videos, locale-aware search |
+| **Unsplash** | Photos only | Unsplash License; API guidelines apply (hotlink, download tracking, attribution) | REST, `UNSPLASH_ACCESS_KEY` | High-quality editorial photos |
+| **Jina** | Web images | Varies by source | Bundled MCP `search_images` | Images from any website, inspiration |
 
-**If Pexels and Unsplash are not configured**, use Jina's `search_images` as the primary fallback — it searches the open web and requires no additional MCP setup beyond the plugin's bundled Jina server. For stock-quality images without dedicated MCP, also try `web_search_advanced_exa` (opt-in Exa tool) with `includeDomains: ["pexels.com", "unsplash.com"]`.
+**Without API keys**, use Jina `search_images` with `"return_url": true` — it needs no extra setup. For stock-quality results without keys you can also use `web_search_advanced_exa` (opt-in Exa tool) with `includeDomains: ["pexels.com", "unsplash.com"]`.
+
+## Keys
+
+```bash
+export PEXELS_API_KEY=...        # https://www.pexels.com/api/
+export UNSPLASH_ACCESS_KEY=...   # https://unsplash.com/developers
+```
+
+Set them in the environment that launches Claude Code (for example the `env` block of your local settings). Never write key values into files that are committed.
 
 ## Pattern 0: Jina Web Image Search (Always Available)
-
-Use this when Pexels/Unsplash MCP tools are not configured, or when you need images from the open web (not just stock sites):
 
 ```
 Tool: search_images
 Input: {
   "query": "modern office workspace interior design",
-  "num": 15
+  "num": 15,
+  "return_url": true
 }
 ```
 
-Returns image URLs from across the web — useful for design inspiration, reference images, and when stock photos aren't specific enough. Bundled with this plugin, no extra configuration needed.
+**Always pass `return_url: true`.** By default the tool returns base64 JPEGs, and every call fills the context with image data. Use it for design inspiration, reference images, and when stock photos are not specific enough.
 
 ## Pattern 1: Search Stock Photos
 
 ### Pexels
 
-```
-Tool: searchPhotos
-Input: {
-  "query": "modern office workspace",
-  "orientation": "landscape",
-  "size": "large",
-  "per_page": 15
-}
+```bash
+curl -s -H "Authorization: ${PEXELS_API_KEY}" \
+  "https://api.pexels.com/v1/search?query=modern+office+workspace&orientation=landscape&size=large&per_page=15&locale=en-US"
 ```
 
-Returns URLs in multiple sizes — use `src.large` (940px), `src.medium` (350px), or `src.small` (130px) based on your needs.
+Use `src.large` (940 px wide), `src.medium` (350 px high) or `src.small` (130 px high) by need. Pass `locale` (for example `ru-RU`, `de-DE`, `ja-JP`) with a query written in that language. Other filters: `color` (name or hex), `page`.
 
 ### Unsplash
 
-```
-Tool: get_search_photos
-Input: {
-  "query": "mountain landscape sunset",
-  "orientation": "landscape",
-  "per_page": 10
-}
+```bash
+curl -s -H "Authorization: Client-ID ${UNSPLASH_ACCESS_KEY}" \
+  "https://api.unsplash.com/search/photos?query=mountain+landscape+sunset&orientation=landscape&per_page=10"
 ```
 
-Returns `urls.regular` (1080px), `urls.small` (400px), `urls.thumb` (200px).
+Returns `urls.regular` (1080 px), `urls.small` (400 px), `urls.thumb` (200 px), plus the photographer in `user` and the download event URL in `links.download_location`.
 
-**Important:** Call `get_photos_download` when using an Unsplash photo to track the download as required by their API guidelines.
+### Unsplash checklist (required for every API use)
 
-### Jina Web Image Search
+1. **Hotlink** the image from `photo.urls.*` — do not download and re-upload it to your own storage or CDN (the download-and-store workflow below is for Pexels only).
+2. **Call `photo.links.download_location`** (with the same `Authorization` header and all query parameters) when the photo is actually used — inserted into a post, set as a header, chosen by a user.
+3. **Attribute** Unsplash and the photographer with links that carry `?utm_source=<app_name>&utm_medium=referral`:
+   `Photo by <a href="https://unsplash.com/@<username>?utm_source=<app_name>&utm_medium=referral"><name></a> on <a href="https://unsplash.com/?utm_source=<app_name>&utm_medium=referral">Unsplash</a>`
+4. Keep the Access Key (and Secret Key) on the server — proxy requests instead of calling the API from client-side code.
+5. Do not name your app after Unsplash, sell unaltered photos, or replicate the Unsplash experience.
 
-```
-Tool: search_images
-Input: {
-  "query": "dashboard UI design inspiration",
-  "num": 10
-}
-```
-
-Searches the open web — returns images from any website, not just stock photo sites. Useful for design inspiration and reference.
-
-## Pattern 2: Search Videos
-
-```
-Tool: searchVideos
-Input: {
-  "query": "tech startup office",
-  "orientation": "landscape",
-  "size": "medium",
-  "per_page": 5
-}
+```bash
+# after the user picks a photo — tracking call, send asynchronously
+curl -s -H "Authorization: Client-ID ${UNSPLASH_ACCESS_KEY}" "<photo.links.download_location>"
 ```
 
-Returns video files with multiple quality options. Use for background videos, hero sections, or content.
+## Pattern 2: Search Videos (Pexels only)
 
-### Trending Videos
+Video endpoints live under `/v1/videos/` (the old `/videos/` prefix is being retired).
 
-```
-Tool: getPopularVideos
-Input: { "per_page": 10 }
-```
-
-## Pattern 3: Get Curated/Random Content
-
-### Pexels Curated
-
-```
-Tool: getCuratedPhotos
-Input: { "per_page": 20 }
+```bash
+curl -s -H "Authorization: ${PEXELS_API_KEY}" \
+  "https://api.pexels.com/v1/videos/search?query=tech+startup+office&orientation=landscape&size=medium&per_page=5"
 ```
 
-Editorially selected — good for placeholder content or featured images.
+Each video returns `video_files[]` — pick the file that fits (`quality`, `width`, `file_type`, `link`). To filter by resolution or length use the popular endpoint, which is the only one with those parameters:
 
-### Unsplash Random
-
-```
-Tool: get_photos_random
-Input: {
-  "query": "technology",
-  "orientation": "landscape",
-  "count": 5
-}
+```bash
+curl -s -H "Authorization: ${PEXELS_API_KEY}" \
+  "https://api.pexels.com/v1/videos/popular?min_width=1920&max_duration=20&per_page=10"
 ```
 
-Returns random photos matching the query — good for dynamic hero images.
+### Background video for a landing page
 
-## Pattern 4: Browse Collections
+1. Search with `orientation=landscape&size=medium` (Full HD is enough for the web; `large` is 4K and much heavier), or use `popular` with `min_width=1920&max_duration=15..20` for short loops.
+2. Pick a file from `video_files`:
 
-```
-Tool: getFeaturedCollections
-Input: { "per_page": 10 }
-```
-
-Then get media from a collection:
-
-```
-Tool: getCollectionMedia
-Input: {
-  "id": "collection-id",
-  "type": "photos",
-  "per_page": 20
-}
+```typescript
+const file = video.video_files.find(f => f.width >= 1920 && f.file_type === 'video/mp4')
+          ?? video.video_files.find(f => f.file_type === 'video/mp4');
 ```
 
-## Pattern 5: Get Specific Media by ID
+3. Embed with a poster image (`video.video_pictures[0].picture`) and add a "Videos provided by Pexels" link:
 
-When you found a photo/video you want to use:
+```html
+<video autoplay muted loop playsinline poster="<video_picture_url>">
+  <source src="<video_file_link>" type="video/mp4">
+</video>
+```
 
-```
-Tool: getPhoto
-Input: { "id": 12345 }
+Try other search terms if results are generic: "abstract particles motion", "digital network connection", "circuit board closeup", "gradient blur background". Check that the loop point is seamless.
+
+## Pattern 3: Curated and Collections (Pexels)
+
+```bash
+# Editorially curated photos — placeholder or featured content
+curl -s -H "Authorization: ${PEXELS_API_KEY}" "https://api.pexels.com/v1/curated?per_page=20"
+
+# Browse featured collections, then fetch the media of one
+curl -s -H "Authorization: ${PEXELS_API_KEY}" "https://api.pexels.com/v1/collections/featured?per_page=10"
+curl -s -H "Authorization: ${PEXELS_API_KEY}" \
+  "https://api.pexels.com/v1/collections/<collection_id>?type=photos&sort=desc&per_page=20"
 ```
 
+Collections hold photos and videos; `type` filters to one of them. Good for building a gallery from a theme (travel, nature, abstract).
+
+## Pattern 4: Random Unsplash Photos
+
+```bash
+curl -s -H "Authorization: Client-ID ${UNSPLASH_ACCESS_KEY}" \
+  "https://api.unsplash.com/photos/random?query=technology&orientation=landscape&count=5"
 ```
-Tool: getVideo
-Input: { "id": 67890 }
+
+Good for dynamic hero images. Every returned photo still needs the checklist above (hotlink, download event, attribution).
+
+## Pattern 5: Specific Media by ID
+
+```bash
+curl -s -H "Authorization: ${PEXELS_API_KEY}" "https://api.pexels.com/v1/photos/2014422"
+curl -s -H "Authorization: Client-ID ${UNSPLASH_ACCESS_KEY}" "https://api.unsplash.com/photos/<photo_id>"
 ```
+
+## Pattern 6: Persist a Pexels Image in Your Own Storage
+
+Pexels licence permits keeping your own copy (Unsplash does not — see the checklist). Download the size you need, then upload it with your storage tool; keep photographer and source URL next to the file for attribution.
+
+```bash
+# 1. pick a size from the search response: src.medium, src.large, src.large2x ...
+curl -sL -o hero.jpg "<photo.src.large>"
+# 2. upload with your own tooling (S3-compatible example)
+aws s3 cp hero.jpg "s3://<bucket>/media/hero.jpg" --endpoint-url "${S3_ENDPOINT_URL}"
+```
+
+Store the `photographer`, `photographer_url` and `url` fields with the record — the "Photo by <photographer> on Pexels" credit and the link to Pexels are still required on display. Upload `medium` or `large` for web use; avoid `original` unless you need print resolution.
 
 ## Workflow: Find Media for Your App
 
-1. **Search broadly** — use `searchPhotos` with general terms
-2. **Refine** — add `orientation`, `size`, `color` filters
-3. **Preview** — check returned URLs at different sizes
-4. **Select and download** — use the appropriate size URL for your app
-5. **Track download** (Unsplash only) — call `get_photos_download`
+1. **Search broadly** with a general term; add `orientation`, `size`, `color` and `locale` to refine.
+2. **Compare** Pexels and Unsplash results (each has different content and aesthetics).
+3. **Select** a photo and note the URL at the right size.
+4. **Unsplash:** hotlink `urls.*`, call `download_location`, render the attribution. **Pexels:** hotlink or store a copy, and render the Pexels link plus photographer credit.
+5. **Cache** search responses — rate limits are low (Pexels 200/hour and 20 000/month, Unsplash 50/hour in demo mode and 1 000/hour in production).
 
 ## Integration Tips
 
-### For Web Apps
+### Responsive images
 
-```typescript
-// Use small/medium URLs for thumbnails, large for detail views
-const imageUrl = photo.src.medium; // Pexels
-const imageUrl = photo.urls.regular; // Unsplash
-```
+| Size | Pexels `src.*` | Unsplash `urls.*` | Typical width |
+|------|----------------|-------------------|---------------|
+| Thumbnail | `tiny` | `thumb` | 130-200 px |
+| Small | `small` | `small` | 350-400 px |
+| Medium | `medium` | `regular` | 940-1080 px |
+| Large | `large` / `large2x` | `full` | 1880-2000 px+ |
+| Original | `original` | `raw` | Full resolution |
 
-### For Content Pipelines
+Unsplash `urls.*` accept resize parameters (`w`, `h`, `fit`, `q`) — change them on the returned URL instead of re-hosting the image.
 
-Combine media search with web scraping:
-1. Scrape content from source site
-2. Search for relevant stock images based on content
-3. Build content package with text + images
+### Content pipelines
 
-### For Responsive Images
-
-Both Pexels and Unsplash provide multiple sizes:
-
-| Size | Pexels Field | Unsplash Field | Typical Width |
-|------|-------------|----------------|---------------|
-| Thumbnail | `src.tiny` | `urls.thumb` | 130-200px |
-| Small | `src.small` | `urls.small` | 350-400px |
-| Medium | `src.medium` | `urls.regular` | 940-1080px |
-| Large | `src.large` | `urls.full` | 1880-2000px+ |
-| Original | `src.original` | `urls.raw` | Full resolution |
+Combine media search with web scraping: scrape the source text, derive keywords, search stock media for each article, build a package of text plus images (with attribution data).
 
 ## Notes
 
-- Pexels and Unsplash require separate MCP configuration — they are not bundled in this plugin's `.mcp.json`
-- If neither stock service is configured, use Jina's `search_images` which searches the open web
-- Always check image licenses before using in commercial applications
-- Consider using `deduplicate_images` (Jina) when collecting images from multiple sources
+- Always check image licences before commercial use; web images from Jina vary by source.
+- Never commit API keys; both keys are read from the environment.
+- Troubleshooting (401, 403, 429): see the `troubleshoot` skill.

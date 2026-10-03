@@ -15,7 +15,7 @@ Depth: deep (broad market analysis)
 
 ### Step 2: PLAN
 ```
-expand_query({ query: "AI code assistant market" })
+Related terms (planned by you, no tool): "AI coding tools", "developer copilots", "code completion"
 
 Queries:
 1. "AI code assistant market size revenue 2026"
@@ -29,11 +29,12 @@ Queries:
 
 ### Step 3: SEARCH
 ```
-~~search("AI code assistant market size and growth in 2026")
+~~answer("AI code assistant market size and growth in 2026")
 → Perplexity for AI-synthesized market data with citations
 
 ~~search("AI code assistant market revenue forecast")
-→ Exa with research_paper category filter
+→ Exa semantic search; for reports and publications use the advanced Exa search with
+  category publication (opt-in), or ~~academic_search for papers
 
 ~~batch_search([
   "GitHub Copilot revenue market share 2026",
@@ -41,12 +42,15 @@ Queries:
   "AI coding tools enterprise adoption rate",
   "AI developer productivity tools market"
 ])
+
+~~deep_agent("AI code assistant market 2026: size, growth, key players, funding — with sources")
+→ One heavy pass because depth is deep; cross-check its figures against the pages read in Step 4
 ```
 
 ### Step 4: READ
 ```
 Rank by relevance("AI code assistant market", all_urls)
-~~batch_scrape(top_8_urls)
+~~batch_scrape(top_8_urls, question: "market size, growth rate, key players", topk: 3)
 
 Detect dates on URLs → filter for recent data only
 ```
@@ -81,4 +85,4 @@ Output: Deep Research Report with:
 - Methodology (7 queries, 8 pages, Perplexity + Exa + Jina)
 
 ### Expected Capabilities Used
-`~~search`, `~~batch_search`, `~~batch_scrape`, relevance ranking, date detection, deduplication
+`~~answer`, `~~search`, `~~batch_search`, `~~batch_scrape`, `~~deep_agent` (one pass, depth deep), relevance ranking, date detection, deduplication

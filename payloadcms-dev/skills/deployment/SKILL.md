@@ -107,18 +107,18 @@ Payload Cloud is the first-party managed host: connect a repo, push to deploy, a
 
 ## 3. Building without a DB connection
 
-`next build` runs static generation, which can hit your database. In CI/CD — or any build environment with no DB reachable — compile without generating static pages using the Next.js build-mode flag (there is no Payload-specific env var for this):
+`next build` runs static generation, which can hit your database. In CI/CD — or any build environment with no DB reachable — compile without generating static pages using the Next.js build-mode flag (there is no Payload-specific env var for this). The official page is [Building without a DB connection](https://payloadcms.com/docs/v3/production/building-without-a-db-connection.md):
 
 ```bash
 # Compile only — no static generation, no DB connection needed
 pnpm next build --experimental-build-mode compile
 ```
 
-Caveat: in `compile` mode, `NEXT_PUBLIC_*` vars are **not** inlined and read as `undefined` on the client. Resolve it one of two ways once a DB *is* reachable (e.g., at container start):
+Caveat: in `compile` mode, `NEXT_PUBLIC_*` vars are **not** inlined and read as `undefined` on the client. Resolve it with a second build step:
 
 ```bash
-pnpm next build --experimental-build-mode generate       # generate static pages + inline env
-pnpm next build --experimental-build-mode generate-env    # inline NEXT_PUBLIC_* env only
+pnpm next build --experimental-build-mode generate       # DB reachable: generate static pages + inline env
+pnpm next build --experimental-build-mode generate-env    # no DB reachable: inline NEXT_PUBLIC_* env only
 ```
 
 Alternatively, mark routes that would otherwise statically render with `export const dynamic = 'force-dynamic'` — this avoids the build-time DB hit but disables static optimization, so pages render slower.
@@ -141,6 +141,7 @@ Payload v3 ships several config-level knobs. **Note:** the old top-level `rateLi
 - **Disable GraphQL in production if unused.** Set `graphQL.disable: true` to drop the endpoint, or `graphQL.maxComplexity` to bound query cost. The GraphQL playground is not served in production builds.
 - **Keep `maxDepth` low.** It is the guardrail against malicious deep-populate queries that time out the server.
 - **Harden auth and uploads.** Set `maxLoginAttempts`/`lockTime` on auth collections; restrict `create`/`update`/`read` on upload collections and consider antivirus scanning in a hook.
+- **Upgrade to 3.90 promptly (security release).** It changes defaults you may rely on in production: API keys shown once (`useAPIKey: { reveal: true }` restores revealing), multipart uploads capped at 50 MiB per request and 20 MiB per file with 413 on excess (`upload.requestSizeLimit` and `upload.limits.fileSize`), strict SVG/XML validation, private Azure containers, a closed `payload-jobs` collection (3.89), and form-submission read access limited to the admin collection. After upgrading run `pnpm payload generate:types`, and on SQL databases `pnpm payload migrate:create` + `pnpm payload migrate` (adds `resetPasswordRequestedAt` and `_objectKey`). Details live in the `authentication`, `adapters`, `jobs-queue` and `official-plugins` skills.
 
 ## 5. Performance
 

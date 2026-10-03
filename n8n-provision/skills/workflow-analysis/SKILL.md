@@ -7,6 +7,8 @@ description: Analyze an n8n workflow JSON before importing — node inventory, c
 
 Analyze an n8n workflow JSON to assess compatibility, security, complexity, and credential requirements before importing to the target instance. Run this analysis on every workflow — whether from the official template library or community sources.
 
+Library templates are often years old. Expect nodes that n8n 2.0 switched off or removed, and nodes that n8n 3.0 (planned for October 2026) removes — Step 6 lists them.
+
 ## Analysis Pipeline
 
 Execute these steps in order on the workflow JSON:
@@ -68,7 +70,7 @@ Detect topology by: IF/Switch nodes (branching), connection cycles (loops), `err
 
 ## Step 3: Credential Requirements
 
-Extract credentials from nodes with a `credentials` field. Map each credential type to the service it connects. List unique types and check if they exist on the target instance using `~~credential_manage`.
+Extract credentials from nodes with a `credentials` field. Map each credential type to the service it connects. List unique types and check if they exist on the target instance using `~~credential_manage`. Also note any Data Table nodes: the table they reference must exist on the target before the workflow runs (create it with `~~datatable_manage`).
 
 ## Step 4: Security Scan
 
@@ -102,9 +104,12 @@ Verify the workflow will work on the target n8n instance.
 
 ### Check for
 
-- **Deprecated nodes**: `n8n-nodes-base.function` → `code` (since v0.198), `functionItem` → `code` (v0.198), `executeCommand` → `code` (v1.0)
-- **typeVersion**: Missing = very old export; unusually high = cutting-edge. Flag either.
-- **AI nodes**: `@n8n/n8n-nodes-langchain.*` requires n8n v1.19+ with AI enabled.
+- **Switched off by default since n8n 2.0:** `n8n-nodes-base.executeCommand` and `n8n-nodes-base.localFileTrigger` are disabled (`NODES_EXCLUDE`). Importing a workflow that holds them fails unless the instance owner sets `NODES_EXCLUDE="[]"` — a security decision. Flag them as a **blocker** and suggest an alternative.
+- **Removed in n8n 2.0:** Start (replaced by the Manual Trigger), Spontit, crowd.dev, Kitemaker, Automizy, and the Pyodide-based Python Code node (`_input` syntax; the native Python runner replaces it). Flag as a **blocker** on a 2.x target.
+- **Removed in n8n 3.0 (October 2026):** Function (`n8n-nodes-base.function`) and Function Item (`functionItem`) — use Code; Item Lists (`itemLists`) — use Aggregate, Limit, Remove Duplicates, Sort, Split Out and Summarize; Cron (`cron`) and Interval (`interval`) — use Schedule Trigger; HTML Extract (`htmlExtract`) — use HTML; iCalendar (`iCal`); Convert binary (Move Binary Data); Read/Write Binary File(s); Read PDF; Workflow Trigger; Orbit; the legacy OpenAI, OpenAI Assistant and OpenAI Model nodes; the legacy HTTP Request Tool; SerpApi; Manual Chat Trigger; Chat Messages Retriever; Motorhead and Zep memory; the Insert and Load vector-store nodes. In Execute Sub-workflow, the Local File and URL sources are removed. Flag as a **warning**: the workflow imports and runs today but will break on upgrade.
+- **AI Agent v1:** `@n8n/n8n-nodes-langchain.agent` with `typeVersion` < 2 is removed in 3.0 — flag it and suggest `typeVersion` 2 or later.
+- **typeVersion:** Missing = very old export; unusually high = cutting-edge. Flag either. `n8n_autofix_workflow` (preview) and `autoUpgradeVersions` raise outdated versions.
+- **Target check:** On a 2.x instance, Settings > Migration Report shows the affected nodes of the workflows already on it. Ask the owner to look there before a large batch.
 
 ## Step 7: Structured Report
 

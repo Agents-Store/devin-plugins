@@ -12,7 +12,7 @@
         "Each child is independently deliverable (a tenant admin could use one without the others)",
         "Child points sum to ~21 (preservation rule)",
         "Uses User Story template with Given/When/Then acceptance criteria in description_html",
-        "Calls create_work_item with parent field set to the epic ID"
+        "Calls workitem(action=create) with the parent field set to the epic's work item ID (the epic is itself a workitem of type Epic, found with workitem_type(action=resolve, name=\"Epic\"))"
       ]
     },
     {
@@ -25,7 +25,7 @@
         "Creates 3-4 child stories (view / edit name+bio / upload picture / delete account)",
         "Child points sum to ~13 (preservation rule)",
         "Each child is a vertical slice (not split by FE/BE/DB layers)",
-        "Creates children in Plane with parent field pointing to the original"
+        "Creates children in Plane with workitem(action=create, parent=<original id>) and can list them back with pql childOf(\"<identifier>\")"
       ]
     },
     {

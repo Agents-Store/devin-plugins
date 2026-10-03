@@ -5,7 +5,7 @@ description: Meta tags, Open Graph, Twitter Cards, and Next.js Metadata API patt
 
 # Meta Tags & Social Sharing
 
-Next.js App Router provides a first-class Metadata API that replaces third-party packages like `next-seo`. Export a `metadata` object or `generateMetadata` function from any `layout.tsx` or `page.tsx`.
+Next.js App Router provides a first-class Metadata API that replaces the `<Head>`-style helpers of older SEO packages (the `NextSeo` / `DefaultSeo` components of `next-seo` v6 were built for the Pages Router). Export a `metadata` object or `generateMetadata` function from any `layout.tsx` or `page.tsx`.
 
 ## Static Metadata
 
@@ -257,11 +257,38 @@ alternates: {
 
 After implementing metadata, verify:
 
-1. **View source** — check `<title>`, `<meta name="description">`, OG tags in HTML
-2. **Facebook Sharing Debugger** — test OG preview (developers.facebook.com/tools/debug/)
-3. **Twitter Card Validator** — test card preview (cards-dev.twitter.com/validator)
-4. **LinkedIn Post Inspector** — test LinkedIn preview
-5. **Google Rich Results Test** — check structured data (separate from meta tags)
+1. **Rendered DOM** — check `<title>`, `<meta name="description">`, OG tags in the rendered page. Since Next.js 15.2 `generateMetadata` output can be streamed: on request-time rendered pages, crawlers that execute JavaScript (Googlebot) get the tags appended to `<body>` after the first UI, so "View source" may not show them where you expect. Prerendered pages whose `generateMetadata` adds no dynamic behavior keep their metadata in the initial `<head>`. Use Google Search Console URL Inspection (rendered HTML), DevTools Elements, or Playwright `page.title()` / `page.locator('meta[...]')`.
+2. **Social crawlers get `<head>` metadata** — HTML-limited bots that cannot run JavaScript (`facebookexternalhit`, `Twitterbot`, `LinkedInBot`, `Slackbot`, `Bingbot`, `DuckDuckBot` and the other bots on Next.js's default list; Googlebot is not on it) receive blocking metadata inside `<head>`. Check the raw HTML as they see it:
+   ```bash
+   curl -sA "facebookexternalhit/1.1" https://example.com/blog/my-post | grep -iE "<title|og:|twitter:"
+   curl -sA "Twitterbot/1.0" https://example.com/blog/my-post | grep -iE "twitter:|og:"
+   ```
+3. **Facebook Sharing Debugger** — test OG preview (developers.facebook.com/tools/debug/)
+4. **X card preview** — the standalone Twitter Card Validator was retired in 2022 and its old URL no longer shows a validator. Paste the URL into the X post composer to see the card preview, or use a third-party OG/Twitter-card checker. The `twitter:card` and `og:*` tags are still read.
+5. **LinkedIn Post Inspector** — test LinkedIn preview
+6. **Google Rich Results Test** — check structured data (separate from meta tags)
+
+### Streaming metadata and `htmlLimitedBots`
+
+Next.js detects HTML-limited bots by User-Agent and keeps blocking `<head>` metadata for them. If a social or SEO crawler that you depend on is missing from the default list, add it with `htmlLimitedBots` in `next.config.ts`:
+
+```ts
+// next.config.ts
+import type { NextConfig } from 'next'
+
+const config: NextConfig = {
+  // ABBREVIATED sample. A custom value REPLACES the default User-Agent list, it does not extend it:
+  // start from the full default regex in html-bots.ts (packages/next/src/shared/lib/router/utils/
+  // in the Next.js repo) and append your own crawler.
+  htmlLimitedBots: /facebookexternalhit|Twitterbot|LinkedInBot|Slackbot|Bingbot|MyCustomBot/i,
+}
+
+export default config
+```
+
+Because the sample above drops every default bot it does not list (Google's `*-Google` / `Google-*` tools, DuckDuckBot, Discordbot, WhatsApp, Applebot and more), a copy-pasted abbreviated regex would silently stream metadata to those bots. Copy the full default first.
+
+`htmlLimitedBots: /.*/` turns streaming metadata off for every visitor (metadata always in `<head>`), at the cost of slower responses. The default is right for most sites. Under Cache Components, a `generateMetadata` that depends on external data but not on request data should use `'use cache'` so metadata stays part of the static shell; `metadataBase` must then be returned as a string (`url.toString()`), because `URL` instances are not serializable.
 
 ## Common Mistakes
 

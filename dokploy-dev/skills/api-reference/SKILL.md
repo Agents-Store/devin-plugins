@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Dokploy REST API Reference
 
-API version: **v0.29.14** | **546 endpoints across 50 routers** (OpenAPI 3.1.0). For the **complete, exhaustive operation index** (every endpoint with its params, generated from the schema) see [api-full-index-resources.md](references/api-full-index-resources.md) and [api-full-index-platform.md](references/api-full-index-platform.md). The themed files below give curated usage patterns for the most-used domains.
+API version: **v0.30.7** | **604 endpoints across 57 routers** (OpenAPI 3.1.0). For the **complete, exhaustive operation index** (every endpoint with its params, generated from the live REST schema) see [api-full-index-resources.md](references/api-full-index-resources.md) and [api-full-index-platform.md](references/api-full-index-platform.md). The themed files below give curated usage patterns for the most-used domains.
 
 ## Connection
 | Setting | Value |
@@ -43,11 +43,11 @@ curl -s -X POST "$DOKPLOY_URL/api/project.create" \
 
 ## Reference files
 
-**Complete coverage (100% of all 546 operations, generated from the v0.29.14 schema):**
+**Complete coverage (100% of all 604 operations, generated from the v0.30.7 schema):**
 | File | Coverage |
 |------|----------|
-| [api-full-index-resources.md](references/api-full-index-resources.md) | EVERY operation for projects, environments, tags, applications, compose, docker, domains, ports, redirects, security, certificates, mounts, registry, all 6 databases, deployments, previews, rollback, schedule, patch, backups, destinations, ai (302 ops) |
-| [api-full-index-platform.md](references/api-full-index-platform.md) | EVERY operation for settings, server, cluster, swarm, sshKey, git providers, notifications, users, organizations, custom roles, SSO, forward auth (app SSO gate), SCIM, license, stripe, whitelabeling, audit log, admin (244 ops) |
+| [api-full-index-resources.md](references/api-full-index-resources.md) | EVERY operation for projects, overview, environments, tags, applications, compose, docker (+ volumes, images, disk usage), networks, domains, ports, redirects, security, certificates, mounts, registry, all 6 databases, deployments, previews, rollback, schedule, patch, backups, destinations, ai (338 ops) |
+| [api-full-index-platform.md](references/api-full-index-platform.md) | EVERY operation for settings, server, cluster, swarm, sshKey, vault (secrets) providers, DNS providers, git providers, notifications, users, organizations, custom roles, SSO, forward auth (app SSO gate), SCIM, license, stripe, whitelabeling, audit log, admin (266 ops) |
 
 **Curated usage patterns (the most-used domains, with gotchas and examples):**
 | File | Coverage |
@@ -57,13 +57,13 @@ curl -s -X POST "$DOKPLOY_URL/api/project.create" \
 | [api-domains-certs.md](references/api-domains-certs.md) | Domains, Certificates, Security, Redirects, Ports, Forward Auth |
 | [api-compose-docker.md](references/api-compose-docker.md) | Compose, Docker, Mounts, Registry |
 | [api-server-settings.md](references/api-server-settings.md) | Server, Settings, Backup, Notifications, Users, Cluster/Swarm |
-| [ai-and-debugging.md](references/ai-and-debugging.md) | AI router, log endpoints, Docker introspection, recovery actions, rollback, settings health & cleanup |
+| [ai-and-debugging.md](references/ai-and-debugging.md) | AI router, log endpoints, Docker introspection and host diagnostics (health, events, images, volumes, disk usage), recovery actions, rollback, settings health & cleanup |
 | [schedule-patch-previews.md](references/schedule-patch-previews.md) | Schedule, Patch, Volume Backups, Preview Deployments |
 
 ## Common patterns
 **Pagination:** Most list endpoints return all records. Use client-side filtering.
 
-**Error responses:** `{"error": "Error message string", "statusCode": 400}`
+**Error responses:** `{"message": "…", "code": "BAD_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED", "data": {…}}` with the matching HTTP status; a 400 carries the failing fields in `data.zodError`.
 
 **ID parameters:** All resource IDs are UUIDs. Pass in JSON body for POST, as query parameters for GET.
 
@@ -72,3 +72,5 @@ curl -s -X POST "$DOKPLOY_URL/api/project.create" \
 curl -s "$DOKPLOY_URL/api/project.one?projectId=uuid-here" \
   -H "x-api-key: $DOKPLOY_API_KEY"
 ```
+
+**Fetch the OpenAPI document over REST, never through MCP:** `curl -s "$DOKPLOY_URL/api/settings.getOpenApiDocument" -H "x-api-key: $DOKPLOY_API_KEY" -o openapi.json`. The MCP tool of the same name returns 27 operations as bare `[REDACTED]` (redaction is on by default). Its `servers[].url` is your real host — keep the file out of git.

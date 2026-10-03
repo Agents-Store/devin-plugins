@@ -35,7 +35,7 @@ restic check                     # verifies repository structure + metadata
 restic check --read-data-subset=5%   # also downloads & verifies 5% of pack data from R2
 ```
 
-`check` validates structure for free; `--read-data-subset` actually reads data back from R2 to catch storage-side corruption without the cost of a full `--read-data`.
+`check` validates structure for free; `--read-data-subset` actually reads data back from R2 to catch storage-side corruption without the cost of a full `--read-data`. On restic 0.19+ `restic check --tag daily --read-data-subset=5%` (or a snapshot ID) limits the data read to the snapshots you just made.
 
 ## Step 4 — Test restore + diff (the real proof)
 

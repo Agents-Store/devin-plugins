@@ -11,18 +11,37 @@ This skill covers generating daily standup summaries — per-person progress, bl
 
 ## Tool Name Resolution
 
-Tools below are referenced by their **action name** only (e.g., `list_cycle_work_items`). Resolve the real tool names for your current Plane MCP server or connector through the `connector-bootstrap` skill. Match by action suffix — never assume a prefix.
+Plane MCP exposes one tool per resource and the operation goes into the `action` parameter: `cycle(action=list, ...)`. This skill writes calls in that form. Resolve the real tool names (`mcp__<server>__<resource>`) for your current Plane connection through the `connector-bootstrap` skill - never assume a server prefix.
 
 ## Available Tools
 
-| Tool | Description |
+| Call | Description |
 |------|-------------|
-| `list_cycles` | Find active sprint |
-| `list_cycle_work_items` | Get all sprint items with states and assignees |
-| `list_work_item_activities` | Track recent state changes |
-| `list_work_item_relations` | Identify blocked items |
-| `get_project_members` | Team roster |
-| `retrieve_cycle` | Sprint dates for progress calculation |
+| `cycle(action=list)` | Find the active sprint: `status=current` |
+| `cycle(action=list_workitems)` | Get all sprint items with states and assignees; takes a `pql` filter |
+| `workitem(action=count)` | Sprint totals per state group without listing items |
+| `workitem(action=list)` | Targeted queries: stalled, unassigned, overdue (`pql`) |
+| `workitem_activity(action=list)` | Track recent state changes |
+| `workitem_relation(action=list)` | Identify blocked items |
+| `member(action=list_project)` | Team roster |
+| `member(action=me)` | The current user, for `assignee = currentUser()` |
+| `get_pql_reference` | Syntax of the `pql` filter |
+
+## Standup Queries with PQL
+
+Let the server do the filtering. These queries answer the standup questions directly (`<cycle_id>` from `cycle(action=list, status=current)`; at most 5 conditions per query; call `get_pql_reference` for the full syntax):
+
+| Question | Call |
+|----------|------|
+| Sprint totals per state group | `workitem(action=count, project_id, pql='cycle = "<cycle_id>"', group_by=state__group)` |
+| Done since the last standup | `cycle(action=list_workitems, project_id, cycle_id, pql='stateGroup = "completed" AND updatedAt >= daysAgo(1)')` |
+| In progress | `cycle(action=list_workitems, project_id, cycle_id, pql='stateGroup = "started"')` |
+| Stalled (no change for 2+ days) | `cycle(action=list_workitems, project_id, cycle_id, pql='stateGroup = "started" AND updatedAt < daysAgo(2)')` |
+| In progress with no owner | `cycle(action=list_workitems, project_id, cycle_id, pql='stateGroup = "started" AND hasNoAssignee()')` |
+| Past due and still open | `cycle(action=list_workitems, project_id, cycle_id, pql='isOverdue()')` |
+| One person's items (my standup) | `workitem(action=list, project_id, pql='assignee = currentUser() AND stateGroup IN openStates()')` |
+
+`updatedAt` is the time of the last change to the item itself; it does not move for every comment. Treat the stalled query as a candidate list and confirm with `workitem_activity(action=list)` before calling an item stalled in front of the team.
 
 ## Standup Summary Generation
 
@@ -30,16 +49,18 @@ Tools below are referenced by their **action name** only (e.g., `list_cycle_work
 
 ```
 1. Find active sprint:
-   list_cycles({ project_id })
-   → Find cycle where today is between start_date and end_date
+   cycle(action=list, project_id=<id>, status=current)
+   → The cycle where today is between start_date and end_date
    → Get cycle_id, start_date, end_date
 
 2. Get sprint items:
-   list_cycle_work_items({ project_id, cycle_id })
-   → Get all items with: name, state, assignees, point
+   cycle(action=list_workitems, project_id=<id>, cycle_id=<cycle_id>)
+   → Get all items with: name, state, assignees, point (follow next_cursor)
+   workitem(action=count, project_id=<id>, pql='cycle = "<cycle_id>"', group_by=state__group)
+   → The state-group totals for the dashboard in one call
 
 3. Get team members:
-   get_project_members({ project_id })
+   member(action=list_project, project_id=<id>)
    → Map user IDs to names
 
 4. Group items by assignee and state:
@@ -51,10 +72,11 @@ Tools below are referenced by their **action name** only (e.g., `list_cycle_work
 
 5. Detect blockers:
    For each "started" item, optionally:
-   list_work_item_relations({ project_id, work_item_id })
+   workitem_relation(action=list, project_id=<id>, workitem_id=<item_id>)
    → Check for "blocked_by" relations
 
    Also flag: items in "started" state for > 2 days without activity
+   → cycle(action=list_workitems, ..., pql='stateGroup = "started" AND updatedAt < daysAgo(2)')
 
 6. Generate report (see format below)
 ```
@@ -112,15 +134,18 @@ Check for these signals:
 
 ```
 1. Explicit blockers:
-   list_work_item_relations({ project_id, work_item_id })
+   workitem_relation(action=list, project_id=<id>, workitem_id=<item_id>)
    → Items with "blocked_by" relations
+   (PQL shortcut for one item: blocks("MP-45") lists the items that block MP-45 — direction per the PQL reference wording, confirm on your instance)
 
 2. Stalled items:
    Items in "started" state for > 2 business days
-   (Check activities for last state change date)
+   → pql='stateGroup = "started" AND updatedAt < daysAgo(2)', then confirm the last
+     state change with workitem_activity(action=list, project_id, workitem_id)
 
 3. Unassigned in-progress:
    Items in "started" state with no assignees
+   → pql='stateGroup = "started" AND hasNoAssignee()'
    → Risk: nobody owns it
 
 4. Dependencies at risk:
@@ -155,11 +180,10 @@ For async teams, generate a standup post that team members can review:
 ```
 Generate and post as a comment or page:
 
-create_project_page({
-  project_id: "<id>",
-  name: "Standup — YYYY-MM-DD",
-  description_html: "<h2>Sprint Progress</h2>...<h2>Per Person</h2>...<h2>Blockers</h2>..."
-})
+page(action=create,
+     project_id=<id>,
+     name="Standup — YYYY-MM-DD",
+     description_html="<h2>Sprint Progress</h2>...<h2>Per Person</h2>...<h2>Blockers</h2>...")
 ```
 
 ## Best Practices

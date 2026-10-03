@@ -27,12 +27,12 @@
     {
       "id": 3,
       "prompt": "Create an initiative 'International expansion Q3' spanning projects Billing, Onboarding, and Compliance.",
-      "expected_output": "Calls create_initiative with name, lead, dates, and project_ids array.",
+      "expected_output": "Calls initiative(action=create) with name, lead, dates, state, then initiative(action=add_projects, project_ids=[...]) for the three projects, and reads them back with initiative(action=list_projects).",
       "files": [],
       "expectations": [
         "Consults connector-bootstrap for initiative tools",
         "Resolves all three project_ids",
-        "Calls create_initiative with the correct project_ids",
+        "Calls initiative(action=create) without project_ids (create takes none), then initiative(action=add_projects) with the three project_ids",
         "Drafts description_html with Why, Bets, and Out-of-scope sections"
       ]
     },
@@ -47,6 +47,30 @@
         "Notes that forecast assumes stable velocity and no new blockers",
         "Suggests monitoring at each sprint review"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Create the epic 'Multi-tenant support' in TaskFlow and attach it to the 'International expansion Q3' initiative, then list all epics in the project.",
+      "expected_output": "Epic created as a work item of type Epic (no epic tool), listed with a type filter, linked to the initiative through manage_workitems.",
+      "expectations": [
+        "Does not look for or call any dedicated epic tool (create, list or link an epic); says there are no epic tools",
+        "Resolves the type with workitem_type(action=resolve, project_id, name=\"Epic\") and creates the epic with workitem(action=create, type_id=<id>)",
+        "Lists epics with workitem(action=list, project_id, pql='type = \"<epic-type-id>\"')",
+        "Links the epic with initiative(action=manage_workitems, initiative_id, add_ids=[<epic work item id>]) and reads it back with initiative(action=list_workitems)",
+        "Sets children through the parent field of the child work item, not on the epic"
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "How far along is the Multi-tenant epic (PROJ-5)? Give me counts per state and the points done.",
+      "expected_output": "One count call grouped by state group for the children of PROJ-5, plus a listing for the point sums.",
+      "expectations": [
+        "Counts children with workitem(action=count, pql='childOf(\"PROJ-5\")', group_by=state__group)",
+        "Lists the children with fields including point to sum the points, noting that count returns items, not points",
+        "Computes completion_rate = completed_points / total_points"
+      ],
+      "files": []
     }
   ]
 }

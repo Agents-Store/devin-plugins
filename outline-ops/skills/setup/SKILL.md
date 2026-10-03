@@ -18,7 +18,7 @@ The user sets these in their shell or repo `.env`. Read them — never hardcode 
 
 If `OUTLINE_API_URL` is missing, ask the user for it. Normalize the trailing slash with `${OUTLINE_API_URL%/}` and build every endpoint as `${OUTLINE_API_URL%/}/<method>`. The URL already ends in `/api` — do **not** append `/api` yourself, and do not pass a URL that ends in a method name.
 
-A user mints a key under **Settings → API Keys → New API Key**. Keys grant full access to the user's data (or are scoped — see Scopes below), so treat them like passwords and never commit them.
+A user mints a key under **Settings → API & Apps** (or programmatically with `apiKeys.create` — see `api-reference` → `oauth-data-attributes.md`; the full key is shown only once). Keys grant full access to the user's data (or are scoped — see Scopes below), so treat them like passwords and never commit them.
 
 ## Step 1 — Verify access
 
@@ -42,12 +42,16 @@ These rules hold across the entire API. Internalize them now so individual opera
 - **Pagination.** List methods take `{"limit": 25, "offset": 0}` in the body (**default limit 25**). The response `pagination` echoes them and adds `nextPath` (e.g. `/api/documents.list?limit=25&offset=25`) as a shortcut to the next page. Walk results by incrementing `offset` until a short/empty page returns.
 - **Sorting.** List methods accept `{"sort": "updatedAt", "direction": "DESC"}` (`direction` is `ASC` or `DESC`). Document search uses `sort` values `relevance|createdAt|updatedAt|title`.
 - **IDs.** Objects are addressed by UUID. Documents, collections, and templates also accept a short `urlId` (e.g. `hDYep1TPAM`), and `documents.info` additionally accepts a `shareId`. Humans speak in titles — resolve a title to an id first with `documents.search` / `documents.search_titles` / `collections.list` before acting.
-- **Rate limits.** Mutating endpoints are stricter than reads. Exceeding a limit returns `429` with a `Retry-After` header (seconds to wait). Inspect with `curl -s -D - …` and back off.
+- **Rate limits.** Mutating endpoints are stricter than reads. Exceeding a limit returns `429` with a `Retry-After` header (seconds to wait). Inspect with `curl -s -D - …` and back off. (Outline v1.7.1+ raised the default model-creation limit from 10 to 25 per minute; self-hosted admins can tune limits with `RATE_LIMITER_MULTIPLIER`.)
 - **Policies.** Most responses include a `policies` array describing the current key's authorized actions on each object. For most uses you can ignore it; when a write returns `403`, the policy is telling you the key lacks that permission — respect it.
 
 ## Scopes (optional, for scoped keys)
 
-API keys can be global (`read`, `write`) or narrowed — by namespace (`documents:read`, `collections:write`), by endpoint (`documents.info`), or by wildcard (`documents.*`). If a previously-working call starts returning `403`, the key may be scoped too narrowly for that method.
+API keys can be global (`read`, `write`) or narrowed — by namespace (`documents:read`, `collections:write`), by endpoint (`documents.info`), or by wildcard (`documents.*`). If a previously-working call starts returning `403`, the key may be scoped too narrowly for that method — Outline v1.10.1 validates API-key and OAuth scopes at the model layer, so a scoped key can become stricter after a server upgrade; re-check it.
+
+## Optional: Outline's built-in MCP server
+
+Every workspace also exposes an MCP server at `<workspace-origin>/mcp` (Streamable HTTP; OAuth by default, or `Authorization: Bearer <api-key>`; toggled under **Settings → Workspace → AI**). It is optional — this plugin works with REST alone. Setup, URL rules and the REST-vs-MCP choice are in the plugin `README.md` (section "Built-in Outline MCP server").
 
 ## Next steps
 

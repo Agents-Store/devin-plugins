@@ -7,6 +7,8 @@ description: Build AI agent workflows on Trigger.dev — prompt chaining, routin
 
 Build production-ready AI agents using Trigger.dev's durable execution.
 
+> **Versions.** The examples use the Vercel AI SDK v5+ API (`ai` `^5`, `^6` or `>=7`; `@trigger.dev/sdk` 4.5.0 and later no longer support AI SDK v4). Model ids in the examples are placeholders: use the models your account offers. For chat UIs (`chat.agent`, sessions) see the **ai-chat-agents** skill.
+
 ## Pattern Selection
 
 ```
@@ -19,7 +21,8 @@ Coordinate multiple specialized tasks   → Orchestrator-Workers
 Self-improve until quality threshold    → Evaluator-Optimizer
 Pause for human approval                → Human-in-the-Loop
 Stream progress to frontend             → Realtime Streams
-Let LLM call your tasks as tools        → ai.tool
+Let LLM call your tasks as tools        → tool() + ai.toolExecute
+Chat UI backed by a durable agent       → ai-chat-agents skill
 ```
 
 ## 1. Prompt Chaining (Sequential with Gates)

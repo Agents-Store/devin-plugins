@@ -3,7 +3,9 @@
 Stand up a space, add a parent page and a child, update the parent (with the version bump), label it, and list the result. Assumes `setup` ran.
 
 ```bash
-CONF="${ATLASSIAN_SITE_URL%/}/wiki/api/v2"
+CONF_ROOT="${ATLASSIAN_CLOUD_ID:+https://api.atlassian.com/ex/confluence/${ATLASSIAN_CLOUD_ID}}"
+CONF_ROOT="${CONF_ROOT:-${ATLASSIAN_SITE_URL%/}}"
+CONF="${CONF_ROOT}/wiki/api/v2"
 AUTH=(-u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" -H "Accept: application/json")
 JSON=(-H "Content-Type: application/json")
 ```
@@ -60,7 +62,7 @@ curl -s "${AUTH[@]}" "${JSON[@]}" -X PUT "${CONF}/pages/${PARENT_ID}" -d "{
 
 ```bash
 curl -s "${AUTH[@]}" "${JSON[@]}" -X POST \
-  "${ATLASSIAN_SITE_URL%/}/wiki/rest/api/content/${PARENT_ID}/label" \
+  "${CONF_ROOT}/wiki/rest/api/content/${PARENT_ID}/label" \
   -d '[{"prefix":"global","name":"handbook"}]' >/dev/null
 curl -s "${AUTH[@]}" "${CONF}/pages/${PARENT_ID}/labels" | jq '.results[].name'
 ```

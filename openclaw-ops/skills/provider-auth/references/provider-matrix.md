@@ -59,10 +59,10 @@ version-stable, unlike an id spelling.
 | Backend | Accepts | Refresh owner | Must be mounted | Diagnosed with | Repaired by |
 |---|---|---|---|---|---|
 | CLI backend at `/home/node/.claude` (chain primary in this shape) | its own native login | the CLI | credential dir, data dir, binary dir; per-instance project state | credential check, structure-only read of the stored credential, CLI status inside the container with its config-dir variable set explicitly | one owner directory mounted everywhere; login printed for a human |
-| CLI backend at `/home/node/.codex` (chain fallback) | native login, or an API key in embedded mode | the CLI when in CLI mode, nobody when in key mode | credential dir; the binary or its shim resolvable on `PATH` | same ladder | same; plus deleting the legacy combined-id profile if one is still present |
+| CLI backend at `/home/node/.codex` (a second CLI link, where the chain has one) | native login, or an API key in embedded mode | the CLI when in CLI mode, nobody when in key mode | credential dir; the binary or its shim resolvable on `PATH` | same ladder | same; plus `doctor --fix` to migrate a legacy `openai-codex` prefix profile into `openai` (R4, planned) |
 | A consumer CLI whose OAuth route the vendor withdrew | nothing new — the runtime no longer offers that login | — | — | the profile still lists, and every request fails or the ref never resolves | remove the profiles and the chain entries together (`fleet.auth.dead-profile`); the replacement route comes from `docs-research`, not from here |
 | Embedded HTTP with an API key | key by **reference**, delivered by the injection wrapper | no refresh exists | nothing | delivery by name and fingerprint, never by value | fix delivery (`fleet.secrets.delivery-short`), or rotate the key at the vendor |
-| Embedded HTTP with provider OAuth stored by the runtime | interactive login, stored encrypted under the auth-secrets key | the runtime, under a lock **local to one state directory** | the auth-secrets directory, per instance | credential check plus expiry from the profile store | login on that instance; never copy the profile to a sibling (`fleet.auth.oauth-copied`) |
+| Embedded HTTP with provider OAuth stored by the runtime | interactive login; the profile is stored **in the state database in plaintext** (the auth-profile file is legacy) | the runtime, under a lock **local to one state directory** | nothing beyond the state directory itself — the legacy key mount is optional | credential check plus expiry from the profile store (`models auth list`) | login on that instance; never copy the profile to a sibling (`fleet.auth.oauth-copied`) |
 | Local or self-hosted endpoint | usually nothing | — | nothing, unless the model files are mounted | connection and model presence, not authentication | it is a capacity problem, not a credential one |
 | The embedding lane | its **own** key, per instance | no refresh | nothing | delivery by name; index identity | out of scope here — owned by `memory-ops` |
 
@@ -73,6 +73,25 @@ Notes the table cannot hold:
   That is what makes one shared owner directory correct rather than a hack.
 - **A legacy combined profile id** (runtime and provider fused into one) is documented as *migration
   input only*: it still resolves, and new profiles are never created in that form.
+- **Where profiles live now.** Auth profiles are rows in SQLite — shared credentials in the state
+  database, per-agent ones in that agent's database. `auth-profiles.json` is a legacy artefact that
+  `security audit --fix` can only tighten the permissions of. Because the rows sit in the state
+  directory, **a copy of the state directory carries working OAuth tokens**: treat it as a credential
+  artefact (`security-audit`).
+- **Order is stored, and it outranks config.** `models auth order get|set|clear --provider <id>` keeps a
+  per-agent profile order in the SQLite store, and it **takes precedence over `auth.order.<provider>`
+  in the config** — an order set that way is invisible to a config diff. `models auth login --force`
+  removes the provider's existing profiles (for the shared main agent, the shared credentials and the
+  main agent's local overrides including their order and health state) before logging in again, and
+  `models auth activate <profile-id>` tests a saved sign-in and selects it. Only the login itself is a
+  human's job; the rest is read with `models auth list --json` first.
+- **Two families of accounts, not one.** `models auth …` manages **system / agent** credentials on the
+  machine running the gateway; `models accounts …` manages **personal** accounts owned by a signed-in
+  person on that gateway. Do not use one to diagnose the other.
+- **The Codex chain is not a fixed shape.** The older `openai-codex` provider prefix is migrated into
+  `openai` by `doctor --fix`, and `--provider openai` now defaults to the ChatGPT / Codex account login
+  (an API key is the explicit `--method api-key`, usually a backup for subscription limits). Resolve
+  what this build does through `docs-research`; do not recite a Codex fallback chain from memory.
 - **Embedded and CLI paths for the same provider compete.** A static-token profile for a provider
   whose chain intends the CLI wins silently, moves billing to metered tokens, and changes no config
   (`fleet.auth.shadowed`).
@@ -84,7 +103,7 @@ Roles as the mount table reports them. Host paths are per deployment; the destin
 | Role | Destination | Shared across the fleet? | What breaks when it is missing |
 |---|---|---|---|
 | `state_dir` | `/home/node/.openclaw` | **never** — unique ownership is enforced at startup | everything; a resolver that finds no state directory falls back to a legacy one silently |
-| `auth_secrets` | `/home/node/.config/openclaw` | **never** | the key that encrypts stored profiles. Sharing it makes profiles cross-readable; copying it is how OAuth material gets cloned by accident |
+| `auth_secrets` | `/home/node/.config/openclaw` | **never** | **optional, legacy**: the key that recovers an older encrypted auth sidecar. It does not encrypt the current rows (they are plaintext in the state database), and an instance without it is not degraded. When it is mounted, sharing it makes the legacy sidecar cross-readable and copying it is how OAuth material gets cloned by accident |
 | `claude_dir` | `/home/node/.claude` | **yes** — this is the owner directory | the login does not stick, or every instance keeps its own racing copy |
 | `claude_share` | `/home/node/.local/share/claude` | yes, with the credential directory | login appears to succeed and is gone after a restart |
 | `claude_local_bin` | `/home/node/.local/bin` | yes, with the credential directory | the CLI cannot install or update itself; later, a version mismatch nobody expects |
@@ -143,7 +162,7 @@ grant them, and automating that away destroys the mechanism.
 
 - Never copy an OAuth profile between instances; key and static-token entries are portable, OAuth
   entries are not, and a copy authenticates for a while before failing as something else.
-- Never share `auth_secrets` or `state_dir`. Share the CLI's own directories, nothing else.
+- Never share `auth_secrets` (when mounted) or `state_dir`. Share the CLI's own directories, nothing else.
 - Never read a credential value. Presence, fingerprint, expiry and key name answer every question a
   value could, and the fingerprint is the only one of them that detects a shared account.
 - Never leave a dead profile in the rotation: profiles rotate **before** the chain moves to the next

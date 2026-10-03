@@ -1,77 +1,97 @@
 # Scenario — AI quote agent
 
-A bot that responds to any message with a relevant quote, streaming the answer in 1:1 chats.
+A bot that answers every message with a fitting public-domain quote. It streams in 1:1 chats, sends one message elsewhere, and remembers the conversation in turn state.
 
-## Steps
+## 1. Scaffold and add the model client
+
+The CLI has no AI template; start from `echo` and add the `openai` package.
 
 ```bash
-teams project new typescript quote-agent --template ai
+teams project new typescript quote-agent -t echo --yes
 cd quote-agent
-npm install
+npm install openai
 ```
 
-Set the OpenAI key in `.env`:
+Create the app registration as in `echo-bot.md` (`teams app create … --env .env`), then add the model settings to `.env`. Use one block:
 
-```
-OPENAI_API_KEY=sk-...
+```bash
+# OpenAI
+OPENAI_API_KEY=<your-key>
+OPENAI_MODEL=<model-name>
+
+# or Azure OpenAI
+AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com
+AZURE_OPENAI_API_KEY=<your-key>
+AZURE_OPENAI_MODEL_DEPLOYMENT_NAME=<deployment-name>
+AZURE_OPENAI_API_VERSION=2024-10-21
 ```
 
-Edit `src/index.ts`:
+## 2. The agent
+
+Replace `src/index.ts`:
 
 ```ts
 import { App } from '@microsoft/teams.apps';
-import { DevtoolsPlugin } from '@microsoft/teams.dev';
-import { ChatPrompt } from '@microsoft/teams.ai';
-import { OpenAIChatModel } from '@microsoft/teams.openai';
+import { AzureOpenAI, OpenAI } from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
-const prompt = new ChatPrompt({
-  instructions:
-    'You are a quote bot. Given any input, reply with a single fitting quote from a public-domain author. Format: "<quote>" — <author>.',
-  model: new OpenAIChatModel({ model: 'gpt-4o' }),
-});
+const useAzure = Boolean(process.env.AZURE_OPENAI_ENDPOINT);
+const client = useAzure
+  ? new AzureOpenAI({
+      endpoint: process.env.AZURE_OPENAI_ENDPOINT!,
+      apiKey: process.env.AZURE_OPENAI_API_KEY!,
+      deployment: process.env.AZURE_OPENAI_MODEL_DEPLOYMENT_NAME!,
+      apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-10-21',
+    })
+  : new OpenAI();
+const MODEL = (useAzure ? process.env.AZURE_OPENAI_MODEL_DEPLOYMENT_NAME : process.env.OPENAI_MODEL)!;
 
-const app = new App({
-  plugins: [new DevtoolsPlugin()],
-});
+const SYSTEM_PROMPT =
+  'You are a quote bot. Given any input, reply with a single fitting quote from a public-domain author. Format: "<quote>" — <author>.';
 
-app.on('message', async ({ send, stream, activity }) => {
-  const isDirect = activity.conversation.conversationType === 'personal';
+const app = new App({ state: true });          // conversation scope keeps the history
 
-  if (isDirect) {
-    await prompt.send(activity.text ?? '', {
-      onChunk: (chunk) => stream.emit(chunk),
+app.on('message', async ({ activity, stream, send, state }) => {
+  const history: ChatCompletionMessageParam[] =
+    state?.conversation.get<ChatCompletionMessageParam[]>('history') ?? [{ role: 'system', content: SYSTEM_PROMPT }];
+  history.push({ role: 'user', content: activity.text ?? '' });
+
+  if (activity.conversation.conversationType === 'personal') {
+    const runner = client.chat.completions.runTools({ model: MODEL, messages: history, tools: [], stream: true });
+    runner.on('content', (delta: string) => {
+      if (stream.canceled) { runner.abort(); return; }
+      stream.emit(delta);
     });
-  } else {
-    const { content } = await prompt.send(activity.text ?? '');
-    await send(content);
+    await runner.done();
+    state?.conversation.set('history', (runner.messages as ChatCompletionMessageParam[]).slice(-20));
+    return;
   }
+
+  // channels and group chats cannot stream
+  const completion = await client.chat.completions.create({ model: MODEL, messages: history });
+  const text = completion.choices[0]?.message?.content ?? '';
+  history.push({ role: 'assistant', content: text });
+  state?.conversation.set('history', history.slice(-20));
+  await send(text);
 });
 
-(async () => {
-  await app.start();
-})();
+app.start(process.env.PORT || 3978).catch(console.error);
 ```
 
-## Run
+## 3. Run and verify
 
 ```bash
-devtunnel host -p 3978 --allow-anonymous           # in another shell
-teams app update $(teams app list --json | jq -r '.[0].teamsAppId') --endpoint "https://<tunnel-host>/api/messages"
 npm run dev
 ```
 
-Sideload via the Developer Portal and start a 1:1 chat.
-
-## Verify
-
-- Send "stay calm" — the bot streams a quote progressively in a 1:1 chat.
-- Add the bot to a channel and @mention it — the reply arrives as a single message (no streaming).
-- DevTools Activities tab shows one inbound `message` and one outbound stream of chunks.
+- In the Agents Playground (`agents-playground`), send `stay calm` — a quote comes back.
+- In Teams, in a 1:1 chat, the same message streams progressively.
+- Add the bot to a channel and mention it: the reply arrives as one message.
+- Ask `another one` — the answer differs from the first, because the history is in turn state.
 
 ## Common tweaks
 
-- Cap cost: pass `maxTokens: 60` to `ChatPrompt`.
-- Add memory: keep the last 5 turns per conversation.
-- Add a tool: register `prompt.function({ name: 'random_author', … })` to bias the model toward a tool-driven path.
-
-See `ai-agents` and `references/prompts-and-models.md` for details.
+- Cap cost: `max_completion_tokens: 80` on the call, and a shorter history slice.
+- Add a tool: define a `RunnableToolFunction` and pass it in `tools` (`ai-agents`).
+- Mark the answer as AI output with `addAiGenerated()` and feedback buttons (`ai-agents`).
+- More than one instance: give `state.storage` a shared store (`sdk-patterns`).

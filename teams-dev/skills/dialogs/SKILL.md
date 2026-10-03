@@ -1,129 +1,150 @@
 ---
 name: dialogs
-description: Use this skill when the user is building task module dialogs in Microsoft Teams — opening a modal from an Adaptive Card button, handling `dialog.open.<id>` and `dialog.submit.<id>`, returning a card or a web page as the dialog body, or chaining a multi-step dialog flow. Triggers on "Teams dialog", "task module", "modal in Teams", "dialog.open", "dialog.submit".
+description: Use this skill when the user is building dialogs (task modules) in a Microsoft Teams bot on Teams SDK 2.1 — opening a dialog from a card with `OpenDialogData`, handling `dialog.open.<id>` and `dialog.submit.<action>`, returning an Adaptive Card or a web page, multi-step flows, dialogs opened from message extensions. Triggers on "Teams dialog", "task module", "modal in Teams", "dialog.open", "dialog.submit", "OpenDialogData".
 ---
 
-# Dialogs (Task Modules)
+# Dialogs (task modules)
 
-A dialog is a modal pop-up the Teams client opens on top of a chat. It receives input, then closes and returns control. The Teams SDK supports two body types: an Adaptive Card or a static web page.
+A dialog is a modal the Teams client opens over a chat. Its body is an Adaptive Card or a web page; when the user submits, control returns to the bot. Two routes and two helpers cover it: `dialog.open.<id>` renders the dialog, `dialog.submit.<action>` receives the result, `OpenDialogData` names the dialog on the button that opens it, `SubmitData` names the action on the button inside it. Both helpers come from `@microsoft/teams.cards`.
 
-## 1. Trigger a dialog from a card
+## 1. Open a dialog from a card
 
 ```ts
-import { AdaptiveCard, TextBlock, ExecuteAction } from '@microsoft/teams.cards';
-import { OpenDialogData } from '@microsoft/teams.api';
+import { MessageActivityInput } from '@microsoft/teams.api';
+import { AdaptiveCard, OpenDialogData, SubmitAction, TextBlock } from '@microsoft/teams.cards';
 
-const card = new AdaptiveCard()
-  .addBody(new TextBlock('Need details? Open the form.'))
-  .addActions(
-    new ExecuteAction('open_form')
-      .withTitle('Open form')
-      .withData(new OpenDialogData('signup_form')),
+app.on('message', async ({ send }) => {
+  const card = new AdaptiveCard(
+    new TextBlock('Need details? Open the form.', { size: 'Large', weight: 'Bolder' }),
+  ).withActions(
+    new SubmitAction().withTitle('Simple form').withData(new OpenDialogData('simple_form')),
+    new SubmitAction().withTitle('Web page').withData(new OpenDialogData('webpage_dialog')),
   );
+  await send(new MessageActivityInput('Pick one').addCard('adaptive', card));
+});
 ```
 
-`OpenDialogData('<id>')` is the magic key. When the user clicks, Teams invokes `dialog.open.signup_form` on the bot.
+`OpenDialogData` marks the action as a `task/fetch` request and carries the dialog id used for routing. It is attached to a **`SubmitAction`**; that is what the Teams client requires.
 
-## 2. Handle `dialog.open.<id>` — return a card-based dialog
+## 2. `dialog.open.<id>` — return a card dialog
 
 ```ts
-import { AdaptiveCard, TextBlock, TextInput, SubmitAction } from '@microsoft/teams.cards';
+import { cardAttachment } from '@microsoft/teams.api';
+import { AdaptiveCard, SubmitAction, SubmitData, TextBlock, TextInput } from '@microsoft/teams.cards';
 
-app.on('dialog.open.signup_form', async ({ activity }) => {
-  const card = new AdaptiveCard()
-    .addBody(new TextBlock('Sign up').withWeight('Bolder'))
-    .addBody(new TextInput('email').withIsRequired())
-    .addActions(new SubmitAction().withTitle('Submit'));
+app.on('dialog.open.simple_form', async () => {
+  const dialogCard = new AdaptiveCard(
+    new TextBlock('This is a simple form', { size: 'Large', weight: 'Bolder' }),
+    new TextInput().withId('name').withLabel('Name').withIsRequired().withPlaceholder('Enter your name'),
+  ).withActions(
+    new SubmitAction().withTitle('Submit').withData(new SubmitData('simple_form')),
+  );
 
   return {
     task: {
       type: 'continue',
       value: {
-        title: 'Sign up',
-        height: 200,
-        width: 400,
-        card: { contentType: 'application/vnd.microsoft.card.adaptive', content: card.toJSON() },
+        title: 'Simple form',
+        card: cardAttachment('adaptive', dialogCard),
       },
     },
   };
 });
 ```
 
-Returning the task envelope is what tells Teams to render the dialog. `type: 'continue'` keeps the dialog open; `type: 'message'` closes it and posts a final message.
+The buttons inside a dialog are `Action.Submit` too. `SubmitData('simple_form')` makes the click arrive at `dialog.submit.simple_form`. `dialog.open` (without an id) is a catch-all; prefer one handler per dialog id.
 
-## 3. Handle `dialog.submit.<id>` — collect the result
+## 3. `dialog.submit.<action>` — collect the result
 
 ```ts
-app.on('dialog.submit.signup_form', async ({ activity, send }) => {
-  const data = activity.value.data as { email: string };
-  await persist(data);
-  await send(`Signed up: ${data.email}`);
-  return { task: { type: 'message', value: 'Thanks!' } };
+app.on('dialog.submit.simple_form', async ({ activity, send }) => {
+  const name = activity.value.data.name;
+  await send(`Hi ${name}, thanks for submitting the form!`);
+  return { task: { type: 'message', value: 'Form was submitted' } };   // closes the dialog with a final message
 });
 ```
 
-The submission carries the input values keyed by their `id`. Return:
-- `type: 'message'` to close the dialog with a final toast.
-- `type: 'continue'` to swap the dialog body (multi-step wizards).
+Return values:
 
-## 4. Web-page dialogs
+- `{ task: { type: 'message', value: '…' } }` closes the dialog and shows the text.
+- `{ status: 200 }` closes it silently.
+- `{ task: { type: 'continue', value: { title, card } } }` swaps the body — a multi-step flow.
 
-For richer UIs (your own React/Vue page), serve a static URL and reference it instead of a card:
+## 4. Multi-step dialogs
+
+Carry earlier answers forward through the extra data of `SubmitData`:
 
 ```ts
-app.on('dialog.open.profile_editor', async () => ({
+import { cardAttachment } from '@microsoft/teams.api';
+import { AdaptiveCard, SubmitAction, SubmitData, TextBlock, TextInput } from '@microsoft/teams.cards';
+
+app.on('dialog.submit.step_one', async ({ activity }) => {
+  const name = activity.value.data.name;
+  const next = new AdaptiveCard(
+    new TextBlock('Email', { size: 'Large', weight: 'Bolder' }),
+    new TextInput().withId('email').withLabel('Email').withIsRequired(),
+  ).withActions(
+    new SubmitAction().withTitle('Submit').withData(new SubmitData('step_two', { name })),
+  );
+  return { task: { type: 'continue', value: { title: `Thanks ${name}`, card: cardAttachment('adaptive', next) } } };
+});
+
+app.on('dialog.submit.step_two', async ({ activity, send }) => {
+  const { name, email } = activity.value.data;
+  await send(`Hi ${name}, we will write to ${email}.`);
+  return { status: 200 };
+});
+```
+
+## 5. Web-page dialogs
+
+Serve the page from the bot with `app.tab(...)` and return its URL. The page must be public, load `@microsoft/teams-js`, and its domain must be in the manifest's `validDomains`.
+
+```ts
+import path from 'node:path';
+
+app.tab('dialog-form', path.resolve('dist/dialog-form'));          // served at /tabs/dialog-form
+
+app.on('dialog.open.webpage_dialog', async () => ({
   task: {
     type: 'continue',
     value: {
-      title: 'Edit profile',
-      height: 600,
-      width: 800,
-      url: 'https://yourapp.example.com/profile',
-      fallbackUrl: 'https://yourapp.example.com/profile',
+      title: 'Web page dialog',
+      url: `${process.env['BOT_ENDPOINT']}/tabs/dialog-form`,    // your public https origin, set in .env
+      width: 1000,
+      height: 800,
     },
   },
 }));
-```
 
-The page uses `@microsoft/teams.client` to call `microsoftTeams.dialog.url.submit({ ... })` from the browser, which fires `dialog.submit.<id>` on the bot. See `tabs` for client-side SDK details.
-
-## 5. Multi-step dialogs
-
-Return another `continue` from `dialog.submit.<id>` to swap the body without closing:
-
-```ts
-app.on('dialog.submit.signup_form', async ({ activity }) => {
-  if (!isComplete(activity.value.data)) {
-    return {
-      task: {
-        type: 'continue',
-        value: { title: 'One more thing', card: { contentType: '…', content: nextStepCard.toJSON() } },
-      },
-    };
-  }
-  return { task: { type: 'message', value: 'Done!' } };
+app.on('dialog.submit.webpage_dialog', async ({ activity, send }) => {
+  await send(`Got ${activity.value.data.email}`);
+  return { status: 200 };                                          // closes the dialog
 });
 ```
 
-## Manifest
+Inside the page, submit with TeamsJS and include the `action` field so the router can find the handler:
 
-The bot must declare the dialog domain in `appPackage/manifest.json`:
+```ts
+import * as microsoftTeams from '@microsoft/teams-js';
 
-```jsonc
-{
-  "validDomains": ["yourapp.example.com"],
-  "webApplicationInfo": {
-    "id": "<AAD app id>",
-    "resource": "api://yourapp.example.com/<AAD app id>"
-  }
+async function submitForm(email: string) {
+  await microsoftTeams.app.initialize();
+  microsoftTeams.dialog.url.submit({ action: 'webpage_dialog', email });
 }
+void submitForm;
 ```
 
-Web-page dialogs without a `validDomains` entry are rejected by the Teams client.
+Add the domain to the manifest through the CLI, for example `teams app manifest update <teamsAppId> --set-json validDomains='["bot.example.com"]'`. (`teams app update --endpoint` adds the bot's own domain on its own.)
+
+## 6. Dialogs from message extensions
+
+An action command with `fetchTask: true` does not use `dialog.open.*`. The route is **`message.ext.open`**; the response has the same `task` envelope. See `message-extensions`.
 
 ## Common pitfalls
 
-- **Dialog never opens** — `OpenDialogData` was attached to the wrong action type, or the action button was sent without `cardAttachment('adaptive', card)`.
-- **Submit hits nothing** — handler is `dialog.submit.<id>` (with the same id as `OpenDialogData(<id>)`). A bare `dialog.submit` matches every id but won't run before a specific handler.
-- **Webpage dialog 404s** — the URL is missing from `validDomains`.
-- **Dialog body is blank** — the returned task envelope is missing `task.value.card.content` or `task.value.url`.
+- **The dialog never opens** — `OpenDialogData` sits on an `ExecuteAction` or on a card that was not sent through the SDK; use a `SubmitAction`.
+- **Submit reaches no handler** — the route is `dialog.submit.<action>` where `<action>` is the first argument of `SubmitData`; it is not the dialog id of `OpenDialogData` unless you reuse the same string.
+- **The web page is blank or 404** — its host is not in `validDomains`, or the page is not publicly reachable.
+- **`activity.value.data` is empty** — the inputs have no id, or a web page submitted without an `action` field.
+- **The dialog stays open** — the handler returned nothing; return `{ status: 200 }` or a `task` response.

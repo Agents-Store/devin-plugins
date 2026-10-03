@@ -121,17 +121,19 @@ Always provide `sizes` attribute so browsers download the correct size:
   width={1920}
   height={1080}
   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-  priority  // Only for above-the-fold LCP image
+  loading="eager"        // Only for the above-the-fold LCP image
+  fetchPriority="high"
 />
 ```
 
 ### Lazy Loading
 
-`next/image` lazy-loads by default. Only disable for above-the-fold images using `priority`:
+`next/image` lazy-loads by default. Only disable lazy loading for the above-the-fold LCP image, with `loading="eager"` and `fetchPriority="high"` (use `fetchPriority="high"` alone if different images are LCP at different viewport sizes; Next.js 16 replaced the `priority` prop with `preload`; the docs recommend these two props in most cases):
 
 ```tsx
-// Above the fold — preload immediately
-<Image src="/hero.jpg" alt="Hero" width={1200} height={630} priority />
+// Above the fold (LCP) — load immediately at high priority
+<Image src="/hero.jpg" alt="Hero" width={1200} height={630}
+  loading="eager" fetchPriority="high" />
 
 // Below the fold — lazy loads automatically
 <Image src="/feature.jpg" alt="Feature" width={600} height={400} />
@@ -233,12 +235,13 @@ generateSlug('Next.js SEO: A Complete Guide!')  // → 'nextjs-seo-a-complete-gu
 
 ## Content Formatting for AI Overviews
 
-Google's AI Overviews cite content formatted with BLUF (Bottom Line Up Front):
+Google states there are no additional requirements to appear in AI Overviews or AI Mode, and no special optimization, markup, or AI-specific text files are needed: a page must be indexed and eligible to be shown in Google Search with a snippet. What helps is ordinary, readable, people-first content. The "answer first" (BLUF, Bottom Line Up Front) layout below is a general readability practice, not a documented ranking or citation factor:
 
 1. **Lead with the answer** — first 2-3 sentences should directly answer the query
 2. **Use clear headers** — structured sections that match search intent
 3. **Include specific facts** — numbers, dates, steps (not vague generalizations)
-4. **Use lists and tables** — easy to parse and cite
+4. **Use lists and tables** — easy for readers (and parsers) to scan
+5. **Keep important content as text** and make sure robots.txt lets Google crawl it; keep any structured data consistent with the visible text
 
 ```tsx
 // Good — BLUF pattern

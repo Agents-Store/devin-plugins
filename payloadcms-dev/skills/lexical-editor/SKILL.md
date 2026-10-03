@@ -220,6 +220,13 @@ export default CustomFeatureClient
 
 Run `pnpm payload generate:importmap` after adding any string-path component.
 
+### Lexical version (3.90+)
+
+Payload 3.90.0 bumped Lexical to **0.50.0**. Built-in rich text features need no application changes or data migration. Two rules follow:
+
+- **Never install `lexical` or `@lexical/*` yourself.** Import Lexical types and helpers from Payload's re-exports — `@payloadcms/richtext-lexical/lexical` and `@payloadcms/richtext-lexical/lexical/*` (for example `.../lexical/react/LexicalComposerContext`). Payload pins the matching version; a second copy or a mismatched version breaks the editor. Remove any direct `lexical` / `@lexical/*` dependency you added.
+- **Re-check custom features after upgrading.** Lexical removed some older APIs, tightened TypeScript types and changed how custom nodes are loaded and copied. Confirm custom features still compile, and that custom content loads, copies and pastes. Tests that assert on editor HTML may need new selectors or snapshots because Lexical adds internal markup.
+
 ## Disabling Default Features
 
 Filter `defaultFeatures` before returning:
@@ -245,7 +252,7 @@ A `richText` field stores a JSON tree:
 
 Walk it for analysis (word count, table-of-contents extraction):
 ```ts
-import type { SerializedEditorState, SerializedLexicalNode } from 'lexical'
+import type { SerializedEditorState, SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
 
 function walk(node: SerializedLexicalNode, fn: (n: SerializedLexicalNode) => void) {
   fn(node)
@@ -269,6 +276,7 @@ function textOf(data: SerializedEditorState): string {
 | --- | --- | --- |
 | `RichText` shows raw JSON | Wrong import — used `data` as a string | Pass the parsed object, not stringified JSON |
 | Custom feature missing in admin | `generate:importmap` not run | `pnpm payload generate:importmap` and commit |
+| Editor breaks or types clash after adding `lexical` / `@lexical/*` | A second Lexical copy or mismatched version next to Payload's pinned 0.50.0 (3.90+) | Remove the direct dependency; import from `@payloadcms/richtext-lexical/lexical` |
 | Block fields lose values on save | Block slug collision with another collection | Rename the block slug; slugs are global |
 | Migration writes plain text into `richText` | Plain strings aren't valid Lexical state | Wrap them as `{ root: { type: 'root', children: [{ type: 'paragraph', children: [{ type: 'text', text: '…' }] }] } }` |
 

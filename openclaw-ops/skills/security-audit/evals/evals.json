@@ -73,6 +73,31 @@
         "States that a secret write has zero retries and the fingerprint is verified before any second attempt",
         "Ends with a clean re-run of both the audit and the health battery"
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "security audit exited 2 on the canary, so that is warn-level findings only — fine to ship. Also doctor --lint returned 2 on another instance, same thing.",
+      "expected_output": "Corrects both. Upstream documents no exit-code table for security audit, so its code is not read as a verdict: the payload is. For doctor --lint, exit 2 means the command failed before its checks completed — a failure, not warnings — so that instance has not been linted at all.",
+      "files": [],
+      "expectations": [
+        "States that security audit has no documented exit-code contract and reads the JSON payload instead",
+        "States that doctor --lint exit 2 is a failed run, not a warn-only result, and that the instance is unverified",
+        "Reads exit 1 from doctor --lint as at least one finding at the chosen --severity-min threshold",
+        "Pins the threshold (--severity-min) so exit codes are comparable between builds",
+        "Does not ship or call the instance clean on an exit code alone"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "We keep nightly tarballs of every instance's state directory on a shared backup share that the whole ops team can read. That is just routine backup hygiene, right?",
+      "expected_output": "Classifies the tarballs as credential artefacts: current OAuth tokens sit in the state database in plaintext, so every copy of a state directory carries working credentials. Owner-only mode, a private location, a stated retention; a copy that leaves the host is answered by revoking the login at its source.",
+      "files": [],
+      "expectations": [
+        "States that state-directory copies and verified archives contain usable OAuth tokens in plaintext",
+        "Calls for owner-only permissions and a non-shared location, and a stated retention",
+        "Says the response to a leaked copy is to revoke and re-issue at the provider, not to delete the file",
+        "Does not claim the legacy key directory protects the current credentials"
+      ]
     }
   ]
 }

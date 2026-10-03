@@ -11,9 +11,9 @@ End-to-end scenario walkthroughs for common development tasks. Each scenario sho
 
 | Scenario | Use Case | Services Used |
 |----------|----------|---------------|
-| [Scrape for App](references/scenarios/scrape-for-app.md) | Extract product data and import into your application | Firecrawl (map, extract), Jina (read) |
+| [Scrape for App](references/scenarios/scrape-for-app.md) | Extract product data and import into your application | Firecrawl (map, scrape with JSON format), Jina (read) |
 | [Doc Search Workflow](references/scenarios/doc-search-workflow.md) | Find framework docs while coding to fix a bug | Context7, Perplexity, Firecrawl, Jina |
-| [Media for Content](references/scenarios/media-for-content.md) | Find stock photos/videos for a blog or app | Pexels, Unsplash, Jina (images) |
+| [Media for Content](references/scenarios/media-for-content.md) | Find stock photos/videos for a blog or app | Pexels REST, Unsplash REST, Jina (images) |
 | [Content Pipeline](references/scenarios/content-pipeline.md) | Multi-service data pipeline: discover, extract, transform, load | Firecrawl, Jina, Exa |
 
 ## Quick Reference: Common Workflows
@@ -30,22 +30,23 @@ End-to-end scenario walkthroughs for common development tasks. Each scenario sho
 
 ```
 1. Map site: firecrawl_map({ url: "https://example.com" })
-2. Extract data: firecrawl_extract({ urls: [...], schema: {...} })
+2. Extract data (per URL): firecrawl_scrape({ url, formats: ["json"], jsonOptions: { prompt, schema } })
 3. Import: write to your database/API
 ```
 
 ### Question → Answer → Verify
 
 ```
-1. Ask: perplexity_ask({ query: "How to implement X?" })
-2. Find docs: query-docs({ libraryId: "...", query: "X" })
+1. Ask: perplexity_ask({ messages: [{ role: "user", content: "How to implement X?" }] })
+2. Find docs: resolve-library-id({ query: "X", libraryName: "..." }) → query-docs({ libraryId: "...", query: "X" })
 3. Verify answer against official docs
 ```
 
 ### Find Media → Select → Download
 
 ```
-1. Search: searchPhotos({ query: "topic", per_page: 20 })
+1. Search: GET https://api.pexels.com/v1/search?query=topic&per_page=20  (header: Authorization: ${PEXELS_API_KEY})
 2. Select best matches from results
-3. Use image URLs in your app (src.medium for web)
+3. Use image URLs in your app (src.medium for web); show the Pexels link and photographer credit
+   (Unsplash instead: hotlink urls.*, call links.download_location, attribute with utm parameters)
 ```

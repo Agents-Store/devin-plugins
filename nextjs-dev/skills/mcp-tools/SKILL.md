@@ -40,7 +40,7 @@ code --add-mcp '{"name":"next-devtools","command":"npx","args":["-y","next-devto
 
 Requirements:
 - Node.js v20.19+
-- For runtime tools (`nextjs_index`, `nextjs_call`): Next.js 16+ with dev server running
+- For runtime tools (`nextjs_index`, `nextjs_call`): Next.js 16+ with the dev server running — use **`next@>=16.3.8`**: before it, the dev server's `/_next/mcp` endpoint did not verify which website a request came from, so a malicious page visited by the developer could read the project path, error-report source snippets, the route inventory and dev logs (GHSA-39w2-rjm5-chcv, low severity, dev server only). Update `next` before wiring this up
 
 > **Removed in 0.4.0:** the `init`, `upgrade_nextjs_16`, and `enable_cache_components` tools no longer exist. Upgrade and Cache Components workflows now live in the upgrade codemod (`npx @next/codemod@canary upgrade latest`, or the `next upgrade` command in 16.1+) and the migration guide at `/docs/app/guides/migrating-to-cache-components`.
 
@@ -87,6 +87,21 @@ Use for:
 - Detecting hydration errors visually
 - Taking screenshots for comparison
 - Capturing browser console errors
+
+**React introspection (agent-browser 0.27 or later).** Launch `agent-browser` with `--enable react-devtools` to get React DevTools commands on top of DOM, console, network and Web Vitals: `react tree` (component tree), `react inspect <fiberId>` (one component), `react renders start` / `stop` (profile re-renders) and `react suspense --only-dynamic --json` (what is holding a render — handy for Cache Components blocking-route errors). Install or upgrade with `npm install -g agent-browser@latest` (the 16.3 release post pinned `agent-browser@^0.27`; the requirement is 0.27 or later).
+
+## First-party Next.js Agent Skills (16.3)
+
+Next.js 16.3 retired the old knowledge-only skills (the bundled docs now do that job) and ships four workflow skills, installed with `npx skills add vercel/next.js --skill <name>`:
+
+| Skill | Use for |
+|-------|---------|
+| `next-dev-loop` | Full dev feedback loop: `/_next/mcp` (routes, logs, compilation issues) plus `agent-browser` (DOM, console, network, React tree). Needs agent-browser 0.27+ |
+| `next-cache-components-adoption` | Turns Cache Components on and adopts routes one feature at a time (incremental or direct mode) |
+| `next-cache-components-optimizer` | Turns "this navigation must be instant" into a failing `instant()` test and works it to green |
+| `next-partial-prefetching-adoption` | Enables Partial Prefetching and works through links until each reuses a shared loading shell |
+
+Other 16.3 agent affordances: any docs page is available as Markdown by appending `.md` to the URL (index at `/docs/llms.txt`, everything in `/docs/llms-full.txt`), and `agentRules: false` in `next.config.ts` stops `next dev` from maintaining the AGENTS.md block.
 
 ## Typical Workflow
 

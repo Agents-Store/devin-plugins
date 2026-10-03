@@ -23,16 +23,10 @@ export interface Env {
 
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
-    // 1. Verify secret header if you set one
-    if (env.WEBHOOK_SECRET) {
-      const got = request.headers.get("X-Telegram-Bot-Api-Secret-Token");
-      if (got !== env.WEBHOOK_SECRET) return new Response("forbidden", { status: 403 });
-    }
-
-    // 2. Construct the bot per request — cheap, no init() needed thanks to BOT_INFO
+    // 1. Construct the bot per request — cheap, no init() needed thanks to BOT_INFO
     const bot = new Bot(env.BOT_TOKEN, { botInfo: JSON.parse(env.BOT_INFO) });
 
-    // 3. Handlers
+    // 2. Handlers
     bot.command("start", (ctx: Context) =>
       ctx.reply("Hello from the edge ⚡", {
         reply_markup: new InlineKeyboard().url("Source", "https://grammy.dev"),
@@ -42,8 +36,11 @@ export default {
 
     bot.catch((err) => console.error("bot error", err));
 
-    // 4. Hand off to grammY
-    return webhookCallback(bot, "cloudflare-mod")(request);
+    // 3. Hand off to grammY. `secretToken` makes it verify the
+    //    X-Telegram-Bot-Api-Secret-Token header and answer 401 on a mismatch.
+    return webhookCallback(bot, "cloudflare-mod", {
+      secretToken: env.WEBHOOK_SECRET,
+    })(request);
   },
 };
 ```

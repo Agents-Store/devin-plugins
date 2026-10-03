@@ -1,132 +1,131 @@
 ---
 name: tabs
-description: Use this skill when the user is building a static-hosted tab inside a Microsoft Teams app — serving a web page from the bot's server via `app.tab()`, using the `@microsoft/teams.client` SDK to call back into Teams, configuring tab context, or wiring a personal / channel / dialog tab. Triggers on "Teams tab", "static tab", "configurable tab", "Teams client SDK".
+description: Use this skill when the user is building a tab inside a Microsoft Teams app on Teams SDK 2.1 — serving a static page with `app.tab()`, calling the agent from the page with `@microsoft/teams.client` and `app.function()`, using TeamsJS (`@microsoft/teams-js`) for context and dialogs, acquiring tokens with Nested App Authentication (NAA) and MSAL. Triggers on "Teams tab", "static tab", "configurable tab", "app.function", "teams.client", "Nested App Authentication", "TeamsJS".
 ---
 
-# Tabs — embedded web pages in Teams
+# Tabs — web pages inside Teams
 
-A tab is a web page rendered inside Teams. The SDK ships two pieces:
-- Server side: `app.tab('name', path)` serves static files from the bot's HTTP server.
-- Client side: `@microsoft/teams.client` exposes the Teams context (theme, user, conversation) and helpers like `dialog.url.submit`.
+Two pieces, two packages — do not mix them up:
 
-## 1. Serve a static tab
+- **Server (`@microsoft/teams.apps`)** — `app.tab(name, dir)` serves a built single-page app; `app.function(name, handler)` exposes REST functions the page can call with an Entra token.
+- **Browser** — `@microsoft/teams-js` (TeamsJS) is the Teams host API: context, theme, dialogs, tab configuration. `@microsoft/teams.client` is a separate class built on TeamsJS and MSAL: it starts both, acquires tokens, calls Graph, and calls the server's functions.
+
+The CLI template `tab` (`teams project new typescript my-tab -t tab`) wires all of this with Vite and React.
+
+## 1. Serve the page
 
 ```ts
 import path from 'node:path';
-import { App } from '@microsoft/teams.apps';
 
-const app = new App({});
-app.tab('settings', path.join(__dirname, '../public/settings'));
-await app.start(3978);
+app.tab('settings', path.resolve('dist/client'));    // served at /tabs/settings
 ```
 
-`app.tab(name, dir)` mounts the directory at `/tabs/<name>`. Drop an `index.html` (or a bundled React/Vue build) in the directory and reference it from the manifest.
+`app.tab` mounts the directory at `https://<bot-host>/tabs/<name>`; scopes default to `personal`. Build the SPA into `dist/client` and keep it out of the server bundle.
 
 ## 2. Manifest
+
+Tabs are declared in the manifest (`teams app manifest download|upload|update`, see `cli-recipes`):
 
 ```jsonc
 {
   "staticTabs": [{
     "entityId": "settings",
     "name": "Settings",
-    "contentUrl": "https://${BOT_HOST}/tabs/settings",
+    "contentUrl": "https://<bot-host>/tabs/settings",
     "scopes": ["personal"]
   }],
   "configurableTabs": [{
-    "configurationUrl": "https://${BOT_HOST}/tabs/configure",
+    "configurationUrl": "https://<bot-host>/tabs/configure",
     "scopes": ["team", "groupChat"]
   }],
-  "validDomains": ["${BOT_HOST}"]
+  "validDomains": ["<bot-host>"]
 }
 ```
 
-Personal tabs (`scopes: ['personal']`) appear in the left rail of a 1:1 chat with the app. Configurable tabs appear in channels / group chats and require a configuration page that calls `pages.config.setConfig` on save.
+Without the host in `validDomains` the Teams client refuses to render the page. A configurable tab needs a configuration page that calls `pages.config.setConfig` and `setValidityState(true)` through TeamsJS.
 
-## 3. Client-side SDK
-
-Inside the page:
+## 3. The client library
 
 ```ts
-import * as teams from '@microsoft/teams.client';
+import * as teamsJs from '@microsoft/teams-js';
+import { App as ClientApp } from '@microsoft/teams.client';
+import * as endpoints from '@microsoft/teams.graph-endpoints';
 
-await teams.initialize();
-const ctx = await teams.app.getContext();
-console.log(ctx.theme, ctx.user, ctx.channel);
+const clientId = String(import.meta.env.VITE_CLIENT_ID);    // the Entra app that backs the tab
 
-// Save configurable tab config:
-teams.pages.config.setConfig({
-  contentUrl: 'https://${BOT_HOST}/tabs/content?roomId=42',
-  entityId: 'room-42',
-  suggestedDisplayName: 'Room 42',
-});
-teams.pages.config.setValidityState(true);
+async function boot() {
+  const app = new ClientApp(clientId, {
+    msalOptions: { prewarmScopes: ['User.Read', 'Team.ReadBasic.All'] },   // explicit scopes; `.default` does not work on Teams desktop
+  });
+  await app.start();                                         // initialises TeamsJS and MSAL
+
+  const context = await teamsJs.app.getContext();            // theme, user, channel, ...
+  const me = await app.graph.call(endpoints.me.get);         // typed Graph client with the user's token
+  const reply = await app.exec<{ conversationId: string }>('post-to-chat', { message: `Hello from ${me.displayName}` });
+  return { context, reply };
+}
+void boot;
 ```
 
-The client SDK works only when the page is loaded inside the Teams app shell. In a regular browser, `initialize()` rejects — gate UI behind that check.
+- `app.start()` fails outside Teams (the TeamsJS initialisation rejects or times out). Catch it and show an "open in Teams" message in a browser.
+- `app.graph.call(endpoints.…)` uses the same endpoint builders as the server (`graph-integration`).
+- `hasConsentForScopes(scopes)` tests, `ensureConsentForScopes(scopes)` tests and prompts.
+- `prewarmScopes` asks for consent at start; `false` disables it. The scopes must belong to one resource.
 
-## 4. Auth from a tab — Nested App Authentication
-
-```ts
-import { PublicClientApplication } from '@azure/msal-browser';
-import * as teams from '@microsoft/teams.client';
-
-await teams.initialize();
-const msal = new PublicClientApplication({
-  auth: { clientId: 'AAD_CLIENT_ID', authority: 'https://login.microsoftonline.com/common' },
-});
-
-const accounts = msal.getAllAccounts();
-const tokenResp = await msal.acquireTokenSilent({
-  scopes: ['User.Read'],
-  account: accounts[0],
-});
-
-const me = await fetch('https://graph.microsoft.com/v1.0/me', {
-  headers: { Authorization: `Bearer ${tokenResp.accessToken}` },
-}).then(r => r.json());
-```
-
-NAA delegates to the parent Teams app's auth — no popup, no redirect. See `authentication` for the full setup.
-
-## 5. Server callbacks from a tab
-
-Tabs cannot call the bot's `/api/messages` directly. Instead:
-- Use NAA + Graph (no bot needed for personal data).
-- Or expose a REST endpoint on the bot's server that validates the SSO token and persists state.
+## 4. Functions — call the agent from the page
 
 ```ts
-import express from 'express';
-import { App } from '@microsoft/teams.apps';
-import { ExpressAdapter } from '@microsoft/teams.apps/express';
-
-const server = express();
-server.use(express.json());
-
-server.post('/api/tab/save', authMiddleware, async (req, res) => {
-  await persist(req.body);
-  res.json({ ok: true });
-});
-
-const app = new App({ plugins: [new ExpressAdapter({ app: server })] });
-```
-
-`authMiddleware` validates the bearer token. The token comes from `teams.authentication.getAuthToken()` on the client.
-
-## 6. Open a dialog from a tab
-
-```ts
-const result = await teams.dialog.url.open({
-  title: 'Pick a value',
-  url: 'https://${BOT_HOST}/tabs/picker',
-  size: { width: 400, height: 300 },
+app.function<{ message: string }>('post-to-chat', async ({ data, send, getCurrentConversationId, log }) => {
+  log.info('post-to-chat called');
+  await send(data.message);                                    // into the conversation the tab runs in
+  return { conversationId: await getCurrentConversationId() };
 });
 ```
 
-The picker page calls `teams.dialog.url.submit(value)` to close itself and resolve the promise.
+The function is served at `POST /api/functions/post-to-chat`. The SDK validates the Entra bearer token before the handler runs (401 otherwise). Context values from the caller (`chatId`, `channelId`, `teamId`, `pageId`, `meetingId`, …) are **not** validated — only `userId`, `tenantId` and `authToken` come from the token. Check access yourself before acting on them, and validate `data`. A returned number is an HTTP status code; a string, object or array is the body.
+
+## 5. Nested App Authentication with plain MSAL
+
+When you do not use `@microsoft/teams.client`, create an MSAL client that talks to the Teams host instead of opening a popup:
+
+```ts
+import { createNestablePublicClientApplication } from '@azure/msal-browser';
+
+async function getGraphToken(clientId: string) {
+  const msal = await createNestablePublicClientApplication({
+    auth: { clientId, authority: 'https://login.microsoftonline.com/common' },
+  });
+  const accounts = msal.getAllAccounts();
+  const result = await msal.acquireTokenSilent({ scopes: ['User.Read'], account: accounts[0] });
+  return result.accessToken;
+}
+void getGraphToken;
+```
+
+If `acquireTokenSilent` throws `interaction_required`, fall back to `acquireTokenPopup` or a sign-in button. The Entra app registration needs the nested-app redirect URI and its SPA platform set up — see `authentication`.
+
+## 6. Dialogs from a page
+
+TeamsJS opens and closes URL dialogs:
+
+```ts
+import * as microsoftTeams from '@microsoft/teams-js';
+
+function pickValue() {
+  microsoftTeams.dialog.url.open(
+    { title: 'Pick a value', url: 'https://<bot-host>/tabs/picker', size: { width: 400, height: 300 } },
+    (result) => { console.log('dialog closed', result); },
+  );
+}
+void pickValue;
+```
+
+The picker page calls `microsoftTeams.dialog.url.submit(value)`. Dialogs opened by the bot are in `dialogs`.
 
 ## Common pitfalls
 
-- **Tab loads blank in Teams** — `validDomains` is missing the host. The Teams shell silently refuses to render.
-- **`teams.initialize()` rejects in the browser** — expected. Detect with `try/catch` and render a "open in Teams" fallback.
-- **NAA returns `interaction_required`** — fall back to `msal.acquireTokenPopup` (Teams 2.x desktop client) or surface a sign-in button.
-- **Channel-tab config never persists** — `pages.config.setValidityState(true)` was not called.
+- **The tab is blank in Teams** — `validDomains` misses the host, or the build output path in `app.tab` is wrong (404 on `/tabs/<name>`).
+- **`teams.client` or TeamsJS rejects in a browser** — expected outside Teams.
+- **TeamsJS functions imported from `@microsoft/teams.client`** — the client package has its own `App` class; context, pages and dialogs come from `@microsoft/teams-js`.
+- **A function answers 401** — the token audience does not match the app, or the call came without a bearer token.
+- **A configurable tab does not save** — `setValidityState(true)` was never called.

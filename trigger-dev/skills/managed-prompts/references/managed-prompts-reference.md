@@ -1,6 +1,6 @@
 # Managed Prompts — MCP Reference
 
-Complete parameter schemas for the 7 Managed Prompts MCP tools (introspected from the live `trigger.dev@latest mcp` server as of v4.4.4).
+Complete parameter schemas for the 7 Managed Prompts MCP tools (checked against the live `trigger.dev mcp` server, CLI 4.7.2). The tools return text; the `Output:` blocks list the fields that text carries. The five write tools (`promote_prompt_version` and the four override tools) are hidden by `trigger.dev mcp --readonly`.
 
 All tools accept the standard scope parameters (omitted from the per-tool tables below):
 
@@ -216,10 +216,18 @@ remove_prompt_override(slug="customer-reply", environment="prod")
 
 ---
 
-## TODO — SDK Side
+## SDK Side (requires SDK and server ≥ 4.5.0)
 
-The SDK-facing surface for declaring managed prompts in code (likely `prompt(...)` / `definePrompt(...)` from `@trigger.dev/sdk`, plus a helper for task integration and an AI SDK tool metadata format) is not yet publicly documented. This section will be filled in when Trigger.dev publishes the `/docs/prompts` page. Until then:
+Prompts are declared with `prompts.define({ id, description?, model?, config?, variables?, content })` from `@trigger.dev/sdk`; the `id` is the slug the MCP tools use. Deploying versions them, `resolve()` returns the override when one is active and the current code version otherwise, and `toAISDKTelemetry()` links AI SDK generations to the prompt. The full API is in the **managed-prompts** skill ("SDK Usage") and at https://trigger.dev/docs/ai/prompts.
 
-- The MCP tools above are the authoritative agent-facing interface.
-- To introduce a new prompt into your project, ship it via a normal deploy once the SDK helper is known.
-- LLM cost / token usage per prompt can be queried today via the `llm_metrics` TRQL table (see the **observability** skill).
+| SDK method | MCP tool |
+|------------|----------|
+| `prompts.list()` | `list_prompts` |
+| `prompts.versions(slug)` | `get_prompt_versions` |
+| `prompts.promote(slug, version)` | `promote_prompt_version` |
+| `prompts.createOverride(slug, body)` | `create_prompt_override` |
+| `prompts.updateOverride(slug, body)` | `update_prompt_override` |
+| `prompts.removeOverride(slug)` | `remove_prompt_override` |
+| `prompts.reactivateOverride(slug, version)` | `reactivate_prompt_override` |
+
+LLM cost and token usage per prompt can be queried with the `llm_metrics` TRQL table (see the **observability** skill).

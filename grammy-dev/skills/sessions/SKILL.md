@@ -74,10 +74,16 @@ Install the storage adapter for your database:
 | PostgreSQL | `@grammyjs/storage-psql` |
 | Supabase | `@grammyjs/storage-supabase` |
 | File | `@grammyjs/storage-file` |
-| DenoKV | `@grammyjs/storage-denokv` |
 | Cloudflare KV | `@grammyjs/storage-cloudflare` |
-| Deno Deploy KV | `@grammyjs/storage-denokv` |
 | AWS DynamoDB | `@grammyjs/storage-dynamodb` |
+| AWS S3 | `@grammyjs/storage-s3` |
+| Prisma | `@grammyjs/storage-prisma` |
+| TypeORM | `@grammyjs/storage-typeorm` |
+| Firestore | `@grammyjs/storage-firestore` |
+| PocketBase | `@grammyjs/storage-pocketbase` |
+| Bun SQL | `@grammyjs/storage-bun` |
+
+**Deno KV** (also the store behind Deno Deploy) has an adapter too, but it is a Deno-only package published on JSR — the `storage-denokv` package in the grammyjs scope — not on npm. On Deno, the other adapters come from the shared storages module of the grammY docs (see "External Storage Solutions" on grammy.dev/plugins/session).
 
 ### Redis example
 

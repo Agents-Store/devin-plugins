@@ -41,69 +41,45 @@ For day-to-day operations, route through the dedicated skills rather than this r
 | [backlog-grooming.md](references/scenarios/backlog-grooming.md) | Backlog grooming session scenario |
 | [everyday-commands.md](references/scenarios/everyday-commands.md) | Common day-to-day flows: page creation, time logging, PR linking, bulk edits, label/state setup |
 
-## Quick Reference: All Tools by Group
+## Quick Reference: The Resource Tools
 
-### Workspace (4)
-`get_me`, `get_workspace_members`, `get_workspace_features`, `update_workspace_features`
+Plane MCP (0.3.0 and later) exposes **one tool per resource**; the `action` parameter selects the operation, so a call reads `cycle(action=list, project_id=<id>)`. Every tool's own description lists its actions with their required and optional parameters and is the authoritative reference at call time. Scope: pass `project_id` for a project's own set, omit it for the workspace.
 
-### Projects (9)
-`list_projects`, `create_project`, `retrieve_project`, `update_project`, `delete_project`, `get_project_members`, `get_project_features`, `update_project_features`, `get_project_worklog_summary`
+| Tool | Actions |
+|------|---------|
+| `project` | `list` `retrieve` `create` `update` `delete` `archive` `unarchive` `worklog_summary` `get_features` `update_features` |
+| `workspace` | `retrieve` `get_features` `update_features` |
+| `member` | `me` `list_workspace` `list_project` `list_roles` `retrieve_role` |
+| `workitem` | `list` `list_archived` `retrieve` `retrieve_by_identifier` `search` `count` `create` `update` `delete` `archive` `manage_assignee` `manage_label` |
+| `cycle` | `list` `retrieve` `create` `update` `delete` `list_workitems` `manage_workitems` `transfer_workitems` `complete` `archive` `unarchive` |
+| `module` | `list` `retrieve` `create` `update` `delete` `list_workitems` `manage_workitems` `archive` `unarchive` |
+| `milestone` | `list` `retrieve` `create` `update` `delete` `list_workitems` `manage_workitems` |
+| `initiative` | `list` `retrieve` `create` `update` `delete` `list_projects` `add_projects` `remove_projects` `list_workitems` `manage_workitems` |
+| `intake` | `list` `retrieve` `create` `update` `delete` |
+| `state` | `list` `retrieve` `create` `update` `delete` |
+| `label` | `list` `retrieve` `create` `update` `delete` |
+| `workitem_type` | `list` `retrieve` `resolve` `create` `update` `delete` `import_to_project` |
+| `workitem_property` | `list` `retrieve` `create` `update` `delete` `manage_type_properties` `list_options` `retrieve_option` `create_option` `update_option` `delete_option` `get_value` `set_value` `delete_value` |
+| `workitem_comment` | `list` `retrieve` `create` `update` `delete` |
+| `workitem_link` | `list` `retrieve` `create` `update` `delete` |
+| `workitem_relation` | `list` `create` `delete` `list_definitions` `create_definition` `update_definition` `delete_definition` |
+| `workitem_activity` | `list` `retrieve` |
+| `workitem_attachment` | `list` `read` `download_url` `upload_from_url` `delete` |
+| `work_log` | `list` `create` `update` `delete` |
+| `page` | `list` `retrieve` `create` `update` `archive` `delete` `set_collection` `list_workitem_pages` `attach_to_workitem` `detach_from_workitem` |
+| `project_estimate` | `retrieve` `create` `update` `delete` `link` `list_points` `create_points` `update_point` `delete_point` |
+| `release` | `list` `retrieve` `create` `update` `delete` `get_changelog` `update_changelog` `list_workitems` `manage_workitems` |
+| `release_tag` | `list` `retrieve` `create` `update` `delete` |
+| `release_label` | `list` `create` `update` `delete` `attach` `detach` |
+| `customer`, `customer_property`, `customer_request` | CRM-style records (outside the scope of this plugin) |
+| `collection` | page collections: `list` `retrieve` `create` `update` `delete` `list_pages` `search_pages` `add_pages` `remove_page` `list_members` `add_member` `update_member` `remove_member` |
+| `template` | `list` `create` `update` `delete` |
+| `get_pql_reference` | no `action`: the syntax of the `pql` filter used by `workitem` `list` / `list_archived` / `count` and by `cycle` / `module` `list_workitems` |
 
-### Work Items (7)
-`list_work_items`, `create_work_item`, `retrieve_work_item`, `retrieve_work_item_by_identifier`, `update_work_item`, `delete_work_item`, `search_work_items`
-
-### Cycles / Sprints (12)
-`list_cycles`, `create_cycle`, `retrieve_cycle`, `update_cycle`, `delete_cycle`, `list_archived_cycles`, `add_work_items_to_cycle`, `remove_work_item_from_cycle`, `list_cycle_work_items`, `transfer_cycle_work_items`, `archive_cycle`, `unarchive_cycle`
-
-### Modules (11)
-`list_modules`, `create_module`, `retrieve_module`, `update_module`, `delete_module`, `list_archived_modules`, `add_work_items_to_module`, `remove_work_item_from_module`, `list_module_work_items`, `archive_module`, `unarchive_module`
-
-### Epics (5)
-`list_epics`, `create_epic`, `retrieve_epic`, `update_epic`, `delete_epic`
-
-### Milestones (8)
-`list_milestones`, `create_milestone`, `retrieve_milestone`, `update_milestone`, `delete_milestone`, `add_work_items_to_milestone`, `remove_work_items_from_milestone`, `list_milestone_work_items`
-
-### Initiatives (5)
-`list_initiatives`, `create_initiative`, `retrieve_initiative`, `update_initiative`, `delete_initiative`
-
-### Labels (5)
-`list_labels`, `create_label`, `retrieve_label`, `update_label`, `delete_label`
-
-### States (5)
-`list_states`, `create_state`, `retrieve_state`, `update_state`, `delete_state`
-
-### Work Item Comments (5)
-`list_work_item_comments`, `create_work_item_comment`, `retrieve_work_item_comment`, `update_work_item_comment`, `delete_work_item_comment`
-
-### Work Item Links (5)
-`list_work_item_links`, `create_work_item_link`, `retrieve_work_item_link`, `update_work_item_link`, `delete_work_item_link`
-
-### Work Item Relations (3)
-`list_work_item_relations`, `create_work_item_relation`, `remove_work_item_relation`
-
-### Work Item Activities (2)
-`list_work_item_activities`, `retrieve_work_item_activity`
-
-### Work Logs (4)
-`list_work_logs`, `create_work_log`, `update_work_log`, `delete_work_log`
-
-### Work Item Types (5)
-`list_work_item_types`, `create_work_item_type`, `retrieve_work_item_type`, `update_work_item_type`, `delete_work_item_type`
-
-### Work Item Properties (5)
-`list_work_item_properties`, `create_work_item_property`, `retrieve_work_item_property`, `update_work_item_property`, `delete_work_item_property`
-
-### Intake (5)
-`list_intake_work_items`, `create_intake_work_item`, `retrieve_intake_work_item`, `update_intake_work_item`, `delete_intake_work_item`
-
-### Pages (4)
-`create_workspace_page`, `retrieve_workspace_page`, `create_project_page`, `retrieve_project_page`
-
-**Total: 98 tools**
+There are no epic tools: an epic is a `workitem` whose type is "Epic" (`workitem_type(action=resolve, name="Epic")`, then `workitem(action=create, type_id=...)`).
 
 ## Tool Name Resolution
 
-All tool names above are **generic action names**. The actual MCP tool name depends on how Plane is connected — the prefix and structure vary across MCP servers, connectors, self-hosted instances, and cloud deployments. Never assume a specific prefix in this plugin.
+The tool names above are **resource names**. The actual MCP tool name is `mcp__<server>__<resource>` and the server segment depends on how Plane is connected (connector, `.mcp.json` entry, self-hosted, cloud). Never assume a specific prefix in this plugin.
 
-To discover the real tool names for the current environment, follow the `connector-bootstrap` skill. In short: use `ToolSearch` with multiple queries (`plane`, `work_item`, `create_cycle`, domain keywords), match tools by the action suffix, and handle multiple instances when present.
+To discover the real tool names for the current environment, follow the `connector-bootstrap` skill. In short: use `ToolSearch` with multiple queries (`plane`, `workitem cycle module`, domain keywords), match the resource tools by name, and handle multiple instances when present. The skill also holds a fallback table for servers older than 0.3.0 that expose one tool per operation.

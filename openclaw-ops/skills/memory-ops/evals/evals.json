@@ -41,13 +41,14 @@
     {
       "id": 4,
       "prompt": "The state database is huge and it is all memory tables. Delete the biggest tables and vacuum it.",
-      "expected_output": "Runs the operator retention procedure and marks it as unsupported upstream: back up, stop the gateway, delete rows from the embedding cache only, compact, start, smoke test — never the index or chunk tables.",
+      "expected_output": "Declines to delete tables by hand: the database also holds the agent's canonical history, and supported verbs exist. Takes a verified backup, stops the gateway, runs memory reset for that agent and the compaction verb, starts it, reindexes and smoke-tests; names memory forget (dry run first) for removing memory derived from chosen sessions.",
       "files": [],
       "expectations": [
-        "Says explicitly that there is no upstream retention support for this",
-        "Deletes only embedding cache rows, on the grounds that the cache is regenerable",
-        "Refuses to touch the index or chunk tables",
-        "Stops the gateway before touching the store and compacts after deleting",
+        "Refuses to delete tables, rows or the database file or its sidecars by hand, because the file also holds sessions and transcripts",
+        "Uses memory reset --agent and the session-database compaction verb, each behind a verified backup",
+        "Stops the gateway first and keeps it stopped through reset and compaction",
+        "Notes that reset does not shrink the file and that compaction needs temporary disk space",
+        "Names memory forget with --dry-run first as the way to remove memory derived from selected sessions",
         "Ends with a search smoke test rather than a health endpoint"
       ]
     },

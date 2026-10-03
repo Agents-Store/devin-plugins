@@ -50,20 +50,30 @@ A `200` with your user object confirms the token works. Check `roles` contains `
 
 ## When the token expires
 
-Session tokens expire and are revoked on logout. When a call returns `401` mid-session, simply re-run Step 1 to obtain a fresh token. To end a session deliberately: `POST /api/v4/users/logout` with the Bearer header.
+Session tokens expire and are revoked on logout. When a call returns `401` mid-session, simply re-run Step 1 to obtain a fresh token. To end a session deliberately: `POST /api/v4/users/logout` with the Bearer header. A **personal access token** can expire too (v11.9+, see below) — a `401` with a PAT means "expired, revoked or disabled", not "wrong URL".
 
 ## Personal access tokens (preferred for unattended integrations)
 
-For long-lived, non-interactive automation, a **personal access token (PAT)** is better than repeatedly logging in with a password. A system admin enables PATs in the System Console, then issues one:
+For non-interactive automation, a **personal access token (PAT)** is better than repeatedly logging in with a password. A system admin enables PATs in the System Console (`ServiceSettings.EnableUserAccessTokens`), then issues one. **Since v11.9 a PAT can carry an expiry — always set one**:
 
 ```bash
+# Expiry = 90 days from now, as Unix milliseconds (expires_at)
+EXPIRES_AT=$(( ($(date +%s) + 90*86400) * 1000 ))
 # As admin, mint a PAT for a user (userId "me" = the current user)
 curl -s -X POST -H "Authorization: Bearer ${MATTERMOST_TOKEN}" -H "Content-Type: application/json" \
-  -d '{"description":"automation token"}' \
+  -d "{\"description\":\"automation token\",\"expires_at\":${EXPIRES_AT}}" \
   "${MATTERMOST_API_URL%/}/api/v4/users/me/tokens" | jq '{id, token}'
 ```
 
-A PAT is used **identically** to a session token — `Authorization: Bearer <pat>` — but never expires until revoked. If the user already has a PAT, they can set `MATTERMOST_TOKEN` to it directly and skip Step 1. See `api-reference` → `references/auth-sessions.md`.
+A PAT is used **identically** to a session token — `Authorization: Bearer <pat>`. If the user already has a PAT, they can set `MATTERMOST_TOKEN` to it directly and skip Step 1. See `api-reference` → `references/auth-sessions.md`.
+
+How expiry behaves (Mattermost v11.9 / v11.10 changelog):
+
+- **No `expires_at` (or `0`) = non-expiring**, as before. Every PAT created before v11.9 stays non-expiring, and servers older than v11.9 do not support expiry at all — there a PAT lives until revoked.
+- **Admin policy.** `ServiceSettings.MaximumPersonalAccessTokenLifetimeDays` (System Console → Integrations → Integration Management): `0` (default) = no policy; non-zero = a new PAT **must** expire within that many days. The policy covers newly created tokens only and exempts bot-account tokens. If token creation fails on a locked-down server, ask for the cap and send a compliant `expires_at`.
+- **An expired PAT is rejected with HTTP `401`** (same as a revoked one) and is reaped hourly. From v11.10 the system bot sends the owner a direct message 7, 3 and 1 days before expiry and when an expired token is removed.
+- **Rotate instead of re-creating** (v11.10+): `POST /users/tokens/rotate` with `{"token_id":"<id>","expires_at":<unix-ms>?}` returns a new secret and invalidates the old one immediately — update every consumer of the old secret right away.
+- **CLI**: `mmctl user token generate` has an `--expires-in` flag (for example `90d`).
 
 ## Global conventions (apply to every call)
 

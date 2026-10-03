@@ -32,9 +32,18 @@ description: This skill should be used when the user reports "macstack lint fail
 
 ## Infisical / env
 
-- `infisical secrets` reads the wrong instance → the CLI ignores `--domain` on
-  authenticated reads; only one instance is active — run
-  `infisical login --domain=…` first.
+- `infisical secrets` reads the wrong instance or organization → the profile in use
+  is not the project's. `infisical profile current` says which profile applies and why
+  (a stale `INFISICAL_PROFILE` pin or `--profile` beats a bound directory, which beats
+  the default). Fix: keep each instance as its own profile —
+  `infisical login --save-as <profile> --domain=<domain>` once, then
+  `infisical profile bind <profile>` in the project root (or `--profile <profile>`).
+- A command fails because the domain differs from the login → a `--domain` /
+  `INFISICAL_DOMAIN` names another instance than the profile in use; this is the CLI
+  refusing to read the wrong vault, not a bug. Select the profile that belongs to that
+  instance, or unset the override.
+- `unknown command "profile"` / `unknown flag: --profile` → the CLI is older than
+  0.43.134; upgrade it.
 - `.env` got wiped empty → setup.sh lacks the guard: fetch into a temp file, mv
   only on success. Restore by pulling from Infisical again.
 - A required key exists in macstack.json but is empty after sync → it is missing in

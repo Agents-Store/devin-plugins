@@ -16,8 +16,8 @@ single most common setup mistake is using the wrong token for the wrong API.
 
 | API | Base path | Token / auth | Use for |
 |-----|-----------|--------------|---------|
-| **Application** | `/api/v1/accounts/{account_id}/...` | User **access token** (`api_access_token` header) | Agent/account automation: conversations, messages, contacts, inboxes, reports |
-| **Platform** | `/platform/api/v1/...` | **Platform app** token (`api_access_token` header) | Super-admin provisioning: create accounts, users, account-users, agent bots |
+| **Application** | `/api/v1/accounts/{account_id}/...` | User **access token** (`api-access-token` header) | Agent/account automation: conversations, messages, contacts, inboxes, reports |
+| **Platform** | `/platform/api/v1/...` | **Platform app** token (`api-access-token` header) | Super-admin provisioning: create accounts, users, account-users, agent bots |
 | **Client / Public** | `/public/api/v1/inboxes/{inbox_identifier}/...` | **No token** (uses `inbox_identifier` + contact `source_id`) | Building a custom chat widget for end users |
 
 `CHATWOOT_API_KEY` in this plugin = your **Application** user access token unless you are
@@ -44,8 +44,21 @@ export CHATWOOT_API_KEY="your_access_token"            # Application user access
 export CHATWOOT_ACCOUNT_ID="1"                         # numeric account id from the dashboard URL
 ```
 
-Keep these out of source control (use a secrets manager or untracked `.env`). The auth
-header Chatwoot expects is literally `api_access_token` — not `Authorization: Bearer`.
+Keep these out of source control (use a secrets manager or untracked `.env`).
+
+### Which header carries the token
+
+Send it as **`api-access-token`** (hyphens). Chatwoot's OpenAPI spells the header
+`api_access_token`, and the server accepts both spellings: Rack turns either into the same
+`HTTP_API_ACCESS_TOKEN` variable, which is what Chatwoot reads. The hyphen matters when a
+reverse proxy sits in front of a self-hosted instance: nginx ignores request headers whose
+names contain underscores unless `underscores_in_headers on;` is set (default `off`), and
+Caddy 2.6.4+ strips them too, so `api_access_token` reaches Chatwoot as *no token* and the
+call fails with `401`. The official CLI sends `api-access-token` since v0.7.0.
+
+`Authorization: Bearer <token>` is accepted only by Chatwoot v4.19.0 and later (v4.18.0 is the
+latest release as of 2026-10-03), so do not rely on it yet. Details:
+`api-reference/references/pagination-errors.md` → Authentication.
 
 ## 4. Install the CLI (optional)
 
@@ -62,6 +75,11 @@ chatwoot auth login
 export CHATWOOT_API_KEY="your_access_token"
 ```
 
+Use CLI **v0.7.0 or newer**: it sends the hyphenated `api-access-token` header (earlier versions
+get `401` behind nginx/Caddy, see above) and locks each conversation during writes. The install
+script fetches the latest release; pinning a version is covered in the
+[CLI install docs](https://developers.chatwoot.com/cli#install).
+
 Non-secret config lives at `~/.chatwoot/config.yaml`. See the `cli-recipes` skill for usage.
 If you use Claude Code/Cursor, you can also install the upstream agent skill with
 `npx skills add chatwoot/cli`.
@@ -71,14 +89,14 @@ If you use Claude Code/Cursor, you can also install the upstream agent skill wit
 Application API — a clean conversation list confirms token + account + base URL:
 
 ```bash
-curl -s -H "api_access_token: ${CHATWOOT_API_KEY}" \
+curl -s -H "api-access-token: ${CHATWOOT_API_KEY}" \
   "${CHATWOOT_BASE_URL}/api/v1/accounts/${CHATWOOT_ACCOUNT_ID}/conversations" | jq '.data.meta'
 ```
 
 Confirm identity (who the token belongs to):
 
 ```bash
-curl -s -H "api_access_token: ${CHATWOOT_API_KEY}" \
+curl -s -H "api-access-token: ${CHATWOOT_API_KEY}" \
   "${CHATWOOT_BASE_URL}/api/v1/profile" | jq '{id, name, email, role}'
 ```
 
@@ -89,8 +107,8 @@ chatwoot me            # current identity
 chatwoot convs         # your open conversations
 ```
 
-A `200` with JSON means you are ready. A `401` means the token or the `api_access_token`
-header is wrong; a `404` usually means a wrong `account_id` or base URL — see the
+A `200` with JSON means you are ready. A `401` means the token or the `api-access-token`
+header is wrong, or a proxy dropped the header (see "Which header carries the token"); a `404` usually means a wrong `account_id` or base URL — see the
 `troubleshoot` skill.
 
 ## What this skill does NOT cover

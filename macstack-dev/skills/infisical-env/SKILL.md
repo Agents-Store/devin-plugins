@@ -1,6 +1,6 @@
 ---
 name: infisical-env
-description: This skill should be used when the user asks to "set up Infisical for this project", "create .infisical.json", "pull the env keys", "wire the env", "sync secrets", or scaffold-project reaches the env step. Creates .infisical.json, pulls .env.prod/.env.dev, ensures every key from macstack.json resources.accesses exists, and installs the mandatory secrets scripts and commands.
+description: This skill should be used when the user asks to "set up Infisical for this project", "create .infisical.json", "pull the env keys", "wire the env", "sync secrets", or scaffold-project reaches the env step. Creates .infisical.json, pulls .env.prod/.env.dev, ensures every key from macstack.json resources.accesses exists, and installs the mandatory secrets scripts and slash-command skills.
 ---
 
 # Infisical & Env Wiring (the mandatory secrets loop)
@@ -77,10 +77,37 @@ Create `scripts/setup.sh` — pulls secrets from Infisical:
 - Fetch as JSON (`infisical secrets -o json`) and render `KEY='value'` —
   **single quotes** keep `$ # & =`, spaces, base64, JWT dots and multiline PEM
   intact; an embedded quote is escaped the POSIX way `'\''`.
-- **Instance switching**: the Infisical CLI keeps a separate login per self-hosted
-  instance, but only ONE is active; before reading, check the active domain and, on
-  mismatch, run `infisical login --domain=<domain>` (the --domain flag is IGNORED on
-  authenticated reads!).
+- **Instance selection — one named profile per instance** (Infisical CLI >= 0.43.134).
+  A profile is one login: an account on one instance plus the organization it uses.
+  Do not check "which instance is active" and re-login; keep every instance logged in
+  as its own profile and let the CLI pick:
+  - once per instance: `infisical login --save-as <profile> --domain=<domain>` (the
+    domain is `infisical.domain` from the organization's registry);
+  - once per project, in the project root: `infisical profile bind <profile>` — every
+    command under that directory then selects the profile by itself. The binding lives
+    in the user's CLI config, never in the repository;
+  - `infisical profile current` prints which profile applies here and why — the
+    script's pre-flight line, and what to run when a pull reads the wrong vault;
+  - one terminal: `eval "$(infisical profile pin <profile>)"`; one command or a
+    script: `--profile <profile>` or `INFISICAL_PROFILE` (`pin` only prints an
+    `export` line). Order of precedence: `--profile`, `INFISICAL_PROFILE`, a bound
+    directory, the default profile (`infisical profile use`).
+- **Wrong-instance guard**: the instance itself is chosen by `--domain`, then
+  `INFISICAL_DOMAIN`, then a `domain` field in `.infisical.json`, then US Cloud. After
+  a user login a `--domain` / `INFISICAL_DOMAIN` that names a different instance than
+  the profile in use makes the command FAIL instead of reading the wrong vault — so
+  the script sets `INFISICAL_DOMAIN` (or passes `--domain`) from the registry value on
+  every read; never a literal in the script. Keep `domain` out of the committed
+  `.infisical.json` unless the team wants it there: anyone who can edit that file can
+  redirect the CLI, and the CLI prints a warning naming the host each time it uses it.
+- A CLI older than 0.43.134 has no `profile` command or `--profile` flag
+  (`unknown command "profile"`) — upgrade it (`infisical --version`). Everything else
+  about the Infisical CLI: the `infisical-dev` plugin, skill `cli-reference`.
+- **No profile applies**: `infisical profile current` exits 1 with "No profile is
+  selected" (a pinned name that does not exist prints `Status: profile does not exist`
+  and exits 0 — treat that as no profile too). `setup.sh` then stops BEFORE the fetch,
+  prints the two one-time commands above (`login --save-as …`, then `profile bind …`)
+  and leaves the existing `.env` untouched; it never starts an interactive login itself.
 - **Guard**: on a failed fetch NEVER wipe the existing .env (write to a temp file
   first, then mv on success).
 - Also mirrors the values into the `.claude/settings.local.json` env block (so the
@@ -92,16 +119,22 @@ Create `scripts/secrets-push.sh [--yes]` — the reverse flow: local `.env.prod`
 Create `scripts/env-audit.sh` — reconciliation: macstack.json accesses ⇄ Infisical ⇄
 `.env*` (+ deploy targets if any): a missing required key = error.
 
-## Step 4 — mandatory commands and rule
+## Step 4 — mandatory slash-command skills and rule
 
-`.claude/commands/`:
+`.claude/skills/<name>/SKILL.md` — frontmatter `name` and `description`, then the body;
+still typed as `/<name>`. The ones that write are manual and carry
+`disable-model-invocation: true` (only the user types them); `env-audit` only reads, so
+it stays model-invocable and Claude can run it when the rule below asks:
 
-| Command | Body |
-|---|---|
-| `secrets-sync.md` | `Run ./scripts/setup.sh prod .env .claude/settings.local.json and report` (description: Pull Infisical → .env/.env.prod/.env.dev) |
-| `secrets-push.md` | dry-run by default, `--yes` to write; upsert, never deletes |
-| `env-audit.md` | reconcile keys macstack.json ⇄ Infisical ⇄ .env |
-| `setup-tokens.md` | first-time setup: login + first pull |
+| Skill | Invocation | Body |
+|---|---|---|
+| `secrets-sync` | manual | `Run ./scripts/setup.sh prod .env .claude/settings.local.json and report` (description: Pull Infisical → .env/.env.prod/.env.dev) |
+| `secrets-push` | manual | dry-run by default, `--yes` to write; upsert, never deletes |
+| `env-audit` | model-invocable | reconcile keys macstack.json ⇄ Infisical ⇄ .env |
+| `setup-tokens` | manual | first-time setup: named profile (`login --save-as`) + `profile bind` + first pull |
+
+A project that already has these as `.claude/commands/<name>.md` keeps them (same
+behaviour) — never add a second skill with the same name beside one.
 
 `.claude/rules/secrets-env-sync.md` (installed by the `best-practices` skill):
 Infisical is the truth; changed .env → `/secrets-push`; before a deploy/push →
@@ -118,6 +151,6 @@ settings.local.json.
 user: "Wire Infisical into this project"
 → .infisical.json (workspaceId of the new "acme-website" workspace)
 → .env.example from 6 accesses (MAILGUN_* marked required:false, provided_by:client)
-→ scripts/setup.sh + secrets-push.sh + env-audit.sh, 4 commands
+→ scripts/setup.sh + secrets-push.sh + env-audit.sh, 4 skills under .claude/skills/
 → /secrets-sync → .env.prod: 4/6 filled, MAILGUN_* empty → into needs_from_client
 </example>

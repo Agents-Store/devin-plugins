@@ -21,7 +21,7 @@ IF topic is a specific named tool/framework/product:
     npmjs.com/package/{name}, pypi.org/project/{name}, docs.{name}.ai
   → Use discovered URLs as primary sources
 
-expand_query({ query: "RAG pipeline architecture" })
+Related terms (planned by you, no tool): "retrieval augmented generation", "RAG", "grounded generation"
 
 Queries:
 1. "RAG pipeline architecture components design"
@@ -36,10 +36,10 @@ Queries:
 ### Step 3: SEARCH
 ```
 ~~code_search("RAG pipeline implementation architecture")
-→ Code examples and technical context
+→ Repositories, issues, PRs and docs with matched passages
 
 ~~academic_search("retrieval augmented generation architecture evaluation")
-→ Academic papers
+→ Academic papers (paper search first, then arXiv/SSRN)
 
 ~~batch_search([
   "RAG best practices production 2026",
@@ -48,14 +48,18 @@ Queries:
 ])
 
 ~~search("current state of RAG architecture best practices 2026")
+
+~~deep_agent("RAG pipeline architecture: components, trade-offs, benchmarks — with sources")
+→ One heavy pass because depth is deep; cross-check its claims against the pages read in Step 4
 ```
 
 ### Step 4: READ
 ```
 Rank by relevance("RAG architecture best practices", all_urls)
-~~batch_scrape(top_8_urls)
+~~batch_scrape(top_8_urls, question: "RAG architecture components and trade-offs", topk: 3)
 
-Extract PDF from arxiv paper → full paper text for key papers
+Key papers: passages that answer a question (paper-index read-paper step),
+PDF extraction for figures and tables
 ```
 
 ### Step 5: EXTRACT
@@ -89,4 +93,4 @@ Output: Deep Research Report with:
 - Methodology
 
 ### Expected Capabilities Used
-`~~code_search`, `~~academic_search`, `~~batch_search`, `~~search`, `~~batch_scrape`, PDF extraction, relevance ranking, deduplication
+`~~code_search`, `~~academic_search`, `~~batch_search`, `~~search`, `~~batch_scrape`, `~~deep_agent` (one pass, depth deep), PDF extraction, relevance ranking, deduplication

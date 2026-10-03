@@ -239,12 +239,13 @@ Update `vercel.json` to call `/api/run-jobs` and set `CRON_SECRET` in Vercel env
 
 ## Monitoring
 
-Query the `payload-jobs` collection from your admin panel or a custom endpoint:
+Since 3.89.0 the `payload-jobs` collection is hidden and denies all access by default, so query it from trusted server code (a custom endpoint behind your own auth check, or a script) with `overrideAccess: true` — and to browse it in the admin panel, open it read-only via `jobs.jobsCollectionOverrides` (see the `jobs-queue` skill, "Access to `payload-jobs`"):
 
 ```ts
 // Failed jobs eligible for manual retry
 await payload.find({
   collection: 'payload-jobs',
+  overrideAccess: true,   // explicit: the Payload 4 canary defaults the Local API to false
   where: { hasError: { equals: true } },
   sort: '-createdAt',
 })
@@ -252,6 +253,7 @@ await payload.find({
 // In-flight jobs (might be stuck)
 await payload.find({
   collection: 'payload-jobs',
+  overrideAccess: true,
   where: { processing: { equals: true } },
 })
 ```

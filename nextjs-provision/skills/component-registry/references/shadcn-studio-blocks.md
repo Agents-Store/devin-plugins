@@ -1,6 +1,6 @@
 # shadcn studio Block Catalog
 
-Pre-built UI blocks (800+) available via the `@ss-blocks` registry. Blocks are complete sections ready to drop into pages.
+Pre-built UI blocks (1000+) available via the `@ss-blocks` registry. Blocks are complete sections ready to drop into pages.
 
 Install any block (namespaced address — CLI v4 has no `--registry` flag):
 ```bash

@@ -7,10 +7,10 @@
       "expected_output": "Combined dashboard: burndown (day X of Y, actual vs ideal), velocity trend across last 5 sprints with confidence tier, WIP current vs limit, blocker count, projected completion points. Concrete recommendations at the bottom.",
       "files": [],
       "expectations": [
-        "Calls list_cycles for active + list_archived_cycles for trend",
+        "Reads the active sprint with cycle(action=list, status=current) and the trend with cycle(action=list, status=completed) (plus archived=true for archived sprints)",
         "Computes ideal_remaining = total × (remaining_days / sprint_days) correctly",
         "Categorizes velocity confidence based on sample size (LOW/MODERATE/HIGH)",
-        "Calculates WIP limit from team size and compares to current",
+        "Counts current WIP with workitem(action=count, pql='stateGroup = \"started\"') instead of listing every item, calculates the WIP limit from team size and compares",
         "Produces a completion forecast (pts projected by end_date at current pace)",
         "Outputs the SPRINT HEALTH dashboard layout from the skill, not prose",
         "Gives 2-3 concrete recommendations, not vague advice"
@@ -54,6 +54,19 @@
         "Identifies the file-handling pattern and suggests raising estimates for file tasks",
         "References this is input for the next estimation session"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "How many work items did TaskFlow finish in each of the last 4 sprints, and how many are in progress right now?",
+      "expected_output": "Throughput per completed sprint from one workitem(action=count) call grouped by cycle_id, and current WIP from a second count on the started state group; cycle ids mapped to sprint names.",
+      "expectations": [
+        "Counts finished items per sprint with workitem(action=count, pql='cycle IN completedCycles() AND stateGroup = \"completed\"', group_by=cycle_id) rather than listing every item of every sprint",
+        "Maps the cycle ids in grouped_counts to sprint names with cycle(action=list, status=completed)",
+        "Counts current WIP with workitem(action=count, pql='stateGroup = \"started\"') and reads total_count",
+        "Does not call a count action 'story points': says count returns items and that velocity in points needs the point field of listed items",
+        "Uses stateGroup (not state__group) in the PQL filter; state__group appears only as a group_by key if at all"
+      ],
+      "files": []
     }
   ]
 }

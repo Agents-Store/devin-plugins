@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Directus REST API Reference
 
-Curated REST API endpoints for scripting and direct HTTP access. For full docs, see https://docs.directus.io/reference/introduction.html
+Curated REST API endpoints for scripting and direct HTTP access. For full docs, see https://directus.io/docs/api (it redirects to `directus.com/docs`).
 
 ## Authentication
 
@@ -134,7 +134,7 @@ curl -s -X POST \
   "${DIRECTUS_URL}/schema/apply"
 ```
 
-This enables CI/CD schema deployments across environments.
+This enables CI/CD schema deployments across environments. Snapshots uploaded to `/schema/diff` and `/schema/apply` are capped by `IMPORT_MAX_FILE_SIZE` (default `50mb` since Directus 12.2.0, larger files get `413`). `/schema/diff` honours `?force=false`; `/schema/apply?force` without a value now bypasses the version and vendor checks.
 
 ## Response Format
 
@@ -154,17 +154,24 @@ Single items: `{ "data": { ... } }`
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/server/ping` | GET | Health check (returns "pong") |
-| `/server/health` | GET | Detailed health status |
+| `/server/ping` | GET | Liveness probe, public (returns "pong") |
+| `/server/health` | GET | Dependency health, needs a token since Directus 12 (403 without) |
 | `/server/info` | GET | Server metadata |
 | `/utils/cache/clear` | POST | Clear server cache |
-| `/utils/hash` | POST | Generate hash |
 | `/utils/random/string` | GET | Random string |
 | `/utils/export/{collection}` | GET | Export data (CSV, JSON, XML, YAML) |
-| `/utils/import/{collection}` | POST | Import data into collection |
+| `/utils/import/{collection}` | POST | Import data into collection (file size capped by `IMPORT_MAX_FILE_SIZE`, default `50mb`) |
+
+The hash utility endpoints were removed in Directus 12.1.0. If you need password hashing or verification over HTTP, write an endpoint extension that uses the `argon2` library.
+
+Boolean query flags without a value count as `true` since 12.2.0 (`POST /utils/import/{collection}?background` runs in the background, `POST /schema/apply?force` bypasses the version checks). Pass `=false` explicitly when you mean false.
+
+## Access Control Endpoints
+
+Since Directus 11 permissions live in policies: `/policies` (flags and permissions), `/permissions` (rules, attached to a policy), `/roles` (organization), `/access` (attaches a policy to a role or user), `/permissions/me` (what the current user can do). Details and curl examples are in `endpoints-system.md`.
 
 ## Detailed References
 
 - [endpoints-items.md](references/endpoints-items.md) — Full items API with all query combinations, batch operations
 - [endpoints-schema.md](references/endpoints-schema.md) — Collections, fields, relations, schema migration
-- [endpoints-system.md](references/endpoints-system.md) — Users, roles, permissions, auth, activity, settings
+- [endpoints-system.md](references/endpoints-system.md) — Users, policies, roles, permissions, access, auth, activity, settings, versions

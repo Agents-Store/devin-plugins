@@ -15,7 +15,7 @@ Payload ships four built-in ways to identify a user. They are not mutually exclu
 | --- | --- | --- | --- |
 | HTTP-only Cookie | Browser sends the `payload-token` cookie automatically after login | On by default with `auth: true` | Admin panel, same-site frontends |
 | JWT (bearer) | `Authorization: JWT <token>` header | On by default; token returned by login/refresh/me | Mobile apps, server-to-server, cross-origin |
-| API Key | `Authorization: <slug> API-Key <key>` header | `useAPIKey: true` | Service accounts, third-party integrations |
+| API Key | `Authorization: <slug> API-Key <key>` header | `useAPIKey: true` (add `{ reveal: true }` to let admins re-read keys, 3.90+) | Service accounts, third-party integrations |
 | Custom | Your `authenticate` function resolves a user | `strategies: [...]` | OAuth/SSO, SAML, header-forwarded identity |
 
 Cookies are immune to XSS (JavaScript cannot read them); JWTs are convenient for non-browser clients. Both carry the same signed payload.
@@ -34,7 +34,7 @@ export const Users: CollectionConfig = {
     verify: true,                       // Require email verification before login
     maxLoginAttempts: 5,                // Failed logins before lockout (0 disables)
     lockTime: 600 * 1000,               // Lockout duration in ms (10 min)
-    useAPIKey: false,                   // Per-user API keys on this collection
+    useAPIKey: false,                   // Per-user API keys; since 3.90 shown once at generation — `{ reveal: true }` lets admins re-read them
     useSessions: true,                  // Default true; false => stateless JWT
     depth: 0,                           // Relationship depth when building the JWT
     removeTokenFromResponses: false,    // Strip token from auth-op responses
@@ -109,6 +109,43 @@ await payload.resetPassword({
   overrideAccess: true,
 })
 ```
+
+## API Keys Since 3.90
+
+From 3.90.0 an API key is shown **once**, when it is generated. Payload then omits `apiKey` from every read (admin UI, REST, GraphQL, Local API) and exposes only the boolean `hasAPIKey`. Copy the key at generation time and keep it in a secret manager; to replace a lost key, regenerate it. Only users with admin access can generate, regenerate or revoke keys, and an API key is independent of the user's password — changing the password does not disable it.
+
+To keep the pre-3.90 behaviour — admins can reveal stored keys from the Admin Panel — switch the boolean to an object:
+
+```ts
+// src/collections/ServiceAccounts.ts
+auth: {
+  useAPIKey: {
+    reveal: true,   // also registers POST /api/<slug>/:id/api-key/reveal (admin-only)
+  },
+}
+```
+
+`reveal: true` also requires the revealing admin to have `read` and `update` access to the document and `update` access to the generated `apiKey` field. Leave it off unless a person genuinely needs to re-read a key — a key that cannot be read cannot leak through an over-broad `read` rule. Restrict who may generate keys by overriding the generated `apiKey` field's `create`/`update` access.
+
+`useAPIKey: true` still compiles on 3.90; `{ reveal?: boolean }` is the object form.
+
+## Upgrade to 3.90 (security release)
+
+3.90.0 (2026-09-18) is a security release — upgrade promptly, then regenerate types and, on a relational database, create and run a migration:
+
+```bash
+pnpm payload generate:types
+pnpm payload migrate:create upgrade-3-90   # SQL adapters only — adds resetPasswordRequestedAt and _objectKey columns
+pnpm payload migrate
+```
+
+What changes for authentication:
+
+- **Password change revokes other sessions** — no action needed; other devices must sign in again.
+- **Password reset clears lockouts; forgot-password is throttled** — every auth collection gains a `resetPasswordRequestedAt` field, which is why the migration is required on Postgres/SQLite/D1. MongoDB needs no migration.
+- **API keys are no longer readable** after generation — see above; opt back in with `useAPIKey: { reveal: true }`.
+- **`schedulePublish` jobs now record the scheduling user's auth collection** — re-create any publish/unpublish events that were pending at upgrade time, and pass `user: { relationTo, value }` (value is the user ID) from custom queue code.
+- **Form Builder, uploads, jobs** also changed defaults — see the `official-plugins`, `adapters` and `jobs-queue` skills.
 
 ## Auth Emails: Verify & Forgot-Password
 
@@ -195,7 +232,7 @@ auth: {
 Turn off email/password entirely when a collection authenticates only via API key or a custom strategy:
 ```ts
 auth: {
-  useAPIKey: true,
+  useAPIKey: true,              // Since 3.90 the key is shown once; use `{ reveal: true }` to let admins re-read it
   disableLocalStrategy: true,   // No password fields, no login op
 }
 ```
@@ -309,6 +346,8 @@ auth: { strategies: [googleStrategy] }
 // src/collections/ServiceAccounts.ts
 export const ServiceAccounts: CollectionConfig = {
   slug: 'service-accounts',
+  // 3.90+: the key is shown once at generation — copy it then. To let admins re-read
+  // stored keys later, use `useAPIKey: { reveal: true }` instead of `true`.
   auth: { useAPIKey: true, disableLocalStrategy: true },
   fields: [
     { name: 'label', type: 'text', required: true },
@@ -323,7 +362,7 @@ await fetch('https://cms.example.com/api/posts', {
   headers: { Authorization: `service-accounts API-Key ${process.env.CMS_API_KEY}` },
 })
 ```
-Keys are encrypted at rest, so a database leak does not expose them.
+Keys are encrypted at rest (with `PAYLOAD_SECRET`), so a database leak alone does not expose them — and rotating `PAYLOAD_SECRET` invalidates every issued key. Since 3.90 the key is displayed once when generated and omitted from every read afterwards (`hasAPIKey` stays readable); store it in your secret manager immediately. See "API keys since 3.90" above.
 </example>
 
 ## What this skill does NOT cover

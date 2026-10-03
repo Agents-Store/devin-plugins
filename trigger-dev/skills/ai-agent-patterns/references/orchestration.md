@@ -27,12 +27,13 @@ export const mapReduce = task({
   id: "map-reduce",
   run: async (payload: { documents: string[] }) => {
     // Fan-out: process each document in parallel
-    const summaries = await summarizeDoc.batchTriggerAndWait(
+    // The result is `{ id, runs }`, not an array
+    const { runs } = await summarizeDoc.batchTriggerAndWait(
       payload.documents.map(doc => ({ payload: { doc } }))
     );
 
     // Fan-in: combine all summaries
-    const validSummaries = summaries
+    const validSummaries = runs
       .filter(r => r.ok)
       .map(r => r.output);
 

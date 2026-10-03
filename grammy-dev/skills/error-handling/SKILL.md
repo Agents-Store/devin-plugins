@@ -90,12 +90,13 @@ npm install @grammyjs/auto-retry
 import { autoRetry } from "@grammyjs/auto-retry";
 
 bot.api.config.use(autoRetry({
-  maxAttempts: 3,
+  maxRetryAttempts: 3,
   maxDelaySeconds: 10,
+  // rethrowInternalServerErrors / rethrowHttpErrors: true to surface 5xx / network errors instead of retrying
 }));
 ```
 
-It transparently waits `retry_after` seconds when Telegram returns 429.
+It transparently waits `retry_after` seconds when Telegram returns 429 (and, by default, retries 5xx and network errors).
 
 For full rate-limit shaping (proactive throttling, not just reactive retry), combine with `@grammyjs/transformer-throttler` — see `scaling-runner`.
 

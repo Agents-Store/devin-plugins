@@ -3,8 +3,13 @@
 Cross-product workflow: query the issues shipped in a fix version from Jira, then publish a formatted release-notes page in Confluence. Assumes `setup` ran.
 
 ```bash
-JIRA="${ATLASSIAN_SITE_URL%/}/rest/api/3"
-CONF="${ATLASSIAN_SITE_URL%/}/wiki/api/v2"
+# Classic token → site URL; scoped token (ATLASSIAN_CLOUD_ID set) → API gateway — see `setup`
+JIRA_ROOT="${ATLASSIAN_CLOUD_ID:+https://api.atlassian.com/ex/jira/${ATLASSIAN_CLOUD_ID}}"
+JIRA_ROOT="${JIRA_ROOT:-${ATLASSIAN_SITE_URL%/}}"
+JIRA="${JIRA_ROOT}/rest/api/3"
+CONF_ROOT="${ATLASSIAN_CLOUD_ID:+https://api.atlassian.com/ex/confluence/${ATLASSIAN_CLOUD_ID}}"
+CONF_ROOT="${CONF_ROOT:-${ATLASSIAN_SITE_URL%/}}"
+CONF="${CONF_ROOT}/wiki/api/v2"
 AUTH=(-u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" -H "Accept: application/json")
 JSON=(-H "Content-Type: application/json")
 PROJ="PROJ"

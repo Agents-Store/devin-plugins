@@ -1,11 +1,11 @@
 # Scenario 3 — Enable the API Keys plugin and mint a token
 
-Goal: turn on the `api-keys` plugin via CLI, create an API key over HTTP, then make an authorised call using the new token. The full bootstrap path for any agent integration.
+Goal: make sure the `api-keys` plugin is on (via CLI), create an API key over HTTP, then make an authorised call using the new token. The full bootstrap path for any agent integration.
 
 ## Prerequisites
 
 - Admin-level access (CLI on the host or admin token).
-- `nb` CLI installed and pointed at the right NocoBase project.
+- `nb` CLI installed with an env for the target NocoBase (`nb env add …`, see `cli-recipes`); add `-e <env>` to the commands below if it is not the current env.
 
 ```bash
 export NB_URL="https://app.example.com"
@@ -14,19 +14,21 @@ H='Authorization: Bearer '"${ADMIN_TOKEN}"
 J='Content-Type: application/json'
 ```
 
-## 1. Enable the plugin (CLI)
+## 1. Make sure the plugin is enabled (CLI)
+
+`API keys` is a built-in plugin and is enabled by default, so this step is usually a check:
 
 ```bash
-nb pm enable api-keys
+nb plugin list | grep plugin-api-keys
 ```
 
-Verify:
+Should report it as enabled. If it is disabled, enable it:
 
 ```bash
-nb pm list | grep api-keys
+nb plugin enable @nocobase/plugin-api-keys
 ```
 
-Should report `enabled`. If it isn't already installed: `nb pm add @nocobase/plugin-api-keys` first, then enable.
+`nb plugin` takes full package names and has no install-from-registry command; a plugin that is not bundled is brought in with `nb plugin import <archive|url|npm-spec>` first, then enabled.
 
 ## 2. Create a non-expiring key for a bot identity (API)
 
@@ -80,11 +82,11 @@ There is no in-place key rotation. Rotate by:
 
 ## Why both surfaces
 
-- `nb pm enable` is the cleanest way to turn on a plugin — no JSON payload, no auth setup, atomic with respect to the running app.
-- `apiKeys:*` endpoints are HTTP-only because the key needs to be returned in a response, and the CLI does not have a "give me back this string" channel.
+- `nb plugin enable` is the cleanest way to turn on a plugin — no JSON payload, atomic with respect to the running app, and the env carries the credential.
+- `apiKeys:*` return the key once, in the response body, so the REST form shows the exact payload. The CLI generates an `nb api api-keys` group from the same OpenAPI schema (confirm with `nb api api-keys --help`); use it when the env is already set up, and keep the curl form for hosts without `nb`.
 
 ## Related skills
 
 - `auth` — what to do with the token once you have it; how to swap it out for an OAuth flow if needed.
 - `nocobase-acl-manage` — design the role the key inherits before issuing it.
-- `nocobase-plugin-manage` — full grammar of `nb pm` (`add`, `remove`, `update`, version pinning).
+- `nocobase-plugin-manage` — full grammar of `nb plugin` (`list`, `enable`, `disable`, `import`) and its error handling.

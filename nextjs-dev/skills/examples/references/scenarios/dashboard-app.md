@@ -2,6 +2,8 @@
 
 Build a multi-page dashboard with authentication, nested layouts, streaming data, and Server Actions.
 
+> **Auth library:** this scenario is written for Auth.js v5 (`next-auth@beta`), the existing-project path — that project is now part of Better Auth and in maintenance mode. For a new project use Better Auth (see the `auth-patterns` skill): `auth()` becomes `auth.api.getSession({ headers: await headers() })`, the `[...nextauth]` route becomes `app/api/auth/[...all]/route.ts` with `toNextJsHandler(auth)`, the proxy cookie check becomes `getSessionCookie(request)`, and `SessionProvider` is replaced by `authClient.useSession()`. The layering (proxy, layout, Server Actions) is unchanged.
+
 ## Project Structure
 
 ```
@@ -34,6 +36,7 @@ app/
 ├── proxy.ts                    # Auth proxy
 └── lib/
     ├── db.ts                  # Database client
+    ├── dal.ts                 # requireAdmin(): who may call the user Server Actions
     └── actions/
         ├── users.ts           # User CRUD actions
         └── settings.ts        # Settings actions
@@ -107,6 +110,8 @@ export const config = {
 ```
 
 ## Step 3: Dashboard Layout with Sidebar (Double-Layer Auth)
+
+> With `cacheComponents: true`, `auth()` reads request-time data, so the part of the layout that reads the session must sit behind a `<Suspense>` boundary (or the route opts out with `export const instant = false` while you migrate); this scenario assumes the previous model where that is not required.
 
 The layout performs a **secondary server-side auth check**. While the proxy catches most unauthenticated requests up front, the layout check provides defense in depth — it verifies the session is valid (not just that a cookie exists) and gives access to the full session object for rendering user info. This uses Auth.js v5 (`next-auth@beta`): the `auth()` helper exported from your `auth.ts` config replaces v4's `getServerSession(authOptions)`:
 
@@ -261,6 +266,26 @@ export function SearchInput({ defaultValue }: { defaultValue?: string }) {
 
 ## Step 6: Server Actions for CRUD
 
+A Server Action is a public POST endpoint: the proxy and the layout check do not protect it, and anyone who has the action id can call it with any input. So each action authenticates the caller and checks the role **before doing anything else**; the role of the user being created is only accepted because the caller is already a verified admin (see `auth-patterns`, "Protecting Server Actions" and RBAC):
+
+```ts
+// lib/dal.ts
+import 'server-only'
+import { auth } from '@/auth'
+import { db } from '@/lib/db'
+
+// Throws unless the caller is a signed-in admin. The role is read from the database on every call,
+// not from the session token, so a demoted admin loses access at once. With Better Auth, replace
+// `auth()` with `auth.api.getSession({ headers: await headers() })`; the rest is unchanged.
+export async function requireAdmin() {
+  const session = await auth()
+  if (!session?.user?.email) throw new Error('Unauthorized')
+  const caller = await db.user.findUnique({ where: { email: session.user.email }, select: { id: true, role: true } })
+  if (caller?.role !== 'admin') throw new Error('Forbidden: Admin access required')
+  return caller
+}
+```
+
 The Server Action validates with zod, returns user-friendly field errors, and handles the mutation. Note two critical patterns: `redirect()` is called **outside** try/catch (it throws `NEXT_REDIRECT` internally, which try/catch would swallow), and `.trim()` is used on string inputs to avoid whitespace-only submissions:
 
 ```tsx
@@ -271,6 +296,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { db } from '@/lib/db'
+import { requireAdmin } from '@/lib/dal'
 
 const userSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100, 'Name must be 100 characters or fewer'),
@@ -281,6 +307,8 @@ const userSchema = z.object({
 export type UserActionState = { errors?: Record<string, string[]>; message?: string } | null
 
 export async function createUser(prevState: UserActionState, formData: FormData): Promise<UserActionState> {
+  await requireAdmin() // first line: hiding the form from non-admins is cosmetic, this check is the control
+
   const parsed = userSchema.safeParse(Object.fromEntries(formData))
 
   if (!parsed.success) {
@@ -299,10 +327,15 @@ export async function createUser(prevState: UserActionState, formData: FormData)
 }
 
 export async function deleteUser(id: string) {
+  const admin = await requireAdmin()
+  if (id === admin.id) throw new Error('You cannot delete your own account')
+
   await db.user.delete({ where: { id } })
   revalidatePath('/users')
 }
 ```
+
+Render the "Add User" link and any delete button only for admins as well, but treat that as presentation: only the checks inside the actions stop a forged request.
 
 ## Step 7: Create User Form
 
@@ -370,7 +403,7 @@ export function CreateUserForm() {
 3. **Streaming** — `<Suspense>` for slow data (stats, activity feed)
 4. **Suspense key pattern** — `key={q-page}` forces fallback re-display when search params change
 5. **Debounced search** — `useDebouncedCallback` prevents navigation on every keystroke
-6. **Server Actions** — form mutations with zod validation, user-friendly messages, `.trim()` on inputs
+6. **Server Actions** — form mutations with zod validation, user-friendly messages, `.trim()` on inputs, and `requireAdmin()` before any mutation (a Server Action is a public endpoint)
 7. **`redirect()` outside try/catch** — `redirect` throws `NEXT_REDIRECT`, which try/catch would swallow
 8. **URL state** — search query in searchParams (bookmarkable, shareable)
 9. **`useActionState`** — form state management with loading and error states

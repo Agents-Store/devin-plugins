@@ -7,9 +7,9 @@
       "expected_output": "Should check: worker token, supervisor logs, Docker memory, container health, suggest restart supervisor",
       "files": [],
       "expectations": [
-        "Mentions checking worker token (TRIGGER_WORKER_TOKEN)', 'type': 'content_check",
-        "Suggests checking supervisor logs', 'type': 'content_check",
-        "Mentions Docker or container health check', 'type': 'content_check"
+        "Mentions checking worker token (TRIGGER_WORKER_TOKEN)",
+        "Suggests checking supervisor logs",
+        "Mentions Docker or container health check"
       ]
     }
   ]

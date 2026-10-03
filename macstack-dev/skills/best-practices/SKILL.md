@@ -1,15 +1,28 @@
 ---
 name: best-practices
-description: This skill should be used when the user asks to "install best practice rules", "set up project rules", "add project rules and commands", "set up project conventions", or scaffold-project reaches the rules step. Installs the proven MACSTACK rule set (.claude/rules) and core commands into a project.
+description: This skill should be used when the user asks to "install best practice rules", "set up project rules", "add project rules and commands", "set up project conventions", or scaffold-project reaches the rules step. Installs the proven MACSTACK rule set (.claude/rules) and core slash-command skills (.claude/skills) into a project.
 ---
 
-# Install Best-Practice Rules & Commands
+# Install Best-Practice Rules & Core Skills
 
 Every MACSTACK project ships the same battle-tested `.claude/rules/` set and core
-commands (proven in a production orchestrator). Install them at scaffold time; adapt
+slash-command skills (proven in a production orchestrator). Install them at scaffold time; adapt
 wording to the project, never drop a rule silently.
 
 ## Mandatory `.claude/rules/`
+
+Every rule below governs ALL work in the project, so none carries `paths:` and all of
+them load at launch — that is intended. A rule you add or adapt that concerns only
+part of the code (one framework, one directory, one file type) gets `paths:`
+frontmatter and loads only when Claude reads a matching file; a rule WITHOUT `paths:`
+is loaded in every session and costs context in every session:
+
+```yaml
+---
+paths:
+  - "src/api/**/*.ts"
+---
+```
 
 Create each file; content = a short version of the rule + the WHY:
 
@@ -55,22 +68,34 @@ If the project deploys to a PaaS (dokploy/coolify) — also add `deploy-verify.m
 (a deploy is done only when the build is done + containers are healthy + logs are
 clean + the domain returns 200).
 
-## Mandatory `.claude/commands/`
+## Mandatory `.claude/skills/` (the slash commands)
 
-| Command | What it does |
+Each slash command is a project skill: `.claude/skills/<name>/SKILL.md` with `name`,
+`description` and the body below the frontmatter; it is still typed as `/<name>`.
+Claude Code merged custom commands into skills — `.claude/commands/<name>.md` and
+`.claude/skills/<name>/SKILL.md` both create `/<name>` and work the same way, and a
+skill adds a folder for supporting files plus control over who may invoke it — so new
+project material goes into skills.
+
+The ones that write something (`commit`, `pr`, `secrets-sync`, `secrets-push`,
+`setup-tokens`) are manual: `disable-model-invocation: true`, so only the user types
+them. The read-only or rule-driven ones (`env-audit`, `macstack-lint`,
+`update-context`) stay model-invocable, so Claude can run them when a rule asks.
+
+| Skill | What it does |
 |---|---|
-| `commit.md` | Conventional commit per the commit-after-task rule |
-| `pr.md` | Create a PR (body: what/why, work-item link) |
-| `secrets-sync.md`, `secrets-push.md`, `env-audit.md`, `setup-tokens.md` | from the `infisical-env` skill |
-| `update-context.md` | update macstack.json + CLAUDE.md + .env.example after stack changes (the `sync` skill) |
-| `macstack-lint.md` | validation, plus the dashboard — "where are we and what next" (the `lint` skill; `status` folded into it) |
+| `commit` | Conventional commit per the commit-after-task rule (manual) |
+| `pr` | Create a PR (body: what/why, work-item link) (manual) |
+| `secrets-sync`, `secrets-push`, `env-audit`, `setup-tokens` | from the `infisical-env` skill |
+| `update-context` | update macstack.json + CLAUDE.md + .env.example after stack changes (the `sync` skill) |
+| `macstack-lint` | validation, plus the dashboard — "where are we and what next" (the `lint` skill; `status` folded into it) |
 
 ## CLAUDE.md wiring
 
 Ensure CLAUDE.md: (1) has the "Stack Specification" section → macstack.json and
 `macstack/README.md`, **including its trigger table** — the exact block is in
 `macstack-dev:setup`; (2) lists the rules as MANDATORY, one line each; (3) stays
-short (<100 lines) — details live in rules/skills/macstack.json, not in CLAUDE.md.
+short (under 200 lines, the Claude Code target) — details live in rules/skills/macstack.json, not in CLAUDE.md.
 
 The trigger table is not optional and not decoration. Without it the block says only
 "read this first", and an agent that reads the folder without ever being told when to
@@ -82,5 +107,8 @@ table, not just for the heading.
 
 - Idempotent: an existing rule file with local edits is never overwritten — show a
   diff instead.
-- Rules are project files (committed); the plugin only installs their initial
-  versions.
+- A project that already has `.claude/commands/<name>.md` keeps it — it works the same
+  way. Never create a second `<name>` skill beside it (two files, one name); offer the
+  move to `.claude/skills/<name>/SKILL.md` as a diff.
+- Rules and skills are project files (committed); the plugin only installs their
+  initial versions.

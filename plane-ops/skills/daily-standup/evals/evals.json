@@ -7,8 +7,8 @@
       "expected_output": "Team-level dashboard: points done/total, items by state, WIP status, pace vs needed pace. Per-person section with DONE/DOING/NEXT/BLOCKED. Attention section listing stalled, blocked, and not-started items.",
       "files": [],
       "expectations": [
-        "Fetches active cycle via list_cycles and resolves day X of Y from its dates",
-        "Groups items by assignee AND separately by state group",
+        "Fetches the active cycle via cycle(action=list, status=current) and resolves day X of Y from its dates",
+        "Groups items by assignee AND separately by state group (workitem(action=count, pql='cycle = \"<id>\"', group_by=state__group) gives the state-group totals in one call)",
         "Computes WIP and compares to a limit",
         "Computes pace (points/day) and what's needed to finish",
         "Has an explicit [!] Attention section flagging at-risk items",
@@ -21,10 +21,10 @@
       "expected_output": "For each team member, a labeled list of items with state, points, and any blocker notes.",
       "files": [],
       "expectations": [
-        "Fetches project members and cycle work items",
+        "Fetches project members with member(action=list_project) and cycle work items with cycle(action=list_workitems)",
         "Groups items by assignee",
         "Uses the [DONE]/[DOING]/[NEXT]/[BLOCKED] labels from the skill format",
-        "Flags items in 'In Progress' without activity for >2 days as stalled"
+        "Flags items in 'In Progress' without activity for >2 days as stalled, e.g. with pql='stateGroup = \"started\" AND updatedAt < daysAgo(2)', and confirms with workitem_activity before calling one stalled"
       ]
     },
     {
@@ -46,7 +46,7 @@
       "files": [],
       "expectations": [
         "Recommends 3x/week async over daily sync",
-        "Suggests publishing to Plane via create_project_page",
+        "Suggests publishing to Plane via page(action=create, project_id, name, description_html)",
         "Uses 'Standup — YYYY-MM-DD' naming so history stays browsable",
         "References the page-formatting gotchas from examples skill"
       ]

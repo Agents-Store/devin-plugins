@@ -1,15 +1,16 @@
 # sendpulse-ops (Devin plugin)
 
-Sendpulse multi-channel marketing plugin. Manage chatbots (Telegram, WhatsApp, Instagram, Messenger, Viber), CRM (contacts, deals, pipelines, boards, tasks), email campaigns, templates, addressbooks, and SMTP transactional email via 133+ MCP tools.
+Sendpulse multi-channel marketing plugin. Manage chatbots (Telegram, WhatsApp, Instagram, Messenger, Viber, TikTok), CRM (contacts, deals, pipelines, boards, tasks), Courses (LMS) academies, courses and students, email campaigns, templates, addressbooks, and SMTP transactional email via 147 MCP tools.
 
 ## Install
 
 Copy this directory's contents into your Devin plugin directory. The manifest (`.devin-plugin/plugin.json`) is metadata only — Devin discovers `skills/` from disk, not from a manifest pointer.
 
-## Skills (11)
+## Skills (12)
 
 - `chatbot-contacts-messaging` — Chatbot contact management, direct messaging across channels, contact variables, tags, and notes. Use when sending messages to contacts, managing contact data, or looking up subscribers.
 - `chatbot-management` — Chatbot bots, statistics, tags, campaigns, flows, and dialogs. Use when managing bots, sending chatbot campaigns, running automation flows, or viewing bot statistics.
+- `courses-management` — SendPulse Courses (LMS) - academies, courses, pricing plans, student groups, tags, and students. Use when listing academies or courses, enrolling or removing students, marking students as paying, deleting a student, or checking student progress.
 - `crm-boards-tasks` — CRM Kanban boards and task management — create boards, manage columns, create and track tasks. Use when organizing work, managing projects, or tracking task completion.
 - `crm-contacts` — CRM contact management — create, update, search, list deals for contacts, and add comments. Use when working with CRM contacts, customer records, or contact-deal relationships.
 - `crm-deals-pipelines` — CRM deals and sales pipelines — create and manage deals, configure pipeline stages, move deals between pipelines. Use when working with sales processes, deal tracking, or pipeline configuration.

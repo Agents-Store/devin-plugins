@@ -31,7 +31,7 @@ This scenario walks through deploying a typical web app stack: a web server, an 
 **MCP:**
 
 ```
-mcp__dokploy__project-create
+mcp__plugin_dokploy-dev_dokploy__project-create
 ```
 
 Parameters:
@@ -56,7 +56,7 @@ Save the returned `projectId`.
 **Resolve the target environment** — compose stacks are created inside a project *environment* (default `production`):
 
 ```
-mcp__dokploy__project-one { "projectId": "<projectId>" }
+mcp__plugin_dokploy-dev_dokploy__project-one { "projectId": "<projectId>" }
    → environments[0].environmentId
 ```
 
@@ -69,7 +69,7 @@ Save the `environmentId`.
 **MCP:**
 
 ```
-mcp__dokploy__compose-create
+mcp__plugin_dokploy-dev_dokploy__compose-create
 ```
 
 Parameters:
@@ -101,7 +101,7 @@ Upload the compose file content. Pass the full YAML as a string.
 **MCP:**
 
 ```
-mcp__dokploy__compose-update
+mcp__plugin_dokploy-dev_dokploy__compose-update
 ```
 
 Parameters:
@@ -143,7 +143,7 @@ If the compose file references environment variables with `${VAR}` syntax, set t
 **MCP:**
 
 ```
-mcp__dokploy__compose-saveEnvironment
+mcp__plugin_dokploy-dev_dokploy__compose-saveEnvironment
 ```
 
 Parameters:
@@ -170,7 +170,7 @@ curl -s -X POST "$DOKPLOY_URL/api/compose.saveEnvironment" \
 **MCP:**
 
 ```
-mcp__dokploy__compose-deploy
+mcp__plugin_dokploy-dev_dokploy__compose-deploy
 ```
 
 Parameters:
@@ -202,7 +202,7 @@ Add a domain for each publicly accessible service. In a compose stack, specify t
 **MCP:**
 
 ```
-mcp__dokploy__domain-create
+mcp__plugin_dokploy-dev_dokploy__domain-create
 ```
 
 Parameters:
@@ -253,7 +253,7 @@ curl -s -X POST "$DOKPLOY_URL/api/domain.create" \
 **MCP:**
 
 ```
-mcp__dokploy__compose-loadServices
+mcp__plugin_dokploy-dev_dokploy__compose-loadServices
 ```
 
 Parameters:
@@ -270,15 +270,15 @@ This returns the list of services defined in the compose file and their status.
 `compose-loadServices` lists the *defined* services; to see the *running* containers and their logs, enumerate then loop (a stack has many containers — `compose-readLogs` is per-container):
 
 ```
-mcp__dokploy__compose-one { composeId }
+mcp__plugin_dokploy-dev_dokploy__compose-one { composeId }
    → appName (e.g. "my-stack-ab12cd"), composeType ("docker-compose")
 
-mcp__dokploy__docker-getContainersByAppNameMatch
+mcp__plugin_dokploy-dev_dokploy__docker-getContainersByAppNameMatch
    → { appName: "my-stack-ab12cd", appType: "docker-compose" }
    → [ { containerId, name, state, status }, ... ]   # web, api, db
 
 for each container:
-  mcp__dokploy__compose-readLogs
+  mcp__plugin_dokploy-dev_dokploy__compose-readLogs
     → { composeId, containerId: "<containerId>", tail: 200, search: "error" }
 ```
 
@@ -289,7 +289,7 @@ Read **all** of them — a crashed `db` container shows up as `ECONNREFUSED` in 
 **MCP:**
 
 ```
-mcp__dokploy__compose-getConvertedCompose
+mcp__plugin_dokploy-dev_dokploy__compose-getConvertedCompose
 ```
 
 Parameters:
@@ -380,11 +380,11 @@ services:
 
 | Problem | Likely cause | Fix |
 |---------|-------------|-----|
-| Deploy fails | Invalid docker-compose.yml | Call `mcp__dokploy__compose-getConvertedCompose` to validate the file |
+| Deploy fails | Invalid docker-compose.yml | Call `mcp__plugin_dokploy-dev_dokploy__compose-getConvertedCompose` to validate the file |
 | Service not starting | Image pull failure or crash | Read that container's logs: `docker-getContainersByAppNameMatch { appName, appType: "docker-compose" }` → `compose-readLogs { composeId, containerId }` (or `/dokploy-dev:compose-logs`). Verify the image name and tag exist |
 | 502 on domain | Wrong port or service name | Verify `port` and `serviceName` match the compose file |
 | Volume data lost | Wrong volume path | Use `../files/` prefix for all persistent volumes |
 | Services cannot communicate | Network misconfiguration | Compose services share a network by default. Reference services by their compose service name |
-| Environment variables not resolving | Vars not set at compose level | Set vars with `mcp__dokploy__compose-saveEnvironment` (Step 4) |
+| Environment variables not resolving | Vars not set at compose level | Set vars with `mcp__plugin_dokploy-dev_dokploy__compose-saveEnvironment` (Step 4) |
 
 See the `troubleshoot` skill for detailed diagnostic procedures.

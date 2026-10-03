@@ -397,8 +397,8 @@ LIMIT 20
 
 ```sql
 SELECT
-  model,
-  sum(cost_usd)      AS total_cost_usd,
+  request_model      AS model,
+  sum(total_cost)    AS total_cost_usd,
   sum(input_tokens)  AS input_tokens,
   sum(output_tokens) AS output_tokens,
   count()            AS call_count

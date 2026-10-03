@@ -11,9 +11,9 @@ Three end-to-end scenarios that exercise both surfaces (REST API + `nb` CLI) and
 
 | # | File | Mix | What it teaches |
 |---|---|---|---|
-| 1 | `references/scenarios/create-collection-via-api.md` | API only | Define a `posts` collection with two fields, write a record, list with a filter, then verify via `nb api collections list`. |
-| 2 | `references/scenarios/run-workflow-via-cli.md` | CLI + API | Trigger a workflow with `nb api workflows trigger`, then poll executions through `/api/executions:list` until `status: 1`. |
-| 3 | `references/scenarios/enable-plugin-and-create-api-key.md` | CLI + API | Enable the `api-keys` plugin, create a token via the API, then make an authorised call as the new bot identity. |
+| 1 | `references/scenarios/create-collection-via-api.md` | API + CLI check | Define a `posts` collection with two fields, write a record, list with a filter, then verify via `nb api data-modeling collections get`. |
+| 2 | `references/scenarios/run-workflow-via-cli.md` | API + CLI | Run a workflow manually with `POST /api/workflows:execute` (or its `nb api workflow workflows execute` twin), then poll the execution until it leaves the queued/started states. |
+| 3 | `references/scenarios/enable-plugin-and-create-api-key.md` | CLI + API | Confirm the `api-keys` plugin is enabled with `nb plugin`, create a token via the API, then make an authorised call as the new bot identity. |
 
 ## How to use these
 

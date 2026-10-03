@@ -1,6 +1,6 @@
 {
   "name": "n8n-dev",
-  "version": "1.0.2",
+  "version": "1.2.0",
   "description": "n8n workflow automation dev plugin for Agents Store. MCP tools guide (external + native), workflow patterns, expression syntax, validation, node configuration, Code node patterns, REST API reference, CLI recipes, and troubleshooting for developers building n8n workflows.",
   "author": {
     "name": "Agents Store",

@@ -27,7 +27,8 @@ Test a running application's frontend by navigating pages, interacting with UI e
 ## Prerequisites
 
 - The application must be running and accessible (localhost or remote URL)
-- Playwright MCP server must be connected (check with `/mcp`)
+- Playwright MCP server must be connected (check with `/mcp`; the plugin's server is listed as `plugin:codemap-dev:playwright`)
+- Tool names: the plugin declares the `playwright` server itself, so the tools are named `mcp__plugin_codemap-dev_playwright__<tool>` (for example `mcp__plugin_codemap-dev_playwright__browser_snapshot`). This skill uses the short `browser_*` names
 - If the app requires authentication, ask the user for credentials before starting
 
 ## Step 1: Determine Target URL

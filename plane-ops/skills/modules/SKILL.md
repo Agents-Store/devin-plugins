@@ -9,22 +9,21 @@ Modules in Plane group work items by **scope** (feature, workstream, or outcome)
 
 ## Tool Name Resolution
 
-Resolve real tool names via the `connector-bootstrap` skill. Match by action suffix.
+Plane MCP exposes one `module` tool and the operation goes into the `action` parameter: `module(action=create, ...)`. This skill writes calls in that form. Resolve the real tool name (`mcp__<server>__module`) through the `connector-bootstrap` skill - never assume a server prefix.
 
-## Available Actions
+## Available Calls
 
-| Action | Purpose |
-|--------|---------|
-| `list_modules` | List active modules in a project |
-| `list_archived_modules` | List archived (completed) modules |
-| `create_module` | Create a new module |
-| `retrieve_module` | Get a module by UUID |
-| `update_module` | Update module details (name, lead, target date) |
-| `delete_module` | Delete a module |
-| `archive_module` / `unarchive_module` | Archive lifecycle |
-| `list_module_work_items` | Get work items in a module |
-| `add_work_items_to_module` | Add items (bulk) |
-| `remove_work_item_from_module` | Remove an item |
+| Call | Purpose |
+|------|---------|
+| `module(action=list)` | List active modules in a project (`archived=true` lists archived ones; paginated) |
+| `module(action=create)` | Create a new module |
+| `module(action=retrieve)` | Get a module by UUID |
+| `module(action=update)` | Update module details (name, lead, target date, status) |
+| `module(action=delete)` | Delete a module |
+| `module(action=archive)` / `module(action=unarchive)` | Archive lifecycle |
+| `module(action=list_workitems)` | Get work items in a module (`pql` filter, paginated) |
+| `module(action=manage_workitems)` | Add (`add_ids`) or remove (`remove_ids`) items in bulk |
+| `workitem(action=count)` | Module totals per state group: `pql='module = "<module_id>"'` |
 
 ## When to Use a Module vs a Cycle
 
@@ -41,42 +40,43 @@ An item can live in **both** a module and a cycle simultaneously.
 
 ```
 1. connector-bootstrap        → resolve tools and instance
-2. list_projects              → pick project_id
-3. get_project_members        → pick lead (UUID)
-4. create_module({
-     project_id,
-     name: "Billing v2",
-     description: "Revamp billing: Stripe migration, invoices, proration",
-     lead: "<user_uuid>",
-     members: ["<uuid>", "<uuid>"],
-     start_date: "YYYY-MM-DD",
-     target_date: "YYYY-MM-DD",
-     status: "planned" | "in-progress" | "paused" | "completed" | "cancelled"
-   })
+2. project(action=list)      → pick project_id
+3. member(action=list_project, project_id=<id>) → pick lead (UUID)
+4. module(action=create,
+     project_id=<id>,
+     name="Billing v2",
+     description="Revamp billing: Stripe migration, invoices, proration",
+     lead=<user_uuid>,
+     members=[<uuid>, <uuid>],
+     start_date="YYYY-MM-DD",
+     target_date="YYYY-MM-DD",
+     status="planned")    // backlog | planned | in-progress | paused | completed | cancelled
 ```
 
 ## Adding Work Items to a Module
 
 ```
-add_work_items_to_module({
-  project_id,
-  module_id,
-  issue_ids: ["<uuid>", "<uuid>", ...]
-})
+module(action=manage_workitems,
+  project_id=<id>,
+  module_id=<module_id>,
+  add_ids=["<uuid>", "<uuid>", ...])
 ```
 
-Items can come from any state — backlog, in-progress, or done. Adding a done item is valid; it counts toward module completion.
+Items can come from any state — backlog, in-progress, or done. Adding a done item is valid; it counts toward module completion. `manage_workitems` returns nothing: read the result back with `module(action=list_workitems)`. To take items out pass `remove_ids=[...]` instead (the items stay in the project).
 
 ## Module Progress Reporting
 
 ```
-1. list_module_work_items({ project_id, module_id })
+1. workitem(action=count, project_id=<id>, pql='module = "<module_id>"', group_by=state__group)
+   → item totals per state group in one call
+   module(action=list_workitems, project_id=<id>, module_id=<module_id>, fields="id,name,point,estimate_point,state")
+   → the items with points (follow next_cursor); pass pql='stateGroup = "completed"' for only the finished ones
 2. Group items by state group: backlog | unstarted | started | completed | cancelled
 3. Calculate:
    - total_items, total_points
    - completed_items, completed_points
    - completion_rate = completed_points / total_points
-4. Surface blockers: list_work_item_relations per item, filter active blocked_by
+4. Surface blockers: workitem_relation(action=list) per open item, filter active blocked_by
 ```
 
 Reporting table:
@@ -98,12 +98,12 @@ Reporting table:
 Always archive completed/cancelled modules to keep the active list clean:
 
 ```
-archive_module({ project_id, module_id })
+module(action=archive, project_id=<id>, module_id=<module_id>)
 ```
 
-**Caveat:** many Plane deployments reject `archive_module` on **active** modules (HTTP 400). Set `status: "completed"` or `"cancelled"` via `update_module` first, then archive. To remove an active module entirely, use `delete_module` directly.
+**Caveat:** unlike `cycle(action=archive)` (which ends a running cycle first), the module tool documents no such behavior, and some Plane deployments reject archiving an **active** module (HTTP 400). If that happens, set `status="completed"` or `"cancelled"` with `module(action=update)` first, then archive; `module(action=unarchive)` reverses it. To remove an active module entirely, use `module(action=delete)` directly, after confirmation.
 
-**Caveat:** `update_module` on many deployments returns a response object with mostly `null` fields even when the update succeeded. Do not rely on the response — refetch via `retrieve_module` to get the post-update state.
+**Caveat:** if an `update` response looks empty or has mostly `null` fields, do not rely on it — refetch with `module(action=retrieve)` to get the post-update state.
 
 ## Best Practices
 

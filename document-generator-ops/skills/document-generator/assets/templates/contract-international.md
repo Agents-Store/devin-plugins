@@ -113,5 +113,5 @@ clauses:
 ## Notes
 
 - Logo: add `"logoBase64": "<base64 string>"` inside `companyInfo`
-- For NDA: use the dedicated `nda` document type with `/generate-nda` command
+- For NDA: use the dedicated `nda` document type with the `/document-generator-ops:generate-nda` command
 - For localized content: simply write clause titles and paragraphs in the target language — the rendering engine handles any Unicode text

@@ -20,8 +20,10 @@ npx -y firecrawl-cli@latest
 ### Authentication
 
 ```bash
-firecrawl login --browser    # Browser-based login
+firecrawl login                        # Interactive (browser by default)
+firecrawl login --method browser       # Browser-based login
 firecrawl login --api-key fc-YOUR_KEY  # Direct key
+export FIRECRAWL_API_KEY=fc-YOUR_KEY   # Or via environment variable
 firecrawl view-config        # Show current auth/config
 firecrawl logout             # Sign out
 ```
@@ -35,6 +37,8 @@ firecrawl scrape https://example.com/spa --wait-for 3000  # JS rendering
 firecrawl scrape https://example.com --screenshot  # Capture screenshot
 firecrawl scrape https://example.com -o output.md  # Save to file
 firecrawl scrape https://example.com --json --pretty  # JSON output
+# Structured data from one page (JSON format + schema)
+firecrawl scrape https://example.com/pricing --format json --schema-file schema.json -o pricing.json --pretty
 ```
 
 ### Search the Web
@@ -45,6 +49,7 @@ firecrawl search "React hooks" --limit 20
 firecrawl search "TypeScript patterns" --scrape  # Search + scrape results
 firecrawl search "AI news" --tbs qdr:d  # Last 24 hours
 firecrawl search "tech startups" --location "San Francisco"
+firecrawl search "axum middleware ordering" --categories developer  # Developer index next to web results
 ```
 
 ### Crawl a Site
@@ -62,7 +67,7 @@ firecrawl crawl JOB_ID  # Check existing crawl status
 ```bash
 firecrawl map https://example.com
 firecrawl map https://example.com --limit 200
-firecrawl map https://example.com --allow-subdomains
+firecrawl map https://example.com --include-subdomains   # (--allow-subdomains belongs to `crawl`)
 ```
 
 ### Autonomous Agent
@@ -70,25 +75,43 @@ firecrawl map https://example.com --allow-subdomains
 ```bash
 firecrawl agent "Find top 5 headless CMS and compare pricing"
 firecrawl agent "Research React state management libraries" --wait
-firecrawl agent "Find API rate limits" --urls https://docs.stripe.com --schema schema.json
+firecrawl agent "Find API rate limits" --urls https://docs.example.com --schema-file schema.json --wait
+firecrawl agent "Compare pricing of the top 3 CMS" --effort medium --max-credits 200 --wait   # cap the spend
+firecrawl agent JOB_ID --wait   # Check or wait for an existing job
 ```
+
+Agent tasks take minutes and spend credits — set `--max-credits`.
 
 ### Interact (live browser)
 
-Drive dynamic pages with natural language or code — replaces the old `firecrawl browser` session flow:
+Drive dynamic pages with natural language or code. `interact` works on the **last scrape** (or a scrape id with `-s`), so scrape first:
 
 ```bash
-firecrawl interact https://example.com --prompt "log in and open the dashboard"
+firecrawl scrape https://example.com/login          # 1. scrape the page
+firecrawl interact "log in and open the dashboard"  # 2. act on it (prompt)
+firecrawl interact -c "await page.title()"          # code (Node/Playwright by default; --python, --bash)
+firecrawl interact -s SCRAPE_ID "extract the table" # target a specific scrape
+firecrawl interact stop                             # 3. close the session
 ```
+
+Persist logins between scrapes with `--profile <name>` on `firecrawl scrape`.
 
 ### Monitor Changes
 
 Recurring scrapes with change detection:
 
 ```bash
-firecrawl monitor create https://example.com/pricing
+firecrawl monitor create --name "Pricing" \
+  --goal "Notify me when plans or prices change" \
+  --schedule "every 30 minutes" \
+  --page https://example.com/pricing
 firecrawl monitor list
+firecrawl monitor run MONITOR_ID
+firecrawl monitor checks MONITOR_ID
+firecrawl monitor update MONITOR_ID --state paused
 ```
+
+Advanced targets (JSON-mode change tracking) go in a JSON file: `firecrawl monitor create monitor.json`. Monitors schedule future network calls — confirm before creating one.
 
 ### Developer Index Search
 
@@ -96,6 +119,15 @@ Search GitHub issues, PRs, READMEs, and docs:
 
 ```bash
 firecrawl developer "nextjs hydration mismatch"
+firecrawl developer "tokio select cancellation safety" --limit 10 --json
+```
+
+Research papers and credits:
+
+```bash
+firecrawl research search-papers "large language models" --json
+firecrawl credit-usage
+firecrawl --status    # version, auth, concurrency, credits
 ```
 
 ### Useful Flags

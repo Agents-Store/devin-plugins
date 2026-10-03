@@ -238,11 +238,11 @@ Default when no branding: Corporate Blue palette with Georgia (headings) + Arial
 
 ## Unified Design System (HTML-First)
 
-Both PDF and DOCX outputs share the same design templates via `scripts/html_templates.js`. This module is the single source of truth for all document layouts:
+PDF layouts come from `scripts/html_templates.js`, the single source of truth for HTML-based rendering. The DOCX engines relate to it differently:
 
-- **PDF**: HTML rendered directly by Playwright
-- **DOCX (pandoc engine)**: Same HTML converted to DOCX via pandoc with a reference template
-- **DOCX (docx-js engine)**: Independent implementation matching the same design language (Georgia/Arial instead of Source Serif 4/Inter)
+- **PDF**: HTML rendered directly by Playwright — the CSS (fonts, colours, spacing) is applied by the browser
+- **DOCX (pandoc engine)**: the same HTML converted by pandoc. Pandoc ignores CSS, so only the structure (headings, lists, tables) carries over; fonts, colours and spacing come from `assets/reference.docx`
+- **DOCX (docx-js engine)**: Independent implementation matching the same design language (Georgia/Arial instead of Source Serif 4/Inter) — the engine to use when the DOCX should carry the plugin's styling
 
 **Font mapping between formats:**
 
@@ -251,7 +251,7 @@ Both PDF and DOCX outputs share the same design templates via `scripts/html_temp
 | Source Serif 4 | Georgia | Headings, legal body text |
 | Inter | Arial | Body text, labels, UI elements |
 
-This ensures documents look consistent regardless of output format.
+This is the font mapping between the PDF and the docx-js DOCX; a pandoc DOCX takes its fonts from `assets/reference.docx` instead.
 
 ## Anti-Patterns
 

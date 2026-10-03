@@ -44,7 +44,7 @@ Teams are the top-level workspaces that contain channels. Base `${MATTERMOST_API
 | POST | `/teams/{team_id}/regenerate_invite_id` | Rotate the open-invite id. |
 | POST | `/teams/members/invite` | Join a team via invite id (`?invite_id=`). |
 
-## Stats, icon, scheme, import
+## Stats, icon, scheme
 
 | Method | Path | Purpose |
 |--------|------|---------|
@@ -53,4 +53,5 @@ Teams are the top-level workspaces that contain channels. Base `${MATTERMOST_API
 | POST | `/teams/{team_id}/image` | Set icon — multipart `-F "image=@icon.png"`. |
 | DELETE | `/teams/{team_id}/image` | Remove icon. |
 | PUT | `/teams/{team_id}/scheme` | Assign a permission scheme. Body `{"scheme_id"}`. |
-| POST | `/teams/{team_id}/import` | Import a team archive (Slack export) — multipart. |
+
+> **Removed in v12.0:** the built-in Slack import (`POST /teams/{team_id}/import`, multipart) was deprecated in favour of mmetl and is removed from the server in v12.0 (absent from v12.0.0-rc2); v11 servers still answer it. For Slack archives use **mmetl** to convert the export and **mmctl import** to load it: `mmetl transform slack …` → `mmctl import validate <zip>` → `mmctl import upload <zip>` + `mmctl import process`, or `mmctl import process --bypass-upload <zip> --local` for large archives on the server host. Guide: https://docs.mattermost.com/administration-guide/onboard/migrate-from-slack.html

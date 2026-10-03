@@ -9,10 +9,10 @@ Bootstrap a grammY Telegram bot from zero. Five steps: install runtime, get a bo
 
 ## 1. Pick a runtime
 
-grammY runs on **Node.js 18+**, **Deno 1.40+**, or **Bun 1.0+**. Pick one:
+grammY runs on **Node.js**, **Deno** and **Bun**. For new projects use a supported release: **Node.js 22 LTS or 24 LTS** (Node 18 and 20 are end-of-life), **Deno 2.x**, or a current **Bun 1.x**. Pick one:
 
 - **Node.js + TypeScript** — most common, biggest ecosystem.
-- **Deno** — URL imports, no `node_modules`, native TypeScript.
+- **Deno** — `npm:` imports, no `node_modules`, native TypeScript.
 - **Bun** — Node-compatible, faster cold start.
 
 ## 2. Get a bot token
@@ -25,8 +25,8 @@ Open [@BotFather](https://t.me/BotFather) in Telegram and send `/newbot`. Pick a
 # Node.js / Bun
 npm install grammy
 
-# Deno — import directly, no install step
-# import { Bot } from "https://deno.land/x/grammy/mod.ts";
+# Deno — import via the npm: specifier, no install step
+# import { Bot } from "npm:grammy";
 ```
 
 ## 4. Write a minimal bot
@@ -63,7 +63,7 @@ bot.start();
 
 ```typescript
 // bot.ts
-import { Bot } from "https://deno.land/x/grammy/mod.ts";
+import { Bot } from "npm:grammy";
 
 const bot = new Bot(Deno.env.get("BOT_TOKEN")!);
 
@@ -76,14 +76,14 @@ bot.start();
 ## 5. Run and verify
 
 ```bash
-# Node.js
-BOT_TOKEN=123456:ABC-DEF... npx tsx src/bot.ts
+# Node.js 22+
+BOT_TOKEN=<BOT_TOKEN> npx tsx src/bot.ts
 
 # Bun
-BOT_TOKEN=... bun run src/bot.ts
+BOT_TOKEN=<BOT_TOKEN> bun run src/bot.ts
 
-# Deno
-BOT_TOKEN=... deno run --allow-net --allow-env bot.ts
+# Deno 2.x (-I = imports, -E = env vars, -N = network)
+BOT_TOKEN=<BOT_TOKEN> deno -IEN bot.ts
 ```
 
 Open Telegram, find your bot by its `@username`, send `/start`. You should see "Hi! I'm alive." Send any other message — the bot echoes it back.
@@ -107,7 +107,7 @@ npm install
 npm run dev
 ```
 
-The script creates `package.json`, `tsconfig.json`, `src/bot.ts`, `.env.example`, and `.gitignore`.
+The script creates `package.json` (grammY `^1.46.0`, Node 22+), `tsconfig.json`, `src/bot.ts`, `.env.example`, and `.gitignore`. The scaffold reads `.env` through Node's `--env-file` flag, so it needs no `dotenv` dependency.
 
 ## What this skill does NOT cover
 

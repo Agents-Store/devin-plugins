@@ -28,6 +28,8 @@ description: >
 npm install -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom
 ```
 
+Vitest 5 requires Node.js >= 22.12 and Vite >= 6.4 (Node 20 is not supported). `vite` is now a peer dependency: npm, pnpm and Bun install it automatically, but with Yarn add it explicitly (`yarn add -D vite`). `clearMocks` now defaults to `true`, so recorded mock calls are cleared before every test — set `clearMocks: false` in the Vitest config only if a suite relies on history carrying over.
+
 ### Configuration
 
 ```typescript
@@ -466,10 +468,25 @@ test('product page navigates instantly', async ({ page }) => {
   await page.goto('/')
   await instant(page, async () => {
     await page.click('a[href="/products/1"]')
+    await page.waitForURL((url) => url.pathname === '/products/1')  // wait for the destination before asserting
     await expect(page.locator('h1')).toBeVisible()
   })
 })
+
+// When page.goto() is the FIRST navigation inside the callback (initial page load), pass baseURL as the third argument:
+test('product page is instant on initial load', async ({ page, baseURL }) => {
+  await instant(
+    page,
+    async () => {
+      await page.goto('/products/1')
+      await expect(page.locator('h1')).toBeVisible()
+    },
+    { baseURL },
+  )
+})
 ```
+
+The testing API is enabled automatically under `next dev`. To run these tests in CI against a production build (`next start`), set `experimental: { exposeTestingApiInProductionBuild: true }` next to `cacheComponents: true` in `next.config.ts`.
 
 See [/docs/app/guides/instant-navigation#prevent-regressions-with-e2e-tests](https://nextjs.org/docs/app/guides/instant-navigation#prevent-regressions-with-e2e-tests).
 

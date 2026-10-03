@@ -12,7 +12,7 @@ description: |
 
 # Dashboards & Widgets
 
-NocoDB v3 has a built-in dashboarding layer. A **Dashboard** is a container; **Widgets** are the individual tiles inside it (charts, KPIs, text blocks, iframes). All operations are Meta API v3.
+NocoDB v3 has a built-in dashboarding layer. A **Dashboard** is a container; **Widgets** are the individual tiles inside it (charts, KPIs, text blocks, iframes). All operations are Meta API v3 (cloud-hosted Enterprise or licensed self-hosted, Business plan and above); on Cloud / licensed the MCP `dashboards` category (`listTools`, then `callTool`) offers the same writes.
 
 ## Endpoints
 
@@ -33,26 +33,29 @@ NocoDB v3 has a built-in dashboarding layer. A **Dashboard** is a container; **W
 
 ## Widget Types
 
-Per the OpenAPI `WidgetOptions*` schemas:
+A widget's `type` is one of `chart`, `metric`, `text`, `iframe`. Charts are selected by `options.chart_type`. Per the OpenAPI `WidgetOptions*` schemas:
 
-| `type` | Schema | Use case |
-|--------|--------|----------|
-| `metric` | `WidgetOptionsMetric` | Single KPI tile (count / sum / avg) |
-| `bar_chart` | `WidgetOptionsBarChart` | Categorical bar chart |
-| `line_chart` | `WidgetOptionsLineChart` | Time-series line |
-| `pie_chart` | `WidgetOptionsPieChart` | Proportional pie |
-| `donut_chart` | `WidgetOptionsDonutChart` | Like pie, with hole |
-| `text` | `WidgetOptionsText` | Markdown content block |
+| `type` | `options` schema | Use case |
+|--------|------------------|----------|
+| `metric` | `WidgetOptionsMetric` | Single KPI tile (count / sum / avg / min / max) |
+| `chart` | `WidgetOptionsBarChart` (`chart_type: "bar"`) | Categorical bar chart |
+| `chart` | `WidgetOptionsLineChart` (`"line"`) | Time-series line |
+| `chart` | `WidgetOptionsPieChart` (`"pie"`) | Proportional pie |
+| `chart` | `WidgetOptionsDonutChart` (`"donut"`) | Like pie, with hole |
+| `chart` | `WidgetOptionsScatter` (`"scatter"`) | Scatter plot |
+| `text` | `WidgetOptionsText` | Markdown / plain text block |
 | `iframe` | `WidgetOptionsIframe` | Embedded URL |
+
+Top-level keys of a widget: `title`, `type`, `options`, `table_id` / `view_id` (the data source), `position` (`x`, `y`, `w`, `h` on a 12-column grid).
 
 ## Create a Dashboard
 
 ```bash
 curl -sS -X POST \
-  -H "xc-token: $NOCODB_API_TOKEN" \
+  -H "xc-token: ${NOCODB_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{ "title": "Sales Overview", "description": "Daily KPIs" }' \
-  "$NOCODB_URL/api/v3/meta/bases/$BASE_ID/dashboards"
+  "${NOCODB_URL}/api/v3/meta/bases/$BASE_ID/dashboards"
 ```
 
 Response includes the new `dashboard_id`.
@@ -61,37 +64,45 @@ Response includes the new `dashboard_id`.
 
 ```bash
 curl -sS -X POST \
-  -H "xc-token: $NOCODB_API_TOKEN" \
+  -H "xc-token: ${NOCODB_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "title":  "Active Customers",
-    "type":   "metric",
+    "title":    "Customers",
+    "type":     "metric",
+    "table_id": "<customersTableId>",
     "options": {
-      "table_id":     "<customersTableId>",
-      "aggregation":  "count",
-      "filter":       "(Status,eq,Active)"
+      "data_source": "table",
+      "metric":      { "type": "count", "aggregation": "count" }
     }
   }' \
-  "$NOCODB_URL/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/widgets"
+  "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/dashboards/${DASHBOARD_ID}/widgets"
 ```
+
+`metric.type` is `count` (all rows) or `summary` (aggregate a field — then `metric.field_id` is required and `aggregation` is `sum`, `avg`, `count`, `min` or `max`). To count a filtered subset, point the widget at a view that carries the filter (`view_id`, `data_source: "view"`).
 
 ## Add a Bar Chart Widget
 
 ```bash
 curl -sS -X POST \
-  -H "xc-token: $NOCODB_API_TOKEN" \
+  -H "xc-token: ${NOCODB_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "title":  "Revenue by Region",
-    "type":   "bar_chart",
+    "title":    "Revenue by Region",
+    "type":     "chart",
+    "table_id": "<ordersTableId>",
     "options": {
-      "table_id":     "<ordersTableId>",
-      "x_axis":       { "field_id": "<regionFieldId>" },
-      "y_axis":       { "field_id": "<amountFieldId>", "aggregation": "sum" }
+      "chart_type":  "bar",
+      "data_source": "table",
+      "data": {
+        "x_axis": { "field_id": "<regionFieldId>" },
+        "y_axis": { "fields": [ { "field_id": "<amountFieldId>", "aggregation": "sum" } ] }
+      }
     }
   }' \
-  "$NOCODB_URL/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/widgets"
+  "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/dashboards/${DASHBOARD_ID}/widgets"
 ```
+
+Pie and donut charts use `data.category.field_id` plus `data.value` (`{ "type": "count" }` or `{ "type": "summary", "field_id", "aggregation" }`) instead of axes.
 
 > Probe the spec for the exact options shape per widget type:
 > ```bash
@@ -104,15 +115,15 @@ curl -sS -X POST \
 For one widget:
 
 ```bash
-curl -sS -H "xc-token: $NOCODB_API_TOKEN" \
-  "$NOCODB_URL/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/widgets/$WIDGET_ID/data"
+curl -sS -H "xc-token: ${NOCODB_TOKEN}" \
+  "${NOCODB_URL}/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/widgets/$WIDGET_ID/data"
 ```
 
 For an entire dashboard (all widgets in one call):
 
 ```bash
-curl -sS -H "xc-token: $NOCODB_API_TOKEN" \
-  "$NOCODB_URL/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/data"
+curl -sS -H "xc-token: ${NOCODB_TOKEN}" \
+  "${NOCODB_URL}/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/data"
 ```
 
 The dashboard-level `/data` endpoint runs every widget's query in parallel server-side and returns the consolidated payload — prefer this over N individual widget calls when rendering a dashboard view.
@@ -121,24 +132,24 @@ The dashboard-level `/data` endpoint runs every widget's query in parallel serve
 
 ```bash
 curl -sS -X PATCH \
-  -H "xc-token: $NOCODB_API_TOKEN" \
+  -H "xc-token: ${NOCODB_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d '{ "title": "Renamed", "options": { "filter": "(Status,eq,Premium)" } }' \
-  "$NOCODB_URL/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/widgets/$WIDGET_ID"
+  -d '{ "title": "Renamed" }' \
+  "${NOCODB_URL}/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/widgets/$WIDGET_ID"
 ```
 
-Type-specific `options` keys depend on the widget kind — refer to the matching `WidgetOptions*` schema.
+Type-specific `options` keys depend on the widget kind — refer to the matching `WidgetOptions*` schema (`appearance` carries colours, legend and size settings).
 
 ## Delete a Widget / Dashboard
 
 ```bash
 # Widget
-curl -sS -X DELETE -H "xc-token: $NOCODB_API_TOKEN" \
-  "$NOCODB_URL/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/widgets/$WIDGET_ID"
+curl -sS -X DELETE -H "xc-token: ${NOCODB_TOKEN}" \
+  "${NOCODB_URL}/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID/widgets/$WIDGET_ID"
 
 # Dashboard (deletes all widgets too)
-curl -sS -X DELETE -H "xc-token: $NOCODB_API_TOKEN" \
-  "$NOCODB_URL/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID"
+curl -sS -X DELETE -H "xc-token: ${NOCODB_TOKEN}" \
+  "${NOCODB_URL}/api/v3/meta/bases/$BASE_ID/dashboards/$DASHBOARD_ID"
 ```
 
 **Confirm with the user before deleting** — both operations are unrecoverable.
@@ -147,11 +158,11 @@ curl -sS -X DELETE -H "xc-token: $NOCODB_API_TOKEN" \
 
 | Widget kind | Pre-flight |
 |-------------|-----------|
-| `metric` | `table_id` set; `aggregation` is one of `count` / `sum` / `avg` / `min` / `max`; numeric `field_id` for non-count aggregations |
-| `bar_chart` / `line_chart` | `x_axis.field_id` and `y_axis.field_id` reference existing columns; `y_axis.aggregation` matches the field type |
-| `pie_chart` / `donut_chart` | One categorical `field_id`; one numeric `field_id` (or count) |
-| `text` | Body markdown ≤ NocoDB's text limit |
-| `iframe` | URL allowed by NocoDB's iframe-source allowlist (admin-controlled) |
+| `metric` | `table_id` (or `view_id`) set; `metric.type` and `aggregation` set; a numeric `metric.field_id` for `summary` metrics |
+| `chart` (bar / line / scatter) | `data.x_axis.field_id` and `data.y_axis.fields[].field_id` reference existing fields; `aggregation` matches the field type |
+| `chart` (pie / donut) | One categorical `data.category.field_id`; `data.value` as `count` or a numeric `summary` |
+| `text` | `content` set; `type` is `markdown` or `text` |
+| `iframe` | `url` allowed by NocoDB's iframe-source allowlist (admin-controlled) |
 
 ## Troubleshooting
 

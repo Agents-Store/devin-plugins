@@ -8,7 +8,7 @@ the Application API. Combines `webhooks-automation` (events, signatures, bots) w
 
 ```bash
 BOT=$(curl -s -X POST \
-  -H "api_access_token: ${CHATWOOT_PLATFORM_TOKEN}" \
+  -H "api-access-token: ${CHATWOOT_PLATFORM_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{"name":"Triage Bot","outgoing_url":"https://example.com/bot","bot_type":"webhook"}' \
   "${CHATWOOT_BASE_URL}/platform/api/v1/agent_bots")
@@ -49,7 +49,7 @@ def bot():
         conv = e["conversation"]["id"]
         requests.post(
             f"{BASE}/api/v1/accounts/{ACC}/conversations/{conv}/messages",
-            headers={"api_access_token": TOKEN},
+            headers={"api-access-token": TOKEN},
             json={"content": "Got it — an agent will follow up shortly.",
                   "message_type": "outgoing"},
             timeout=10,

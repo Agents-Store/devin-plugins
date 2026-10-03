@@ -40,6 +40,10 @@ Input: {"bot_id": "bot_jkl", "messages": [{"type": "text", "text": "Campaign mes
 # Viber
 Tool: chatbots_bots_campaigns_v_send
 Input: {"bot_id": "bot_mno", "messages": [{"type": "text", "text": "Campaign message"}]}
+
+# TikTok (vendor publishes no parameter schema for this tool - read it from the server first)
+Tool: chatbots_bots_campaigns_tt_send
+Input: bot and campaign message text; the bot_id + messages shape above is expected, not confirmed
 ```
 
 ### Pattern 3: Contact Direct Message
@@ -219,4 +223,40 @@ Input: {}
 Tool: smtp_unsubscribes_list
 Input: {"limit": 100}
 -> Returns: [{email, date}, ...]
+```
+
+## Courses Patterns
+
+The vendor's tool list publishes descriptions and example requests for the Courses tools, not parameter schemas. These patterns show the call order only; read each tool's schema from the connected server before the first call.
+
+### Pattern 11: Enroll a Student
+```
+Tool: edu_courses_list
+-> Courses with academy website, dates, learning settings, pricing plans, discount codes
+
+Tool: edu_students_create
+Input: course ID, student name, student email
+-> Adds the student and enrolls them in the course
+```
+
+### Pattern 12: Mark a Student as Paying
+```
+Tool: edu_courses_students_list
+Input: course ID
+-> Students with contact details, activity dates, course progress
+
+Tool: edu_courses_students_mark_paid
+Input: course ID, student ID
+-> Marks the student as paying in that course
+```
+
+### Pattern 13: Student Progress
+```
+Tool: edu_auditory_list
+Input: filter by name, email, status, tags or payment
+-> Students across all courses
+
+Tool: edu_students_statistics_show
+Input: student ID
+-> Progress across courses, lessons, tests and assignments
 ```

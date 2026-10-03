@@ -7,10 +7,23 @@
       "expected_output": "Should cover: auth.createPublicToken, useRealtimeRun or useRealtimeTaskTrigger hook, metadata for progress, @trigger.dev/react-hooks",
       "files": [],
       "expectations": [
-        "Mentions @trigger.dev/react-hooks package', 'type': 'content_check",
-        "Shows useRealtimeRun or useRealtimeTaskTrigger hook', 'type': 'content_check",
-        "Includes auth token creation (createPublicToken or createTriggerPublicToken)', 'type': 'content_check",
-        "Uses metadata for progress tracking', 'type': 'content_check"
+        "Mentions @trigger.dev/react-hooks package",
+        "Shows useRealtimeRun or useRealtimeTaskTrigger hook",
+        "Includes auth token creation (createPublicToken or createTriggerPublicToken)",
+        "Uses metadata for progress tracking"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "My Next.js app triggers a Trigger.dev task from a Server Action and shows the run with useRealtimeRun. It works against Trigger.dev Cloud but against our self-hosted server the hook never gets any data, and long runs stop updating after a few minutes. What is wrong?",
+      "expected_output": "baseURL on the hook (or TriggerAuthContext) for self-hosted, NEXT_PUBLIC address, publicAccessToken lifetime and refreshAccessToken, no TriggerProvider",
+      "files": [],
+      "expectations": [
+        "Says the hook needs baseURL pointing at the self-hosted server because the browser has no TRIGGER_API_URL and the default is Trigger.dev Cloud",
+        "Puts the address in a NEXT_PUBLIC_ variable and keeps TRIGGER_SECRET_KEY on the server",
+        "Explains that the publicAccessToken from the trigger() handle is short-lived: the docs say 15 minutes, and the SDK signs a 1 hour token itself when the server sends no x-trigger-jwt, so the publicAccessToken request option applies only in that case",
+        "Adds a refreshAccessToken callback that calls a server function which authorizes the caller (a run tag set at trigger time and checked with runs.retrieve, or a token scoped to the user's tag) before minting a token with auth.createPublicToken",
+        "Uses TriggerAuthContext.Provider or per-hook options and does not use a TriggerProvider component"
       ]
     }
   ]

@@ -41,7 +41,8 @@ Who can do what, and the configurable value lists (priorities, resolutions, secu
 
 | Method | Purpose & key fields |
 |--------|----------------------|
-| `GET /priority` · `GET /priority/search` | List / search priorities. |
+| `GET /priority/search` | List / search priorities (`searchPriorities`, paginated) — the current call. |
+| `GET /priority` | **Deprecated** list of all priorities (`getPriorities`); use `/priority/search`. |
 | `POST /priority` · `PUT /priority/{id}` · `DELETE /priority/{id}` | Create / update / delete a priority. |
 | `PUT /priority/default` · `PUT /priority/move` | Set default / reorder. |
 | `GET /priorityscheme` · `POST /priorityscheme` | List / create priority schemes (Cloud). |
@@ -50,7 +51,8 @@ Who can do what, and the configurable value lists (priorities, resolutions, secu
 
 | Method | Purpose & key fields |
 |--------|----------------------|
-| `GET /resolution` · `GET /resolution/search` | List / search resolutions. |
+| `GET /resolution/search` | List / search resolutions (paginated). |
+| `GET /resolution` | **Deprecated** list of all resolutions (`getResolutions`) — the spec names no replacement; prefer `/resolution/search`. |
 | `POST /resolution` · `PUT /resolution/{id}` · `DELETE /resolution/{id}` | Create / update / delete. |
 | `PUT /resolution/default` · `PUT /resolution/move` | Set default / reorder. |
 

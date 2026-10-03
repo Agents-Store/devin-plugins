@@ -10,68 +10,102 @@ Deploy Trigger.dev tasks to staging, production, or preview environments.
 ## Deploy Cycle
 
 1. Develop locally with `npx trigger.dev@latest dev`
-2. Deploy to staging: `npx trigger.dev@latest deploy --env staging`
+2. Deploy to staging: `npx trigger.dev@<version> deploy --env staging`
 3. Test in staging
-4. Deploy to production: `npx trigger.dev@latest deploy --env production`
+4. Deploy to production: `npx trigger.dev@<version> deploy --env prod`
 5. Verify: check dashboard or `list_deploys` MCP tool
+
+`<version>` is the version of `@trigger.dev/sdk` your project uses; on self-hosted it must also be the version of the server. A CLI that differs from the installed `@trigger.dev/*` packages makes `deploy` fail in CI and behave unpredictably elsewhere, so keep the `trigger.dev` package in `devDependencies` and run it through `npm run` / `npx trigger.dev` instead of `@latest` (see CI/CD below).
 
 ## CLI Deploy
 
 ```bash
-# Deploy to production (default)
-npx trigger.dev@latest deploy
+# Deploy to production (default env is prod)
+npx trigger.dev@<version> deploy
 
 # Deploy to staging
-npx trigger.dev@latest deploy --env staging
+npx trigger.dev@<version> deploy --env staging
 
 # Deploy to preview branch
-npx trigger.dev@latest deploy --env preview --branch feature/new-task
+npx trigger.dev@<version> deploy --env preview --branch feature/new-task
 
-# Deploy without promoting (canary)
-npx trigger.dev@latest deploy --skip-promotion
+# Deploy without promoting (canary), promote later
+npx trigger.dev@<version> deploy --skip-promotion
+npx trigger.dev@<version> promote <deployed-version>
 ```
 
 ## Deploy Flags
 
 | Flag | Description |
 |------|-------------|
-| `--env <environment>` | Target: staging, prod, preview |
-| `--api-url <url>` | Self-hosted server URL (default: `https://api.trigger.dev`) |
+| `-e, --env <environment>` | Target: `prod` (default), `staging`, `preview`. `production` is coerced to `prod`, but write `prod` |
+| `-a, --api-url <url>` | Self-hosted server URL (default: cloud) |
+| `--profile <name>` | CLI login profile |
 | `--env-file <path>` | Load .env file into CLI process (default: `.env`) |
-| `--branch <name>` | Branch name (required for preview) |
+| `-b, --branch <name>` | Preview branch (detected from git when omitted, with `--env preview`) |
 | `--skip-promotion` | Deploy without making it active |
 | `--skip-update-check` | Skip package version check |
 | `--skip-sync-env-vars` | Skip syncEnvVars extension |
-| `--config <path>` | Custom trigger.config.ts path |
-| `--project-ref <ref>` | Override project ref |
+| `-c, --config <path>` | Custom trigger.config.ts path |
+| `-p, --project-ref <ref>` | Override project ref |
 | `--dry-run` | Show what would be deployed without deploying |
-| `--local-build` | Build Docker image locally |
+| `--external-id <id>` | Your own id for the deploy (commit SHA, CI run id, release tag; max 128 characters). Deploying an id that is already live reports the existing version instead of building again. Basis of version skew protection (below). Requires server ≥ 4.5.12 (CLI/SDK must match); an older CLI rejects the flag |
+| `--force` | Rebuild even if the `--external-id` is already deployed; needs `--external-id` (same version requirement) |
+| `--local-build` | Build the Docker image locally |
+| `--native-build` | Build on the native build server (cloud build options) |
+| `--depot-build` | Build with Depot (cloud build options) |
+| `--local-bundle` | Experimental: bundle locally, upload only the output; requires `--native-build` |
+| `--detach` | Return as soon as the deploy is queued; requires `--native-build` |
+| `--build-logs <mode>` | `compact` (one updating line, default) or `full`; CI and piped output always use `full` |
+
+On self-hosted, builds run locally on the machine that runs `deploy`, so the native and Depot build options do not apply there.
+
+## Version Skew Protection (requires server ≥ 4.5.12; CLI/SDK must match)
+
+Automatic atomic deployments are deprecated in favour of version skew protection. Give each deploy an id, give your running app the same id, and Trigger.dev pins every triggered run to the deployment built for that release:
+
+```bash
+npx trigger.dev@<version> deploy --env prod --external-id "$GITHUB_SHA"  # requires CLI/SDK and server >= 4.5.12; drop it on older
+# and in the application's runtime environment, the same value:
+# TRIGGER_EXTERNAL_DEPLOYMENT_ID=<same commit sha>
+```
+
+Make sure the id cannot expand to an empty string (an unset variable silently deploys with no id), and do not add a `paths:` filter to the workflow when the id is a commit SHA: commits that do not touch tasks never produce a deployment with that SHA, so their runs expire after an hour. Without a matching id nothing changes: runs execute on the current version.
 
 ## Self-Hosted Deploy
 
-For self-hosted instances, pass `--api-url` pointing to your Trigger.dev server and authenticate with `TRIGGER_ACCESS_TOKEN`:
+For self-hosted instances, pass `--api-url` (or set `TRIGGER_API_URL`) pointing to your Trigger.dev server and authenticate with `TRIGGER_ACCESS_TOKEN`. There is no self-hosted-specific deploy flag: cloud and self-hosted use the same command, only the URL differs.
 
 ```bash
-# Option A: Use a Personal Access Token (from `trigger.dev login`)
+# Option A — local machine: personal access token from `trigger.dev login`
 TRIGGER_ACCESS_TOKEN=tr_pat_xxx \
-npx trigger.dev@latest deploy \
+npx trigger.dev@<server-version> deploy \
   --env prod \
   --api-url https://your-trigger-instance.example.com \
   --env-file .env
 
-# Option B: Use the project secret key as access token
-# This works when the CLI profile token doesn't have access to the project
+# Option B — CI: an environment API key with "Deploy only" access, one per environment
+# (Dashboard -> project -> environment -> API keys -> New API key). It is passed as
+# TRIGGER_ACCESS_TOKEN and is not tied to one person's account.
+TRIGGER_ACCESS_TOKEN=<deploy-only-key-for-prod> \
+TRIGGER_API_URL=https://your-trigger-instance.example.com \
+npx trigger.dev@<server-version> deploy --env prod --external-id "$GITHUB_SHA"  # requires CLI/SDK and server >= 4.5.12; drop it on older
+```
+
+Deploy-only keys are documented for Trigger.dev Cloud; confirm they exist on your server version before relying on them. A personal access token is the documented fallback, but it is tied to a person and not recommended for CI.
+
+```bash
+# Option C — workaround seen on some self-hosted instances (not documented upstream):
+# the project's secret key as the access token, when the profile token is rejected
 TRIGGER_ACCESS_TOKEN=$TRIGGER_SECRET_KEY \
-npx trigger.dev@latest deploy \
+npx trigger.dev@<server-version> deploy \
   --env prod \
   --api-url https://your-trigger-instance.example.com \
   --project-ref proj_xxx \
   --env-file .env
 ```
 
-If the CLI says "Project not found" even though the project exists, the CLI profile token likely lacks access to the project's organization. Use Option B (`TRIGGER_SECRET_KEY` as `TRIGGER_ACCESS_TOKEN`) to authenticate with the project-scoped key instead.
-
-There is no `--self-hosted` flag — self-hosted and cloud deploys use the same CLI command, only `--api-url` differs (cloud default: `https://api.trigger.dev`).
+If the CLI says "Project not found" even though the project exists, the CLI profile token likely lacks access to the project's organization. Use Option B or C to authenticate with an environment-scoped key instead.
 
 The CLI automatically discovers the container registry from the server and handles Docker build + push internally.
 
@@ -88,23 +122,26 @@ unauthorized: authentication required
 no basic auth credentials
 ```
 
-### Two separate sets of registry env vars
+### Registry env vars: who reads what
 
 | Scope | Var prefix | Who reads them | Purpose |
 |-------|-----------|----------------|---------|
 | **Server** (webapp docker-compose) | `DEPLOY_REGISTRY_*` | Trigger.dev webapp | Tells the server which registry to instruct CLIs to push to |
-| **Client** (dev machine / CI) | `DOCKER_REGISTRY_*` *(convention)* | `docker login` via a shell wrapper | Stores registry creds in `.env` / secrets manager for non-interactive login |
+| **Instance `.env`** | `DOCKER_REGISTRY_*` | docker compose (webapp and supervisor) | Registry URL, user, password, namespace of the instance |
+| **Client** (dev machine / CI) | `DOCKER_REGISTRY_*` *(same names, by convention)* | `docker login` via a shell wrapper | Stores registry creds in `.env` / secrets manager for non-interactive login |
 
-The `DOCKER_REGISTRY_*` prefix is **not read by the Trigger.dev CLI** — it's a project convention for feeding `docker login` in a reproducible way (so secrets live in Infisical / .env alongside other service creds, not only in Docker's OS keychain).
+The Trigger.dev **CLI does not read** `DOCKER_REGISTRY_*`, so `docker login` is always needed. The names are not arbitrary though: the instance's `.env.example` and compose files use `DOCKER_REGISTRY_URL`, `DOCKER_REGISTRY_USERNAME`, `DOCKER_REGISTRY_PASSWORD` and `DOCKER_REGISTRY_NAMESPACE`. The webapp compose maps `DOCKER_REGISTRY_URL` to `DEPLOY_REGISTRY_HOST` and `DOCKER_REGISTRY_NAMESPACE` to `DEPLOY_REGISTRY_NAMESPACE`, and the supervisor reads `DOCKER_REGISTRY_*` to pull images. Reuse the same names on deploying machines and CI so secrets live in one place (Infisical / .env) and feed `docker login` reproducibly.
 
-**Server-side variables** (official, set in webapp's `.env` on the host):
+**Instance-side variables** (the compose `.env` on the host; since 4.5.6 there are no shared default credentials):
 
 | Var | Required | Default | Purpose |
 |-----|----------|---------|---------|
-| `DEPLOY_REGISTRY_HOST` | Yes | `localhost:5000` | Hostname CLIs will push to |
-| `DEPLOY_REGISTRY_USERNAME` | Optional | `registry-user` | Basic-auth username |
-| `DEPLOY_REGISTRY_PASSWORD` | Optional | `very-secure-indeed` | Basic-auth password (⚠️ CHANGE for prod — update `hosting/docker/registry/auth.htpasswd`) |
-| `DEPLOY_REGISTRY_NAMESPACE` | Optional | `trigger` | Image namespace; final image path: `{host}/{namespace}/{project-ref}` |
+| `DOCKER_REGISTRY_URL` | Yes | `localhost:5000` | Registry hostname CLIs push to (becomes `DEPLOY_REGISTRY_HOST` in the webapp) |
+| `DOCKER_REGISTRY_USERNAME` | Yes | `registry-user` | Basic-auth username |
+| `DOCKER_REGISTRY_PASSWORD` | Yes | none, empty in `.env.example` | Basic-auth password. `./generate-secrets.sh` fills it and writes the matching bcrypt entry to `registry/auth.htpasswd` |
+| `DOCKER_REGISTRY_NAMESPACE` | Optional | `trigger` | Image namespace; final image path: `{host}/{namespace}/{project-ref}` |
+
+Instances installed before 4.5.6 may still run the old published default password. Replace it, or the upgrade refuses to boot unless `ALLOW_INSECURE_DEFAULT_SECRETS=true` is set as a temporary bypass.
 
 **Client-side convention** (stored in project `.env` / Infisical alongside other creds):
 
@@ -123,7 +160,7 @@ docker login -u registry-user registry.your-trigger-domain.com
 # → Login Succeeded (credentials saved to ~/.docker/config.json or OS keychain)
 ```
 
-Once done, `npm run deploy:staging` / `deploy:production` works for all future deploys on this machine until credentials change.
+Once done, deploys work on this machine until the credentials change.
 
 ### Login — non-interactive (CI, reproducible)
 
@@ -136,7 +173,7 @@ echo "$DOCKER_REGISTRY_PASSWORD" | docker login \
   --password-stdin
 ```
 
-Add this as a step **before** `trigger.dev deploy` in any CI pipeline.
+Add this as a step **before** `trigger.dev deploy` in any CI pipeline, together with Docker Buildx (`docker/setup-buildx-action`), since self-hosted images are built on the CI runner.
 
 ### Verify registry connectivity
 
@@ -169,16 +206,35 @@ Deployed tasks run in isolated Docker containers that do **not** have access to 
 
 The `deploy.env` option in `trigger.config.ts` may not propagate env vars to self-hosted runtime containers. To reliably set runtime env vars, use one of these methods:
 
-### Method 1: REST API (recommended for automation)
+### Method 1: CLI (CLI 4.6.1+)
 
 ```bash
-# Set a single env var for the prod environment
+npx trigger.dev@<version> env set MY_API_KEY "<value>" --env prod
+npx trigger.dev@<version> env set MY_SECRET "<value>" --env prod --secret   # cannot be read back
+npx trigger.dev@<version> env list --env prod
+npx trigger.dev@<version> env pull --env prod                              # to a local file
+```
+
+### Method 2: SDK or REST API (recommended for automation)
+
+```ts
+import { envvars } from "@trigger.dev/sdk";
+
+await envvars.upload("proj_xxx", "prod", {
+  variables: { MY_API_KEY: "<value>", MY_SECRET: "<value>" },
+  override: true,
+  isSecret: true, // store as redacted secrets
+});
+```
+
+```bash
+# Set a single env var for the prod environment ({env} is dev, staging or prod)
 curl -X POST "$TRIGGER_API_URL/api/v1/projects/$TRIGGER_PROJECT_REF/envvars/prod" \
   -H "Authorization: Bearer $TRIGGER_SECRET_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"name": "MY_API_KEY", "value": "sk-xxx"}'
+  -d '{"name": "MY_API_KEY", "value": "<value>", "isSecret": true}'
 
-# Script to sync all required vars from .env.local
+# Script to sync all required vars from the current shell environment
 for var_name in DIRECTUS_URL API_KEY OTHER_VAR; do
   eval var_value=\$$var_name
   curl -s -X POST "$TRIGGER_API_URL/api/v1/projects/$TRIGGER_PROJECT_REF/envvars/prod" \
@@ -188,13 +244,13 @@ for var_name in DIRECTUS_URL API_KEY OTHER_VAR; do
 done
 ```
 
-### Method 2: Dashboard UI
+### Method 3: Dashboard UI
 
-Navigate to `$TRIGGER_API_URL/projects/v3/$PROJECT_REF/environment-variables` and add vars manually.
+Open the project's **Environment variables** page in the dashboard of your instance and add vars manually.
 
 ### Common symptom
 
-If a deployed task fails with `TypeError: Failed to parse URL from undefined/...`, the env var providing the base URL is missing from the runtime environment. Set it via the API or dashboard.
+If a deployed task fails with `TypeError: Failed to parse URL from undefined/...`, the env var providing the base URL is missing from the runtime environment. Set it with one of the methods above (or sync it at deploy time with the `syncEnvVars` extension).
 
 ## Environments
 
@@ -209,7 +265,20 @@ Each environment has its own unique secret key. Staging uses the `tr_dev_` prefi
 
 ## CI/CD (GitHub Actions)
 
-For **self-hosted**, add a `docker login` step before `deploy` — the runner has no Docker credentials by default and the push will fail with "unauthorized". For **cloud** (api.trigger.dev), skip the docker login step.
+For **self-hosted**, add a `docker login` step (and Docker Buildx) before `deploy` — the runner has no Docker credentials by default and the push will fail with "unauthorized". For **cloud** (api.trigger.dev), skip the docker login step.
+
+Pin the CLI: put `trigger.dev` in `devDependencies` at the version of the SDK (on self-hosted, the version of the server) and call it through a script. `deploy` aborts in CI when the CLI and the `@trigger.dev/*` packages differ.
+
+```json
+{
+  "scripts": {
+    "deploy:trigger": "trigger deploy --env prod"
+  },
+  "devDependencies": {
+    "trigger.dev": "<sdk-version>"
+  }
+}
+```
 
 ```yaml
 name: Deploy Trigger.dev
@@ -221,23 +290,27 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: "20"
+          node-version: "22"
       - run: npm ci
 
-      # Required for self-hosted only — push target is the instance's built-in registry
+      # Required for self-hosted only — images are built here and pushed to the instance's built-in registry
+      - uses: docker/setup-buildx-action@v3
       - name: Login to Trigger.dev container registry
         run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login "${{ secrets.DOCKER_REGISTRY_URL }}" -u "${{ secrets.DOCKER_REGISTRY_USERNAME }}" --password-stdin
 
       - name: Deploy to production
-        run: npx trigger.dev@latest deploy --env production
+        run: npm run deploy:trigger -- --external-id ${{ github.sha }}  # requires CLI/SDK and server >= 4.5.12; drop it on older
         env:
+          # A "Deploy only" environment API key, one per environment (a personal access token also works)
           TRIGGER_ACCESS_TOKEN: ${{ secrets.TRIGGER_ACCESS_TOKEN }}
           # For self-hosted:
           TRIGGER_API_URL: ${{ secrets.TRIGGER_API_URL }}
 ```
+
+Without a `package.json` script you can pin on the command line instead: `npx trigger.dev@<version> deploy --env prod`.
 
 Required GitHub Actions secrets for self-hosted: `TRIGGER_ACCESS_TOKEN`, `TRIGGER_API_URL`, `DOCKER_REGISTRY_URL`, `DOCKER_REGISTRY_USERNAME`, `DOCKER_REGISTRY_PASSWORD`.
 
@@ -260,10 +333,12 @@ Required GitHub Actions secrets for self-hosted: `TRIGGER_ACCESS_TOKEN`, `TRIGGE
   "scripts": {
     "trigger:dev": "trigger.dev dev",
     "trigger:deploy:staging": "trigger.dev deploy --env staging",
-    "trigger:deploy:prod": "trigger.dev deploy --env production"
+    "trigger:deploy:prod": "trigger.dev deploy --env prod"
   }
 }
 ```
+
+Keep `trigger.dev` in `devDependencies` at the SDK (server) version so these scripts run the matching CLI.
 
 ## Post-Deploy Verification
 

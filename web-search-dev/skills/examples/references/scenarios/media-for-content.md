@@ -6,52 +6,34 @@ You're building a blog application and need high-quality images for hero section
 
 ### Pexels (photos + videos)
 
-```
-Tool: searchPhotos
-Input: {
-  "query": "technology abstract gradient",
-  "orientation": "landscape",
-  "size": "large",
-  "per_page": 20
-}
+```bash
+curl -s -H "Authorization: ${PEXELS_API_KEY}" \
+  "https://api.pexels.com/v1/search?query=technology+abstract+gradient&orientation=landscape&size=large&per_page=20"
 ```
 
 ### Unsplash (high-quality photos)
 
-```
-Tool: get_search_photos
-Input: {
-  "query": "minimal workspace technology",
-  "orientation": "landscape",
-  "per_page": 15
-}
+```bash
+curl -s -H "Authorization: Client-ID ${UNSPLASH_ACCESS_KEY}" \
+  "https://api.unsplash.com/search/photos?query=minimal+workspace+technology&orientation=landscape&per_page=15"
 ```
 
 ## Step 2: Search for Category-Specific Images
 
-For different blog categories:
+For different blog categories (one request per query; each call counts against the 200 requests/hour limit — cache the results):
 
-```
-Tool: searchPhotos
-Input: { "query": "artificial intelligence robot", "orientation": "landscape", "per_page": 10 }
-
-Tool: searchPhotos
-Input: { "query": "web development coding", "orientation": "landscape", "per_page": 10 }
-
-Tool: searchPhotos
-Input: { "query": "startup business meeting", "orientation": "landscape", "per_page": 10 }
+```bash
+for q in "artificial+intelligence+robot" "web+development+coding" "startup+business+meeting"; do
+  curl -s -H "Authorization: ${PEXELS_API_KEY}" \
+    "https://api.pexels.com/v1/search?query=${q}&orientation=landscape&per_page=10"
+done
 ```
 
 ## Step 3: Find Background Videos
 
-```
-Tool: searchVideos
-Input: {
-  "query": "abstract technology particles",
-  "orientation": "landscape",
-  "size": "medium",
-  "per_page": 5
-}
+```bash
+curl -s -H "Authorization: ${PEXELS_API_KEY}" \
+  "https://api.pexels.com/v1/videos/search?query=abstract+technology+particles&orientation=landscape&size=medium&per_page=5"
 ```
 
 ## Step 4: Search Web for Design Inspiration
@@ -60,20 +42,16 @@ Input: {
 Tool: search_images
 Input: {
   "query": "tech blog hero image design inspiration dribbble",
-  "num": 10
+  "num": 10,
+  "return_url": true
 }
 ```
 
-## Step 5: Deduplicate Results
+`return_url: true` returns URLs and metadata instead of base64 images, which would otherwise fill the context.
 
-If you collected images from multiple sources:
+## Step 5: Remove Near-Duplicates
 
-```
-Tool: deduplicate_images
-Input: {
-  "images": ["<url1>", "<url2>", "<url3>", "..."]
-}
-```
+If you collected images from several sources, compare their `alt`/description text and drop near-duplicates by hand, or pass those descriptions to Jina `deduplicate_strings` and keep the images behind the distinct ones. (There is no image de-duplication tool.)
 
 ## Step 6: Use in Your App
 
@@ -89,19 +67,24 @@ const thumbnail = photo.urls.regular;  // 1080px
 const preview = photo.urls.thumb;      // 200px
 ```
 
-## Step 7: Track Downloads (Unsplash requirement)
+## Step 7: Unsplash Requirements (hotlink, download event, attribution)
 
-```
-Tool: get_photos_download
-Input: { "id": "<photo_id>" }
+For each Unsplash photo you actually use:
+
+```bash
+# download event — fire asynchronously, keep the query parameters in the URL
+curl -s -H "Authorization: Client-ID ${UNSPLASH_ACCESS_KEY}" "<photo.links.download_location>"
 ```
 
-Call this for each Unsplash photo you use — required by their API guidelines.
+- Keep hotlinking `photo.urls.*` — do not copy the file to your own storage.
+- Render "Photo by <name> on Unsplash" with links to the photographer and to Unsplash, both with `?utm_source=<app_name>&utm_medium=referral`.
+
+For Pexels photos show a link to Pexels and credit the photographer.
 
 ## Tips
 
 - Use landscape orientation for hero images, portrait for sidebars
 - Store multiple sizes for responsive design (thumbnail, medium, large)
-- Consider using `get_photos_random` for dynamic hero images that change on each visit
+- Consider Unsplash `GET /photos/random?query=...` for dynamic hero images (each photo still needs the download event and attribution)
 - Cache image URLs — no need to re-search every page load
 - Check licensing: Pexels and Unsplash are free for commercial use

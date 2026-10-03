@@ -24,7 +24,7 @@ Tools you'll touch in this walkthrough:
 project-all, application-one, deployment-all,
 application-readLogs, docker-getContainersByAppLabel, docker-getConfig,
 application-readTraefikConfig, ai-analyzeLogs,
-settings-checkInfrastructureHealth, settings-getDockerDiskUsage,
+settings-checkInfrastructureHealth, settings-getDockerDiskUsage, docker-getServerHealth,
 application-killBuild, application-redeploy, rollback-rollback
 ```
 
@@ -33,12 +33,13 @@ application-killBuild, application-redeploy, rollback-rollback
 ## Step 0: Confirm the platform is healthy
 
 ```
-mcp__dokploy__settings-health
-mcp__dokploy__settings-checkInfrastructureHealth
-mcp__dokploy__settings-getDockerDiskUsage
+mcp__plugin_dokploy-dev_dokploy__settings-health
+mcp__plugin_dokploy-dev_dokploy__settings-checkInfrastructureHealth
+mcp__plugin_dokploy-dev_dokploy__settings-getDockerDiskUsage
+mcp__plugin_dokploy-dev_dokploy__docker-getServerHealth        # v0.30+: disk, memory, inotify, network IP pools, daemon errors
 ```
 
-Expected: all three return ok and disk usage < 90%. If `getDockerDiskUsage` shows Images > 50GB or disk > 90% full, jump to the cleanup section before diagnosing the deploy — disk pressure causes silent build failures.
+Expected: `settings-health` returns ok, `checkInfrastructureHealth` reports `postgres` and `traefik` as ok, and disk usage < 90%. If `getDockerDiskUsage` shows Images > 50GB or `docker-getServerHealth` shows `disk.usedBytes` near `disk.totalBytes`, jump to the cleanup section before diagnosing the deploy — disk pressure causes silent build failures.
 
 ---
 
@@ -47,7 +48,7 @@ Expected: all three return ok and disk usage < 90%. If `getDockerDiskUsage` show
 Resolve the app:
 
 ```
-mcp__dokploy__project-all
+mcp__plugin_dokploy-dev_dokploy__project-all
    → find the "production" project
    → inside, find the application named "marketing-site"
    → save applicationId (e.g. app_aaa111)
@@ -56,7 +57,7 @@ mcp__dokploy__project-all
 List its deployments, most recent first:
 
 ```
-mcp__dokploy__deployment-all
+mcp__plugin_dokploy-dev_dokploy__deployment-all
    → { applicationId: "app_aaa111" }
 ```
 
@@ -71,15 +72,15 @@ Find the most recent entry with `status: "error"`. Save:
 
 ## Step 2: Read the logs
 
-The `status: error` here was a quick finish (~seconds), and the live site returns 502 — that points to a **runtime** crash (the build succeeded, the container won't stay up). Read the app's runtime log directly over MCP (v0.29.0+ — no SSH/Beszel):
+The `status: error` here was a quick finish (~seconds), and the live site returns 502 — that points to a **runtime** crash (the build succeeded, the container won't stay up). Read the app's runtime log directly over MCP (v0.29.0+ — no SSH/Beszel; the log text is not redacted):
 
 ```
-mcp__dokploy__application-readLogs
+mcp__plugin_dokploy-dev_dokploy__application-readLogs
    → { applicationId: "app_aaa111", tail: 300, since: "1h", search: "error" }
    → .data is a newline-joined, timestamp-prefixed string
 ```
 
-(If this had been a *build* failure instead, you'd read that deployment's build log with `mcp__dokploy__deployment-readLogs { deploymentId: "deploy_bbb222", tail: 500 }`.)
+(If this had been a *build* failure instead, you'd read that deployment's build log with `mcp__plugin_dokploy-dev_dokploy__deployment-readLogs { deploymentId: "deploy_bbb222", tail: 500 }`.)
 
 Scan the log for these patterns first:
 
@@ -110,7 +111,7 @@ In our scenario, the log ends with:
 ## Step 3: Inspect the container
 
 ```
-mcp__dokploy__docker-getContainersByAppLabel
+mcp__plugin_dokploy-dev_dokploy__docker-getContainersByAppLabel
    → { appName: "marketing-site", type: "standalone" }   # type is required
 ```
 
@@ -119,17 +120,17 @@ You'll see a container with `state: "restarting"` — classic crash loop. Each e
 Get its full config:
 
 ```
-mcp__dokploy__docker-getConfig
+mcp__plugin_dokploy-dev_dokploy__docker-getConfig
    → { containerId: "<id>" }
 ```
 
 Look for:
 
 - **`Networks`** — confirm the container is on `dokploy-network` so it can reach the `postgres` service.
-- **`Env`** — does `DATABASE_URL` exist? Does it point at `postgres:5432` (the compose service name) or a different host?
+- **`Env`** — **redacted**: since `@dokploy/mcp` 0.30.0 the MCP server returns `Env` (and `env` from `application-one`) as `[REDACTED]`, so you cannot read `DATABASE_URL` here. Take the host from the log instead (`getaddrinfo ENOTFOUND db` in Step 2), and list the variable *names* over REST without printing values if you need to confirm `DATABASE_URL` exists — the recipe is in the `mcp-patterns` skill ("Redaction"). Set `DOKPLOY_REDACT_ENV=false` only if you knowingly want the values in context.
 - **`RestartPolicy`** — Dokploy sets `unless-stopped`; the loop confirms the app keeps exiting.
 
-In our scenario, `DATABASE_URL=postgres://postgres:secret@db:5432/main` — but the actual DB service is called `postgres`, not `db`. The Next.js app was configured for a previous compose layout. We have the root cause.
+In our scenario the log says the app resolves the host `db`, but the actual DB service is called `postgres`. The Next.js app was configured for a previous compose layout, so its `DATABASE_URL` still points at `db`. We have the root cause.
 
 ---
 
@@ -146,8 +147,8 @@ Only relevant if the runtime *is* up but HTTP is broken. In our scenario the con
 If an AI provider is configured:
 
 ```
-mcp__dokploy__ai-getEnabledProviders     # confirm non-empty → take an aiId
-mcp__dokploy__ai-analyzeLogs
+mcp__plugin_dokploy-dev_dokploy__ai-getEnabledProviders     # confirm non-empty → take an aiId
+mcp__plugin_dokploy-dev_dokploy__ai-analyzeLogs
    → { aiId: "<enabled provider id>", logs: "<the runtime-log text from Step 2>", context: "runtime" }
 ```
 
@@ -161,30 +162,32 @@ This matches our manual analysis from Step 3.
 
 ## Step 6: Recover and verify
 
-Fix the env var:
+Fix the env var. `application-saveEnvironment` **replaces the whole `env` string**, and through MCP you cannot read the current values back (redaction) — so do not rebuild the string from a redacted read. Either supply the complete new env yourself (the user's source of truth, e.g. their `.env.production`):
 
 ```
-mcp__dokploy__application-saveEnvironment
+mcp__plugin_dokploy-dev_dokploy__application-saveEnvironment
    → {
        applicationId: "app_aaa111",
-       env: "DATABASE_URL=postgres://postgres:secret@postgres:5432/main\nNODE_ENV=production\nPORT=3000",
+       env: "DATABASE_URL=postgres://postgres:<password>@postgres:5432/main\nNODE_ENV=production\nPORT=3000",
        buildArgs: "",
        buildSecrets: "",
        createEnvFile: false
      }
 ```
 
+or change just that one variable over REST, keeping every other value (and `buildArgs` / `buildSecrets` / `createEnvFile`) untouched and unprinted — see the "change ONE variable" recipe in `mcp-patterns` → "Redaction".
+
 Trigger a redeploy:
 
 ```
-mcp__dokploy__application-redeploy
+mcp__plugin_dokploy-dev_dokploy__application-redeploy
    → { applicationId: "app_aaa111" }
 ```
 
 Poll until done:
 
 ```
-mcp__dokploy__deployment-all
+mcp__plugin_dokploy-dev_dokploy__deployment-all
    → { applicationId: "app_aaa111" }
    → wait until newest entry has status: "done"
 ```
@@ -192,7 +195,7 @@ mcp__dokploy__deployment-all
 Confirm the container is healthy:
 
 ```
-mcp__dokploy__docker-getContainersByAppLabel
+mcp__plugin_dokploy-dev_dokploy__docker-getContainersByAppLabel
    → { appName: "marketing-site" }
    → State should be "running", Health "healthy"
 ```

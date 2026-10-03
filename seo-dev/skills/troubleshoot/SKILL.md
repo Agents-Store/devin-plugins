@@ -42,9 +42,10 @@ Structured data not showing rich results?
 │     ├─ Errors found → Fix the JSON-LD (missing fields, wrong types)
 │     └─ Valid but "not eligible" → Schema type restrictions apply
 ├─ Is the schema type still supported?
-│  ├─ FAQPage → Restricted to gov/health sites since 2023
-│  ├─ HowTo → Desktop removed in 2023, mobile/voice only
-│  └─ Other types → Check Google's supported types list
+│  ├─ FAQPage → The FAQ rich result stopped appearing for all sites on 2026-05-07. Markup is harmless but gives no SERP feature
+│  ├─ HowTo → The HowTo rich result is removed on desktop and mobile. Markup is harmless but gives no SERP feature
+│  ├─ WebSite + SearchAction → Google removed the search-box feature on 2024-11-21. Keep WebSite name/alternateName for the site name
+│  └─ Other types → Check Google's Search Gallery for a rich result for that type
 ├─ Does the schema match page content?
 │  └─ Google verifies schema against visible content — mismatches are penalized
 ├─ Is the site new or low-authority?
@@ -63,7 +64,7 @@ Structured data not showing rich results?
 PageSpeed Insights score < 90?
 ├─ LCP > 2.5s?
 │  ├─ Is the LCP element an image?
-│  │  ├─ Missing priority prop → Add priority to hero/banner Image
+│  │  ├─ LCP image lazy-loaded or not prioritized → loading="eager" + fetchPriority="high" on the hero (only fetchPriority="high" if the hero differs per viewport; Next.js 16 replaced `priority` with `preload`)
 │  │  ├─ Missing sizes prop → Add responsive sizes attribute
 │  │  └─ Image too large → Use AVIF/WebP, configure formats in next.config
 │  ├─ Is the LCP element text?
@@ -86,7 +87,7 @@ PageSpeed Insights score < 90?
 │  ├─ Dynamic content injection → Reserve space with min-height or Suspense
 │  └─ Ads or embeds loading late → Set explicit dimensions, use placeholder
 └─ General slow?
-   ├─ Not using ISR → Add revalidate to static pages
+   ├─ Not using ISR → Add `revalidate` (previous model) or `'use cache'` + `cacheLife()` (Cache Components) to static pages
    ├─ No CDN → Deploy to Vercel or edge-enabled host
    └─ Too many third-party scripts → Audit and remove unused scripts
 ```
@@ -126,16 +127,36 @@ Social media preview missing image?
 │  └─ Minimum 600x315, recommended 1200x630
 ├─ Is there a cache issue?
 │  ├─ Facebook → Use Sharing Debugger to clear cache
-│  ├─ Twitter/X → Use Card Validator to refresh
+│  ├─ Twitter/X → The Card Validator was retired; preview in the X post composer, append ?v=2 to bypass a stale card
 │  ├─ LinkedIn → Use Post Inspector to recrawl
 │  └─ Slack → Append ?v=2 to URL to bust cache
-├─ Is the og:image tag in the HTML?
-│  └─ View page source, search for og:image
+├─ Is the og:image tag in the HTML social bots receive?
+│  └─ curl -sA "facebookexternalhit/1.1" https://example.com/page | grep -i og:image
 │     ├─ Missing → Check metadata export has openGraph.images
 │     └─ Present but wrong URL → Check metadataBase configuration
 └─ Using opengraph-image.tsx?
    └─ Test by visiting /opengraph-image directly in browser
       └─ Error → Check ImageResponse code for bugs
+```
+
+## "Meta Tags Missing in View Source"
+
+```
+<title>, description or og: tags not in the HTML you fetched?
+├─ Is this a browser or Googlebot request?
+│  └─ On request-time rendered pages Next.js 15.2+ streams generateMetadata output: the tags are
+│     appended to <body> after the first UI for JavaScript-capable crawlers (prerendered pages with a
+│     non-dynamic generateMetadata keep them in the initial <head>). Check the rendered DOM instead
+│     (DevTools Elements, Search Console URL Inspection, Playwright page.title())
+├─ Is the crawler a social or HTML-limited bot?
+│  └─ facebookexternalhit, Twitterbot, LinkedInBot, Slackbot, Bingbot and others get blocking
+│     <head> metadata. Test with curl -sA "<bot UA>" URL | grep -iE "<title|og:"
+│     └─ Crawler missing from the default list → Add it to htmlLimitedBots in next.config.ts
+├─ Does generateMetadata read cookies(), headers() or params at request time?
+│  └─ With Cache Components it defers to request time. If the data is not request-specific,
+│     cache it with 'use cache' so metadata is part of the static shell
+└─ Is metadata still missing after all of the above?
+   └─ Check the page does not export both metadata and generateMetadata
 ```
 
 ## "Google Search Console Errors"
@@ -182,9 +203,10 @@ The URL is disallowed in `robots.txt`.
 | Tool | URL | Use For |
 |------|-----|---------|
 | Google Search Console | search.google.com/search-console | Index status, crawl errors, performance |
-| Google Rich Results Test | search.google.com/test/rich-results | Structured data validation |
+| Google Rich Results Test | search.google.com/test/rich-results | Validation for types Google still renders (FAQ and HowTo rich results were removed, so it no longer checks them) |
+| Search Console URL Inspection | search.google.com/search-console | Rendered HTML and metadata as Googlebot sees it |
 | PageSpeed Insights | pagespeed.web.dev | Core Web Vitals, performance |
 | Facebook Sharing Debugger | developers.facebook.com/tools/debug/ | OG tag preview |
-| Twitter Card Validator | cards-dev.twitter.com/validator | Twitter Card preview |
+| X post composer | x.com (compose a post with the URL) | Card preview — the standalone Twitter Card Validator was retired in 2022 |
 | Schema.org Validator | validator.schema.org | JSON-LD syntax validation |
 | Lighthouse (DevTools) | Chrome DevTools → Lighthouse tab | Full audit |

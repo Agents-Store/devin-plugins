@@ -27,6 +27,42 @@
         "Shows for-await-of loop for consuming events",
         "Includes correct imports (createDirectus, realtime, staticToken)"
       ]
+    },
+    {
+      "id": 23,
+      "prompt": "How do I log in with email and password using the Directus SDK in a Node.js script?",
+      "expected_output": "authentication('json') client, login with a payload object, stopRefreshing for one-shot scripts",
+      "files": [],
+      "expectations": [
+        "Calls client.login with a single payload object { email, password }, not two positional arguments",
+        "Uses authentication('json') for Node.js because the default cookie mode needs a cookie jar",
+        "Mentions optional login options (otp, mode, provider) and the LDAP identifier payload",
+        "Reads credentials from environment variables",
+        "Mentions Node 22 or later for SDK 26 and stopRefreshing for one-shot scripts"
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "I use the Directus SDK in a Next.js Server Component and wrote createDirectus(url).with(rest({ cache: 'no-store' })) but TypeScript complains. How do I control caching?",
+      "expected_output": "rest() has no cache option; pass fetch options through onRequest or withOptions",
+      "files": [],
+      "expectations": [
+        "Explains that RestConfig has no cache option (TS2353) and that credentials, onRequest and onResponse are the only options",
+        "Shows rest({ onRequest }) for every request or withOptions(command, options) for one command to pass cache or next.tags to fetch",
+        "Says a readItems command should be built inside the request call (not stored in a const) so the collection name type-checks",
+        "Does not suggest putting the access token in a URL"
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "My Next.js health check does directus.request(readItems('directus_collections')) and fails. What should I call instead?",
+      "expected_output": "System collections use typed commands; readItems refuses directus_* collections",
+      "files": [],
+      "expectations": [
+        "Says readItems on a directus_* collection is a type error and throws 'Cannot use readItems for core collections' at runtime",
+        "Recommends readCollections() for collections and serverPing() for a connection check",
+        "Lists readMe, readUsers, readRoles, readPolicies or readFiles as the typed commands for other system collections"
+      ]
     }
   ]
 }

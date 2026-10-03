@@ -286,6 +286,12 @@ This creates the post, a new author, and a new category — linking existing cat
 
 **Note:** Delete must be enabled in Directus MCP settings (Settings > AI > MCP > Allow Deletes). It is disabled by default.
 
+### Update and Delete by Query (REST, GraphQL, flows)
+
+The MCP `items` tool targets items by `keys`: read first, then update or delete the keys you found. REST, GraphQL and the flow operations can also target items with a `query` instead. Since Directus 12.4.0 that path resolves the affected items with the caller's **read** permissions: read access to the collection's primary key is required, items the policy cannot read are skipped, and fields used in `filter` and `sort` must be readable. A query without `limit` is capped at `QUERY_LIMIT_DEFAULT` (100 by default), so bulk changes need `"limit": -1`. In flows, an empty or missing `key` and `query` (Directus 12.3.0+) now do nothing instead of touching every item, see the `flow-automation` skill.
+
+In a collection with content versioning the Studio shows the published item read-only and sends edits to the draft version. Item writes through the API (including `items` update) change the item itself; to change a version, save into it with the version endpoints (`saveToContentVersion` in the SDK, `POST /versions/{id}/save` in REST), see `sdk-patterns` and `api-reference`.
+
 ## Common Workflows
 
 ### Search and Update

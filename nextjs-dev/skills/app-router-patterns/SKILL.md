@@ -264,4 +264,4 @@ export async function generateStaticParams() {
 }
 ```
 
-Combine with `dynamicParams = false` to return 404 for params not generated at build time.
+Without `cacheComponents` (previous model), combine with `export const dynamicParams = false` to return 404 for params not generated at build time. With `cacheComponents: true`, `dynamicParams` is removed (exporting it fails the build): `generateStaticParams` must return at least one param, params you do not return are rendered on request after a static shell, and you call `notFound()` in the page when a param does not resolve to real data.

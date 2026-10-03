@@ -35,6 +35,7 @@ chmod 600 /root/.restic/r2.env
 
 - **Repository URL form:** `s3:https://<account_id>.r2.cloudflarestorage.com/<bucket>` — note the `s3:` prefix in front of the full `https://` endpoint.
 - **`AWS_DEFAULT_REGION=auto` is required for R2** (or pass `-o s3.region=auto`). Standard AWS region names do not work.
+- **`RESTIC_COMPRESSION`:** `auto` is a sound default. On 0.19+ the zstd levels `fastest` and `better` are also valid next to `max` and `off` — `fastest` uses the least CPU, `max` compresses hardest. 0.19 also loads the repository index much faster, which helps `check`/`prune`/`mount` on large R2 repositories.
 - Other S3-compatible providers: same shape, e.g. Wasabi `s3:https://s3.<region>.wasabisys.com/<bucket>`, MinIO `s3:http://host:9000/<bucket>`, AWS `s3:s3.amazonaws.com/<bucket>` (+ real region).
 
 **Sourcing for any manual restic command:**
@@ -52,7 +53,7 @@ set -a; . /root/.restic/r2.env; set +a
 if restic cat config >/dev/null 2>&1; then
   echo "Repository already exists — do NOT re-init (would not overwrite, but never regenerate the password)."
 else
-  restic init           # creates the encrypted repo
+  restic init           # creates the encrypted repo (format v2 by default; `--repository-version latest|stable` to choose)
 fi
 
 restic cat config       # readable config => keys + password work; expect "version":2
@@ -95,7 +96,8 @@ restic encrypts everything client-side before upload, so the objects in R2 are a
 - **Password loss = total, unrecoverable loss.** Force an off-server copy before `init`.
 - **Idempotency:** check `restic cat config` before `init`; **never regenerate the password over an existing repo** — you'd lose access to every prior snapshot.
 - Both `/root/.restic/password` and `/root/.restic/r2.env` must be mode **600**, root-owned. Never commit `r2.env` to git.
-- Repo format v2 / compression needs restic **≥ 0.14** (see `setup`).
+- Repo format v2 / compression needs restic **≥ 0.14**; target **≥ 0.19.1** (see `setup`).
+- **A typo in `RESTIC_COMPRESSION` is fatal since 0.19.0** — valid values are `off`, `auto` (default), `fastest`, `better`, `max`. Same for `RESTIC_PACK_SIZE` and `RESTIC_READ_CONCURRENCY`.
 
 ## What this skill does NOT cover
 

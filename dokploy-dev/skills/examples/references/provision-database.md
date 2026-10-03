@@ -32,7 +32,7 @@ If a project already exists, skip this step and use its `projectId`.
 **MCP:**
 
 ```
-mcp__dokploy__project-create
+mcp__plugin_dokploy-dev_dokploy__project-create
 ```
 
 Parameters:
@@ -57,7 +57,7 @@ Save the returned `projectId`.
 **Resolve the target environment** — databases are created inside a project *environment* (default `production`):
 
 ```
-mcp__dokploy__project-one { "projectId": "<projectId>" }
+mcp__plugin_dokploy-dev_dokploy__project-one { "projectId": "<projectId>" }
    → environments[0].environmentId
 ```
 
@@ -70,7 +70,7 @@ Save the `environmentId`.
 **MCP:**
 
 ```
-mcp__dokploy__postgres-create
+mcp__plugin_dokploy-dev_dokploy__postgres-create
 ```
 
 Parameters (`databaseName` and `databaseUser` are **required** for postgres):
@@ -114,7 +114,7 @@ Start the PostgreSQL container.
 **MCP:**
 
 ```
-mcp__dokploy__postgres-deploy
+mcp__plugin_dokploy-dev_dokploy__postgres-deploy
 ```
 
 Parameters:
@@ -142,7 +142,7 @@ By default, the database is only accessible from other containers on the same Do
 **MCP:**
 
 ```
-mcp__dokploy__postgres-saveExternalPort
+mcp__plugin_dokploy-dev_dokploy__postgres-saveExternalPort
 ```
 
 Parameters:
@@ -214,7 +214,7 @@ Destinations can be S3-compatible storage (AWS S3, MinIO, etc.) configured in th
 **MCP:**
 
 ```
-mcp__dokploy__postgres-one
+mcp__plugin_dokploy-dev_dokploy__postgres-one
 ```
 
 Parameters:
@@ -243,7 +243,7 @@ postgresql://postgres:secure-password-here@<server-ip>:5433/postgres
 Get the server IP with:
 
 ```
-mcp__dokploy__server-publicIp
+mcp__plugin_dokploy-dev_dokploy__server-publicIp
 ```
 
 ### Test with psql
@@ -280,7 +280,7 @@ postgresql://postgres:<password>@<host>:<port>/postgres
 |---------|-------------|-----|
 | Connection refused externally | No external port set | Complete Step 4 |
 | Connection refused internally | Database not deployed | Complete Step 3 |
-| Authentication failed | Wrong password | Check password with `mcp__dokploy__postgres-one` |
+| Authentication failed | Wrong password | Check password with `mcp__plugin_dokploy-dev_dokploy__postgres-one` |
 | Backup not running | Destination not configured | Create a destination in **Settings > Destinations** first |
 | Container keeps restarting | Corrupted data volume | Check container logs, consider recreating the database |
 

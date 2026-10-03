@@ -27,10 +27,9 @@ Body: [{
 
 ### SERP Locations Lookup
 ```bash
-POST /v3/serp/google/locations
-Body: [{"country": "US"}]
+GET /v3/serp/google/locations/US
 ```
-Returns available location codes for SERP queries.
+No body. Returns the location codes and names available for SERP queries in that country; without the country code, the list of all locations.
 
 ## DataForSEO Labs API
 
@@ -42,7 +41,7 @@ Body: [{
   "location_name": "United States",
   "language_code": "en",
   "limit": 50,
-  "filters": [["keyword_info.search_volume", ">", 100], "and", ["keyword_info.keyword_difficulty", "<", 40]]
+  "filters": [["keyword_info.search_volume", ">", 100], "and", ["keyword_properties.keyword_difficulty", "<", 40]]
 }]
 ```
 Returns: Related keywords with search_volume, cpc, competition, keyword_difficulty.
@@ -86,30 +85,28 @@ Body: [{
 ```bash
 POST /v3/dataforseo_labs/google/domain_intersection/live
 Body: [{
-  "targets": {
-    "1": "example.com",
-    "2": "competitor.com"
-  },
+  "target1": "competitor.com",
+  "target2": "example.com",
+  "intersections": false,
   "location_name": "United States",
   "language_code": "en",
   "limit": 50
 }]
 ```
-Returns keywords where both domains rank (or only one does).
+`intersections: true` (the default) returns the keywords both domains rank for; `false` returns the keywords `target1` ranks for and `target2` does not.
 
 ### Search Intent
 ```bash
 POST /v3/dataforseo_labs/google/search_intent/live
 Body: [{
-  "keywords": ["buy running shoes", "what is seo", "nike store near me"],
-  "language_code": "en"
+  "keywords": ["buy running shoes", "what is seo", "nike store near me"]
 }]
 ```
 Returns intent classification: informational, navigational, commercial, transactional.
 
 ### Bulk Keyword Difficulty
 ```bash
-POST /v3/dataforseo_labs/bulk_keyword_difficulty/live
+POST /v3/dataforseo_labs/google/bulk_keyword_difficulty/live
 Body: [{
   "keywords": ["seo tools", "keyword research tool", "backlink checker"],
   "location_name": "United States",

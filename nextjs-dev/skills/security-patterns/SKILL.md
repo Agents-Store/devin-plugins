@@ -121,7 +121,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 }
 ```
 
-> **Note:** In Next.js 16, the nonce is automatically applied to framework scripts. You only need to set it manually on third-party `<Script>` components.
+> **Note:** In Next.js 16, the nonce is automatically applied to framework scripts — since 16.3.5 also to the `<script>` tags of `loading` and `template` files. You only need to set it manually on third-party `<Script>` components.
 
 ## Security Headers
 
@@ -278,8 +278,19 @@ export async function getUserPosts() {
 }
 ```
 
+## Keep Next.js Patched
+
+Since 2026-07-13 Next.js runs a formal security-release program (advance notice roughly monthly, ad-hoc patches for urgent issues). The 16.3 line has shipped critical fixes — unauthenticated RCE on Windows-hosted servers and via AVIF in Image Optimization (16.3.3), RCE in `next/og` `ImageResponse` (16.3.6) — and the September 2026 release (16.3.8) added a high-severity SSRF in Image Optimization, SSG/ISR cache-poisoning fixes, two `use cache` leaks (Draft Mode content, nested root params) and an origin check for the dev-server `/_next/mcp` endpoint. Pin `next@^16.3.8` (15.5.x users: 15.5.27 or later) and re-check each month:
+
+```bash
+npm ls next && npm view next@latest version
+```
+
+Also narrow `images.remotePatterns` to the exact hostnames (and pathnames) you load — the 16.3.8 SSRF needed an allow-listed remote URL, and apps with no `remotePatterns` were not affected.
+
 ## Production Security Checklist
 
+- [ ] `next` on the latest patch (at least 16.3.8 on the 16.3 line, 15.5.27 on 15.5)
 - [ ] No secrets in `NEXT_PUBLIC_*` variables
 - [ ] `server-only` package on all server modules (db, auth, secrets)
 - [ ] CSP headers with nonces for inline scripts
@@ -290,6 +301,7 @@ export async function getUserPosts() {
 - [ ] No `dangerouslySetInnerHTML` with unsanitized content
 - [ ] Rate limiting on auth endpoints and public APIs
 - [ ] `poweredByHeader: false` in `next.config.js`
+- [ ] `images.remotePatterns` limited to the hosts you actually load
 
 ## What This Skill Does NOT Cover
 

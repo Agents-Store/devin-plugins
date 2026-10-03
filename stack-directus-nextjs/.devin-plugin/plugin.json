@@ -1,0 +1,20 @@
+{
+  "name": "stack-directus-nextjs",
+  "version": "2.0.0",
+  "description": "Directus + Next.js architecture plugin. How Directus (content, files, access) and a Next.js App Router frontend fit together: who holds the token, how the cache is invalidated, how assets and types cross the boundary, who owns the session, and a production checklist. Tool knowledge comes from its dependencies.",
+  "author": {
+    "name": "Agents Store",
+    "url": "https://github.com/agents-store"
+  },
+  "license": "MIT",
+  "keywords": [
+    "stack",
+    "directus-nextjs",
+    "architecture",
+    "agents-store",
+    "directus",
+    "nextjs",
+    "headless-cms",
+    "app-router"
+  ]
+}

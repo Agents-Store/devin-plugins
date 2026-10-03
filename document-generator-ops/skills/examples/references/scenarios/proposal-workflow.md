@@ -115,7 +115,7 @@ Script: `generate_docx.js`
 ## Step 5: GENERATE
 
 ```bash
-cd <plugin_dir> && node scripts/generate_docx.js /path/to/.doc_input.json
+node "<plugin_dir>/scripts/generate_docx.js" /path/to/.doc_input.json
 ```
 
 Output:

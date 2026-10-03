@@ -2,11 +2,13 @@
 
 Canonical write path is `nb api flow-surfaces <action>`. When runtime/auth is missing, report the blocked nb command before writing.
 
-Use this checklist after the matching quick route is already clear. For global rules, see [normative-contract.md](./normative-contract.md). For template planning and existing template reference edits, keep [templates.md](./templates.md) as the only source of truth.
+Use this checklist after the matching quick route is already clear. For global rules, see [normative-contract.md](./normative-contract.md). For navigation layout/group/page identity, use [navigation-targets.md](./navigation-targets.md). For template planning and existing template reference edits, keep [templates.md](./templates.md) as the only source of truth.
 
 ## 1. Preflight
 
 - Confirm the task is really about Modern page (v2) UI.
+- Before every other UI Builder preflight step, load and execute `nocobase-portal-manage` for the same request unless a current-request Portal Manager routing outcome is already present. Reuse that outcome instead of recursively invoking Portal Manager after its no-code dispatch.
+- Complete [navigation-targets.md](./navigation-targets.md) Portal preflight: one selected Portal is not enough; require its inventory record to report `portalType === "no-code"`, explicit `capabilities.multiPortal === false` legacy evidence, or Portal Manager's verified legacy Flow Surfaces signature. A sole AI Portal exits UI Builder without writing but immediately continues the same request through its source project; do not ask whether to use it or create a no-code Portal. Missing or unsupported types return to Portal Manage for resolution.
 - Confirm `nb` is available, then run:
   - `nb --help`
 - If runtime/auth is missing, report the blocked nb command before writing.
@@ -16,8 +18,8 @@ Use this checklist after the matching quick route is already clear. For global r
   - localized existing-surface edit
   - reaction authoring
 - If one user request spans several pages, split it into ordered single-page runs first.
-- Agent orchestration rule: if multiple ordered page runs share the same menu group title, serialize the page runs yourself. On the first page, use `navigation.group.title` to create or resolve the group and capture the returned `routeId`; for subsequent pages, set `navigation.group` to `{ routeId }` and do not use title-only creation. Never start concurrent title-only group creates for the same shared group. Concurrent title-only shared-group creates are forbidden.
-- Page identity for duplicate-page prevention is `(navigation.group.routeId, page.title)` after any unique group-title resolution. Same group + same page title may auto-upgrade `create` to `replace`; different group + same page title must not merge, reuse, or auto-replace another page.
+- Determine the target before the first whole-page draft. A confirmed no-code Portal uses its resolved `navigation.portalUid`. Only the proven legacy lane defaults to desktop/admin `admin-layout-model`; legacy mobile intent uses `navigation.layoutUid: "mobile-layout-model"`, `navigation.item`, and no `navigation.group`.
+- Follow [navigation-targets.md](./navigation-targets.md) for duplicate same-title group handling, multi-page shared-group serialization, and duplicate page identity.
 - If real fields or relations matter, gather live schema first with `nb api data-modeling collections get --filter-by-tk <collection> --appends fields -j`. If that command family is unavailable, use `nb api resource list --resource collections --filter '{"name":"<collection>"}' --appends fields -j`. Drop any field whose `interface` is empty / null before authoring.
 - If JS is involved, validate it first and route through [js.md](./js.md).
 - If a dashboard asks for chart / 图表 / Charts / trend / 趋势 / distribution / 分布 / ranking / 排行 / percentage / 占比, record the required chart sections before drafting; KPI JSBlocks and tables/lists cannot satisfy those chart sections.

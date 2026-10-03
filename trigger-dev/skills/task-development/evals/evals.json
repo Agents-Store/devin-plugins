@@ -4,14 +4,41 @@
     {
       "id": 1,
       "prompt": "Write a Trigger.dev task that processes image uploads. It should validate the input with Zod, retry up to 5 times on failure, use a queue with max 3 concurrent executions, and track progress via metadata.",
-      "expected_output": "Should produce working TypeScript with schemaTask or task+zod, retry config, queue(), metadata.set for progress, proper exports",
+      "expected_output": "Should produce working TypeScript with schemaTask or task+zod, retry config, a concurrency limit of 3 (queue concurrencyLimit on every server, or the concurrency option flagged as server 4.7.0 or newer), metadata.set for progress, proper exports",
       "files": [],
       "expectations": [
-        "Uses @trigger.dev/sdk import', 'type': 'content_check",
-        "Includes retry configuration with maxAttempts', 'type': 'content_check",
-        "Uses queue with concurrencyLimit', 'type': 'content_check",
-        "Uses metadata.set for progress tracking', 'type': 'content_check",
-        "Task is exported', 'type': 'content_check"
+        "Uses @trigger.dev/sdk import",
+        "Includes retry configuration with maxAttempts",
+        "Limits concurrency to 3: queue with concurrencyLimit (works on every server version), or concurrency: { total: 3 } clearly marked as requiring server 4.7.0 or newer",
+        "Uses metadata.set for progress tracking",
+        "Task is exported"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "A NocoDB webhook fires whenever an order row is updated. Write the Trigger.dev tasks that process each order in the background, write a job_status back to the row, never process the same order version twice, and process a list of order ids in parallel.",
+      "expected_output": "A task with a pre-declared queue(), onFailure writing a failed status, idempotency key built from the record id and version, and a parent task using batchTriggerAndWait (no Promise.all over triggerAndWait); all imports from @trigger.dev/sdk.",
+      "files": [],
+      "expectations": [
+        "Imports from @trigger.dev/sdk, not @trigger.dev/sdk/v3",
+        "Declares the queue with queue({ name, concurrencyLimit }) and passes the queue object to the task",
+        "Writes job_status processing at the start, completed at the end and failed in onFailure",
+        "Builds an idempotency key from the record id (and version)",
+        "Fans out with batchTriggerAndWait and does not use Promise.all with triggerAndWait"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "My Next.js route handler receives a webhook with a list of item ids and should start a Trigger.dev task for each id. The build fails with 'You need to set the TRIGGER_SECRET_KEY environment variable', and I also want the handler to wait for one task's output in an admin script. How do I write both?",
+      "expected_output": "batchTrigger with per-item idempotency keys inside the handler, a type-only task import, the build error explained as a trigger at module level or while prerendering, runs.poll for waiting outside a task",
+      "files": [],
+      "expectations": [
+        "Imports the task with import type and calls tasks.trigger or tasks.batchTrigger inside the handler body, not at module level",
+        "Explains that importing the SDK reads no environment variable and the first API call throws when TRIGGER_SECRET_KEY is missing",
+        "Warns that TRIGGER_API_URL must be set where the trigger runs on self-hosted, or the SDK falls back to Trigger.dev Cloud",
+        "Builds the idempotency key from the item (and a version) or sets a short idempotencyKeyTTL, not the item id alone",
+        "Says triggerAndWait and triggerAndSubscribe work only inside a task, there is no triggerAndPoll, and uses runs.poll from backend code",
+        "Imports from @trigger.dev/sdk, not @trigger.dev/sdk/v3"
       ]
     }
   ]

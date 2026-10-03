@@ -17,7 +17,8 @@ Always follow this order. Do NOT skip to GitHub without checking the official li
 
 ```
 Tier 1: OFFICIAL LIBRARY (template-discovery skill)
-  → ~~template_search with user's query
+  → ~~template_search with user's query: n8n-mcp local database first,
+    then the public API at api.n8n.io (12,900+ templates)
   → If good match found → stop, use it
 
 Tier 2: GITHUB REPOSITORIES
@@ -31,11 +32,11 @@ Tier 3: COMMUNITY PLATFORMS
 
 ### When to escalate from Tier 1 to Tier 2
 
-- Official search returns 0 results.
+- Official search returns 0 results on **both** providers (n8n-mcp and `api.n8n.io`).
 - Results exist but none match the required node combination.
 - User needs a workflow for a niche integration not in the template library.
 - User explicitly asks for GitHub/community sources.
-- Template library versions are outdated for the user's n8n version.
+- Library templates are too old for the user's n8n version (many use nodes that n8n 2.0 turned off or n8n 3.0 removes).
 
 ## Tier 2: GitHub Search
 
@@ -46,7 +47,7 @@ Construct queries that combine the workflow purpose with GitHub-specific filters
 ```
 ~~search("n8n workflow JSON site:github.com <use-case>")
 ~~search("n8n-nodes-base.<nodeName> workflow.json site:github.com")
-~~search("repo:n8nio/n8n-templates <keyword>")
+~~search("repo:Zie619/n8n-workflows <keyword>")
 ~~search("filename:workflow.json n8n <integration-name> site:github.com")
 ```
 
@@ -56,10 +57,11 @@ Search these repositories first — they contain curated, tested workflows:
 
 | Repository | What It Contains |
 |------------|-----------------|
-| `n8nio/n8n-templates` | Official template source (may have more than API exposes) |
-| `n8nio/n8n` | Core repo — example workflows in docs and tests |
-| `n8nio/n8n-docs` | Documentation examples with workflow JSON |
-| Community repos | User-shared workflows (search by topic) |
+| `n8n-io/n8n` | Core repo — example workflows in docs and tests |
+| `n8n-io/n8n-docs` | Documentation examples with workflow JSON |
+| Community repos (see `references/GITHUB_SOURCES.md`) | User-shared workflows (search by topic) |
+
+The official GitHub organization is `n8n-io` (the name `n8nio` belongs to Docker Hub). The official templates are **not** stored in a git repository: the only source for them is the public API at `api.n8n.io` — see the `template-discovery` skill.
 
 ### Fetching raw JSON from GitHub
 
@@ -80,7 +82,7 @@ Always convert to `raw.githubusercontent.com` before scraping — the regular Gi
 | Operator | Example | Purpose |
 |----------|---------|---------|
 | `site:github.com` | `n8n webhook site:github.com` | Limit to GitHub |
-| `repo:<owner>/<name>` | `repo:n8nio/n8n-templates slack` | Search specific repo |
+| `repo:<owner>/<name>` | `repo:Zie619/n8n-workflows slack` | Search specific repo |
 | `filename:` | `filename:workflow.json n8n` | Find workflow files by name |
 | `path:` | `path:workflows/ n8n` | Search in specific directories |
 | `extension:json` | `n8n nodes extension:json` | JSON files only |
@@ -118,7 +120,7 @@ Not all community workflows are safe or functional. Assess every candidate befor
 ### Red flags
 
 - Workflow JSON contains actual API keys or tokens (security risk).
-- Uses deprecated nodes (`n8n-nodes-base.function` instead of `n8n-nodes-base.code`).
+- Uses deprecated nodes (`n8n-nodes-base.function` instead of `n8n-nodes-base.code`) or nodes n8n 2.0 turned off or removed — see `workflow-analysis`, Step 6.
 - References community nodes not available in the user's installation.
 - Over 50 nodes with no sub-workflow organization.
 - No `connections` object or empty node list (broken export).
@@ -130,9 +132,12 @@ Once a suitable community workflow is found:
 ```
 1. ~~scrape(raw_json_url) → fetch the workflow JSON
 2. Run workflow-analysis skill → assess compatibility and security
-3. ~~workflow_validate(json) → validate before import
-4. ~~workflow_create(json) → import to n8n instance (not ~~template_deploy)
-5. ~~workflow_list → verify import succeeded
+3. Build the payload: keep only name, nodes, connections, settings; strip node credentials
+   (see single-workflow-import, Path 2)
+4. ~~workflow_validate(payload) → validate before import (validate_workflow)
+5. ~~workflow_create(payload) → import to n8n instance as a draft (not ~~template_deploy)
+6. ~~workflow_autofix in preview mode → apply after review
+7. ~~workflow_list → verify import succeeded
 ```
 
-Use `~~workflow_create` (not `~~template_deploy`) for community JSON — template deploy is only for official library templates.
+Use `~~workflow_create` (not `~~template_deploy`) for community JSON — template deploy is only for official library templates, and only those in the n8n-mcp local database. If a community page names an n8n.io template number, fetch that template through the `template-discovery` provider chain instead.

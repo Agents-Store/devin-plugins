@@ -40,7 +40,7 @@ Catches the case where the timer itself stops or never fires (so the script neve
 ```bash
 set -a; . /root/.restic/r2.env; set +a
 latest_epoch=$(restic snapshots --json --latest 1 | \
-  python3 -c 'import sys,json,datetime; s=json.load(sys.stdin); print(int(datetime.datetime.fromisoformat(s[0]["time"].split(".")[0]).timestamp())) if s else print(0)')
+  python3 -c 'import sys,json,datetime; s=json.load(sys.stdin); print(max(int(datetime.datetime.fromisoformat(x["time"].split(".")[0]).timestamp()) for x in s) if s else 0)')
 age_h=$(( ( $(date +%s) - latest_epoch ) / 3600 ))
 if [ "$latest_epoch" -eq 0 ] || [ "$age_h" -gt 26 ]; then
   curl -fsS -m10 -d "restic: newest snapshot is ${age_h}h old on $(hostname)" https://ntfy.sh/your-topic || true
@@ -49,12 +49,15 @@ fi
 
 26h threshold = a daily backup plus slack. Run this on its own timer a few hours after the backup window.
 
+`--latest 1` returns the newest snapshot **per host/path group**, so the snippet takes the maximum `time` over everything returned instead of trusting the first element. That keeps the check right on every restic version (0.19.0 briefly stopped grouping `snapshots --latest <n>` by default; 0.19.1 restored it).
+
 ## 4 — Periodic integrity check
 
 Storage rots silently. Schedule integrity checks **off** the backup hour (they lock the repo):
 
 - weekly `restic check` (structure/metadata — cheap)
 - monthly `restic check --read-data-subset=10%` (reads a sample of pack data back from R2)
+- on 0.19+, `restic check --tag daily` (or `--host` / `--path` / a snapshot ID) restricts the pack verification to the selected snapshots — a cheap check of just the fresh backups; combine with `--read-data-subset` for a sample
 
 Units: `restic-check.service` + `.timer` in `scheduling/references/systemd-units.md`.
 

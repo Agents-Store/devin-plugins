@@ -44,6 +44,7 @@ Every `PATCH`/`PUT` on items, statuses, attachments, and custom-attribute values
 
 - Check the user's role permissions: `GET /roles/{id}` and `GET /permissions`. (→ `api-reference` `projects.md`)
 - Admin-only operations (e.g. `GET /stats/system`, deleting others' content) require a superuser/owner account — the `TAIGA_ADMIN_*` credentials should map to one.
+- **`"Archived element"`** — the write targets an **archived project** (project archiving arrived in taiga-back 6.10.0, 2026-04-20; older instances do not have it). Check the project before editing: `GET /projects/{id}` returns `archived_code`, which is `null` for an active project and a string such as `"archived-by-staff"` for an archived one. Ask the project's owner or an admin to unarchive it first; do not retry the write.
 
 ## 404 / "object not found"
 
@@ -75,4 +76,4 @@ Tags are arrays of `[name, color]` pairs, e.g. `"tags": [["urgent","#ff0000"],["
 
 ## Optional convenience MCP
 
-If you'd rather call tools than curl for the ~33 most common operations, the community `greddy7574/taiga-mcp-server` (npx) and `talhaorak/pytaiga-mcp` exist. They cover a subset only — for full coverage use the REST endpoints in `api-reference`. These are not dependencies of this plugin.
+If you'd rather call tools than curl, there is no official Taiga MCP server, but community ones exist: [`greddy7574/taigaMcpServer`](https://github.com/greddy7574/taigaMcpServer) (npm `taiga-mcp-server`, run with npx), [`talhaorak/pytaiga-mcp`](https://github.com/talhaorak/pytaiga-mcp) and [`madebyclowd/taiga-mcp-server`](https://github.com/madebyclowd/taiga-mcp-server). They cover a subset only — for full coverage use the REST endpoints in `api-reference`. They are unaudited third-party code and not dependencies of this plugin; review one before giving it your Taiga credentials.

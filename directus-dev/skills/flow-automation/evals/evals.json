@@ -28,6 +28,45 @@
         "Shows nested object syntax for condition filters",
         "Mentions stringified JSON for request body"
       ]
+    },
+    {
+      "id": 26,
+      "prompt": "I need a Directus flow that sets archived=true on all old posts. My Update Items operation stopped changing anything after upgrading to 12.3",
+      "expected_output": "empty key/query returns null; explicit query with filter and limit -1",
+      "files": [],
+      "expectations": [
+        "Explains that Update Items with an empty or missing key and query now returns null (Directus 12.3.0+)",
+        "Uses an explicit query with a filter and limit -1 for a bulk change",
+        "Warns that key and query together are an error",
+        "Notes that update by query applies read permissions (12.4.0+)"
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "Set up a Directus flow that tells my Next.js site to refresh its cache when a post is published, and keep the shared secret out of the URL.",
+      "expected_output": "Event flow with a request operation, secret in a header via $env and FLOWS_ENV_ALLOW_LIST",
+      "files": [],
+      "expectations": [
+        "Uses an event trigger of type action on items.create, items.update and items.delete for the chosen collections",
+        "Uses a request operation with headers as an array of header/value objects and the body as a stringified JSON string",
+        "Sends the secret in a header, not in the query string",
+        "Reads the secret with {{ $env.NAME }} and explains FLOWS_ENV_ALLOW_LIST, noting the template renders undefined without it",
+        "Notes that localhost in the URL is the Directus container when Directus runs in Docker"
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "When an article is created or its body edited in Directus, my worker should process it. The worker writes ai_summary back into the same article and now the flow fires in a loop. Set up the flow so it sends the item ids to the worker and does not re-fire on the worker's own write.",
+      "expected_output": "Event flow with a request operation sending event, collection and keys; a condition with filter rules on $trigger.payload that the write-back does not satisfy; the secret in a header",
+      "files": [],
+      "expectations": [
+        "Sends $trigger.keys, noting that it is always an array, in a stringified JSON body such as \"keys\":{{ $trigger.keys }}",
+        "Puts a condition operation before the request and writes it as filter rules in nested objects (for example $trigger.payload.body _nnull true), not as an expression string",
+        "Explains that on items.update the payload holds only the fields that request changed, so the worker's write-back (without the source field) fails the condition and the flow ends",
+        "Keeps the secret in a header read from $env with FLOWS_ENV_ALLOW_LIST, not in the URL",
+        "Says a Run Script (exec) operation cannot compute an HMAC (isolated context, no crypto or Node modules) and offers the header secret, a JWT operation or a custom operation",
+        "Tells the receiver to answer quickly and be idempotent, because the request operation does not retry and editors save repeatedly"
+      ]
     }
   ]
 }

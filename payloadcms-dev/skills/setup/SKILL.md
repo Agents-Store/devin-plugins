@@ -9,7 +9,7 @@ Bootstrap a PayloadCMS v3 project from zero. Five steps: install Node, scaffold 
 
 ## 1. Prerequisites
 
-- **Node.js `^18.20.2 || >=20.9.0`** (the `payload` engines field); use 20 LTS+ in practice.
+- **Node.js `^18.20.2 || >=20.9.0`** (the `payload` engines field — unchanged through 3.90). Node 18 and 20 are end-of-life, so use a **22 or 24 LTS** in practice.
 - **pnpm 9+**, npm 10+, yarn 4+, or bun 1+ for installing dependencies. pnpm is the project default.
 - A database. Pick one before scaffolding:
   - **MongoDB** — simplest local dev (Docker, Atlas free tier, mongodb-memory-server).
@@ -25,22 +25,22 @@ pnpm create payload-app@latest my-app
 ```
 
 Interactive prompts:
-- **Template**: `blank` (recommended for custom builds) or `website` / `ecommerce` (full demo apps).
-- **Database**: `mongodb` / `postgres` / `sqlite`.
+- **Template**: `blank` (recommended for custom builds) or `website` / `ecommerce` (full demo apps); the CLI list also has `with-cloudflare-d1` (Workers + D1) and `plugin` (for plugin authors).
+- **Database**: `mongodb` / `postgres` / `sqlite` (also `vercel-postgres`, `d1-sqlite`) and its connection string.
+- **Coding agent** (new): "Select a coding agent to install the Payload skill for" — `Claude Code`, `Codex`, `Cursor` or `None`. Choosing an agent installs the official Payload skill (for Claude Code into `.claude/skills/payload`) and a `CLAUDE.md` / `AGENTS.md`; with this plugin installed pick **None**, the skills overlap.
 - **Project name**: kebab-case slug.
 
-The payload repo also ships additional starter templates beyond the scaffolder prompts: `plugin` (for plugin authors), `with-cloudflare-d1` (Workers + D1), `with-vercel-*`, and the experimental `blank-tanstack`.
+The payload repo's 3.x branch also ships starter templates beyond the CLI list: `with-postgres`, `with-vercel-mongodb`, `with-vercel-postgres`, `with-vercel-website`. The experimental `blank-tanstack` exists only on `main` (the Payload 4 canary).
 
-Non-interactive form (CI-friendly):
+Non-interactive form (CI- and agent-friendly). Every prompt needs a flag — **a missing `-a <agent>` / `--no-agent` leaves the run waiting on the agent prompt forever**:
 ```bash
-pnpm create payload-app@latest my-app \
-  --template blank \
-  --db postgres \
-  --no-deps=false \
-  --use-pnpm
+pnpm create payload-app@latest --no-agent --use-pnpm \
+  -n my-app -t blank -d postgres --db-accept-recommended
+# -a claude|codex|cursor installs the official skill instead of --no-agent;
+# --db-connection-string '<uri>' replaces --db-accept-recommended; --no-deps / --no-git skip install / git init
 ```
 
-The scaffolder writes:
+The scaffolder writes (the templates pin Payload 3.90.x with Next 16.3.3 — see the `nextjs-integration` skill for the supported `next` ranges):
 - `src/app/(frontend)/` — your public Next.js frontend.
 - `src/app/(payload)/` — the Payload admin panel at `/admin`.
 - `src/payload.config.ts` — central Payload configuration.

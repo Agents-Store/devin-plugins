@@ -60,24 +60,27 @@ export default function Home() {
 
 ### Add a Form with Validation (3 steps)
 
-For simple forms, the newer `field` component (`npx shadcn@latest add field`) is the modern alternative — it works with Server Actions, React Hook Form, and TanStack Form. The RHF + Zod pattern below remains fully valid:
+Forms are built from the `field` component plus a form library — there is no working `form` item in the registry (the old `Form` / `FormField` / `FormItem` wrappers are gone). React Hook Form + Zod:
 
 ```bash
-# 1. Install form components
-npx shadcn@latest add form input button label select
+# 1. Install the field component, inputs and the form libraries
+npx shadcn@latest add field input textarea button
+npm install react-hook-form @hookform/resolvers zod
 
-# 2. Create schema
+# 2. Create the schema
 ```
 
 ```typescript
 // lib/validations.ts
-import { z } from "zod"
+import * as z from "zod"
 
 export const contactSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Invalid email address."),
+  message: z.string().min(10, "Message must be at least 10 characters."),
 })
+
+export type ContactValues = z.infer<typeof contactSchema>
 ```
 
 ```typescript
@@ -85,46 +88,79 @@ export const contactSchema = z.object({
 // components/forms/contact-form.tsx
 "use client"
 
-import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { contactSchema } from "@/lib/validations"
+import { Controller, useForm } from "react-hook-form"
+
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import type { z } from "zod"
+import { Textarea } from "@/components/ui/textarea"
+import { contactSchema, type ContactValues } from "@/lib/validations"
 
 export function ContactForm() {
-  const form = useForm<z.infer<typeof contactSchema>>({
+  const form = useForm<ContactValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: { name: "", email: "", message: "" },
   })
 
-  function onSubmit(values: z.infer<typeof contactSchema>) {
+  function onSubmit(values: ContactValues) {
     console.log(values)
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField control={form.control} name="name" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Name</FormLabel>
-            <FormControl><Input {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-        <FormField control={form.control} name="email" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email</FormLabel>
-            <FormControl><Input type="email" {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldGroup>
+        <Controller
+          name="name"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+              <Input {...field} id={field.name} aria-invalid={fieldState.invalid} autoComplete="name" />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="email"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+              <Input {...field} id={field.name} type="email" aria-invalid={fieldState.invalid} autoComplete="email" />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="message"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Message</FieldLabel>
+              <Textarea {...field} id={field.name} aria-invalid={fieldState.invalid} />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
         <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+      </FieldGroup>
+    </form>
   )
 }
+```
+
+TanStack Form and Formisch variants: https://ui.shadcn.com/docs/forms.
+
+### Add a Date Picker (2 steps)
+
+A date picker is a composition of `Popover` and `Calendar` — there is no `date-picker` item:
+
+```bash
+# 1. Install the parts
+npx shadcn@latest add popover calendar
+
+# 2. Compose them — full component in the `component-registry` skill ("Date Picker")
 ```
 
 ### Add a Data Table (3 steps)
@@ -145,5 +181,5 @@ See `references/scenarios/new-project-shadcn-studio.md` for a complete data tabl
 - All examples use the `src/` directory structure with `@/` path aliases
 - TypeScript is used throughout
 - Server Components by default; `'use client'` only when needed
-- New York style variant (cleaner borders and shadows)
+- `base-nova` style (Base UI, the `init` default; `-b radix` gives `radix-nova`)
 - CSS variables enabled for theming

@@ -15,7 +15,7 @@ Compose services deploy multi-container apps from docker-compose.yml files.
 | Method | Path | operationId | Description |
 |--------|------|-------------|-------------|
 | GET | `/compose.one` | compose.one | Get a compose service by ID |
-| GET | `/compose.search` | compose.search | Search compose services by name |
+| GET | `/compose.search` | compose.search | Search compose services — free-text param is `q` (plus `name`, `appName`, `projectId`, `environmentId`, `limit`, `offset`) |
 | GET | `/compose.templates` | compose.templates | List available compose templates |
 | GET | `/compose.getTags` | compose.getTags | Get available template tags |
 | GET | `/compose.loadServices` | compose.loadServices | Parse and list services from a compose file |
@@ -28,7 +28,7 @@ Compose services deploy multi-container apps from docker-compose.yml files.
 
 | Method | Path | operationId | Description |
 |--------|------|-------------|-------------|
-| POST | `/compose.create` | compose.create | Create a new compose service |
+| POST | `/compose.create` | compose.create | Create a new compose service. `environmentId`, `name` required; optional `sourceType` (`git` \| `github` \| `gitlab` \| `bitbucket` \| `gitea` \| `raw`), `composeType`, `composeFile`, `serverId` |
 | POST | `/compose.delete` | compose.delete | Delete a compose service |
 | POST | `/compose.import` | compose.import | Import a compose file from raw YAML |
 
@@ -36,15 +36,15 @@ Compose services deploy multi-container apps from docker-compose.yml files.
 
 | Method | Path | operationId | Description |
 |--------|------|-------------|-------------|
-| POST | `/compose.deploy` | compose.deploy | Deploy the compose stack |
-| POST | `/compose.redeploy` | compose.redeploy | Force redeploy from scratch |
+| POST | `/compose.deploy` | compose.deploy | Deploy the compose stack. Optional `title`, `description`, `freshVolumes` (v0.30.5+: runs `docker compose down --volumes` first — deletes the stack's volumes; `docker-compose` type only) |
+| POST | `/compose.redeploy` | compose.redeploy | Force redeploy from scratch. Same optional `freshVolumes` |
 | POST | `/compose.start` | compose.start | Start all compose containers |
 | POST | `/compose.stop` | compose.stop | Stop all compose containers |
 | POST | `/compose.cancelDeployment` | compose.cancelDeployment | Cancel an in-progress deployment |
 | POST | `/compose.killBuild` | compose.killBuild | Kill a running build |
 | POST | `/compose.cleanQueues` | compose.cleanQueues | Clear the deployment queue |
 | POST | `/compose.clearDeployments` | compose.clearDeployments | Remove all deployment history |
-| POST | `/compose.isolatedDeployment` | compose.isolatedDeployment | Deploy a single service in isolation |
+| POST | `/compose.isolatedDeployment` | compose.isolatedDeployment | **DEPRECATED (v0.30.0)** — clones the source and returns the compose file (`composeId`, optional `suffix`; default suffix = the compose `appName`) — rewritten with that suffix only when the stack's `isolatedDeployment` flag is already on, otherwise returned unmodified; the mode itself is `compose.update { isolatedDeployment }` (still in Compose advanced settings). Replaced by per-service networks: `compose.update { serviceNetworks: [{ serviceName, networkIds, detachDokployNetwork }] }` and the `network.*` endpoints (see `api-full-index-resources.md`) |
 
 ### Update & configuration
 
@@ -113,7 +113,7 @@ Direct Docker container inspection and management.
 
 | Method | Path | operationId | Description |
 |--------|------|-------------|-------------|
-| GET | `/docker.getConfig` | docker.getConfig | Get Docker daemon configuration |
+| GET | `/docker.getConfig` | docker.getConfig | Inspect one container's config (`containerId`; `Env` is `[REDACTED]` through MCP by default) |
 | GET | `/docker.getContainers` | docker.getContainers | List all containers on the host |
 | GET | `/docker.getContainersByAppLabel` | docker.getContainersByAppLabel | Find containers by Dokploy app label |
 | GET | `/docker.getContainersByAppNameMatch` | docker.getContainersByAppNameMatch | Find containers matching an app name |
@@ -125,6 +125,8 @@ Direct Docker container inspection and management.
 
 **docker.getContainersByAppNameMatch**
 - Query: `appName` (required)
+
+v0.30.0 added host diagnostics (`docker.getServerHealth`, `docker.getEvents`), container file access (`docker.listContainerFiles` / `readContainerFile` / `writeContainerFile` / `deleteContainerFile`), and the `dockerVolume.*`, `dockerImage.*`, `dockerDiskUsage.*` and `network.*` routers — documented in `ai-and-debugging.md` and listed per operation in `api-full-index-resources.md`.
 
 **docker.restartContainer**
 ```json

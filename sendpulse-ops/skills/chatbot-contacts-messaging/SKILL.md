@@ -21,6 +21,7 @@ This skill covers chatbot contact lookup, direct messaging on all channels, and 
 | `chatbots_contacts_messages_lc_send` | Send Live Chat message to contact |
 | `chatbots_contacts_messages_i_send` | Send Instagram message to contact |
 | `chatbots_contacts_messages_v_send` | Send Viber message to contact |
+| `chatbots_contacts_messages_tt_send` | Send TikTok message to a chatbot subscriber |
 | `chatbots_contacts_variables_set` | Set variable values on a contact |
 | `chatbots_contacts_tags_set` | Assign tags to a contact |
 | `chatbots_contacts_notes_list` | List operator notes for a contact |
@@ -35,6 +36,7 @@ This skill covers chatbot contact lookup, direct messaging on all channels, and 
 | WhatsApp | `_wa` | `chatbots_contacts_messages_wa_send` |
 | Instagram | `_i` | `chatbots_contacts_messages_i_send` |
 | Viber | `_v` | `chatbots_contacts_messages_v_send` |
+| TikTok | `_tt` | `chatbots_contacts_messages_tt_send` |
 | Live Chat | `_lc` | `chatbots_contacts_messages_lc_send` |
 
 ## Contact Lookup
@@ -102,6 +104,17 @@ Input: {"contact_id": "<contact-id>", "messages": [{"type": "text", "text": "Hel
 ```
 Tool: chatbots_contacts_messages_v_send
 Input: {"contact_id": "<contact-id>", "messages": [{"type": "text", "text": "Hello!"}]}
+```
+
+**TikTok:**
+```
+Tool: chatbots_contacts_messages_tt_send
+Input: contact (the TikTok chatbot subscriber) and the message text
+
+Sends a message to a TikTok chatbot subscriber. The vendor's tool list publishes
+no parameter schema for it; the `contact_id` + `messages` shape of the other
+channels is expected but not confirmed, so read the tool's schema before the
+first send.
 ```
 
 **Live Chat:**

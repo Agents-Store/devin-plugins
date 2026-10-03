@@ -11,7 +11,7 @@ Labels, key/value content properties, and the governance surface (classification
 | `GET /spaces/{id}/labels` · `GET /spaces/{id}/content/labels` | Labels on a space / on all content in a space. |
 | `GET /labels/{id}/pages` · `/blogposts` · `/attachments` | Content carrying a given label. |
 
-> **Adding/removing** a label is not in v2 — use the v1 endpoint `POST ${ATLASSIAN_SITE_URL%/}/wiki/rest/api/content/{id}/label` with body `[{"prefix":"global","name":"release-1-2"}]`, and `DELETE …/label/{name}` to remove.
+> **Adding/removing** a label is not in v2 — use the v1 endpoint `POST ${CONF_ROOT}/wiki/rest/api/content/{id}/label` with body `[{"prefix":"global","name":"release-1-2"}]`, and `DELETE …/label/{name}` to remove.
 
 ## Content properties (key/value on any content)
 

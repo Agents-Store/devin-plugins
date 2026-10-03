@@ -120,6 +120,16 @@ Client Components reach panel state through hooks from `@payloadcms/ui`. The ess
 
 Full return shapes and import examples are in **`references/react-hooks.md`**.
 
+## UI components (`@payloadcms/ui`)
+
+Since 3.89 the official docs have a UI-components library (`/docs/v3/ui-components/*`, e.g. https://payloadcms.com/docs/v3/ui-components/overview.md) covering `Banner`, `Button`, `Card`, `Collapsible`, `Modals and Drawers`, `Pill`, `Table`, `Tooltip` and more, with props, accessibility notes and required providers. Build custom views and fields from these instead of hand-rolling markup so they match the panel in light and dark mode. `Banner` gained a warning type in 3.89:
+
+```tsx
+import { Banner } from '@payloadcms/ui'
+
+<Banner type="warning">This setting affects every tenant.</Banner>   // also: default | success | info | error
+```
+
 ## Document locking
 
 Payload locks a document while someone edits it, blocking concurrent updates/deletes on both the Local and REST APIs. It is **on by default** (5-minute idle expiry). Tune or disable per collection/global:

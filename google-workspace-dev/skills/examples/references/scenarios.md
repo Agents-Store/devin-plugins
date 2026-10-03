@@ -73,7 +73,7 @@ One command assembles your next meeting's agenda, attendees, and linked docs.
 gws workflow +meeting-prep
 ```
 
-Skill: `gws-workflow` → `gws-workflow-meeting-prep`. Timezone comes from your Google account; override with `--timezone America/New_York`.
+Skill: `gws-workflow` → `gws-workflow-meeting-prep`. It takes only `--calendar` and `--format`; there is no `--timezone` flag, so times follow your Google account's timezone. For an explicit zone use `gws calendar +agenda --today --timezone America/New_York` (the flag exists only on `calendar +agenda`).
 
 ---
 

@@ -6,7 +6,7 @@ You're building a Next.js app and encounter a hydration error. You need to find 
 
 ```
 Tool: resolve-library-id
-Input: { "libraryName": "nextjs" }
+Input: { "query": "hydration mismatch error causes and solutions", "libraryName": "Next.js" }
 → Returns: "/vercel/next.js"
 
 Tool: query-docs
@@ -25,7 +25,12 @@ If Context7 docs don't fully explain the issue:
 ```
 Tool: perplexity_reason
 Input: {
-  "query": "Next.js hydration mismatch error: server renders 'March 29' but client renders '03/29/2025'. Why does this happen with date formatting and how to fix it?"
+  "messages": [
+    {
+      "role": "user",
+      "content": "Next.js hydration mismatch error: server renders 'March 29' but client renders '03/29/2025'. Why does this happen with date formatting and how to fix it?"
+    }
+  ]
 }
 ```
 

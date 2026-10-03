@@ -28,7 +28,7 @@ Discussion, files, version history, likes, and tasks on Confluence content. Base
 | `GET /attachments/{id}/thumbnail/download` | Download a thumbnail. |
 | `DELETE /attachments/{id}` | Delete an attachment (`deleteAttachment`). `?purge=true`. **Confirm first.** |
 
-> **Uploading** an attachment is not in the v2 spec — use the v1 endpoint `POST ${ATLASSIAN_SITE_URL%/}/wiki/rest/api/content/{id}/child/attachment` (multipart `-F file=@…`, header `-H "X-Atlassian-Token: nocheck"`).
+> **Uploading** an attachment is not in the v2 spec — use the v1 endpoint `POST ${CONF_ROOT}/wiki/rest/api/content/{id}/child/attachment` (multipart `-F file=@…`, header `-H "X-Atlassian-Token: nocheck"`).
 
 ## Versions (history)
 

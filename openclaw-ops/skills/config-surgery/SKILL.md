@@ -19,7 +19,10 @@ procedure around it.
   through an ordinary JSON writer deletes every comment in the file and reports it as formatting.
 - **Strict schema.** An unknown key does not warn — the gateway refuses to start. `$schema` is the
   only non-schema root key. A mistyped key name is an outage that arrives at the next restart, far
-  from the edit that caused it.
+  from the edit that caused it. The same goes for a name upstream has **retired**: keys move between
+  releases and `doctor --fix` migrates them (`references/config-reference.md`, "Migrated keys"), so a
+  key remembered from an older build is a suspect, not a source. When the schema is in doubt, ask the
+  instance — `config schema` and `config validate` — before writing.
 - **Not a symlink.** The loader refuses a symlinked config path. Configs are never shared by linking;
   composition is what includes are for.
 - **Secret references by name only.** A literal value is `fleet.config.literal-secret` and stays
@@ -39,9 +42,10 @@ procedure around it.
    config write path, never a read-modify-write of the file, and never in the same turn the
    plan was first shown. Confirm the verb from `--help` on this instance; what makes it the
    right mechanism is that the write is refused when the file moved underneath you.
-5. **Validate twice:** it parses, then `doctor --lint --json` shows no *new* findings. Comparing
-   against a baseline matters — on a fleet with standing findings, an absolute gate blocks every edit
-   forever and gets switched off.
+5. **Validate twice:** it parses, then `doctor --lint --json --severity-min info` shows no *new*
+   findings. Comparing against a baseline matters — on a fleet with standing findings, an absolute
+   gate blocks every edit forever and gets switched off. Exit **2** from the lint is a failed run, not
+   a verdict: it proves nothing about your edit.
 6. **Reload or restart** per the table below. Guessing here is how a change is "applied" for a week
    without ever taking effect.
 7. **Verify from the runtime:** `config get <path>` returns what the process holds. A changed file
@@ -97,8 +101,8 @@ the same sequence — snapshot, validate, verify from the runtime.
 | embedding provider, model or chunking | applies, then pauses vector search with an index-identity warning until an explicit reindex |
 | anything while search is stuck on a fallback model | full restart, not a reload — a reload does not clear it |
 
-The reload mode is itself configurable (hot, restart, hybrid, off), so what a given instance does on
-change is one `config get` away. Never assume a default.
+The reload mode is itself configurable (`off` or `hybrid`; the older `hot` and `restart` values are
+retired), so what a given instance does on change is one `config get` away. Never assume a default.
 
 ## Common mistakes
 

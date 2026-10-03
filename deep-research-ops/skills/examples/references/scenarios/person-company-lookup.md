@@ -36,10 +36,10 @@ Then generate search queries:
 
 ### Step 3: SEARCH
 ```
-~~search("Anthropic company overview products team")
-→ Exa with company category filter
+~~search("category:company Anthropic overview products team")
+→ Exa semantic search with the inline company category
 
-~~search("Anthropic company history funding products team 2026")
+~~answer("Anthropic company history funding products team 2026")
 → Perplexity AI answer with key facts
 
 ~~search("Anthropic AI safety research Claude models")
@@ -85,4 +85,4 @@ Output: Executive Summary with:
 - Methodology
 
 ### Expected Capabilities Used
-`~~scrape` (discovery), `~~search`, `~~batch_scrape`
+`~~scrape` (discovery), `~~answer`, `~~search`, `~~batch_scrape`

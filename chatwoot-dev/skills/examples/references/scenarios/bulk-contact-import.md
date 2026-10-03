@@ -10,7 +10,7 @@ pagination rules in `pagination-errors.md`.
 # contacts.csv: name,email,phone,plan
 tail -n +2 contacts.csv | while IFS=, read -r name email phone plan; do
   curl -s -X POST \
-    -H "api_access_token: ${CHATWOOT_API_KEY}" \
+    -H "api-access-token: ${CHATWOOT_API_KEY}" \
     -H "Content-Type: application/json" \
     -d "$(jq -n --arg n "$name" --arg e "$email" --arg p "$phone" --arg pl "$plan" \
           '{name:$n, email:$e, phone_number:$p, custom_attributes:{plan:$pl}}')" \
@@ -28,7 +28,7 @@ done
 ```bash
 page=1
 while :; do
-  resp=$(curl -s -H "api_access_token: ${CHATWOOT_API_KEY}" \
+  resp=$(curl -s -H "api-access-token: ${CHATWOOT_API_KEY}" \
     "${CHATWOOT_BASE_URL}/api/v1/accounts/${CHATWOOT_ACCOUNT_ID}/contacts?page=${page}")
   count=$(echo "$resp" | jq '.payload | length')
   [ "$count" -eq 0 ] && break
@@ -41,12 +41,12 @@ done
 
 ```bash
 # Quick text search
-curl -s -H "api_access_token: ${CHATWOOT_API_KEY}" \
+curl -s -H "api-access-token: ${CHATWOOT_API_KEY}" \
   "${CHATWOOT_BASE_URL}/api/v1/accounts/${CHATWOOT_ACCOUNT_ID}/contacts/search?q=jane@example.com" | jq '.payload[].id'
 
 # Structured filter (POST body with attribute/operator/values) — see contacts filter endpoint
 curl -s -X POST \
-  -H "api_access_token: ${CHATWOOT_API_KEY}" -H "Content-Type: application/json" \
+  -H "api-access-token: ${CHATWOOT_API_KEY}" -H "Content-Type: application/json" \
   -d '{"payload":[{"attribute_key":"plan","filter_operator":"equal_to","values":["pro"],"query_operator":null,"custom_attribute_type":"contact_attribute"}]}' \
   "${CHATWOOT_BASE_URL}/api/v1/accounts/${CHATWOOT_ACCOUNT_ID}/contacts/filter" | jq '.payload | length'
 ```

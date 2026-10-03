@@ -15,7 +15,7 @@ Depth: standard (3 products to compare)
 
 ### Step 2: PLAN
 ```
-expand_query({ query: "project management tools comparison" })
+Related terms (planned by you, no tool): "project management", "task tracker", "work OS"
 
 Queries:
 1. "Notion project management features pricing 2026"
@@ -48,16 +48,18 @@ Rank by relevance("project management comparison", all_urls)
   "https://asana.com/pricing",
   top_comparison_article_url,
   top_review_url
-])
+], question: "plans, prices and key features", topk: 3)
 ```
 
 ### Step 5: EXTRACT
 ```
+For each pricing URL (one call per URL):
 ~~extract(
-  urls: ["https://notion.so/pricing", "https://linear.app/pricing", "https://asana.com/pricing"],
+  url: "https://notion.so/pricing",
   prompt: "Extract plan names, monthly prices, key features, and user limits",
   schema: { plans: [{ name, price_monthly, features[], user_limit }] }
 )
+(repeat for linear.app/pricing and asana.com/pricing)
 ```
 
 ### Step 6: SYNTHESIZE

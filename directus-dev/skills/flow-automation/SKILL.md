@@ -93,8 +93,8 @@ Input: {
 | `condition` | If/else branching | `filter` (condition rules) |
 | `item-create` | Create items | `collection`, `payload` |
 | `item-read` | Read items | `collection`, `query` |
-| `item-update` | Update items | `collection`, `payload`, `query` |
-| `item-delete` | Delete items | `collection`, `query` |
+| `item-update` | Update items | `collection`, `payload`, `key` or `query` (see below) |
+| `item-delete` | Delete items | `collection`, `key` or `query` (see below) |
 | `mail` | Send email | `to`, `subject`, `body` |
 | `notification` | In-app notification | `recipient`, `subject`, `message` |
 | `request` | HTTP request | `url`, `method`, `headers`, `body` |
@@ -103,6 +103,43 @@ Input: {
 | `exec` | Run custom code | `code` |
 | `transform` | Transform data | `json` |
 | `trigger` | Chain to another flow | `flow` |
+| `json-web-token` | Sign, verify or decode a JWT | `operation` (`sign`/`verify`/`decode`), `payload`, `token`, `secret`, `options` |
+| `throw-error` | Fail the flow with a custom error | `code`, `status`, `message` |
+
+### Targeting in `item-update` and `item-delete` (Directus 12.3.0+)
+
+Target items with **either** `key` (one primary key or an array) **or** `query`, never both:
+
+- Empty or missing `key` and `query` (including `"query": {}`) return `null` and change nothing. Before 12.3.0 they affected every item in the collection.
+- To update or delete **all** items, say so explicitly with `"query": { "limit": -1 }`.
+- `key` together with `query` fails the operation with `INVALID_PAYLOAD` ("Cannot use both key and query"). `item-update` with a batch (array) payload together with `key` or `query` throws too, because a batch payload carries its own keys.
+- 12.4.0+: update and delete by `query` apply the **read** permissions of the operation's accountability. The role needs read on the primary key, and only readable items are touched. Fields used in `filter` and `sort` must be readable.
+- Both operations also take `emitEvents` (fire hooks and flows for the change) and `permissions` (`$trigger`, `$full`, `$public` or a role UUID) to choose whose permissions apply.
+
+```json
+Tool: operations
+Input: {
+  "action": "create",
+  "data": {
+    "flow": "FLOW_UUID",
+    "key": "archive_old_drafts",
+    "type": "item-update",
+    "name": "Archive old drafts",
+    "options": {
+      "collection": "posts",
+      "payload": { "status": "archived" },
+      "query": {
+        "filter": { "date_created": { "_lt": "$NOW(-90 days)" }, "status": { "_eq": "draft" } },
+        "limit": -1
+      }
+    },
+    "position_x": 40,
+    "position_y": 1
+  }
+}
+```
+
+A `query` without a `limit` is capped at `QUERY_LIMIT_DEFAULT` (100 unless configured), so a bulk change over more matches needs `"limit": -1` as above (bounded by `QUERY_LIMIT_MAX` when that is set). With the `filter` this still targets only old drafts. A bare `{"limit": -1}` with no `filter` means the whole collection, so use it only on purpose.
 
 ## Creating Operations
 
@@ -316,6 +353,8 @@ Input: {
 }
 ```
 
+A flow with a `manual` trigger needs an authenticated user. For flows that unauthenticated clients must call, use a `webhook` trigger instead.
+
 ## Managing Flows
 
 ### List All Flows
@@ -341,6 +380,32 @@ Input: {
   "data": { "status": "inactive" }
 }
 ```
+
+### Group Flows in Folders
+
+Flows can be grouped in flow folders. A folder created with the `folders` tool needs `"type": "flows"` (the default is `files`, which is the file library). Then point the flow at it with `folder`:
+
+```json
+Tool: folders
+Input: { "action": "create", "data": [{ "name": "Notifications", "type": "flows" }] }
+```
+
+```json
+Tool: flows
+Input: {
+  "action": "update",
+  "key": "flow-uuid",
+  "data": { "folder": "folder-uuid" }
+}
+```
+
+List only flow folders with `"query": { "filter": { "type": { "_eq": "flows" } } }` on the `folders` tool.
+
+## Calling an External App
+
+A flow that tells your frontend or another service about a change (cache revalidation, outgoing webhook): event trigger, `request` operation, the secret in a header read from `$env` through `FLOWS_ENV_ALLOW_LIST`, and where the request is made from in Docker. See [references/notify-external-app.md](references/notify-external-app.md).
+
+When the receiver processes the changed items (enrich, sync, transcode) rather than only expiring a cache: send the keys (`$trigger.keys` is always an array), keep the worker's write-back from re-firing the flow (a `condition` operation with filter rules), and know why a Run Script cannot sign the request. See [references/send-items-to-a-worker.md](references/send-items-to-a-worker.md).
 
 ## Best Practices
 

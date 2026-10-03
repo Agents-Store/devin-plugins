@@ -26,6 +26,19 @@
         "Shows POST /schema/apply endpoint",
         "Includes curl command examples with auth headers"
       ]
+    },
+    {
+      "id": 24,
+      "prompt": "Show me REST calls to create a Content Editor role that can read and update posts in Directus 12",
+      "expected_output": "policy first, permissions on the policy, role, access row attaching the policy",
+      "files": [],
+      "expectations": [
+        "Creates a policy with POST /policies (admin_access and app_access live on the policy)",
+        "Creates permissions with POST /permissions using policy, not role",
+        "Creates the role with POST /roles without admin_access or app_access",
+        "Attaches the policy to the role with POST /access",
+        "Does not use filter[role] on /permissions"
+      ]
     }
   ]
 }

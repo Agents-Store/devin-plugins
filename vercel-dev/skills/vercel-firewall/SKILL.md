@@ -206,7 +206,7 @@ vercel firewall rules add "Rate limit API" \
   --yes
 ```
 
-- `--rate-limit-window` — seconds, 10–3600
+- `--rate-limit-window` — seconds, 10–3600 (over 600 Enterprise only)
 - `--rate-limit-requests` — max per window, 1–10,000,000
 - `--rate-limit-keys` — count by `ip` (default) or `ja4`. `header:<name>` Enterprise only. Repeatable.
 - `--rate-limit-algo` — `fixed_window` (default), `token_bucket` (Enterprise only)
@@ -236,7 +236,7 @@ vercel firewall ip-blocks unblock ip_abc123 --yes                          # by 
 
 ## System bypass
 
-[System bypass rules](https://vercel.com/docs/vercel-firewall/vercel-waf/system-bypass-rules) exempt trusted IPs/CIDRs from **all** firewall checks (office, CI servers, uptime monitors). Immediate — no publish.
+[System bypass rules](https://vercel.com/docs/vercel-firewall/vercel-waf/system-bypass-rules) exempt trusted IPs/CIDRs from system-level mitigations such as DDoS mitigation (office, CI servers, uptime monitors). Pro/Enterprise only. Immediate — no publish.
 
 ```bash
 vercel firewall system-bypass list

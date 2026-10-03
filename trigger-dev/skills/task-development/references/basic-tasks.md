@@ -105,7 +105,6 @@ export const myTask = task({
 ```
 
 `console.log`/`console.error` also work and appear in the run trace, but `logger` creates structured logs that are easier to search and filter in the dashboard.
-```
 
 ## Task with Tags
 

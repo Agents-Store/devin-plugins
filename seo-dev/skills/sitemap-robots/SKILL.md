@@ -95,7 +95,30 @@ export default async function sitemap(
 }
 ```
 
-This generates `/sitemap/0.xml`, `/sitemap/1.xml`, etc., with an automatic sitemap index.
+This generates `/sitemap/0.xml`, `/sitemap/1.xml`, etc. Next.js does **not** generate a sitemap index for these files, so `/sitemap.xml` is not a list of them. Do one of:
+
+- List every generated URL in `robots.ts` — the `sitemap` field accepts an array of URLs
+- Submit each generated sitemap in Google Search Console → Sitemaps
+- Serve your own index from a route handler:
+
+```ts
+// app/sitemap-index.xml/route.ts
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
+const URLS_PER_SITEMAP = 50000 // keep equal to the constant in app/sitemap.ts (or share it from a module)
+
+export async function GET() {
+  const sitemapCount = Math.ceil((await getProductCount()) / URLS_PER_SITEMAP)
+  const entries = Array.from(
+    { length: sitemapCount },
+    (_, i) => `<sitemap><loc>${BASE_URL}/sitemap/${i}.xml</loc></sitemap>`
+  ).join('')
+
+  return new Response(
+    `<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${entries}</sitemapindex>`,
+    { headers: { 'Content-Type': 'application/xml' } }
+  )
+}
+```
 
 ## Nested Sitemaps
 
@@ -140,8 +163,10 @@ export default function robots(): MetadataRoute.Robots {
 
   return {
     rules: [
-      { userAgent: '*', allow: '/', disallow: ['/api/', '/admin/', '/_next/'] },
+      // Do not disallow /_next/ — it serves the JS, CSS and images Google needs to render pages
+      { userAgent: '*', allow: '/', disallow: ['/api/', '/admin/'] },
       { userAgent: 'GPTBot', disallow: ['/'] },
+      { userAgent: 'ClaudeBot', disallow: ['/'] },
       { userAgent: 'CCBot', disallow: ['/'] },
       { userAgent: 'Google-Extended', disallow: ['/'] },
     ],
@@ -150,21 +175,29 @@ export default function robots(): MetadataRoute.Robots {
 }
 ```
 
+## Do Not Block `/_next/`
+
+Next.js serves its JavaScript, CSS and optimized images from `/_next/static` and `/_next/image`. Googlebot renders pages with JavaScript, and Google Search cannot render JavaScript or CSS from files that robots.txt blocks, which can hurt how the page is understood and indexed. Keep `/_next/` crawlable and disallow only real private paths (`/api/`, `/admin/`, ...).
+
 ## AI Crawler Management (2025-2026)
 
-New crawler types to manage in `robots.txt`:
+Crawlers to manage in `robots.txt`. Separate training crawlers from search and user-initiated fetchers:
 
 | Crawler | Purpose | Recommendation |
 |---------|---------|----------------|
 | `Googlebot` | Google Search indexing | Allow |
 | `Bingbot` | Bing Search indexing | Allow |
 | `GPTBot` | OpenAI training data | Block (unless opted in) |
+| `OAI-SearchBot` | ChatGPT search results; opted-out sites are not shown in ChatGPT search answers | Allow (traffic) |
+| `ChatGPT-User` | User-initiated fetches from ChatGPT; OpenAI says robots.txt rules may not apply | Cannot be controlled via robots.txt |
+| `ClaudeBot` | Anthropic training data | Block (unless opted in) |
+| `Claude-SearchBot` | Anthropic search result quality and relevance | Allow (traffic) |
+| `Claude-User` | User-initiated fetches when a Claude user asks about a page | Allow (a user asked for your page) |
 | `CCBot` | Common Crawl / AI training | Block (unless opted in) |
-| `Google-Extended` | Google AI training (not Search) | Block (unless opted in) |
-| `OAI-SearchBot` | OpenAI Search (ChatGPT search) | Allow (beneficial for traffic) |
+| `Google-Extended` | Control token for Gemini training and grounding. Does **not** affect Google Search inclusion, ranking or AI Overviews | Block (unless opted in) |
 | `Applebot-Extended` | Apple AI training | Block (unless opted in) |
 
-Differentiate beneficial crawlers (drive traffic) from training scrapers (use your content without attribution).
+Anthropic documents its three crawlers at support.claude.com (Anthropic's crawler article, updated 2026-04); each one is controlled by its own `User-agent` entry in robots.txt. Differentiate beneficial crawlers (drive traffic) from training scrapers (use your content without attribution).
 
 ## Multilingual Sitemap (Hreflang)
 

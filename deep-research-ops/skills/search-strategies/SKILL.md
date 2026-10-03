@@ -12,26 +12,28 @@ Search strategies, provider selection, and query optimization. All calls use `~~
 ### Exa
 - Semantic meaning-based search (not keyword matching)
 - Find similar content
-- Filter by category (company, research_paper, news)
-- Code and technical context search
+- Company and people lookup (`category:company`, `category:people` inside the query)
+- Date and domain filters through the opt-in advanced search tool
+- Heavy research runs (`~~deep_agent`) when an API key or OAuth is set up
 
 ### Perplexity
 - Factual questions (market size, dates, definitions)
-- AI-synthesized answer with citations
+- AI-synthesized answer with citations — `~~answer` (Agent API presets: `fast`, `medium`, `high`)
+- Search with recency and domain filters (`perplexity_search`)
 - Quick fact-checking
 
 ### Jina
-- Multiple queries at once (~~batch_search)
-- Reading URLs (~~scrape — primary)
-- Scientific papers (arXiv, SSRN)
+- Multiple queries at once (~~batch_search — an array of up to 5 queries)
+- Reading URLs (~~scrape — primary), several at once, or only the passages that answer a question
+- Scientific preprints (arXiv, SSRN)
 - Deduplication and relevance ranking
-- Query expansion
 
 ### Firecrawl
 - JS-heavy pages (with waitFor)
 - Crawling entire sites (~~crawl)
 - Structured data extraction (~~extract with JSON schema)
-- Screenshots and browser sessions
+- Code, GitHub issues and docs (~~code_search); scientific papers (~~academic_search)
+- Autonomous agent for unknown URLs (~~deep_agent); browser sessions; screenshots
 
 ## Exhaustive Discovery Protocol
 
@@ -87,7 +89,7 @@ Documentation:
 
 If Steps 1-3 all return empty:
 ```
-1. ~~search("What is {Name}? {context}") — try Perplexity first
+1. ~~answer("What is {Name}? {context}") — Perplexity first
 2. ~~search("{Name}") — try other providers
 3. ~~search("{Name} twitter OR linkedin OR discord")
 ```
@@ -107,7 +109,7 @@ If Steps 1-3 all return empty:
 
 ### Expanding queries
 ```
-1. Use query expansion utility to get related terms
+1. Think of related terms, synonyms and the field's own vocabulary — you do this yourself
 2. Form 3-7 queries from different angles:
    - Direct: "RAG frameworks comparison"
    - Synonym: "retrieval augmented generation tools"
@@ -118,8 +120,8 @@ If Steps 1-3 all return empty:
 
 ### Parallel Search Strategy
 ```
-1. Expand query → related terms
-2. Form 3-5 queries from different angles
+1. Think of related terms and synonyms
+2. Form 3-5 queries from different angles (a batch holds at most 5)
 3. ~~batch_search(queries) → batch results
 4. Rank by relevance → top results
 5. Deduplicate → remove duplicates
@@ -141,22 +143,24 @@ Combine domain filtering with general search for broader coverage. Never rely on
 
 ## Exa Semantic Search
 
-Exa provides meaning-based search (not keyword matching). Use category filters for targeted discovery:
+Exa provides meaning-based search (not keyword matching). The default search tool accepts only a query and a result count; a category goes inline in the query string, and only two inline categories exist:
 
-| Category | What it finds | When to use |
-|----------|--------------|-------------|
-| `company` | Company profiles, about pages, team info | Person/Company Lookup |
-| `research_paper` | Academic papers, studies, reports | Market Research, Technical Audit |
-| `news` | News articles, press releases | News & Trends |
-| (no filter) | Everything — semantic matching by meaning | Topic Deep Dive, general search |
+| Inline category | What it finds | When to use |
+|-----------------|--------------|-------------|
+| `category:company` | Company profiles, about pages, team info | Person/Company Lookup |
+| `category:people` | Professional profiles | Person/Company Lookup |
+| (none) | Everything — semantic matching by meaning | Topic Deep Dive, general search |
 
-**Exa type modes:**
-- `auto` — balanced (default, recommended)
-- `fast` — quick results, less semantic depth
+Describe the ideal page, not keywords: "blog post comparing RAG frameworks", not "RAG frameworks".
 
-**Exa date filtering:**
-- `start_published_date` — filter to recent content (e.g., "2025-06-01")
-- Combine with category for targeted fresh results
+**Filters live elsewhere.** Domain scoping, date windows and the other categories (`news`, `publication`, `pdf`, `github`, ...) need the opt-in advanced search tool (`category`, `includeDomains`, `startPublishedDate`, `type`: `auto`/`fast`/`instant`). If it is not enabled, use another provider for the same need:
+
+| Need | Without the advanced Exa tool |
+|------|-------------------------------|
+| Recent news / date window | Perplexity search with a recency filter; Jina search with the age limit (`tbs`) |
+| Only some domains | Perplexity search with a domain filter; Firecrawl search with `includeDomains` |
+| Academic papers | `~~academic_search` |
+| Code and GitHub | `~~code_search` |
 
 **When Exa shines:**
 - Finding conceptually similar content (not just keyword matches)

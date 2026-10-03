@@ -9,8 +9,12 @@ An attachment is a file in cloud storage. Creating one returns the inputs needed
 | Method | Purpose & key fields |
 |--------|----------------------|
 | `attachments.create` | Create the DB record and get a signed upload target. `{"name","contentType","size"(bytes, required)}` + `{"documentId"?}`. Returns `{maxUploadSize, uploadUrl, form, attachment}`. |
+| `attachments.createFromUrl` | Let the **server** download a remote file and store it — no presigned upload step. `{"url"(required, remote URL to fetch),"documentId"?,"id"?(client-generated UUID)}`. The returned attachment is available immediately; embed its `url` in a document. |
+| `attachments.list` | List the workspace's attachments. Pagination + sorting + `{"documentId"?(only this document's),"userId"?(only this uploader's)}`. |
 | `attachments.redirect` | Resolve an attachment to its stored file. `{"id"}`. Responds **`302`** redirecting to the file URL (a signed URL is generated on demand for private files) — use `curl -sL` to follow or `curl -sI` to read the `Location`. |
 | `attachments.delete` | Permanently delete an attachment. `{"id"}`. Does not remove links/references to it inside documents. |
+
+**Server-side fetch (simplest):** for a file that already lives at a reachable URL, call `attachments.createFromUrl` `{"url","documentId"?}` — Outline downloads and stores it, so there is no second request. Use the two-step flow below for local files.
 
 **Two-step upload:** call `attachments.create`, then POST the file to the returned `uploadUrl` as `multipart/form-data` using the returned `form` fields (this request goes to storage, not the Outline API, and does not use the Bearer header). The returned `attachment.url` can then be embedded in a document.
 
@@ -28,5 +32,6 @@ A `FileOperation` is a long-running import or export job. `type` is `import` or 
 ## Notes
 
 - Poll `fileOperations.info` until `state == "complete"`, then fetch with `fileOperations.redirect`. Don't download before completion.
+- An uploaded export/import archive is also what `collections.import` consumes: upload it with `attachments.create`, then pass the attachment id as `attachmentId` (→ `collections.md`).
 - Both `attachments.redirect` and `fileOperations.redirect` return signed URLs / redirects — handle the `302`/binary rather than expecting the JSON envelope.
 - For exact schemas, search `operationId: attachments…` / `fileOperations…` in `outline-openapi.yml`.

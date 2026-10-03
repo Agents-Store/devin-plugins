@@ -193,6 +193,8 @@ Between any two tables, use exactly **one** relation type — either a direct FK
 
 If you need both a "primary" link (single value) and a "uses many" link between the same tables, model it as a single M2M junction — the "primary" is just one row in the junction.
 
+> **Historical note.** This rule came from duplicate link columns seen on external PostgreSQL in April 2026. NocoDB has since fixed related bugs — duplicate Link columns created by schema sync (issue 13788, in release 2026.05.2) and many-to-many links on the same table (issue 13349, in release 2026.06.0). The rule stays as good practice because one relation per pair is clearer in both UIs, but the duplicate-column symptom may no longer appear on current releases. Re-test on your target version before relying on either behaviour.
+
 ## Relation Checklist
 
 - **One relation type per table pair** — FK or junction, not both

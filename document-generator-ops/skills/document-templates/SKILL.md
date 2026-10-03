@@ -372,7 +372,7 @@ grandTotal = totalAmount + vatAmount
 
 ## Template File Locations
 
-All templates are in `<plugin_dir>/templates/`:
+All templates are in `${CLAUDE_PLUGIN_ROOT}/templates/`:
 
 | File | Document Type |
 |------|--------------|

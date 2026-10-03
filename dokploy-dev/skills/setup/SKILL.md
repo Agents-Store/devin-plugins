@@ -26,7 +26,11 @@ Before verifying, confirm `DOKPLOY_URL` and `DOKPLOY_API_KEY` resolve to real va
 
 ### Optional: reduce the exposed tool surface
 
-The official `@dokploy/mcp` server exposes 546 tools across 50 categories. If that is more than you need, set `DOKPLOY_ENABLED_TAGS` in the plugin's `.mcp.json` `env` block to a comma-separated list of categories (e.g. `project,application,domain,compose,postgres,settings,deployment,docker`). The server will then only expose tools from those categories. (`DOKPLOY_TOOL_PRESET` and `DOKPLOY_DISABLED_TAGS` are unreleased — merged upstream 2026-08-07, not in `@dokploy/mcp` 0.29.14, so the published package silently ignores them; use `DOKPLOY_ENABLED_TAGS` until the next release.)
+The official `@dokploy/mcp` server exposes 604 tools across 57 categories. If that is more than you need, set one of these in the plugin's `.mcp.json` `env` block: `DOKPLOY_TOOL_PRESET` (`minimal`, `core`, `deploy`, `databases`, `git`; `@dokploy/mcp` ≥ 0.30.0), or `DOKPLOY_ENABLED_TAGS` — a comma-separated list of categories (e.g. `project,application,domain,compose,postgres,settings,deployment,docker,ai`) that takes priority over the preset — and optionally `DOKPLOY_DISABLED_TAGS` to drop categories from the result. No preset contains `docker`, `ai`, `settings`, `rollback` or `schedule`, which `/dokploy-dev:debug` needs.
+
+### Secrets are redacted by default
+
+`@dokploy/mcp` ≥ 0.30.0 runs with `DOKPLOY_REDACT_ENV=true`: MCP responses show `[REDACTED]` for `env`, `buildArgs`, passwords, tokens and keys (not even variable names), while REST and the CLI return real values. Writes still work. Details, the exact field rules and a names-only recipe are in the `mcp-patterns` skill ("Redaction"). Set `DOKPLOY_REDACT_ENV=false` in the `.mcp.json` `env` block only if you knowingly want raw values in the model context; reconnect the server afterwards.
 
 ### How to obtain an API key
 
@@ -42,7 +46,7 @@ The official `@dokploy/mcp` server exposes 546 tools across 50 categories. If th
 Call the MCP tool to list all projects:
 
 ```
-mcp__dokploy__project-all
+mcp__plugin_dokploy-dev_dokploy__project-all
 ```
 
 **No parameters required.**
@@ -73,10 +77,10 @@ Report the specific error message from the MCP call to help diagnose.
 
 ## Step 2: Verify CLI Installation
 
-Check the CLI is installed, then make a real call (there is NO `dokploy verify` command in the 0.29.x auto-generated CLI):
+Check the CLI is installed, then make a real call (there is NO `dokploy verify` command in the auto-generated 0.30.x CLI):
 
 ```bash
-dokploy --version        # versions in lockstep with Dokploy, e.g. 0.29.14
+dokploy --version        # versions in lockstep with Dokploy, e.g. 0.30.7
 dokploy project all      # real API call — succeeds only when auth works
 ```
 
@@ -202,7 +206,7 @@ If any step fails, provide the specific fix instructions from the relevant secti
 ## What This Skill Does NOT Cover
 
 - **Application deployment workflows** — See the `mcp-patterns` skill for MCP tool sequences to deploy apps, provision databases, and manage domains.
-- **API endpoint details** — See the `api-reference` skill for the REST API surface (546 endpoints across 50 routers, Dokploy v0.29.14) with parameters and response schemas.
+- **API endpoint details** — See the `api-reference` skill for the REST API surface (604 endpoints across 57 routers, Dokploy v0.30.7) with parameters and response schemas.
 - **Reading logs / debugging deploys** — See the `read-logs` and `debug-deploy` skills (and `/dokploy-dev:logs`, `/dokploy-dev:compose-logs`, `/dokploy-dev:debug`).
 - **CLI command recipes** — See the `cli-recipes` skill for common CLI workflows like deploying from a local directory, managing Docker Compose stacks, and backup operations.
 - **Troubleshooting deployment issues** — See the `troubleshoot` skill for diagnosing failed deployments, container crashes, and Traefik routing problems.

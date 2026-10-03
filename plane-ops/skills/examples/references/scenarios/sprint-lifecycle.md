@@ -39,8 +39,8 @@ Capacity: min(18, 10.5 × 2) × 0.85 = ~15 points
 ### 4. Create Sprint
 
 ```
-create_cycle → "Sprint 8 — Profile & API Stability"
-add_work_items_to_cycle → [TF-30, TF-31, TF-32, TF-33]
+cycle(action=create)            → "Sprint 8 — Profile & API Stability"
+cycle(action=manage_workitems)  → add_ids=[TF-30, TF-31, TF-32, TF-33] (work item ids)
 ```
 
 ---
@@ -50,7 +50,8 @@ add_work_items_to_cycle → [TF-30, TF-31, TF-32, TF-33]
 ### Status Check
 
 ```
-list_cycle_work_items → group by assignee and state
+cycle(action=list_workitems) → group by assignee and state
+workitem(action=count, pql='cycle = "<id>"', group_by=state__group) → state totals in one call
 
 Alice: TF-30 User profile page → In Progress (started yesterday)
 Bob:   TF-31 API rate limiting → In Progress
@@ -82,8 +83,8 @@ Note: TF-30 in review — will be done once approved
 Bob reports TF-31 needs a library upgrade first.
 
 ```
-create_work_item → "TF-34 Upgrade rate-limit library" (1 pt, parent: TF-31)
-create_work_item_relation → TF-31 blocked_by TF-34
+workitem(action=create)          → "TF-34 Upgrade rate-limit library" (1 pt, parent: TF-31)
+workitem_relation(action=create) → TF-31 blocked_by TF-34 (relation_type=blocked_by, workitem_ids=[TF-34 id])
 ```
 
 ---
@@ -110,7 +111,7 @@ On track for ~14 pts completion
 ### Sprint Review
 
 ```
-list_cycle_work_items → categorize results
+cycle(action=list_workitems) → categorize results
 
 COMPLETED (14 points):
   [DONE] TF-30 User profile page (5 pts) — Alice
@@ -144,18 +145,19 @@ CONTINUE:
 ### Action Items
 
 ```
-create_work_item → "[RETRO] Set up review SLA — 4hr turnaround"
-  assignee: Alice, label: retro-action, target: next sprint
+workitem(action=create) → "[RETRO] Set up review SLA — 4hr turnaround"
+  assignees: Alice, labels: retro-action, target_date: next sprint end
 
-create_work_item → "[RETRO] Add acceptance criteria template"
-  assignee: Bob, label: retro-action, target: next sprint
+workitem(action=create) → "[RETRO] Add acceptance criteria template"
+  assignees: Bob, labels: retro-action, target_date: next sprint end
 ```
 
 ### Close Sprint
 
 ```
-archive_cycle → Sprint 8 archived
-create_project_page → "Retro — Sprint 8 (2025-03-14)"
+cycle(action=complete)  → Sprint 8 ends today (nothing is left to transfer)
+cycle(action=archive)   → Sprint 8 archived
+page(action=create)     → "Retro — Sprint 8 (2025-03-14)"
 ```
 
 ---

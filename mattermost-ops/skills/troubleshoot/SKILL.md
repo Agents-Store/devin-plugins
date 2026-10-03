@@ -32,7 +32,9 @@ If it's still empty, the login itself failed — see below.
 **Cause:** the session token expired or was revoked (e.g. logout, password change, "revoke all sessions").
 
 - Confirm the header is exactly `Authorization: Bearer ${MATTERMOST_TOKEN}` (Bearer, not `Token`).
-- Session tokens expire — just re-run the `setup` login to get a fresh one. For unattended use, switch to a **personal access token** (never expires until revoked; see `api-reference` → `auth-sessions.md`).
+- Session tokens expire — just re-run the `setup` login to get a fresh one. For unattended use, switch to a **personal access token** (see `api-reference` → `auth-sessions.md`).
+- **A PAT that suddenly returns `401` has probably expired** (v11.9+ lets a PAT carry `expires_at`; an expired PAT is rejected with `401`, like a revoked one). Check the token's metadata with `GET /users/{user_id}/tokens` (the secret is never returned): a non-zero `expires_at` that is in the past means expired (it stays listed until the hourly reaper removes it), `0` means no expiry, `is_active:false` means disabled. Also read the owner's direct messages from the system bot — v11.10+ warns 7, 3 and 1 days before expiry. Fix: `POST /users/tokens/rotate` (new secret, old one dies immediately) or mint a new PAT with a fresh `expires_at`. A token created without `expires_at` has no expiry at all, so a `401` there means it was revoked or disabled (an admin can also bulk-revoke non-compliant tokens, see `auth-sessions.md`).
+- Creating a PAT fails on a server whose admin set `MaximumPersonalAccessTokenLifetimeDays` to a non-zero value: the policy requires an expiry within that many days — send `expires_at` (Unix ms).
 
 ## 403 Forbidden
 
@@ -70,6 +72,19 @@ If it's still empty, the login itself failed — see below.
 - For DMs/GMs the body is a **bare JSON array of user ids**, not an object.
 - Uploads (`/files`, `/emoji`, `/plugins`, images) are **multipart** (`-F`), not JSON.
 
+## A post shows my name instead of the custom name/icon (v12.0)
+
+**Cause:** from Mattermost v12.0 the server **silently strips** `from_webhook`, `from_bot`, `from_oauth_app`, `from_plugin`, `override_username`, `override_icon_url`, `override_icon_emoji` and `webhook_display_name` from `props` on posts made with a user session or PAT. The post is created, no error is returned, and the author is the authenticating user.
+
+- Fix: post through an **incoming webhook** (`/hooks/<id>` with `username`/`icon_url`, allowed when the System Console overrides are enabled — `ServiceSettings.EnablePostUsernameOverride` / `EnablePostIconOverride`), a **slash command response**, or a **bot account** (posts as the bot). See `api-reference` → `integrations.md`.
+- On a v11 server the old trick still works — it is going away, do not build new automation on it.
+
+## `last_viewed_at` is `-1` (or missing) on channel members (v12.0)
+
+**Cause:** for *other* users' memberships the API sanitises `last_viewed_at`/`last_update_at` to `-1` (read as 1969-12-31). From v12.0 the fields are **omitted** instead. Your own membership keeps real values (`0` = never viewed). Code that reads the `-1` sentinel or assumes the field is always present must treat "absent" and `-1` the same way. Affects `GET /channels/{id}/members[/{user_id}]`, `POST /channels/{id}/members[/ids]`, `GET /users/{id}/teams/{team_id}/channels/members` and `GET /users/{id}/channel_members`.
+
 ## Optional convenience MCP
 
-If you'd rather call tools than curl for the most common read/post operations, the official Mattermost MCP server (PAT auth; read/search/create posts) and community servers (`kakehashi-inc/mcp-server-mattermost`, `pvev/mattermost-mcp`) exist. They cover a small subset — for full coverage (admin, RBAC, integrations) use the REST endpoints in `api-reference`. These are not dependencies of this plugin.
+If you'd rather call tools than curl for the most common read/post operations, use the **official Mattermost MCP server, built into the Mattermost Agents plugin** (Mattermost Server v11.2+). Admin: System Console → Plugins → Agents → Model Context Protocol (MCP) → set **Enable Mattermost MCP Server (HTTP)** to true; endpoint (streamable HTTP, no SSE): `${MATTERMOST_API_URL%/}/plugins/mattermost-ai/mcp-server/mcp`; auth: a personal access token as `Authorization: Bearer` (works without any extra setup) or OAuth 2.0 (an admin must first set *Integrations → Integration Management → Enable OAuth 2.0 Service Provider*; add *Enable OAuth 2.0 Dynamic Client Registration* for automatic client registration). It exposes 16 native tools (`read_post`, `read_channel`, `search_posts`, `create_post`, `dm`, `group_message`, `create_channel`, `get_channel_info`, `get_team_info`, `search_users`, `get_channel_members`, `add_channel_member`, `get_user_channels`, `get_team_members`, `add_team_member`, `list_agents`) plus an extended catalogue loaded on demand through `search_tools` / `load_tool`; read-only tools work on every licence level, state-changing tools need Enterprise or above, and every call runs with the calling user's own permissions. Docs: https://docs.mattermost.com/administration-guide/configure/agents-admin-guide.html#mattermost-mcp-server — and the announcement https://mattermost.com/blog/mattermost-mcp-server/. Community servers (`kakehashi-inc/mcp-server-mattermost`, `pvev/mattermost-mcp`) also exist.
+
+None of these cover admin, RBAC or integration management — use the REST endpoints in `api-reference` for those. MCP is not a dependency of this plugin.

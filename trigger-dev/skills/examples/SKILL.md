@@ -11,7 +11,7 @@ Ready-to-use examples and complete workflow scenarios.
 
 | File | Description |
 |------|-------------|
-| @references/mcp/tool-patterns.md | Common MCP tool call patterns and workflows |
+| @references/mcp/tool-patterns.md | Common MCP tool call patterns and workflows (tasks, runs, TRQL, prompts, health report, agent chat, session channels) |
 
 ## Scenario Walkthroughs
 
@@ -27,16 +27,17 @@ Ready-to-use examples and complete workflow scenarios.
 
 ```
 1. list_orgs() → pick org
-2. initialize_project(orgParam, projectName, cwd)
+2. initialize_project(orgParam, projectName, cwd) → setup guide (writes no files); follow it
 3. get_current_worker(environment="dev") → verify
 ```
 
 ### Trigger and Monitor
 
 ```
-1. get_current_worker() → find task + schema
-2. trigger_task(taskId, payload) → get run ID
-3. wait_for_run_to_complete(runId) → get result
+1. get_current_worker() → find the task slug
+2. get_task_schema(taskSlug) → payload schema
+3. trigger_task(taskId, payload) → get run ID
+4. wait_for_run_to_complete(runId) → get result
 ```
 
 ### Debug Failures
@@ -87,12 +88,18 @@ Ready-to-use examples and complete workflow scenarios.
 ```
 1. get_query_schema(table="llm_metrics")
 2. query({
-     query: "SELECT model, sum(cost_usd) AS usd
+     query: "SELECT request_model AS model, sum(total_cost) AS usd
              FROM llm_metrics
              GROUP BY model
              ORDER BY usd DESC",
      period: "30d"
    })
+```
+
+### Health Check
+
+```
+get_report(key="health", environment="prod", period="24h") → verdict + next action
 ```
 
 ### Switch Profile Mid-Session

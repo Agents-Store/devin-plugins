@@ -17,18 +17,18 @@ On reads, request what you want back with `?body-format=storage` (or `atlas_doc_
 | `GET /spaces/{id}/pages` | Pages in a space (`getPagesInSpace`). |
 | `POST /pages` | Create a page (`createPage`). Body `{"spaceId":"<numeric>","status":"current","title":"…","parentId":"<id>"?,"body":{"representation":"storage","value":"<p>…</p>"}}`. `?embedded=&private=`. |
 | `GET /pages/{id}` | Get a page (`getPageById`). `?body-format=storage&get-draft=false&version=`. Read `version.number` here before updating. |
-| `PUT /pages/{id}` | Update a page (`updatePage`). Body `{"id":"<id>","status":"current","title":"…","version":{"number":<current+1>,"message":"…"?},"body":{"representation":"storage","value":"<p>…</p>"}}`. |
-| `PUT /pages/{id}/title` | Rename only (`updatePageTitle`) — still requires the next `version.number`. |
+| `PUT /pages/{id}` | Update a page (`updatePage`). Body `{"id":"<id>","status":"current","title":"…","version":{"number":<current+1>,"message":"…"?},"body":{"representation":"storage","value":"<p>…</p>"}}`. Returns `409` on a stale version — and, once rolled out, in a space that requires approval before publishing, on **every** direct update (see Notes). |
+| `PUT /pages/{id}/title` | Rename only (`updatePageTitle`) — still requires the next `version.number`; same approval-space `409` (rollout pending). |
 | `DELETE /pages/{id}` | Delete a page (`deletePage`). `?purge=true` (admin, permanent) / `?draft=true`. **Confirm first.** |
 
 ## Page hierarchy
 
 | Method | Purpose & key fields |
 |--------|----------------------|
-| `GET /pages/{id}/children` | Child pages (`getChildPages`). |
+| `GET /pages/{id}/children` | **Deprecated** child pages (`getChildPages`) — use `/pages/{id}/direct-children`. |
 | `GET /pages/{id}/ancestors` | Ancestor chain to the root (`getPageAncestors`). |
 | `GET /pages/{id}/descendants` | All descendants (`getPageDescendants`). |
-| `GET /pages/{id}/direct-children` | Direct children of any type (`getPageDirectChildren`). |
+| `GET /pages/{id}/direct-children` | Direct children — pages, folders, databases, whiteboards and Smart Links, with minimal fields (`getPageDirectChildren`); fetch details with the per-type `GET`. Replaces `/children`. |
 
 ## Blog posts
 
@@ -50,7 +50,9 @@ On reads, request what you want back with `?body-format=storage` (or `atlas_doc_
 
 ## Notes
 - **Update flow is always read-then-write**: `GET /pages/{id}` → take `version.number` → `PUT` with `version.number + 1`. A stale number returns `409`.
+- **`409` in approval spaces (CHANGE-3432, announced 2026-09-28; rollout date still to be published by Atlassian).** In a space whose admins require approval before publishing, a direct `PUT /pages/{id}`, `PUT /pages/{id}/title` (and v1 `PUT /wiki/rest/api/content/{id}`) on a published page will return `409 Conflict` **whatever `version.number` you send** once the change is rolled out — bumping the version does not help. Only regular pages in approval-enabled spaces are affected. Atlassian's guidance is to save the change as a draft, go through the approval, and publish the approved draft; **no REST draft→approval→publish flow is documented yet**, so use the Confluence UI or ask a Confluence admin. Do not retry the `PUT` in a loop. If a `409` survives a correct `version.number`, check whether the space has approvals on (ask a space admin).
 - **`spaceId` is the numeric id**, not the space key. Resolve it via `GET /spaces?keys=PROJ` (see `spaces.md`).
 - **Cursor pagination** — follow `_links.next` (or the `Link` header); don't compute `startAt`.
-- v2 lists filter by `space-id`/`title`/`status`; **full-text/CQL search is the v1 endpoint** `${ATLASSIAN_SITE_URL%/}/wiki/rest/api/search?cql=…` (not in v2).
+- Don't fall back to the removed v1 content CRUD (`/wiki/rest/api/content`, deleted 2025-04-30) for pages; v1 is only for label writes, attachment upload and CQL search.
+- v2 lists filter by `space-id`/`title`/`status`; **full-text/CQL search is the v1 endpoint** `${CONF_ROOT}/wiki/rest/api/search?cql=…` (not in v2).
 - For exact schemas: `grep -n '"operationId": "createPage"' ../confluence-openapi-v2.json`.

@@ -11,9 +11,9 @@
         "Creates schema factory functions using schema-dts types (WithContext<Article>)",
         "Adds Article schema with headline, datePublished, dateModified, author, image",
         "Adds BreadcrumbList schema with proper position numbering",
-        "Places sitewide schemas (Organization, WebSite) in root layout",
+        "Places Organization in the root layout and WebSite (name/alternateName, no SearchAction) on the home page",
         "Places page-specific schemas (Article, BreadcrumbList) in page component",
-        "Does NOT use FAQPage schema (restricted to gov/health since 2023)"
+        "Does NOT add FAQPage, HowTo or SearchAction markup to chase a rich result (Google removed or stopped showing those features); does not tell the user to delete existing valid markup, only that it earns no SERP feature"
       ]
     }
   ]

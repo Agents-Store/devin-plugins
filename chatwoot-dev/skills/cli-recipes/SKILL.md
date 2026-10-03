@@ -11,6 +11,11 @@ search contacts, inspect inboxes, and search help-center articles.
 
 > Adapted from the official Chatwoot `chatwoot-cli` agent skill (MIT, https://github.com/chatwoot/cli).
 > The CLI is in active development — run `chatwoot --help` to confirm flags for your version.
+>
+> Use **CLI v0.7.0 or newer** (released 2026-09-25): it adds the per-conversation write lock
+> described below and sends the auth header as `api-access-token` (hyphens), so it works behind
+> proxies that drop underscore headers (nginx default, Caddy 2.6.4+). Older versions get `401`
+> there.
 
 ## Install & authenticate
 
@@ -37,6 +42,19 @@ environments. When a script or agent will consume the output, opt in explicitly:
 - `-o csv` — spreadsheet-friendly.
 - Exit `0` = success; non-zero = error (errors go to stderr).
 - `-v` (verbose) shows the underlying HTTP request/response when debugging.
+
+### Per-conversation locks (v0.7.0)
+
+Every mutating `conv` verb (`reply`, `resolve`, `open`, `pending`, `snooze`, `assign`,
+`unassign`, `label`, `priority`) takes a lock on that conversation first (files under
+`~/.chatwoot/locks/`, released by the OS if the process dies). A second mutation of the **same**
+conversation from another terminal or agent fails immediately instead of running in parallel, so:
+
+- Treat that failure as "someone else is writing", not as an error to retry in a tight loop;
+  re-read the conversation, then decide.
+- Different conversations are not blocked by each other, so bulk work across many conversations
+  still runs in parallel.
+- Locks are local to one machine's `~/.chatwoot/`; they do not coordinate two machines.
 
 ## Grammar
 
@@ -145,6 +163,7 @@ chatwoot api -X PATCH /conversations/123 --data '{"status":"open"}'
 7. **A list is one page** — inspect `meta` and advance with `-p N`.
 8. **Bare `snooze` is not forever** — it snoozes until the next reply; pass `--until`.
 9. **Never run `auth login` in a script** — use `CHATWOOT_API_KEY` + saved config (or `-a`).
+10. **A second write to the same conversation fails fast** — v0.7.0 locks per conversation; don't launch two mutating commands on one conversation in parallel (see "Per-conversation locks").
 
 ## Safety — customer-visible writes
 

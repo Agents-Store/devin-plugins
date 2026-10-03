@@ -16,7 +16,8 @@ export const Users: CollectionConfig = {
     maxLoginAttempts: 5,
     lockTime: 10 * 60 * 1000,
     cookies: { secure: true, sameSite: 'Strict' },
-    useAPIKey: true,                                     // each user gets an API key
+    useAPIKey: true,                                     // each user gets an API key; since 3.90 it is shown once at generation
+                                                         // ({ reveal: true } lets admins re-read stored keys)
     verify: true,
   },
   admin: { useAsTitle: 'email' },
@@ -161,6 +162,8 @@ curl 'https://api.example.com/api/resources' \
 ```
 
 Format: `Authorization: <auth-collection-slug> API-Key <key>`.
+
+Since 3.90 Payload shows an API key once, when it is generated, and omits it from every later read — copy it into your secret manager immediately. If admins must be able to re-read stored keys, set `auth: { useAPIKey: { reveal: true } }` on the collection.
 
 ### Refresh token
 

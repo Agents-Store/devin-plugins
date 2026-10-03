@@ -4,7 +4,7 @@
     {
       "id": 7,
       "prompt": "I'm building a tech blog and need some high-quality landscape photos of modern office workspaces for my hero sections. Also need a few short background videos. Find me some options.",
-      "expected_output": "Should use searchPhotos (Pexels) for photos with orientation=landscape, searchVideos for videos. May also suggest get_search_photos (Unsplash) as alternative. Should mention image sizes (src.large for hero) and licensing info.",
+      "expected_output": "Should call the Pexels REST API (GET /v1/search with orientation=landscape, GET /v1/videos/search for videos) using ${PEXELS_API_KEY}. May also suggest Unsplash GET /search/photos as an alternative, and if it does, must mention the Unsplash API requirements (hotlink photo.urls, call download_location, attribution with utm parameters). Should mention image sizes (src.large for hero) and licensing/attribution info.",
       "files": []
     }
   ]

@@ -16,7 +16,7 @@ const webhookQueue = queue({
 
 const WebhookPayload = z.object({
   event: z.string(),
-  data: z.record(z.unknown()),
+  data: z.record(z.string(), z.unknown()),
   timestamp: z.string().datetime(),
   source: z.string(),
 });

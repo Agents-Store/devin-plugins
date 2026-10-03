@@ -2,6 +2,8 @@
 
 Build a public product catalog with ISR, search, product detail pages, image optimization, and a client-side cart.
 
+> **Caching model:** this scenario uses the previous model (route segment config: `export const revalidate`), which works only when `cacheComponents` is off in `next.config.ts`. With `cacheComponents: true` those exports are removed; each step notes the Cache Components replacement (`'use cache'` + `cacheLife()` / `cacheTag()`).
+
 ## Project Structure
 
 ```
@@ -137,6 +139,7 @@ import { SearchFilters } from '@/components/search-filters'
 import { GridSkeleton } from '@/components/skeletons'
 
 export const metadata = { title: 'Products' }
+// Previous model — works only without `cacheComponents` (removed when it is on)
 export const revalidate = 60  // ISR: revalidate every 60 seconds
 
 export default async function ProductsPage({
@@ -189,6 +192,20 @@ export async function ProductGrid({
       {/* Pagination component */}
     </>
   )
+}
+```
+
+With `cacheComponents: true`, drop the `revalidate` export and put the lifetime on the data function the grid calls (the page keeps `await searchParams` outside the cached scope and passes plain values in):
+
+```tsx
+// lib/products.ts — Cache Components variant
+import { cacheLife, cacheTag } from 'next/cache'
+
+export async function getProducts(args: { query?: string; category?: string; sort?: string; page: number }) {
+  'use cache'
+  cacheLife('minutes')   // replaces the 60-second segment-level revalidate option
+  cacheTag('products')   // revalidate on demand with updateTag('products') / revalidateTag('products', 'max')
+  return queryProducts(args)
 }
 ```
 
@@ -268,7 +285,8 @@ export async function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }))
 }
 
-// ISR: revalidate product pages every 60 seconds
+// ISR: revalidate product pages every 60 seconds.
+// Previous model — works only without `cacheComponents` (removed when it is on; there also drop `dynamicParams`)
 export const revalidate = 60
 
 export async function generateMetadata({
@@ -323,6 +341,8 @@ export default async function ProductPage({
   )
 }
 ```
+
+With `cacheComponents: true`, remove the `revalidate` export, keep `generateStaticParams` (it must return at least one param), mark `getProduct` with `'use cache'` + `cacheLife('minutes')` + `cacheTag(`product-${slug}`)`, and await `params` inside a `<Suspense>` boundary so unlisted slugs still get a static shell. `notFound()` still handles missing products.
 
 ## Step 5: Cart Page (Client State)
 
@@ -397,7 +417,7 @@ export function CartContents() {
 
 ## Key Patterns Used
 
-1. **ISR** — Product catalog and detail pages revalidate every 60 seconds
+1. **ISR** — Product catalog and detail pages revalidate every 60 seconds (previous model: `revalidate` without `cacheComponents`; with it, `'use cache'` + `cacheLife('minutes')`)
 2. **`generateStaticParams`** — Pre-render all product pages at build time
 3. **Image optimization** — `next/image` with `fill`, `sizes`, `priority` for LCP image
 4. **URL state** — Search and filter params in searchParams (shareable URLs)

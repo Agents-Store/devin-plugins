@@ -43,12 +43,15 @@ Channels live inside a team. Types: `O` public (open), `P` private, `D` direct m
 |--------|------|---------|
 | GET | `/channels/{channel_id}/members` | List members. Query `page`, `per_page`. |
 | POST | `/channels/{channel_id}/members` | Add a user. Body `{"user_id"}`. |
+| PUT | `/channels/{channel_id}/members` | **v11.7+, System Admin.** Set the channel's **complete** roster in one call: body `{"members":["<user_id>",...],"channel_admins"?:["<user_id>",...]}`. Missing users are added, extra users removed, those already in are left alone; `channel_admins` (when sent) declares the full admin set, omitted = keep current admin roles. Reply is NDJSON (`application/x-ndjson`), one line per batch with `added`/`removed`/`promoted`/`demoted`/`errors`. DM/GM and group-constrained channels are rejected and a private channel cannot be emptied. Replaces a loop of `POST …/members`. |
 | GET | `/channels/{channel_id}/members/{user_id}` | One membership. |
 | DELETE | `/channels/{channel_id}/members/{user_id}` | Remove a user. |
 | POST | `/channels/{channel_id}/members/ids` | Bulk get members by ids. |
 | PUT | `/channels/{channel_id}/members/{user_id}/roles` | Set channel roles. Body `{"roles":"channel_user channel_admin"}`. |
 | PUT | `/channels/{channel_id}/members/{user_id}/notify_props` | Per-user notification props. |
 | POST | `/channels/members/{user_id}/view` | Mark channel(s) viewed. Body `{"channel_id"}`. |
+
+> **v12.0 change — `last_viewed_at` / `last_update_at`.** For *other* users' memberships these fields are sanitised to `-1` today; from v12.0 they are **omitted** from the response instead (your own membership keeps real values, `0` = never viewed). Affects `GET /channels/{channel_id}/members`, `GET /channels/{channel_id}/members/{user_id}`, `POST /channels/{channel_id}/members` and `/members/ids`, `GET /users/{user_id}/teams/{team_id}/channels/members` and `GET /users/{user_id}/channel_members`. Scripts must treat "absent" and `-1` alike and must not assume the key exists.
 
 ## Stats, pinned, moderation
 

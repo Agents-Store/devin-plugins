@@ -1,212 +1,171 @@
 ---
 name: ai-optimization
-description: This skill should be used when the user asks about "AI optimization", "LLM mentions", "ChatGPT visibility", "AI search", "LLM ranking", "brand mentions in AI", "AI SEO", "GEO", "generative engine optimization", or needs to track and improve visibility in AI-powered search using DataForSEO.
+description: This skill should be used when the user asks about "AI optimization", "LLM mentions", "ChatGPT visibility", "AI search", "LLM ranking", "brand mentions in AI", "AI SEO", "GEO", "generative engine optimization", "AI Overview mentions", or needs to track and improve visibility in AI-powered search using DataForSEO.
 ---
 
 # AI Optimization
 
-Track and improve brand visibility in AI-powered search — ChatGPT, Google AI Overviews, Perplexity, and other LLMs. This is Generative Engine Optimization (GEO): the discipline of making your brand appear when LLMs answer user questions.
+Track and improve brand visibility in AI-powered search: ChatGPT and Google's AI Overviews through LLM Mentions, plus the live answers of ChatGPT and Gemini. This is Generative Engine Optimization (GEO): making your brand appear when LLMs answer user questions.
 
-## Why AI Optimization Matters
+All calls go through `api_request` (see the `mcp-patterns` skill); paths and minimal bodies for every endpoint below are in `../mcp-patterns/references/endpoint-paths.md`. Read each endpoint's page with `docs_search` before the first call and agree a budget first (`cost-awareness` skill).
 
-Traditional SEO optimizes for Google's 10 blue links. But users increasingly get answers directly from LLMs — ChatGPT, Google AI Overviews, Perplexity, Gemini. These models cite sources, recommend products, and shape purchasing decisions. If your brand is not mentioned in LLM responses, you are invisible to a growing segment of searchers.
+## What DataForSEO offers here
 
-DataForSEO provides the only programmatic way to track LLM mentions at scale: which queries mention your domain, how often, across which models, and how you compare to competitors. This data is the foundation of any GEO strategy.
+| Family | Paths under `/v3/ai_optimization/` | Answers |
+|---|---|---|
+| LLM Mentions | `llm_mentions/search_mentions/live`, `target_metrics/live`, `multi_target_metrics/live`, `top_mentioned_domains/live`, `top_mentioned_pages/live`, `top_mentioned_brands/live`, `top_mentioned_brand_categories/live`, `historical/live`, `timeseries_delta/live`, `timeseries_new_lost/live`, plus `_lite` variants | Which questions and answers mention a domain or keyword, how often, next to whom, and how that changes |
+| LLM Scraper | `chat_gpt/llm_scraper/live/advanced`, `gemini/llm_scraper/live/advanced` | What ChatGPT or Gemini actually shows for one query: text, sources, brands, products |
+| LLM Responses | `chat_gpt/llm_responses/live`, `claude/llm_responses/live`, `gemini/llm_responses/live`, `perplexity/llm_responses/live` | A raw model answer to a prompt you write, optionally with web search |
+| AI Keyword Data | `ai_keyword_data/keywords_search_volume/live` | How often keywords are searched inside AI assistants |
 
-## Available Tools
+LLM Mentions has two platforms: `chat_gpt` (United States and English only) and `google` (Google AI Overview, other markets available). Leave `platform` out to get both.
 
-| Tool | Description |
-|------|-------------|
-| `ai_opt_llm_ment_search` | Search for LLM mentions of your domain/keyword |
-| `ai_opt_llm_ment_agg_metrics` | Get aggregated mention visibility metrics |
-| `ai_opt_llm_ment_cross_agg_metrics` | Cross-model comparison of mentions |
-| `ai_opt_llm_ment_top_domains` | Top domains mentioned for a keyword area |
-| `ai_opt_llm_ment_top_pages` | Top pages cited by LLMs |
-| `ai_optimization_chat_gpt_scraper` | Scrape ChatGPT responses for specific queries |
-| `ai_optimization_keyword_data_search_volume` | AI keyword search volume data |
-| `ai_optimization_llm_models` | List supported LLM models |
-| `ai_optimization_llm_response` | Get actual LLM responses for queries |
-| `ai_optimization_llm_mentions_filters` | Available filters for mention searches |
-| `ai_opt_llm_ment_loc_and_lang` | Supported locations/languages for LLM mentions |
-| `ai_opt_kw_data_loc_and_lang` | Supported locations/languages for AI keyword data |
-| `ai_optimization_chat_gpt_scraper_locations` | Supported locations for ChatGPT scraper |
+## Target entities
 
-## Workflow 1: Brand Visibility Check
+`target` is an array of up to 10 entities. Each is one domain or one keyword.
 
-Discover which LLM queries mention your domain and get an overall visibility score.
+| Entity | Example | Notes |
+|---|---|---|
+| Domain | `{"domain": "example.com", "search_scope": ["sources"]}` | No `https://` or `www.`; `search_scope` values `any`, `sources`, `search_results` (`search_results` is ChatGPT only); `include_subdomains: true` widens it |
+| Keyword | `{"keyword": "acme", "search_scope": ["answer"], "match_type": "word_match"}` | `search_scope` values `any`, `question`, `answer`, `brand_entities`, `fan_out_queries`; `match_type` `word_match` or `partial_match` |
 
-### Step 1 — Search for Mentions
-```
-Tool: ai_opt_llm_ment_search
-Input: {
-  "targets": [{"domain": "yourdomain.com"}],
-  "location_name": "United States",
-  "language_name": "English",
-  "limit": 100
-}
-```
+Either kind accepts `"search_filter": "exclude"`. A request needs at least one entity left on `include`.
 
-Returns a list of queries where LLMs mention your domain, with context: the query text, which model cited you, position in the response, and whether you appeared in the answer text, citations, or both. Each result includes `mention_type` (recommendation, citation, comparison) and `sentiment`.
+## Workflow 1: brand visibility baseline
 
-### Step 2 — Aggregated Metrics
-```
-Tool: ai_opt_llm_ment_agg_metrics
-Input: {
-  "targets": [{"domain": "yourdomain.com"}],
-  "location_name": "United States",
-  "language_name": "English"
-}
-```
-
-Returns your overall LLM visibility score: total mention count, mention share (your mentions vs. total for those queries), average position in responses, and distribution across mention types. This is your GEO baseline metric.
-
-## Workflow 2: Cross-Model Analysis
-
-Compare how different AI models cite your brand versus competitors.
+Find out where the brand is mentioned and how visible it is overall.
 
 ```
-Tool: ai_opt_llm_ment_cross_agg_metrics
-Input: {
-  "targets": [
-    {"domain": "yourdomain.com"},
-    {"domain": "competitor1.com"},
-    {"domain": "competitor2.com"}
-  ],
-  "aggregation_keys": ["llm_model", "target"],
-  "location_name": "United States",
-  "language_name": "English"
-}
+api_request({
+  method: "POST",
+  path: "/v3/ai_optimization/llm_mentions/search_mentions/live",
+  data: [{
+    "target": [{"domain": "yourdomain.com", "search_scope": ["sources"]}],
+    "platform": "chat_gpt", "location_code": 2840, "language_code": "en", "limit": 50
+  }]
+})
 ```
 
-Returns a matrix: each target domain x each LLM model, with mention counts and visibility scores. Use this to discover:
-- Which model favors your brand (optimize content for models where you are weak)
-- Which competitors dominate which models
-- Whether your visibility is concentrated in one model or distributed
-
-Combine with `ai_opt_llm_ment_top_domains` to see who dominates your keyword space:
-```
-Tool: ai_opt_llm_ment_top_domains
-Input: {
-  "keyword": "best project management tool",
-  "location_name": "United States",
-  "language_name": "English"
-}
-```
-
-## Workflow 3: ChatGPT SERP Scraping
-
-See exactly how ChatGPT answers a specific query — the full response, citations, and recommendations.
+Each item is a mention: the `question`, the `answer` in markdown, the `sources` the model cited, `ai_search_volume` for the query, and the model name. For the totals:
 
 ```
-Tool: ai_optimization_chat_gpt_scraper
-Input: {
-  "keyword": "best CRM for startups",
-  "location_code": 2840,
-  "language_code": "en"
-}
+api_request({
+  method: "POST",
+  path: "/v3/ai_optimization/llm_mentions/target_metrics/live",
+  data: [{
+    "target": [{"domain": "yourdomain.com"}],
+    "platform": "chat_gpt", "location_code": 2840, "language_code": "en"
+  }]
+})
 ```
 
-Use `ai_optimization_chat_gpt_scraper_locations` to find valid location codes. The scraper returns the complete ChatGPT response as structured data: text segments, cited URLs, product recommendations, and comparison tables when present. Analyze this to understand:
-- What ChatGPT recommends for queries in your space
-- How your competitors are positioned in ChatGPT responses
-- What content patterns trigger citations (lists, comparisons, reviews)
+`aggregated_metrics` splits the mentions by platform, location, language and cited source domain. This is the GEO baseline; run it again every month.
 
-## Workflow 4: AI Keyword Research
-
-Find queries where LLMs actively cite sources — these are the high-value targets for GEO.
+## Workflow 2: you against competitors
 
 ```
-Tool: ai_optimization_keyword_data_search_volume
-Input: {
-  "keywords": ["best CRM for startups", "CRM comparison 2026", "affordable CRM tools"],
-  "location_name": "United States",
-  "language_name": "English"
-}
+api_request({
+  method: "POST",
+  path: "/v3/ai_optimization/llm_mentions/multi_target_metrics/live",
+  data: [{
+    "targets": [
+      {"key": "us", "target": [{"domain": "yourdomain.com"}]},
+      {"key": "rival1", "target": [{"domain": "competitor1.com"}]},
+      {"key": "rival2", "target": [{"domain": "competitor2.com"}]}
+    ],
+    "platform": "chat_gpt", "location_code": 2840, "language_code": "en"
+  }]
+})
 ```
 
-Returns AI-specific search volume: how many times each query triggers LLM responses that cite external sources. High citation volume = high GEO opportunity. Prioritize keywords where LLMs actively link to sources over keywords where they give generic answers.
-
-Check available regions first:
-```
-Tool: ai_opt_kw_data_loc_and_lang
-Input: {}
-```
-
-## Target Object Format
-
-The `targets` parameter accepts an array of objects. Each target can be:
-
-| Format | Example | Use Case |
-|--------|---------|----------|
-| Domain | `{"domain": "example.com"}` | Track all mentions of your site |
-| Keyword | `{"keyword": "your brand name"}` | Track brand name mentions |
-
-Additional target options:
-- `search_scope` — `"any"` (default), `"question"`, or `"answer"` — filter where the mention appears
-- `match_type` — `"word_match"` (exact word boundary) or `"partial_match"` (substring) — control matching strictness
-
-Example with all options:
-```json
-{
-  "domain": "yourdomain.com",
-  "search_scope": "answer",
-  "match_type": "word_match"
-}
-```
-
-## Platform Selection
-
-| Platform Value | What It Tracks |
-|---------------|----------------|
-| `"chat_gpt"` | ChatGPT responses and citations |
-| `"google"` | Google AI Overviews (formerly SGE) |
-
-Specify with the `platform` parameter in mention search tools. Track both to get full AI visibility coverage.
-
-## Discovering Available Models
+Two to ten keyed targets, one comparable result per key. To see who owns a topic rather than a named rival, ask for the leaders:
 
 ```
-Tool: ai_optimization_llm_models
-Input: {}
+api_request({
+  method: "POST",
+  path: "/v3/ai_optimization/llm_mentions/top_mentioned_domains/live",
+  data: [{
+    "target": [{"keyword": "best project management tool"}],
+    "platform": "chat_gpt", "location_code": 2840, "language_code": "en", "limit": 20
+  }]
+})
 ```
 
-Returns all supported LLM models with their identifiers. Use these model IDs in cross-aggregation queries to compare specific model versions.
+`top_mentioned_pages`, `top_mentioned_brands` and `top_mentioned_brand_categories` take the same body and answer which pages, which brands and which brand categories the models cite for that topic.
 
-To get an actual LLM response for a query:
+## Workflow 3: what an assistant says for one query
+
 ```
-Tool: ai_optimization_llm_response
-Input: {
-  "keyword": "best headless CMS",
-  "model": "chat_gpt_4o"
-}
+api_request({
+  method: "POST",
+  path: "/v3/ai_optimization/chat_gpt/llm_scraper/live/advanced",
+  data: [{"keyword": "best crm for startups", "location_code": 2840, "language_code": "en"}]
+})
 ```
 
-## Practical GEO Strategy
+The result carries the answer as typed items (text, tables, navigation lists, images, local businesses, products, ads), the `sources`, the `brand_entities` and the `search_results` the model looked at. Read it for: which brands are recommended and in what order, which sites are cited, and which content shapes (lists, comparisons, reviews) get cited. The Gemini scraper has the same body at `/v3/ai_optimization/gemini/llm_scraper/live/advanced`. Execution takes up to 120 seconds.
 
-1. **Baseline** — Run Workflow 1 to measure current LLM mention count and share
-2. **Competitive landscape** — Run Workflow 2 to see who dominates your space in AI
-3. **Content audit** — Run Workflow 3 to see what ChatGPT currently recommends
-4. **Keyword targets** — Run Workflow 4 to find high-citation queries to optimize for
-5. **Optimize content** — Create authoritative, well-structured content that LLMs prefer to cite: clear definitions, comparisons, data-backed claims, and FAQ structures
-6. **Measure progress** — Re-run Workflow 1 monthly to track mention growth
+To put your own prompt to a model, use LLM Responses. `model_name` must come from the models endpoint of that vendor:
+
+```
+api_request({method: "GET", path: "/v3/ai_optimization/chat_gpt/llm_responses/models"})
+
+api_request({
+  method: "POST",
+  path: "/v3/ai_optimization/chat_gpt/llm_responses/live",
+  data: [{"user_prompt": "Compare monday.com and asana for a 20-person agency", "model_name": "<id from the models list>", "web_search": true}]
+})
+```
+
+The same body works at `/v3/ai_optimization/claude/llm_responses/live`, `/v3/ai_optimization/gemini/llm_responses/live` and `/v3/ai_optimization/perplexity/llm_responses/live`. The answer is a model's output for one prompt, not a measurement of how many users see it; use it to test phrasing, use LLM Mentions to measure.
+
+## Workflow 4: AI keyword research
+
+Find the queries people put to AI assistants.
+
+```
+api_request({
+  method: "POST",
+  path: "/v3/ai_optimization/ai_keyword_data/keywords_search_volume/live",
+  data: [{"keywords": ["best crm for startups", "crm comparison", "affordable crm tools"], "location_code": 2840, "language_code": "en"}]
+})
+```
+
+Up to 1000 keywords per call. Rank the list by AI search volume, then check the top queries with Workflow 3.
+
+## Trends over time
+
+| Question | Path |
+|---|---|
+| Mentions month by month | `/v3/ai_optimization/llm_mentions/historical/live` |
+| Change between two periods | `/v3/ai_optimization/llm_mentions/timeseries_delta/live` (`date_from`, `date_to`, `group_range` required) |
+| Mentions gained and lost | `/v3/ai_optimization/llm_mentions/timeseries_new_lost/live` |
+
+## Practical GEO strategy
+
+1. **Baseline**: Workflow 1, monthly.
+2. **Competitive landscape**: Workflow 2 and the top-domains call.
+3. **Content audit**: Workflow 3 on your ten most valuable queries.
+4. **Keyword targets**: Workflow 4, then fill the gaps Workflow 3 shows.
+5. **Optimize**: write content the models cite: clear definitions, comparisons, data-backed claims, FAQ structure.
+6. **Measure**: Workflow 1 again next month; compare with the historical and delta endpoints.
 
 <example>
-User: "How visible is our brand acme.io in AI search? Compare us to competitor1.com and competitor2.com."
+User: "How visible is acme.io in AI search? Compare us with competitor1.com and competitor2.com."
 
-1. Call ai_opt_llm_ment_search with targets=[{"domain": "acme.io"}], location_name="United States", language_name="English", limit=100
-2. Call ai_opt_llm_ment_agg_metrics with targets=[{"domain": "acme.io"}] for baseline score
-3. Call ai_opt_llm_ment_cross_agg_metrics with all three domains and aggregation_keys=["llm_model", "target"]
-4. Call ai_opt_llm_ment_top_domains for the primary keyword in acme.io's space
-5. Report: "acme.io is mentioned in 23 queries by ChatGPT and 8 by Google AI. Competitor1 leads with 67 mentions. Your strongest model is ChatGPT where you rank 3rd; you are absent from Google AI Overviews for 80% of tracked queries."
-6. Recommend specific queries where competitors are cited but acme.io is not — these are content gaps to fill
+1. docs_search for llm_mentions/multi_target_metrics/live and llm_mentions/target_metrics/live; read the Pricing links.
+2. Show the plan: one target_metrics call, one multi_target_metrics call, one top_mentioned_domains call; ask the user for a ceiling.
+3. After approval, call api_request on `/v3/ai_optimization/llm_mentions/target_metrics/live` for acme.io, then on `/v3/ai_optimization/llm_mentions/multi_target_metrics/live` with the three keyed targets.
+4. Compare the keyed results: mention counts, cited source domains, platform split.
+5. Report where competitors are mentioned and acme.io is not, and which queries to cover with new content.
 </example>
 
 <example>
-User: "What does ChatGPT say when someone asks 'best project management tool for remote teams'?"
+User: "What does ChatGPT say when someone asks for the best project management tool for remote teams?"
 
-1. Call ai_optimization_chat_gpt_scraper with keyword="best project management tool for remote teams", location_code=2840, language_code="en"
-2. Call ai_opt_llm_ment_top_pages with keyword="best project management tool for remote teams"
-3. Parse the ChatGPT response: list recommended tools, cited URLs, comparison criteria used
-4. Report: "ChatGPT recommends 5 tools in this order: [Tool A], [Tool B], [Tool C], [Tool D], [Tool E]. It cites 3 review articles from [Site1], [Site2], [Site3]. Key selection criteria mentioned: async communication features, time zone management, pricing."
-5. Identify optimization opportunity: if the user's product is not listed, recommend creating content that matches the cited article format (comparison + data + user testimonials)
+1. docs_search for ai_optimization/chat_gpt/llm_scraper/live/advanced; read the Pricing link and note the 120-second execution time.
+2. Get the user's go-ahead for one scraper call.
+3. Call api_request on `/v3/ai_optimization/chat_gpt/llm_scraper/live/advanced` with keyword "best project management tool for remote teams", location_code 2840, language_code "en".
+4. List the recommended tools in order, the cited URLs and the comparison criteria the answer uses.
+5. If the user's product is missing, recommend content in the format of the cited pages.
 </example>

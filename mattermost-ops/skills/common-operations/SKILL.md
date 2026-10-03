@@ -9,7 +9,7 @@ Plain-language playbooks for everyday Mattermost work. Each one drives the REST 
 
 ## Before anything: ensure a token
 
-If `MATTERMOST_TOKEN` is not already set this session, run the `setup` skill's login first (it reads the token from the login **`Token` response header**). Every call below assumes `MATTERMOST_TOKEN` and `MATTERMOST_API_URL` are set and uses `Authorization: Bearer ${MATTERMOST_TOKEN}`.
+If `MATTERMOST_TOKEN` is not already set this session, run the `setup` skill's login first (it reads the token from the login **`Token` response header**). Every call below assumes `MATTERMOST_TOKEN` and `MATTERMOST_API_URL` are set and uses `Authorization: Bearer ${MATTERMOST_TOKEN}`. (If the user hands you a personal access token instead, use it the same way — but a later `401` can mean the PAT expired; see `troubleshoot`.)
 
 ## The golden rules (why workflows look the way they do)
 
@@ -38,6 +38,7 @@ curl -s -X POST -H "Authorization: Bearer ${MATTERMOST_TOKEN}" -H "Content-Type:
 - **Reply in a thread**: add `"root_id":"<root_post_id>"`.
 - **Attach a file**: upload first (`POST /files`), then pass `"file_ids":["<id>"]` (→ `files-emoji.md`).
 - **React**: `POST /reactions` with `{"user_id","post_id","emoji_name"}`. (→ `posts.md`)
+- **Do not forge the sender through `props` (breaks in v12.0).** Setting `from_webhook`, `from_bot`, `from_oauth_app`, `from_plugin`, `override_username`, `override_icon_url`, `override_icon_emoji` or `webhook_display_name` in `props` on a post made with this session/PAT works on v11 but is **silently stripped** from v12.0 (October 2026): the post is still created, no error, and it shows up as the authenticated user. If the user wants a custom name/icon, post through an **incoming webhook** (see below) or a **bot account** instead. Ordinary `props` (message attachments, etc.) are fine.
 
 ## Workflow: send a direct message
 
@@ -58,6 +59,7 @@ For a group message, POST an array of 3–8 ids to `/channels/group`. (→ `chan
 2. **Add a user** — `POST /channels/{channel_id}/members` with `{"user_id"}`.
 3. **Set header/purpose** — `PUT /channels/{channel_id}/patch` with `{"header":"...","purpose":"..."}`.
 4. **Make someone a channel admin** — `PUT /channels/{channel_id}/members/{user_id}/roles` with `{"roles":"channel_user channel_admin"}`.
+5. **Set the whole roster at once** (System Admin, v11.7+) — `PUT /channels/{channel_id}/members` with `{"members":["<user_id>",...],"channel_admins":["<user_id>"]}`; users not listed are **removed**, so show the diff and confirm first. (→ `channels.md`)
 
 ## Workflow: create a team and invite people
 
@@ -80,7 +82,7 @@ HOOK=$(curl -s -X POST -H "Authorization: Bearer ${MATTERMOST_TOKEN}" -H "Conten
   "${MATTERMOST_API_URL%/}/api/v4/hooks/incoming" | jq -r .id)
 echo "Post to: ${MATTERMOST_API_URL%/}/hooks/${HOOK}"
 ```
-(→ `integrations.md`)
+The hook URL needs no token; its JSON payload may set `username` / `icon_url` / `icon_emoji` when the System Console allows overrides. This is the supported route for custom-sender automated posts (see the v12.0 warning under "post a message"). (→ `integrations.md`)
 
 ## Workflow: report & audit
 

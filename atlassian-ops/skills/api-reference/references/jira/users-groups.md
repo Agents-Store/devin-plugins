@@ -39,7 +39,7 @@ People, group membership, the current user, and avatars. Base `${ATLASSIAN_SITE_
 |--------|----------------------|
 | `GET /myself` | The current (token) user (`getCurrentUser`) — confirms auth, returns your `accountId`. |
 | `GET/PUT/DELETE /mypreferences` | Get / set / clear a user preference (`getPreference`, `setPreference`). |
-| `GET/PUT /mypreferences/locale` | Get / set locale. |
+| `GET /mypreferences/locale` · `PUT /mypreferences/locale` | Get / set locale. **`PUT` is deprecated** (`setLocale`) — Atlassian points to *Update a user profile* in the user-management API (`/users/{account_id}/manage/profile`). |
 
 ## Avatars
 

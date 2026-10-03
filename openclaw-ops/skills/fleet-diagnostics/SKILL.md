@@ -96,7 +96,7 @@ Checks are shown as CLI intent, run through `${CLAUDE_PLUGIN_ROOT}/scripts/ocexe
 | vector search paused, index-identity warning | provider, model or chunking changed, so the index identity no longer matches | `memory status` | `fleet.memory.index-identity-changed` |
 | search returns nothing useful, last index long ago | indexing stopped when the provider broke | last index time vs activity | `fleet.memory.stale-index` |
 | search still degraded after the provider was fixed | stuck on the fallback model; only a full restart clears it | compare behaviour before and after a full restart, not a reload | `fleet.memory.search-stuck-fallback` |
-| state database growing without bound | no retention or LRU on chunk and embedding-cache tables | database size and per-table row counts | `fleet.memory.db-growth` |
+| state database growing without bound | the per-agent database holds the index and the (bounded) embedding cache beside canonical history, and the file does not shrink by itself | `memory status --agent <id> --json`: database and WAL size, reusable bytes, cache payload | `fleet.memory.db-growth` |
 
 ### Schedules
 
@@ -132,6 +132,13 @@ Checks are shown as CLI intent, run through `${CLAUDE_PLUGIN_ROOT}/scripts/ocexe
 - One instance, deep and unclear → the incident-responder agent.
 - Neither agent mutates anything. If a walkthrough proposes a change, it comes back as a finding id and
   a `/openclaw-ops:repair` line for a human to approve.
+- Evidence for a human or a ticket: `triage --json` and `gateway diagnostics export --json` (through the
+  one door) write a sanitized bundle, change no config or state and start no agent — both are reads, and a
+  caller-chosen `--output` turns either into an R2. Without `--json` or `--non-interactive`, triage
+  launches a coding agent that repairs by itself, so it is never run bare here (R4).
+- Lint depth: `healthcheck.py --lint` is the default read; `--lint-all` adds the opt-in checks upstream
+  leaves out of the default run. An exit 2 from the lint is a failed run (`fleet.lint.run-failed`), not a
+  clean one.
 
 `references/findings-catalog.md` — every id with severity, detection, fix, verification and mutation
 class. It is one id space with the battery, not a parallel one, and that is checked rather than

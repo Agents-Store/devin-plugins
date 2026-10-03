@@ -13,8 +13,18 @@ what the host filesystem lets other people read.
 
 Run it through the one door: `${CLAUDE_PLUGIN_ROOT}/scripts/ocexec.py <instance> --json -- security audit --deep`.
 
-- **Exit code is the verdict, the document is the evidence**: 0 clean, 1 error, 2 warn. Findings carry
-  `checkId`, `severity`, `message`, `path`, `ocPath`, `fixHint`.
+- **The document is the evidence; the exit code is not asserted here.** Upstream documents the audit's
+  severities (`critical`, `warn`, `info`) and its JSON (`summary`, `findings`, `suppressedFindings`) but
+  no exit-code table, so this plugin does not read one into it — a code is "0 succeeded" and nothing
+  more until the owner confirms a contract on a test instance. Findings carry `checkId`, `severity`,
+  `message`, `path`, `fixHint`. Suppressed findings are kept under `suppressedFindings`; a configured
+  suppression also leaves an info finding saying the audit was filtered, and a filtered audit is not a
+  clean one.
+- **Three more axes, each with its own documented contract** (`references/checkids.md`):
+  `doctor --lint --all --severity-min info` for the complete health inventory (exit 0 / 1, and **2 is a
+  failed run**, not a warning); `secrets audit --check` for plaintext, shadowed references and residues
+  (exit 1 findings, 2 unresolved references) — the result belongs to `secrets-infisical`; and, when the
+  policy plugin is installed, `policy check`, whose drift also surfaces in the lint.
 - **Ids pass through verbatim.** Families `fs.*`, `gateway.*`, `tools.exec.*`, `plugins.*`,
   `security.exposure.*` belong to the runtime. Quote what the live `--json` returned; never compose an
   id, a message or a fix hint from memory. Field meanings and family scope: `references/checkids.md`.
@@ -23,6 +33,8 @@ Run it through the one door: `${CLAUDE_PLUGIN_ROOT}/scripts/ocexec.py <instance>
   upstream made bulk-approval flags unable to grant consent on purpose. Propose it as a plan; never
   chain it onto the audit in the same turn.
 - **A clean audit is not a secure instance.** It is one process reporting on itself.
+- **`--fix` also rewrites file modes** on the state tree, config, credential files and the per-agent
+  database. It is still the narrow, R4 repair described above; it does not rotate anything.
 
 ## Layer two: the deployment class
 
@@ -39,6 +51,24 @@ Checks the runtime cannot make, because the answers live outside it.
 **The `fleet.secrets.*` family is not audited here.** Plaintext env files, leaked-in-backup values,
 identity-file modes, the unencrypted store and the whole rotate-or-not decision belong to
 **`secrets-infisical`** — a secret finding raised by this audit is handed to that skill, not resolved here.
+
+## Credential artefacts — copies of state are credentials
+
+Current OAuth material (access, refresh and ID tokens) is stored **in the state database under the
+ordinary state mount, in plaintext**. The encryption-key directory some deployments still mount is a
+legacy recovery key for an older sidecar; it does not encrypt the current rows and does not protect them
+from a state-only copy. Three consequences, each a finding class of its own:
+
+- **Every copy of a state directory is a credential.** The runtime's verified archive
+  (`backup create --verify`), a per-database snapshot, the tar of a state directory taken as layer 3 of
+  an upgrade backup, and `gate.snapshot` all qualify. Classify them as **credential artefacts**: owner-only
+  mode, a private directory, never a shared or world-readable path, never attached to a ticket, and a
+  stated retention.
+- **A leaked copy is answered at the source.** Revoke and re-issue the provider login — deleting the
+  file does not recall what was readable. Hand it to `secrets-infisical` for the rotation order.
+- **The mount is not evidence of anything.** An instance without the legacy key mount is not a legacy
+  layout and is not less protected; an instance with it is not better protected. Judge the state
+  directory's mode and where its copies live.
 
 ## Trust boundary — repeat it in every report
 

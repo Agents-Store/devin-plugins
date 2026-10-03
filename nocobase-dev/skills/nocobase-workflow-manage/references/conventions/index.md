@@ -13,13 +13,17 @@ Some trigger and node configuration items use the `collection` field to represen
 
 Some triggers and nodes use a `filter` (or `condition`) field to specify filtering conditions. This field is a JSON object that follows the NocoBase filter condition format.
 
-**Full reference**: [nocobase-utils / Filter Condition Format](../../../nocobase-utils/references/filter/index.md)
+**Mandatory full reference**: load the `nocobase-utils` skill with topic `filter`, then read [nocobase-utils / Filter Condition Format](../../../nocobase-utils/references/filter/index.md) in the current task before choosing or emitting any operator. This section is only a workflow-specific summary and is not an operator reference.
 
 Key points for workflow context:
+- Resolve the terminal field's live frontend interface/type before choosing an operator, then use only that field group's allowlist from the full reference. Do not infer an operator directly from natural-language comparison words.
+- Date intent is type-specific: before/less than → `$dateBefore`; after/greater than → `$dateAfter`; not before/at least/greater than or equal → `$dateNotBefore`; not after/at most/less than or equal → `$dateNotAfter`. `$lt`, `$lte`, `$gt`, and `$gte` are number-only and must never be used for date/datetime fields.
 - Root must be `{ "$and": [...] }` or `{ "$or": [...] }` — never place field conditions directly at the root.
 - Values can be constants or workflow variable expressions (e.g., `"{{$context.data.id}}"`). See [Variable Expressions](#variable-expressions) below for available variable paths.
 - Variables are NOT supported in trigger configuration items. In trigger configuration, only static values are allowed.
 - Both dot-string notation (`"category.name"`) and nested object notation (`{ "category": { "name": {...} } }`) are valid for association fields.
+
+Before a workflow mutation, inspect every filter condition as a `(terminal field type, operator)` pair. If metadata is unavailable or the operator is absent from that field type's row in the full reference, stop and resolve it instead of guessing.
 
 ## The `appends` Field in Trigger and Node Configuration
 
@@ -76,10 +80,32 @@ After execution, the node result will include `author` with its `department` dat
 
 Workflow variables are internally JSON values. In the variable picker UI they are usually exposed as a tree of `{ label, value, children? }`, but the actual runtime expression always uses the `value` path, not `label`.
 
+The runtime JSON shape and the frontend variable model are separate concerns. The server may resolve a manually written child path on a raw JSON object even when the variable picker exposes only the object root. Do not rely on that server-only behavior: a path that is absent from the variable tree cannot be displayed or reliably edited by ordinary users.
+
+### Modeling Raw JSON Before Downstream Use
+
+When a trigger or node exposes an object or array without modeled child fields, a JSON modeling node is mandatory before any downstream node uses a child value:
+
+1. Add `json-variable-mapping` when the required JSON paths are known and should become stable named variables.
+2. Add `json-query` when the JSON must first be filtered, calculated, or reshaped, and define its output fields in `model`.
+3. Pass the whole raw object/array into that JSON node. This is the only direct use of the raw source allowed in the downstream chain.
+4. Configure every later node from the JSON node's modeled output tree, for example `{{$jobsMapByNodeKey.map_payload.order_id}}`.
+5. Do not manually write a child expression such as `{{$context.data.order.id}}`, `{{$context.body.body_$0.order.id}}`, `{{$jobsMapByNodeKey.sql_rows.0.id}}`, or `{{$jobsMapByNodeKey.http_call.data.order.id}}` when those child paths are not exposed by the source's variable tree.
+
+This rule applies especially to:
+
+- `custom-action` with global custom-data context (`type = 0`), where `$context.data` is a raw JSON value.
+- Webhook request items whose extracted value is itself an object or array.
+- `sql` results, which expose only the full result root.
+- `request` results, where nested response body fields are not expanded in the variable picker.
+- Any other trigger or node that documents a raw root or no child variable tree.
+
+Modeling is not optional even when a handwritten path works at runtime. The modeled JSON node is what gives the frontend a stable label/value tree and lets ordinary users select, view, and maintain the variable.
+
 ### Core Rules
 
-1. Most variables are JSON objects or arrays, and you usually reference only the needed sub-path.
-2. Object properties are accessed with dot notation, such as `{{$context.data.title}}` or `{{$jobsMapByNodeKey.query1.author.department.name}}`.
+1. Most variables are JSON objects or arrays, and you usually reference only the needed sub-path when that path is present in the variable tree.
+2. Modeled object properties are accessed with dot notation, such as `{{$context.data.title}}` or `{{$jobsMapByNodeKey.query1.author.department.name}}`. If the property is absent from the source's variable tree, model it first instead of appending the path manually.
 3. A selected association field may itself be an object, and nested relations continue to form deeper object paths.
 4. Some variables are scalar values directly, such as `{{$context.date}}` or `{{$jobsMapByNodeKey.calc_total}}`.
 5. When a path segment is an array, selecting a child field under that array produces a mapped array of that child field's values.
@@ -191,6 +217,7 @@ The upstream means all the ancestor nodes search up the workflow graph by `upstr
 - Do NOT use the node's numeric `id` — use the string `key` instead.
 - Do NOT invent a key — always read the actual `key` from the node record after creating it.
 - Do NOT reference a node that is not upstream of the current node.
+- Do NOT append child paths that are absent from the node's variable tree. Pass the raw root through `json-variable-mapping` or `json-query` and use the modeled output instead.
 
 ### Scope Variables (`$scopes`)
 
@@ -226,6 +253,31 @@ Only use `dateRange` variables in filter conditions for date fields when needed,
 Application-level environment variables configured in NocoBase settings.
 
 **Format**: `{{$env.VARIABLE_NAME}}`
+
+### Variables in Field Assignments
+
+For `params.values` in `create` and `update` nodes, string template concatenation is allowed only when the target collection field has type `string`. For all other field types, use a variable only as the complete assigned value so that its original data type is preserved.
+
+Allowed:
+
+```json
+{
+  "orderId": "{{$context.data.id}}",
+  "title": "Order: {{$context.data.title}}"
+}
+```
+
+In this example, `title` must be a `string` field. Assuming `orderId` is not a string field, its variable remains the complete assigned value.
+
+Denied for a non-string field:
+
+```json
+{
+  "orderId": "ORDER-{{$context.data.id}}"
+}
+```
+
+If a non-string field needs a transformed value, calculate it in an upstream `calculation`, `script`, `json-query`, or `json-variable-mapping` node, then assign the resulting pure variable, for example `"{{$jobsMapByNodeKey.calculate_order_id}}"`.
 
 ### Usage Examples
 

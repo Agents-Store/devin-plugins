@@ -69,7 +69,7 @@ The PR link will be discoverable by release-notes generation and by reviewers la
 
 Setup (one-time, per project):
 ```
-/work-item-type create "TaskFlow" --name Bug --icon bug --color #e11d48
+/work-item-type create "TaskFlow" --name Bug
 /property create "TaskFlow" --name severity --type select --options "S0,S1,S2,S3" --required --type-id <bug-type-id>
 /property create "TaskFlow" --name environment --type select --options "prod,staging,dev" --required --type-id <bug-type-id>
 /property create "TaskFlow" --name "customers affected" --type number --type-id <bug-type-id>
@@ -78,7 +78,7 @@ Setup (one-time, per project):
 Per-bug flow:
 ```
 /triage-intake "TaskFlow"
-# Accept the bug → creates PROJ-160 of type Bug
+# Accept the bug (intake status=1) → PROJ-160, then set its type and fields
 /work-item update "TaskFlow" PROJ-160 --severity S1 --environment prod --customers-affected 12
 /label apply "TaskFlow" --item PROJ-160 area/checkout
 /assign "TaskFlow" PROJ-160 alice
@@ -117,7 +117,7 @@ Then mark the moved items as carryover for retro analysis:
 /label create "Mobile App" "area/checkout"
 /label create "Mobile App" "priority/p0" --color #dc2626
 /label create "Mobile App" "priority/p1" --color #f97316
-/work-item-type create "Mobile App" --name Story --default
+/work-item-type create "Mobile App" --name Story
 /work-item-type create "Mobile App" --name Bug
 /work-item-type create "Mobile App" --name Spike
 /property create "Mobile App" --name timebox --type number --type-id <spike-type-id>

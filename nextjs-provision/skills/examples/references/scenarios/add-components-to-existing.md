@@ -62,12 +62,14 @@ Check for potential conflicts:
 # Check if components/ui/ already exists
 ls src/components/ui/ 2>/dev/null
 
-# Check for cn() utility conflicts
+# Check for cn() utility conflicts (init writes `export { cn } from "cn"` to lib/utils.ts)
 grep -r "function cn" src/ --include="*.ts" --include="*.tsx"
 
 # Check for CSS variable conflicts
 grep -c "\-\-background:" src/app/globals.css
 ```
+
+On a Tailwind v3 project note that, per the shadcn docs, the `cn` package's merge engine supports Tailwind v4 only — v3 projects stay on `tailwind-merge` v2. If your project already has a working `cn()` helper, keep it; on v4 you can move to the `cn` package later with `npx shadcn@latest migrate cn`.
 
 If `components/ui/` exists with custom components, either:
 - Rename your existing directory: `mv src/components/ui src/components/custom-ui`
@@ -86,7 +88,7 @@ Map your custom components to shadcn equivalents:
 | Custom button | `button` | `npx shadcn@latest add button` |
 | Custom modal | `dialog` | `npx shadcn@latest add dialog` |
 | Custom dropdown | `dropdown-menu` | `npx shadcn@latest add dropdown-menu` |
-| Custom input | `input` + `form` | `npx shadcn@latest add input form` |
+| Custom input / form field | `input` + `field` | `npx shadcn@latest add input field` |
 | Custom tooltip | `tooltip` | `npx shadcn@latest add tooltip` |
 | Custom tabs | `tabs` | `npx shadcn@latest add tabs` |
 | Custom toast | `sonner` | `npx shadcn@latest add sonner` |
@@ -147,7 +149,7 @@ Replace hand-built sections with studio blocks:
 npx shadcn@latest add @ss-blocks/hero-section-01
 
 # If you have a custom pricing page
-npx shadcn@latest add @ss-blocks/pricing-01
+npx shadcn@latest add @ss-blocks/pricing-component-01
 
 # If you have a custom dashboard layout
 npx shadcn@latest add @ss-blocks/dashboard-shell-01

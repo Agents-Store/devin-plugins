@@ -46,7 +46,7 @@ integration patterns (a-to-b data flows), decision frameworks, `.mcp.json` with
 `{tool}-dev` plugins define HOW to build with each software in the architecture
 (SDK patterns, API usage, gotchas). Enable them, and follow their conventions when
 writing the initial code stubs (e.g.: Directus SDK `cache: 'no-store'`; Trigger.dev
-v4 imports from `@trigger.dev/sdk/v3`). Do not copy their content into the project —
+v4 imports from `@trigger.dev/sdk`). Do not copy their content into the project —
 plugins own tool knowledge; the project only references them.
 
 ### 4. Only then — generate project files
@@ -59,7 +59,7 @@ Backed by sources 1→3, create:
 | `CLAUDE.md` ("Stack Specification" section → macstack.json; Tech Stack from software; Installed Plugins from context.plugins) | prototype + stack plugin template |
 | `.mcp.json` (`${VAR}`) | stack plugin / connections |
 | `.env.example`, **`.env.prod`, `.env.dev`** (always created), `.infisical.json` | the `infisical-env` skill (mandatory to invoke) — variables = union of macstack.json `resources.accesses` AND the `${VAR}` tokens required by the project's enabled Claude plugins (settings.json → stack plugin `.mcp.json`/`.env.example`); required-but-empty keys appear as `KEY=''` with a FILL ME comment |
-| `.claude/rules/`, `.claude/commands/`, `scripts/` | the `best-practices` skill (mandatory to invoke) |
+| `.claude/rules/`, `.claude/skills/` (the slash commands), `scripts/` | the `best-practices` skill (mandatory to invoke) |
 | `macstack/` (README.md, client/OVERVIEW.md, USER-CASES.md, UX-UI.md, AUTOMATION.md, HANDBOOK.md, OPEN-QUESTIONS.md, history/DECISIONS.md, ledger.jsonl) | the `documents` skill (mandatory to invoke) |
 | Workflow stubs (from `workflows[]` + `triggers[]`) and entity schemas/migrations | macstack.json + dev plugins |
 
@@ -83,7 +83,7 @@ Backed by sources 1→3, create:
 user: "Scaffold the project from macstack.json"
 → prototype github:<owner>/project-directus-nextjs-trigger-dev → clone, copy
   compose/scripts/.claude/layout
-→ stack plugin stack-directus-nextjs-trigger-dev → enabledPlugins + .mcp.json (${VAR}) + CLAUDE.md merge
+→ stack plugin stack-directus-nextjs-trigger → enabledPlugins + .mcp.json (${VAR}) + CLAUDE.md merge
 → dev plugins directus-dev, nextjs-dev, trigger-dev → enable, follow their conventions in stubs
 → files: src/trigger/<wf-id>.ts per workflows[], collection schemas per entities[]
 → infisical-env → best-practices → documents → lint → report

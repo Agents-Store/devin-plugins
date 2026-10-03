@@ -1,6 +1,6 @@
 ---
 name: webhook-management
-description: Webhook CRUD, event types, testing, delivery logs, statistics, and toggle. Use when setting up webhooks for order/payment notifications or debugging webhook delivery.
+description: Webhook CRUD, event types, testing, delivery logs, statistics, and toggle. Use when setting up webhooks for order, product, category, customer, or cart notifications or debugging webhook delivery.
 ---
 
 # Webhook Management
@@ -30,9 +30,23 @@ This skill covers all webhook operations — creating webhooks for event notific
 Tool: get_webhook_events
 Input: {}
 
-Returns list of available event types (e.g., order.created, order.updated,
-payment.completed, etc.)
+Returns the list of available event types.
 ```
+
+The vendor publishes 13 events. The authoritative list is always the output of
+`get_webhook_events` — use these exact names:
+
+| Group | Events |
+|-------|--------|
+| Orders | `order.created`, `order.updated`, `order.completed`, `order.cancelled` |
+| Products | `product.created`, `product.updated`, `product.deleted` |
+| Categories | `category.created`, `category.updated`, `category.deleted` |
+| Customers | `customer.created`, `customer.updated` |
+| Cart | `cart.updated` |
+
+There is no payment-specific event. To react to payment or completion changes,
+subscribe to the order events (`order.updated`, `order.completed`) and check the
+payload fields with `get_webhook_sample_payload`.
 
 ## Creating Webhooks
 
@@ -74,7 +88,7 @@ Tool: update_webhook
 Input: {
   "id": 1,
   "url": "https://new-server.com/webhooks",
-  "events": ["order.created", "order.updated", "payment.completed"]
+  "events": ["order.created", "order.updated", "order.completed"]
 }
 ```
 
@@ -172,7 +186,7 @@ Use this to verify incoming webhook payloads are authentic.
 ```
 1. get_webhook_events() -> List events
 2. get_webhook_sample_payload(event="order.created") -> See payload format
-3. get_webhook_sample_payload(event="payment.completed") -> See another
+3. get_webhook_sample_payload(event="order.completed") -> See another
 ```
 
 ## Best Practices

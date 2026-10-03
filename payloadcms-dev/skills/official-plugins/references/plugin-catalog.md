@@ -97,6 +97,34 @@ export default buildConfig({
 
 Since 3.86, the plugin's fields support translations (i18n of the form-builder field labels).
 
+**Access defaults (3.90.0, breaking for multi-auth setups):** reading `form-submissions` and the `forms.emails` array field is limited by default to users of the admin collection (`req.user.collection === config.admin.user`); `create` on submissions stays open so public forms work. If you have several auth collections and a secondary one must read submissions or recipient emails, set access explicitly — existing overrides keep being respected:
+
+```ts
+formBuilderPlugin({
+  formSubmissionOverrides: {
+    access: {
+      read: ({ req }) => ['users', 'staff'].includes(req.user?.collection ?? ''),
+    },
+  },
+  formOverrides: {
+    // `forms` collection access is open for read by default; the `emails` field has its own,
+    // admin-only read access — override it on the field to let a second auth collection see recipients
+    fields: ({ defaultFields }) =>
+      defaultFields.map((field) =>
+        field.type === 'array' && field.name === 'emails'
+          ? {
+              ...field,
+              access: {
+                ...field.access,
+                read: ({ req }) => ['users', 'staff'].includes(req.user?.collection ?? ''),
+              },
+            }
+          : field,
+      ),
+  },
+})
+```
+
 ---
 
 ## Nested Docs — `@payloadcms/plugin-nested-docs`
@@ -176,7 +204,7 @@ Query the index from the frontend by hitting `/api/search?where[title][like]=...
 
 ## Stripe — `@payloadcms/plugin-stripe`
 
-Two-way sync between Payload collections and Stripe resources. Adds a `/api/stripe/rest` proxy (dev), a `/api/stripe/webhooks` route, `stripeID` + `skipSync` fields on synced collections, and admin links to Stripe.
+Two-way sync between Payload collections and Stripe resources. Adds a `/api/stripe/webhooks` route, an optional `/api/stripe/rest` proxy (only registered when you pass a `rest` object), `stripeID` + `skipSync` fields on synced collections, and admin links to Stripe.
 
 ```ts
 // src/payload.config.ts
@@ -188,7 +216,11 @@ export default buildConfig({
       stripeSecretKey: process.env.STRIPE_SECRET_KEY,
       stripeWebhooksEndpointSecret: process.env.STRIPE_WEBHOOKS_ENDPOINT_SECRET,
       isTestKey: process.env.NODE_ENV !== 'production',
-      rest: false,            // expose /api/stripe/rest proxy — dev only, keep off in prod
+      // `rest` is OFF unless you pass an object (3.90.0+; boolean is a TS error). Omit it to disable the proxy.
+      // rest: {
+      //   allowedMethods: ['customers.list', 'products.retrieve'],   // exact Stripe SDK method names, no '*'
+      //   access: ({ req }) => Boolean(req.user),                    // optional; default = admin-panel access
+      // },
       logs: true,
       sync: [
         {
@@ -216,10 +248,12 @@ export default buildConfig({
 | `stripeSecretKey` * | Stripe secret key (required) |
 | `stripeWebhooksEndpointSecret` | Signing secret for the webhook route |
 | `isTestKey` | Flags the key as a test key |
-| `rest` | Enable the `/api/stripe/rest` proxy (development only) |
+| `rest` | Optional `{ allowedMethods: string[]; access?: ({ req }) => boolean \| Promise<boolean> }` that registers the `/api/stripe/rest` proxy. `allowedMethods` is required, non-empty, exact method names such as `customers.list` (no `*`). Without `access` only users who can open the admin panel are allowed. Omit `rest` to disable the proxy — a boolean value is a TypeScript error, and `true` throws at startup (3.90.0+) |
 | `webhooks` | Object/function of handlers keyed by Stripe event name |
 | `sync` | Field-by-field two-way sync config between collections and Stripe |
 | `logs` | Console-log sync activity |
+
+**Upgrading to 3.90:** a boolean `rest` option from older examples no longer compiles / starts — delete the line to keep the proxy off, or replace it with the object above and list only the Stripe methods the client genuinely needs. Prefer calling Stripe from server code with your own SDK client over exposing the proxy to browsers.
 
 Env vars: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOKS_ENDPOINT_SECRET`. The webhook route must be reachable by Stripe; configure the endpoint in the Stripe dashboard pointing at `/api/stripe/webhooks`. See the `adapters` skill for the email/storage env wiring this commonly sits alongside.
 
@@ -396,8 +430,12 @@ export default buildConfig({
 | `userCollection` | Auth collection that owns the MCP API keys (defaults to `config.admin.user`) |
 | `overrideApiKeyCollection` | Customize the auto-generated MCP API Keys collection |
 | `overrideAuth` | Replace the built-in Bearer API-key auth |
+| `disabled` | `true` turns the plugin off (no endpoint, no keys collection tools) |
+| `experimental.tools` | Experimental tools (`auth`, `collections`, `config`, `jobs`), each `{ enabled }` — the file-editing ones also take a path (`collectionsDirPath`, `configFilePath`, `jobsDirPath`); off by default and disabled in production |
 
-What it adds: the `/api/mcp` endpoint, an `MCP → API Keys` admin collection, auto tools like `findPosts`/`createPosts`, and Bearer-token auth (`Authorization: Bearer <API-KEY>`). Create a key in the admin panel and grant per-key permissions before connecting a client.
+What it adds: the `/api/mcp` endpoint, an `MCP → API Keys` admin collection, auto tools like `findPosts`/`createPosts`, and Bearer-token auth (`Authorization: Bearer <API-KEY>`). Create a key in the admin panel and grant per-key permissions before connecting a client — since 3.90 the key is shown once at creation and cannot be read again, so copy it immediately.
+
+Safer defaults (3.88.0 / 3.90.0): the API-keys collection is fail-safe — an authenticated user may create keys and read/update/delete only **their own**, and binding a key to another user is disabled until you grant it through `overrideApiKeyCollection`. Experimental tools (`experimental.tools.*`) are off by default and disabled in production; `disabled: true` switches the whole plugin off. Remember a key acts as its associated user, so give MCP keys a dedicated low-privilege user.
 
 ---
 

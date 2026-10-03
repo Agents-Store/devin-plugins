@@ -44,7 +44,7 @@ n8n_create_workflow({
       id: "webhook-1",
       name: "Webhook",
       type: "n8n-nodes-base.webhook",
-      typeVersion: 2,
+      typeVersion: 2.1,
       position: [250, 300],
       parameters: {
         path: "form-submit",
@@ -56,7 +56,7 @@ n8n_create_workflow({
       id: "set-1",
       name: "Map Fields",
       type: "n8n-nodes-base.set",
-      typeVersion: 3.4,
+      typeVersion: 3.5,
       position: [450, 300],
       parameters: {
         mode: "manual",
@@ -89,7 +89,7 @@ n8n_create_workflow({
       id: "slack-1",
       name: "Slack",
       type: "n8n-nodes-base.slack",
-      typeVersion: 2.2,
+      typeVersion: 2.7,
       position: [650, 300],
       parameters: {
         resource: "message",
@@ -102,7 +102,7 @@ n8n_create_workflow({
       id: "respond-1",
       name: "Respond",
       type: "n8n-nodes-base.respondToWebhook",
-      typeVersion: 1.1,
+      typeVersion: 1.5,
       position: [850, 300],
       parameters: {
         respondWith: "json",
@@ -143,7 +143,9 @@ n8n_test_workflow({
 })
 ```
 
-## Step 6: Activate
+## Step 6: Publish
+
+Only when the owner wants the webhook live. In n8n 2.x the `activateWorkflow` operation **publishes** the workflow (the name is unchanged for compatibility).
 
 ```javascript
 n8n_update_partial_workflow({
@@ -157,4 +159,5 @@ n8n_update_partial_workflow({
 - Webhook data is under `$json.body.*` — not `$json.*` directly
 - Use `responseMode: "responseNode"` to control response with Respond to Webhook node
 - Slack channel uses `__rl` (resource locator) format with `mode: "name"`
-- Set node v3.4 uses `assignments` structure for field mapping
+- Set node v3.x uses the `assignments` structure for field mapping (current version 3.5)
+- Take `typeVersion` values from `get_node({nodeType, mode: "versions"})` — they move with each n8n release

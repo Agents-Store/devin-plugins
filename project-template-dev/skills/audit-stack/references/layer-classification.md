@@ -7,7 +7,7 @@ Canonical mapping of technologies to the 3-layer model used in `stack.json`.
 ## Classification Rules
 
 1. **Full-stack frameworks** (Next.js, Nuxt, SvelteKit, Remix, Rails, Django, Laravel, Leptos) appear in BOTH `logic` AND `interface` — they handle server routes (logic) and rendering (interface)
-2. **BaaS/headless CMS** (Supabase, Firebase, Directus, NocoDB, NocoBase, Sanity, Contentful, Strapi, Appwrite) are always `data` — even if they have UI, the plugin consumer uses them as data sources
+2. **BaaS/headless CMS** (Supabase, Firebase, Directus, NocoDB, NocoBase, Sanity, Contentful, Strapi, Payload CMS, Appwrite) are always `data` — even if they have UI, the plugin consumer uses them as data sources
 3. **ORMs and database drivers** are always `data`
 4. **Auth libraries** are `logic` — they implement business logic (session management, token validation)
 5. **Job runners and automation** (Trigger.dev, Inngest, BullMQ, Celery, Sidekiq, n8n) are `logic`
@@ -70,6 +70,10 @@ Canonical mapping of technologies to the 3-layer model used in `stack.json`.
 | LangChain | AI orchestration | |
 | Vercel AI SDK | AI/LLM | |
 | Zod | Validation | |
+| grammY | Bot framework (Telegram) | |
+| Chatwoot | Customer-support platform | External service the project integrates with |
+| Mattermost | Team-chat platform | External service the project integrates with |
+| Plane | Project-management platform | External service the project integrates with |
 
 ### Interface Layer
 
@@ -130,6 +134,7 @@ Canonical mapping of technologies to the 3-layer model used in `stack.json`.
 | Diesel | ORM (Rust) | |
 | Mongoose | ODM (MongoDB) | |
 | Directus | Headless CMS / BaaS | |
+| Payload CMS | Headless CMS | Runs inside Next.js; data layer like Directus |
 | NocoDB | BaaS | |
 | NocoBase | BaaS | |
 | Supabase | BaaS | |
@@ -172,6 +177,10 @@ Canonical mapping of technologies to the 3-layer model used in `stack.json`.
 | Nginx / Traefik / Caddy | Reverse proxy |
 | Prometheus | Monitoring |
 | Beszel | Server monitoring |
+| Dokploy | Self-hosted PaaS |
+| Infisical | Secrets management |
+| restic | Encrypted backups |
+| pnpm / Bun / uv | Package managers |
 | Turborepo / Nx | Monorepo tools |
 
 ---

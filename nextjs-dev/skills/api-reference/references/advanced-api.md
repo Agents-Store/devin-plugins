@@ -233,6 +233,7 @@ const nextConfig = {
 - Local `src` values with query strings require `images.localPatterns`
 - Optimization of private-network (local IP) upstreams is blocked by default — set `images.dangerouslyAllowLocalIP: true` when needed
 - `maximumRedirects` is now 3
+- AVIF in `formats` was switched off in 16.3.3 (to patch an RCE in the AVIF path of the Image Optimization API) and re-enabled in 16.3.4 — use `next@^16.3.8` so `'image/avif'` works and the security fixes are in
 - `images.domains` is deprecated (use `remotePatterns`); `next/legacy/image` is deprecated
 
 ### Custom Image Loader

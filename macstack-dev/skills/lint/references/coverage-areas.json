@@ -14,7 +14,7 @@
       "kind": "section",
       "name": "Processes",
       "description": "Business processes, their steps and HITL points",
-      "examples": ["media-hosting-ops", "sales-ops"]
+      "examples": ["teleshop-ops", "sales-ops"]
     },
     {
       "id": "triggers",
@@ -140,7 +140,7 @@
       "kind": "cross-cutting",
       "name": "Conventions",
       "description": "Naming, code style, commit and branch discipline for this stack",
-      "examples": ["stack-directus-nextjs-trigger-dev"]
+      "examples": ["stack-directus-nextjs-trigger"]
     },
     {
       "id": "documentation",

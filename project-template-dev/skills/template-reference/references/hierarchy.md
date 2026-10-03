@@ -8,21 +8,22 @@ The universal base template. Created once by the core team. All other templates 
 
 **What it contains:**
 - Empty `stack.json` (level 0, no stack, no parent)
-- Generic `CLAUDE.md` with placeholder sections
+- `AGENTS.md` with the shared rules and a generic `CLAUDE.md` (placeholder sections) that imports it with `@AGENTS.md`
 - Generic `README.md` with comprehensive setup guide
 - `.env.example` with all possible services commented out
-- `.mcp.json.example` with placeholder structure
+- Committed `.mcp.json` with `${VAR}` references only (empty `mcpServers` at Level 0)
+- Committed `.claude/settings.json` (`enabledPlugins`, `extraKnownMarketplaces`)
 - Process skills: brainstorming, planning, tdd, debugging, verification
 - Project-config skill (template with empty tables)
-- Core commands: init-stack, commit, pr, plan, review, retro, sync, fix-issue
+- Core workflow skills: init-stack, commit, pr, plan-feature, code-review-project, retro, sync, fix-issue
 - Core agent: code-reviewer
 - Core rules: safety, search-before-building, project-conventions
 - Docs templates: architecture.md, code-style.md, api-conventions.md
-- Sync script for CLAUDE.md → AGENTS.md mirroring
+- Sync script that mirrors the shared rules (`AGENTS.md`) into `.cursor/` — `AGENTS.md` itself is never generated
 
 **When to modify Level 0:**
 - Adding a new process skill that all stacks benefit from
-- Updating a core command (commit, pr, plan, etc.)
+- Updating a core workflow skill (commit, pr, plan-feature, etc.)
 - Adding a universal safety rule
 - Improving documentation templates
 - Updating the sync script
@@ -40,7 +41,8 @@ Stack-specific template. Created per technology combination. Reused for multiple
 - Filled `stack.json` (level 1, parent = project-template, layers and plugins populated)
 - Stack-specific `CLAUDE.md` with technology details, gotchas, installed plugins
 - Stack-specific `.env.example` with only relevant variables uncommented
-- Stack-specific skills (e.g., `new-page` for Next.js projects)
+- Stack-specific skills (e.g., `new-page` for Next.js projects) and `.claude/rules/*.md` with `paths:`
+- Stack-specific MCP servers in `.mcp.json` and `enabledPlugins` in `.claude/settings.json`, both from `stack.json`
 - Stack-specific documentation in `docs/`
 - Technology-specific config files (next.config.ts, tsconfig.json, docker-compose.yml, etc.)
 - Package management files (package.json, pnpm-lock.yaml, etc.)
@@ -90,7 +92,7 @@ Final client project with real credentials and resource IDs.
 **What it adds over Level 1 (or 1.5 if forked from demo):**
 - Filled `project-config` skill with real resource IDs (table IDs, workflow IDs, webhook URLs)
 - Real `.env` / `.env.local` with actual credentials (never committed)
-- Real `.mcp.json` with actual service URLs and tokens (never committed)
+- `.mcp.json` entries for the project's own services — still `${VAR}` references; the real URLs and tokens live in `.env` / `.claude/settings.local.json` (never committed)
 - Client-specific skills (domain logic, business workflows)
 - Client-specific agents (data analyst, report generator, etc.)
 - Custom business logic, pages, components

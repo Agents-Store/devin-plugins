@@ -95,7 +95,7 @@ Add these recommended fields to every content collection:
 | Field | Type | Purpose |
 |-------|------|---------|
 | `id` | `uuid` | Primary key (auto-generated on collection create) |
-| `status` | `string` | Workflow status (draft/published/archived) |
+| `status` | `string` | Workflow status (draft/published/archived). Directus 12 new collections get a boolean `archived` field instead, see Archive Pattern |
 | `sort` | `integer` | Manual sort order |
 | `user_created` | `uuid` | Auto-tracked creator (system field) |
 | `user_updated` | `uuid` | Auto-tracked last editor (system field) |
@@ -220,7 +220,13 @@ Input: {
 }
 ```
 
-Allows creating content versions (drafts) before publishing changes.
+Allows creating content versions (drafts) before publishing changes. This is the draft/publish workflow of Directus 12, and it replaces a hand-made `status` field for review flows:
+
+- The published item is addressed by the reserved version key `published` (the older `main` still works). `draft` is a reserved global version that exists for every item once versioning is on. `published`, `main` and `draft` cannot be used as custom version keys
+- In the Studio the published view is read-only: editing opens the draft, and Publish (with a comparison step) makes a version the published item. Creating an item in a versioned collection opens an item-less draft, publishing it creates the item and needs `create` permission
+- Read a version with `?version=<key>` (REST, SDK `version` option, MCP `items` query `version`). Relational data of a version must be requested with explicit field expansion. A version key that does not exist answers 403
+- REST: `/versions`, `POST /versions/{id}/save`, `GET /versions/{id}/compare`, `POST /versions/{id}/promote`. SDK: `createContentVersion`, `saveToContentVersion`, `compareContentVersion`, `promoteContentVersion`
+- Editors need permissions beyond the collection itself: Read, Create, Update, Delete on `directus_versions` (all fields, no item rules) and Read on `directus_revisions`. Without them the Studio shows a disabled Create button, a read-only form or a Forbidden error when publishing
 
 ## Display Templates
 
@@ -247,7 +253,20 @@ Soft-delete pattern using archive fields:
 }
 ```
 
-When `archive_app_filter: true`, archived items are hidden by default in the app.
+When `archive_app_filter: true`, archived items are hidden by default in the app. Archived items are still returned by the API unless you filter them out.
+
+**Directus 12:** collections created through the Studio wizard get an optional boolean `archived` field (archive value `true`, unarchive value `false`) instead of a string `status`. Existing collections with a string `status` keep working with no migration. For a new collection, prefer:
+
+```json
+"meta": {
+  "archive_field": "archived",
+  "archive_value": "true",
+  "unarchive_value": "false",
+  "archive_app_filter": true
+}
+```
+
+and keep draft/review/publish in content versioning rather than in a `status` value.
 
 ## Common Design Patterns
 

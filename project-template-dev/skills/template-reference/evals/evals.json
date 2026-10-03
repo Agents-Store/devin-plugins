@@ -9,7 +9,7 @@
       "expectations": [
         "Explains the 4-level hierarchy (Level 0, 1, 1.5, 2) with their purposes",
         "Describes the classification rule: universal improvements → Level 0, stack-specific → Level 1",
-        "Provides concrete examples of what goes to Level 0 (safety rules, process skills, core commands)",
+        "Provides concrete examples of what goes to Level 0 (safety rules, process skills, core workflow skills)",
         "Provides concrete examples of what goes to Level 1 (stack-specific skills, gotchas, env vars)",
         "Mentions that project-specific content (resource IDs, client logic) stays at Level 2"
       ]

@@ -9,20 +9,20 @@ Complete list of files in each template level, with descriptions.
 | File | Description |
 |------|-------------|
 | `stack.json` | Template metadata: level, parent, layers, plugins (empty at L0) |
-| `CLAUDE.md` | Claude Code project memory — generic with placeholders |
-| `AGENTS.md` | Auto-generated from CLAUDE.md via sync script (for Cursor/Gemini) |
+| `AGENTS.md` | Shared rules for every coding tool (Cursor, Gemini, Codex, Claude) — the single source, not generated |
+| `CLAUDE.md` | Claude Code project memory — starts with `@AGENTS.md`, then Claude-specific lines; generic with placeholders |
 | `README.md` | Comprehensive setup guide |
 | `.env.example` | All possible env vars commented out — uncomment per stack |
-| `.mcp.json.example` | MCP connection template with placeholder URLs |
-| `.mcp.json` | Real MCP connections (gitignored) |
+| `.mcp.json` | MCP connections, committed — `${VAR}` references only (empty `mcpServers` at L0); values live in `.env` / `.claude/settings.local.json` |
 | `.editorconfig` | Editor formatting rules |
-| `.gitignore` | Excludes .env, .mcp.json, node_modules, etc. |
+| `.gitignore` | Excludes `.env`, `.env.local`, `.claude/settings.local.json`, node_modules, etc. (not `.mcp.json`) |
 
 ### `.claude/` Directory
 
 | File | Type | Description |
 |------|------|-------------|
-| `settings.local.json.example` | Config | Template for Claude Code local settings |
+| `settings.json` | Config | Committed project settings: `enabledPlugins` and `extraKnownMarketplaces` (L0: marketplace registered, `enabledPlugins` empty; L1+: `enabledPlugins` filled from `stack.json` `plugins`) — see `conventions.md` |
+| `settings.local.json.example` | Config | Template for Claude Code local settings (the `env` block `${VAR}` expands from) |
 | `settings.local.json` | Config | Actual local settings (gitignored) |
 
 ### `.claude/skills/`
@@ -37,18 +37,20 @@ Complete list of files in each template level, with descriptions.
 | `project-config/SKILL.md` | Project-specific resource IDs and MCP mappings (template) |
 | `project-config/references/_template.md` | Reference template for project config |
 
-### `.claude/commands/`
+### `.claude/skills/` — workflow skills
 
-| Command | Description |
-|---------|-------------|
-| `init-stack.md` | Initialize stack.json with technologies and plugins |
-| `commit.md` | Create a conventional commit |
-| `pr.md` | Create a pull request |
-| `plan.md` | Create structured implementation plan |
-| `review.md` | Comprehensive code review |
-| `retro.md` | Sprint retrospective |
-| `sync.md` | Sync CLAUDE.md → AGENTS.md and .cursor/ |
-| `fix-issue.md` | Fix a GitHub issue |
+Base workflows are skills (`.claude/skills/<name>/SKILL.md`), invoked as `/<name>`. The older `.claude/commands/<name>.md` form still works and a skill wins over a command of the same name, so existing templates migrate by moving the file.
+
+| Skill | Description |
+|-------|-------------|
+| `init-stack/SKILL.md` | Initialize stack.json with technologies and plugins |
+| `commit/SKILL.md` | Create a conventional commit |
+| `pr/SKILL.md` | Create a pull request |
+| `plan-feature/SKILL.md` | Create structured implementation plan (not `plan`: collides with the built-in `/plan`) |
+| `code-review-project/SKILL.md` | Comprehensive code review (not `review`: the built-in `/review` alias of `/code-review` shadows it) |
+| `retro/SKILL.md` | Sprint retrospective |
+| `sync/SKILL.md` | Mirror the shared rules into `.cursor/` (runs `scripts/sync-context.sh`) |
+| `fix-issue/SKILL.md` | Fix a GitHub issue |
 
 ### `.claude/agents/`
 
@@ -76,7 +78,7 @@ Complete list of files in each template level, with descriptions.
 
 | File | Description |
 |------|-------------|
-| `sync-context.sh` | Syncs CLAUDE.md → AGENTS.md, .cursor/ |
+| `sync-context.sh` | Mirrors the shared rules (`AGENTS.md`) into `.cursor/` — `AGENTS.md` itself is the source and is never generated |
 
 ---
 
@@ -90,6 +92,8 @@ Everything from Level 0 plus:
 |------|-------------|
 | `stack.json` | level=1, parent="project-template", layers and plugins filled |
 | `CLAUDE.md` | Tech stack filled, installed plugins listed, stack-specific gotchas |
+| `.mcp.json` | Stack-specific MCP servers added, `${VAR}` references only |
+| `.claude/settings.json` | `enabledPlugins` lists every plugin from `stack.json`; `extraKnownMarketplaces` registers the marketplace |
 | `.env.example` | Only relevant variables uncommented (e.g., DIRECTUS_URL, NEXTAUTH_SECRET) |
 | `docs/architecture.md` | Stack-specific architecture description |
 | `docs/code-style.md` | Stack-specific style rules |
@@ -122,6 +126,12 @@ Varies by stack. Example for `project-directus-nextjs`:
 | `new-page/SKILL.md` | Scaffold a new page with data fetching (Next.js + Directus) |
 | (other stack-specific skills) | Varies by stack |
 
+### New Rules
+
+| Rule | Description |
+|------|-------------|
+| `.claude/rules/<name>.md` with `paths:` frontmatter | Stack-specific rules that load only when Claude reads a matching file (e.g. `paths: ["src/app/**"]`), keeping CLAUDE.md short |
+
 ---
 
 ## Level 1.5: `demo-{stack}` — Additions
@@ -144,8 +154,8 @@ Everything from Level 1 (or forked from Level 1.5) plus:
 
 | Content | Description |
 |---------|-------------|
-| `.env.local` / `.env` | Real credentials (never committed) |
-| `.mcp.json` | Real MCP connections (never committed) |
+| `.env.local` / `.env` | Real credentials and the values behind the `${VAR}` references in `.mcp.json` (never committed) |
+| `.claude/settings.local.json` | `env` block holding the same values for Claude Code (never committed) |
 | `project-config/SKILL.md` | Filled with actual resource IDs |
 | Domain-specific skills | Business logic skills |
 | Custom agents | Client-specific agents |

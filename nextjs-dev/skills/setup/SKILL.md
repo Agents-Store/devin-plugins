@@ -9,27 +9,38 @@ Confirm that a Next.js project is properly configured for modern App Router deve
 
 ## Prerequisites
 
-- Node.js 20.9+ installed (Next.js 16 minimum); TypeScript 5.1+
+- Node.js 22 or 24 LTS recommended. Next.js 16 formally requires `>=20.9.0`, but Node 20 reached end-of-life on 2026-04-30 and no longer gets fixes; Vitest 5 needs Node >= 22.12
+- TypeScript 5.1+
 - A Next.js project directory with `package.json`
 
 ## Step 1: Check Next.js Version
 
-Read `package.json` and locate the `next` dependency:
+Read `package.json` and locate the `next` dependency. The recommended range is `^16.3.8`:
 
 ```json
 {
   "dependencies": {
-    "next": "^16.0.0"
+    "next": "^16.3.8"
   }
 }
 ```
 
 | Version | Status | Notes |
 |---------|--------|-------|
-| 16.x | Current (16.3 latest) | Cache Components, Turbopack default, `proxy.ts`, built-in MCP at `/_next/mcp` |
-| 15.x | Maintenance | Backport releases only (e.g. 15.5.x); `middleware.ts` era, no built-in MCP |
+| 16.3.x, at 16.3.8 or later | Current | Cache Components, Turbopack default, `proxy.ts`, built-in MCP at `/_next/mcp` |
+| 16.x below 16.3.8 | Patch now | Missing security fixes: RCE on Windows-hosted servers and via AVIF in Image Optimization (16.3.3), RCE in `next/og` `ImageResponse` (16.3.6), and in 16.3.8 an SSRF in Image Optimization, Draft Mode and root-param leaks in `use cache`, and `/_next/mcp` without an origin check |
+| 15.x | Maintenance | Backport releases only; stay on 15.5.27 or later. `middleware.ts` era, no built-in MCP |
 | 14.x | Legacy | App Router GA, consider upgrading |
 | 13.x or below | Outdated | Upgrade required for modern patterns |
+
+Verify the installed (not just the declared) version and the registry latest:
+
+```bash
+npm ls next
+npm view next@latest version   # compare: installed must be >= 16.3.8 on the 16.3 line
+```
+
+Next.js ships a formal monthly security-release program (since 2026-07-13), so re-run this check each month instead of leaving an old range in place.
 
 ## Step 2: Verify App Router Structure
 
@@ -88,7 +99,7 @@ export default nextConfig
 
 The config file can be `next.config.ts` natively (TypeScript is fully supported). Common configuration to verify:
 - `images.remotePatterns` — if using external image domains
-- `cacheComponents` — must be `true` for `use cache` / Cache Components (16+)
+- `cacheComponents` — must be `true` for `use cache` / Cache Components (16+). Record whether it is on: it decides which caching model applies (`export const revalidate` / `dynamic` work only when it is off, and are removed when it is on — see the `data-fetching` skill)
 - `experimental` — any experimental features enabled
 - `output` — `'standalone'` for Docker deployments
 
@@ -106,7 +117,7 @@ Verify the server starts on `http://localhost:3000` without errors.
 
 ## Step 6: Verify MCP Integration (Next.js 16+)
 
-For Next.js 16+, the built-in MCP endpoint is available at `/_next/mcp` when the dev server is running. Check for `.mcp.json` in the project root:
+For Next.js 16+, the built-in MCP endpoint is available at `/_next/mcp` when the dev server is running. Use `next@>=16.3.8` for it: earlier dev servers did not verify the request origin, so a website the developer visits could read project data from the endpoint. Check for `.mcp.json` in the project root:
 
 ```json
 {

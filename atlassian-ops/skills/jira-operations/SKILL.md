@@ -12,7 +12,10 @@ Plain-language playbooks for everyday Jira work, each driving the REST API v3. F
 If `ATLASSIAN_*` aren't confirmed this session, run the `setup` skill first (one `GET /myself` call). Define these once for brevity:
 
 ```bash
-JIRA="${ATLASSIAN_SITE_URL%/}/rest/api/3"
+# Classic token → site URL; scoped token (ATLASSIAN_CLOUD_ID set) → API gateway — see `setup`
+JIRA_ROOT="${ATLASSIAN_CLOUD_ID:+https://api.atlassian.com/ex/jira/${ATLASSIAN_CLOUD_ID}}"
+JIRA_ROOT="${JIRA_ROOT:-${ATLASSIAN_SITE_URL%/}}"
+JIRA="${JIRA_ROOT}/rest/api/3"
 AUTH=(-u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" -H "Accept: application/json")
 JSON=(-H "Content-Type: application/json")
 ```
@@ -32,7 +35,9 @@ curl -s "${AUTH[@]}" "${JSON[@]}" -X POST "${JIRA}/search/jql" \
   -d '{"jql":"project = PROJ AND statusCategory != Done ORDER BY created DESC","fields":["summary","status","assignee"],"maxResults":50}' \
   | jq '.issues[] | {key, summary: .fields.summary, status: .fields.status.name}'
 ```
-Page by passing the returned `nextPageToken` until `isLast` is true. (→ `search-jql.md`)
+The JQL must be **bounded** — it needs a restriction such as `project = PROJ` or `created >= -30d` before `ORDER BY`; a bare `ORDER BY created DESC` returns `400`. List the `fields` you need (the default is `id` only). Page by passing the returned `nextPageToken` until `isLast` is true — there is no `total`; use `POST /search/approximate-count` for a count. (→ `search-jql.md`)
+
+To pull many issues with full fields, search for ids and then `POST /issue/bulkfetch` (`{"issueIdsOrKeys":[…],"fields":["summary","status"]}`): up to 1000 issues per call when `fields` is an explicit list with no multi-value fields (`comment`, `worklog`, `attachment`), otherwise 100. (→ `issues.md`)
 
 ## Workflow: create an issue
 
@@ -109,6 +114,8 @@ curl -s "${AUTH[@]}" "${JSON[@]}" -X POST "${JIRA}/issueLink" -d '{
 
 ## Workflow: report (paginate a JQL)
 
-Use `POST /search/jql` with `maxResults` and loop on `nextPageToken`; or `POST /search/approximate-count` `{"jql":"…"}` for a fast total. Build a saved filter with `POST /filter` to reuse the query. (→ `search-jql.md`, `dashboards-filters.md`)
+Use `POST /search/jql` (bounded JQL) with `maxResults` and loop on `nextPageToken`; or `POST /search/approximate-count` `{"jql":"…"}` for a fast total. Build a saved filter with `POST /filter` to reuse the query. (→ `search-jql.md`, `dashboards-filters.md`)
+
+Right after a write, a search can still miss the change; pass `"reconcileIssues":[<issueId>]` for read-after-write consistency. (→ `search-jql.md`)
 
 When a call fails (400/401/403/404/429), switch to the `troubleshoot` skill.

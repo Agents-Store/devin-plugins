@@ -25,11 +25,12 @@ Queries:
 
 ### Step 3: SEARCH
 ```
-~~search("latest AI regulation news and developments 2026")
-→ Perplexity for most recent AI answer
+~~answer("latest AI regulation news and developments 2026")
+→ Perplexity for the most recent AI answer (recency filter month)
 
 ~~search("AI regulation policy 2026")
-→ Exa with news category and date filter
+→ Perplexity search with a month recency filter, or Exa advanced search with
+  category news and a start date (opt-in)
 
 ~~batch_search([
   "EU AI Act enforcement 2026",
@@ -44,7 +45,7 @@ Detect dates on all URLs → filter for most recent only
 
 Rank by relevance("AI regulation 2026", recent_urls)
 
-~~batch_scrape(top_5_recent_urls)
+~~batch_scrape(top_5_recent_urls, question: "what changed and when", topk: 3)
 ```
 
 ### Step 5: EXTRACT
@@ -77,4 +78,4 @@ Output: Executive Summary with:
 - Methodology
 
 ### Expected Capabilities Used
-`~~search`, `~~batch_search`, `~~batch_scrape`, date detection, relevance ranking, deduplication
+`~~answer`, `~~search`, `~~batch_search`, `~~batch_scrape`, date detection, relevance ranking, deduplication

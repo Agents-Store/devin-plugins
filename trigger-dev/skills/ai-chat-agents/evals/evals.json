@@ -1,0 +1,18 @@
+{
+  "skill_name": "ai-chat-agents",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a Next.js route handler that calls streamText for a chat UI. Move it to a durable Trigger.dev chat agent on a self-hosted server that is on version 4.4.4.",
+      "expected_output": "Should define chat.agent with the streamText taken from the run argument, the two server actions, useTriggerChatTransport, and warn that chat agents and sessions need server 4.5.0 or newer",
+      "files": [],
+      "expectations": [
+        "Defines the agent with chat.agent from @trigger.dev/sdk/ai",
+        "Takes streamText from the run argument instead of importing it from ai",
+        "Forwards signal as abortSignal",
+        "Adds the two server actions (chat.createStartSessionAction and a token mint) and useTriggerChatTransport on the frontend",
+        "States that chat agents and sessions require server 4.5.0 or newer, so a 4.4.4 server must be upgraded first"
+      ]
+    }
+  ]
+}

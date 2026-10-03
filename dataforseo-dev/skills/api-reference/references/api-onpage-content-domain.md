@@ -95,48 +95,46 @@ Returns domain registration data enriched with backlink stats and traffic metric
 
 ### LLM Mentions Search
 ```bash
-POST /v3/content_analysis/ai_optimization/llm_mentions/search
+POST /v3/ai_optimization/llm_mentions/search_mentions/live
 Body: [{
-  "target": [{"domain": "example.com", "search_scope": ["answer"]}],
+  "target": [{"domain": "example.com", "search_scope": ["sources"]}],
   "platform": "chat_gpt",
-  "location_name": "United States",
+  "location_code": 2840,
   "language_code": "en",
   "limit": 50
 }]
 ```
-Returns queries where ChatGPT or Google AI mentions the target domain.
+Returns the questions and answers in which ChatGPT or Google AI mentions the target. ChatGPT data exists for United States and English only.
 
-### LLM Mentions Aggregated Metrics
+### LLM Mentions Target Metrics
 ```bash
-POST /v3/content_analysis/ai_optimization/llm_mentions/agg_metrics
+POST /v3/ai_optimization/llm_mentions/target_metrics/live
 Body: [{
   "target": [{"keyword": "best crm software", "match_type": "word_match"}],
   "platform": "chat_gpt",
-  "location_name": "United States",
+  "location_code": 2840,
   "language_code": "en"
 }]
 ```
-Returns aggregated visibility scores across all matching queries.
+Returns aggregated mention metrics for the target. To compare 2 to 10 targets, use `/v3/ai_optimization/llm_mentions/multi_target_metrics/live`; the other LLM Mentions endpoints are listed in the `mcp-patterns` skill's `endpoint-paths.md`.
 
-### ChatGPT Scraper
+### ChatGPT LLM Scraper
 ```bash
-POST /v3/content_analysis/ai_optimization/chat_gpt_scraper/live
+POST /v3/ai_optimization/chat_gpt/llm_scraper/live/advanced
 Body: [{
-  "keyword": "best project management tools 2024",
-  "location_name": "United States",
+  "keyword": "best project management tools",
+  "location_code": 2840,
   "language_code": "en"
 }]
 ```
-Returns ChatGPT's actual response for the query, including cited URLs and recommendations.
+Returns what ChatGPT shows for the query: the answer as typed items, cited sources, brand entities and the search results it looked at. The Gemini version is `/v3/ai_optimization/gemini/llm_scraper/live/advanced`.
 
-### LLM Response
+### LLM Responses
 ```bash
-POST /v3/content_analysis/ai_optimization/llm_response/live
+POST /v3/ai_optimization/chat_gpt/llm_responses/live
 Body: [{
-  "keyword": "compare monday.com vs asana",
-  "model": "gpt-4",
-  "location_name": "United States",
-  "language_code": "en"
+  "user_prompt": "compare monday.com vs asana",
+  "model_name": "<id from GET /v3/ai_optimization/chat_gpt/llm_responses/models>"
 }]
 ```
-Returns the actual LLM response for the specified model and query.
+Returns the model's answer to your prompt. The same body works for `/v3/ai_optimization/claude/llm_responses/live`, `/v3/ai_optimization/gemini/llm_responses/live` and `/v3/ai_optimization/perplexity/llm_responses/live`.

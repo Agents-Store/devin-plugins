@@ -7,7 +7,7 @@
       "expected_output": "Identifies specific LCP and CLS issues and implements targeted fixes",
       "files": [],
       "expectations": [
-        "Checks if LCP image has priority prop and sizes attribute",
+        "Checks that the LCP image has loading=\"eager\" and fetchPriority=\"high\" (or preload in Next.js 16 when one LCP image fits every viewport) and a sizes attribute; does not recommend the deprecated priority prop on Next.js 16",
         "Verifies next/image is used instead of native img tags",
         "Checks for AVIF/WebP format configuration in next.config",
         "Verifies next/font usage (no external font requests causing CLS)",

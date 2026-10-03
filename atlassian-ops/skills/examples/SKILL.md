@@ -5,7 +5,7 @@ description: This skill should be used when the user wants a worked end-to-end J
 
 # Atlassian Worked Examples
 
-End-to-end scenarios that chain real Jira and Confluence REST calls. Each scenario lives in `references/scenarios/`. They assume the `setup` skill has run (so `ATLASSIAN_SITE_URL`, `ATLASSIAN_EMAIL`, `ATLASSIAN_API_TOKEN` are set) and reuse the conventions from `jira-operations` / `confluence-operations` (real verbs, ADF for Jira, version bump for Confluence, resolve names → ids, confirm destructive actions).
+End-to-end scenarios that chain real Jira and Confluence REST calls. Each scenario lives in `references/scenarios/`. They assume the `setup` skill has run (so `ATLASSIAN_SITE_URL`, `ATLASSIAN_EMAIL`, `ATLASSIAN_API_TOKEN` are set, plus `ATLASSIAN_CLOUD_ID` when the token is scoped — each scenario then targets the `api.atlassian.com` gateway) and reuse the conventions from `jira-operations` / `confluence-operations` (real verbs, ADF for Jira, version bump for Confluence, resolve names → ids, confirm destructive actions).
 
 ## Scenarios
 

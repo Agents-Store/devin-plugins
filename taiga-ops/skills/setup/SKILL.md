@@ -13,10 +13,12 @@ The user sets these in their shell or repo `.env`. Read them — never hardcode 
 
 | Variable | Required | Meaning |
 |----------|----------|---------|
-| `TAIGA_API_URL` | yes | Base instance URL, e.g. `https://api.taiga.io` (hosted) or `https://taiga.mycompany.com` (self-hosted). The API lives under `${TAIGA_API_URL}/api/v1`. |
+| `TAIGA_API_URL` | yes | Base instance URL, e.g. `https://api.taiga.io` (hosted Taiga Cloud — has plans with project and storage limits, see the note below) or `https://taiga.mycompany.com` (self-hosted). The API lives under `${TAIGA_API_URL}/api/v1`. |
 | `TAIGA_ADMIN_USERNAME` | yes | Username or email used to obtain a token. |
 | `TAIGA_ADMIN_PASSWORD` | yes | Password for that account. |
 | `TAIGA_AUTH_TOKEN` | derived | Obtained at runtime from the login call below; reused for the rest of the session. |
+
+**Taiga Cloud limits.** Since 2025-10-15 the hosted service enforces plan limits on project count and storage (existing accounts had until 2026-01-01 to choose a plan). A `POST /projects`, a privacy change or a file upload on a Cloud account can therefore be refused for hitting a limit — for example `"No room left for more projects."`; read the response body before retrying. Self-hosted instances are not subject to the Cloud plans (an admin can set `MAX_PRIVATE_PROJECTS_PER_USER`-style limits of their own).
 
 If `TAIGA_API_URL` is missing, ask the user for it. If it does not already end without a trailing slash, normalize it (`${TAIGA_API_URL%/}`).
 

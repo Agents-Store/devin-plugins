@@ -4,14 +4,14 @@
     {
       "id": 1,
       "prompt": "I have a new feature request 'Two-factor authentication' to add to TaskFlow. Create it with acceptance criteria, estimate 5 points, label it type/feature + area/auth, and drop it into the current cycle 'Sprint 15'. Show me the exact MCP tool calls.",
-      "expected_output": "Sequence of concrete tool calls with exact parameter names: list_projects → list_labels → list_cycles → create_work_item (with point, label_ids, description_html containing Given/When/Then AC) → add_work_items_to_cycle (with issue_ids array).",
+      "expected_output": "Sequence of concrete tool calls with exact parameter names: project(action=list) → label(action=list) → cycle(action=list) → workitem(action=create) (with point, labels, description_html containing Given/When/Then AC) → cycle(action=manage_workitems) (with add_ids array).",
       "files": [],
       "expectations": [
         "Lists labels before creating (to resolve label names → IDs)",
         "Uses description_html with Given/When/Then format, not raw text",
-        "Passes point: 5 and label_ids as an array",
-        "Uses add_work_items_to_cycle with issue_ids (plural array, not issue_id)",
-        "Resolves cycle by name from list_cycles (not assumed)",
+        "Passes point=5 and labels as an array of label UUIDs (the workitem tool's fixed parameter name)",
+        "Uses cycle(action=manage_workitems) with add_ids (an array of work item UUIDs)",
+        "Resolves cycle by name from cycle(action=list) (not assumed)",
         "References tool-patterns.md for exact parameter formats"
       ]
     },
@@ -23,7 +23,7 @@
       "expectations": [
         "Explicitly reads references/scenarios/sprint-lifecycle.md (not just SKILL.md)",
         "Names all key phases: planning, execution, standup, close, retro",
-        "Shows concrete tool calls (list_archived_cycles, create_cycle, add_work_items_to_cycle, etc.), not just prose",
+        "Shows concrete tool calls (cycle(action=list, status=completed), cycle(action=create), cycle(action=manage_workitems), etc.), not just prose",
         "Links to dedicated skills (sprint-planning, daily-standup, sprint-review-retro) for deep-dives"
       ]
     },

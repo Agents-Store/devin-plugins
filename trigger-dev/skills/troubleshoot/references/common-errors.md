@@ -17,7 +17,10 @@
 | `Error: ENOENT: no such file` | Missing config file | Run `npx trigger.dev@latest init` |
 | `Authentication failed` | Invalid credentials | Re-login: `npx trigger.dev@latest login` |
 | `Could not find project` | Wrong project ref | Check `project` in trigger.config.ts |
-| `Package version mismatch` | SDK/CLI version mismatch | Update: `npm install @trigger.dev/sdk@latest` |
+| `Package version mismatch` | SDK/CLI version mismatch | `npx trigger.dev@<version> update` (on self-hosted use the server's version) |
+| `The "maxDuration" trigger.config option is now required` | No `maxDuration` in `defineConfig` | Add `maxDuration: 300` (seconds, at least 5) |
+| `Interactive prompts cannot be used in non-TTY environments` | `init` run without a TTY | Pass `--yes` with `--project-ref` (or `--project-name` and `--org-name`) |
+| `unknown option` on a self-hosted flag (init, login, deploy) | The CLI has no self-hosted switch | Use `-a, --api-url <url>` or `TRIGGER_API_URL` |
 
 ## Runtime Errors
 
@@ -26,7 +29,7 @@
 | `Task "xxx" not found` | Task not exported or not in dirs | Export task; check `dirs` in config |
 | `Payload validation failed` | Schema mismatch | Match payload to task's schema definition |
 | `AbortTaskRunError` | Task intentionally aborted | Check abort conditions in code |
-| `Max duration exceeded` | Task took too long | Increase `maxDuration` or optimize |
+| `Max duration exceeded` | Task took too long | Increase `maxDuration` (task or config) or optimize |
 | `Out of memory` | Task exceeds machine RAM | Use larger machine preset |
 
 ## Deployment Errors
@@ -49,7 +52,8 @@
 | `No containers starting` | Supervisor OOM | Increase Docker memory limits |
 | `Registry push: connection refused` | Registry not running | Check registry container status |
 | `MinIO: bucket not found` | Missing packets bucket | Create via MinIO UI at :9001 |
-| `ClickHouse schema error` | Migration tracker out of sync | Check webapp migration logs |
+| `ClickHouse schema error` | Migration tracker out of sync | Check webapp migration logs; the goose tracker may need `goose reset && goose up` (destructive, non-production only) |
+| Webapp refuses to start after upgrade | Old default credentials in `.env` (4.5.6+) | Generate unique secrets, or temporarily `ALLOW_INSECURE_DEFAULT_SECRETS=true` |
 
 ## MCP Errors
 
@@ -58,7 +62,9 @@
 | MCP tools not found | Server not configured | Run `npx trigger.dev@latest mcp` |
 | MCP returns empty | Wrong project/environment | Pass correct projectRef and environment |
 | MCP timeout | Instance unreachable | Check network to self-hosted URL |
-| MCP accesses prod | No dev-only restriction | Add `--dev-only` to MCP args |
+| MCP accesses prod | No dev-only restriction | Add `--dev-only` to the MCP server args |
+| MCP can deploy or trigger | No read-only restriction | Add `--readonly` to the `mcp` server args (not to `install-mcp`) |
+| `submit_feedback` missing | Read-only mode, or telemetry disabled | Expected: the tool is hidden in both cases |
 
 ## HTTP Status Codes
 

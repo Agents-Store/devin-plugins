@@ -77,17 +77,20 @@ npm install @grammyjs/auto-retry
 import { autoRetry } from "@grammyjs/auto-retry";
 
 bot.api.config.use(autoRetry({
-  maxAttempts: 3,         // up to 3 retries
-  maxDelaySeconds: 10,    // never wait longer than 10s — fail fast otherwise
-  retryOnInternalServerErrors: true,
+  maxRetryAttempts: 3,                 // retry a failed call up to 3 times (default: Infinity)
+  maxDelaySeconds: 10,                 // never wait longer than 10s — fail fast otherwise (default: Infinity)
+  rethrowInternalServerErrors: false,  // 5xx responses are retried by default; true surfaces them instead
+  rethrowHttpErrors: false,            // network failures (HttpError) are retried by default; true surfaces them
 }));
 ```
+
+Every option is optional — `autoRetry()` alone retries 429s, 5xx and network errors forever. These four are the complete option set: any other name (for example one copied from an older blog post) is a TypeScript error.
 
 Without auto-retry you'd see `GrammyError: 429 Too Many Requests` bubbling into your handlers — your bot just stops talking until the user retries.
 
 ## transformer-throttler — proactive shaping
 
-Auto-retry is reactive. `@grammyjs/transformer-throttler` *prevents* hitting the limit by enqueueing outgoing calls via Bottleneck:
+Auto-retry is reactive. `@grammyjs/transformer-throttler` *prevents* hitting the limit by enqueueing outgoing calls via Bottleneck. The official docs open with "consider using the auto-retry plugin instead", so start with auto-retry alone and add the throttler when you send a lot of outbound traffic (broadcasts, many chats):
 
 ```bash
 npm install @grammyjs/transformer-throttler
@@ -106,11 +109,11 @@ bot.api.config.use(apiThrottler({
 }));
 ```
 
-Recommended pairing: **install BOTH** — throttler proactively, auto-retry as the safety net.
+For heavy outbound traffic, install **both** — the throttler proactively, auto-retry as the safety net for the undocumented limits the throttler cannot know about.
 
 ```typescript
 bot.api.config.use(apiThrottler());     // first
-bot.api.config.use(autoRetry());        // second (executes if throttler missed)
+bot.api.config.use(autoRetry());        // second (catches whatever the throttler missed)
 ```
 
 ## Bot API rate limits — what you're shaping against
@@ -122,21 +125,24 @@ Documented Telegram limits (subject to change):
 | Outgoing messages to the same user | ~1 / second |
 | Outgoing messages to the same group | ~20 / minute |
 | Global outgoing | ~30 / second |
-| Broadcasts | Use `sendMessage` in chunks of ≤30/s |
+| Broadcasts (free) | Spread over time: stay near 30 messages / second, or you get 429s |
+| Paid broadcasts | Up to 1000 messages / second, **0.1 Star per message** above the free 30/s |
 
-The throttler defaults approximate these. Telegram also enforces *undocumented* anti-spam limits — there's no way to know exactly where the line is, so always include auto-retry.
+Paid broadcasts are switched on through @BotFather and need a balance of at least 100 000 Stars and at least 100 000 monthly active users; only successfully delivered messages are charged. Below that, spread notifications over several hours.
+
+The throttler defaults approximate the free limits. Telegram also enforces *undocumented* anti-spam limits — there's no way to know exactly where the line is, so always include auto-retry.
 
 ## Bot.api.config — transformer order matters
 
-Transformers are applied in the order you `use()` them, outermost first. The recommended order:
+Each `use()` wraps the transformers installed before it, so the **last** one installed is the outermost. The usual arrangement:
 
 ```typescript
 bot.api.config.use(apiThrottler());     // 1. shape outbound rate
-bot.api.config.use(autoRetry());        // 2. retry on 429 / 5xx
+bot.api.config.use(autoRetry());        // 2. retry on 429 / 5xx — wraps the throttler
 // (your custom transformers if any)
 ```
 
-Reverse this and auto-retry happens *before* throttling — wasted requests when you're already past the limit.
+With this order a retried request passes through the throttler again. The grammY docs do not prescribe an order, so treat it as a convention and check it under your own load.
 
 ## High-throughput pattern (canonical)
 

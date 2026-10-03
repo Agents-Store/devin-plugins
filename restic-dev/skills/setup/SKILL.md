@@ -52,10 +52,12 @@ curl -fsSL -o restic.bz2 \
 bunzip2 restic.bz2
 install -m755 restic /usr/local/bin/restic
 rm -f restic
-restic version    # expect >= 0.14 (compression / repo format v2)
+restic version    # expect >= 0.14 (compression / repo format v2); recommended >= 0.19.1
 ```
 
 If `restic` is already installed, prefer `restic self-update` (needs write permission to the binary path). In production pin a version rather than auto-updating on a schedule.
+
+**Recommended version: ≥ 0.19.1** (≥ 0.14 is only the floor for repo format v2 and compression). 0.19.1 restores the `snapshots --latest <n>` grouping that 0.19.0 dropped, makes `backup` skip inaccessible source paths, and refuses a `mount` over the repository directory. Mind the 0.19 behaviour changes before upgrading a scheduled host: `backup` exits 3 for a missing source path, `forget` exits 3 when it cannot remove a snapshot, and an invalid `RESTIC_COMPRESSION`/`RESTIC_PACK_SIZE`/`RESTIC_READ_CONCURRENCY` is fatal (see `cli-reference`, `backup-script`).
 
 ## Verification
 
@@ -67,9 +69,10 @@ command -v restic # /usr/local/bin/restic
 ## Gotchas
 
 - **`aarch64` ↔ `arm64` naming mismatch** — `uname -m` says `aarch64`, but the release asset is `arm64`. The snippet above maps it.
-- **Need ≥ 0.14** for compression and repo format v2. An older binary silently creates a v1 repo with no compression.
+- **Need ≥ 0.14** for compression and repo format v2 (target ≥ 0.19.1). An older binary silently creates a v1 repo with no compression.
 - **restic cache disk pressure** — the local cache (default `~/.cache/restic`) can grow to gigabytes on large repos. If `/` is tight, plan `RESTIC_CACHE_DIR` on a bigger filesystem (set in `repository-setup`).
 - **`self-update` needs write access** to `/usr/local/bin/restic` (run as root). It will not update a package-manager-managed binary in a system path it can't write.
+- **`self-update` can hit a GitHub API rate limit (403 Forbidden) on a shared IP** — since 0.19.0 set `GITHUB_ACCESS_TOKEN=<personal access token>` for that one command (never in `r2.env` or git).
 - This skill only recons and installs — it does **not** touch credentials or the repository. That is `repository-setup`.
 
 ## What this skill does NOT cover

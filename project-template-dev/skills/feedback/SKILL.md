@@ -105,9 +105,11 @@ Open the appropriate file in the parent template and make targeted edits. Route 
 - Use imperative form in the body
 - Generalize: ensure the skill works for ANY project using this template, not just the one where the issue was discovered
 
-### Commands (`.claude/commands/{name}.md`)
+### Workflow skills and commands (`.claude/skills/{name}/SKILL.md`, older: `.claude/commands/{name}.md`)
+- New workflows are skills; update an existing `.claude/commands/{name}.md` in place, or migrate it to a skill when the change is larger than a one-line fix
 - Create or update with proper frontmatter (description, argument-hint, allowed-tools)
-- Keep commands generic — no project-specific paths or IDs
+- Do not name a workflow `review` (the built-in `/review` alias shadows it) or `plan` (collides with the built-in `/plan`); use `code-review-project` and `plan-feature`
+- Keep workflows generic — no project-specific paths or IDs
 
 ### Agents (`.claude/agents/{name}.md`)
 - Create or update with frontmatter (name, description with examples, model)
@@ -118,8 +120,8 @@ Open the appropriate file in the parent template and make targeted edits. Route 
 - Include a WHY explanation for every restrictive rule
 
 ### CLAUDE.md
-- Update the relevant section (Tech Stack, Quick Commands, Gotchas, Critical Rules, Installed Plugins)
-- Keep total under 100 lines
+- Update the relevant section (Tech Stack, Quick Commands, Gotchas, Critical Rules, Installed Plugins) in the file that holds it: `AGENTS.md` for the shared rules, `CLAUDE.md` for Claude-specific lines (it starts with `@AGENTS.md`)
+- Keep the total under 100 lines, imported `AGENTS.md` included (this system's own limit; Anthropic's guidance is under 200)
 - Remove any placeholder text being replaced
 
 ### .env.example
@@ -136,9 +138,14 @@ Open the appropriate file in the parent template and make targeted edits. Route 
 - At Level 0: keep generic with placeholders
 - At Level 1: fill with stack-specific content
 
-### .mcp.json.example
-- Update MCP connection templates
-- Use placeholder URLs only — never real credentials
+### .mcp.json
+- The file is committed: update MCP connections with `${VAR}` references only — never a literal token, key or deployment host
+- Add every new variable to `.env.example`
+- A literal URL is acceptable only for a published product endpoint that is the same for every user
+
+### .claude/settings.json
+- Committed: only `enabledPlugins` and `extraKnownMarketplaces`, kept in step with `stack.json` `plugins`
+- Never put `env` values or tokens here (those go in the gitignored `.claude/settings.local.json`)
 
 ### scripts/
 - Add or fix utility scripts

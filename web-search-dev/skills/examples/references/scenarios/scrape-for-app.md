@@ -21,29 +21,32 @@ From the mapped URLs, select only product pages (e.g., those matching `/products
 
 ## Step 3: Extract Structured Product Data
 
+Scrape each product URL with the `json` format — prompt and schema go into `jsonOptions`. One call per URL:
+
 ```
-Tool: firecrawl_extract
+Tool: firecrawl_scrape
 Input: {
-  "urls": [
-    "https://store.example.com/products/item-1",
-    "https://store.example.com/products/item-2",
-    "https://store.example.com/products/item-3"
-  ],
-  "prompt": "Extract product details including name, price, description, category, and image URLs",
-  "schema": {
-    "type": "object",
-    "properties": {
-      "name": { "type": "string" },
-      "price": { "type": "number" },
-      "currency": { "type": "string" },
-      "description": { "type": "string" },
-      "category": { "type": "string" },
-      "images": { "type": "array", "items": { "type": "string" } },
-      "specs": { "type": "object" }
+  "url": "https://store.example.com/products/item-1",
+  "formats": ["json"],
+  "jsonOptions": {
+    "prompt": "Extract product details including name, price, description, category, and image URLs",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "specs": { "type": "object" }
+      }
     }
   }
 }
 ```
+
+Repeat for `item-2`, `item-3`, ... If the product URLs are not known up front, let `firecrawl_agent` find them (poll `firecrawl_agent_status` until the job completes).
 
 ## Step 4: Transform and Import
 
@@ -67,11 +70,11 @@ for (const product of extractedProducts) {
 
 ## Alternative: Read + Manual Extraction
 
-If `firecrawl_extract` doesn't capture the data cleanly:
+If the JSON format doesn't capture the data cleanly:
 
 ```
-Tool: parallel_read_url
-Input: { "urls": ["<product_urls>"] }
+Tool: read_url
+Input: { "url": ["<up to 5 product URLs>"] }
 ```
 
 Then parse the markdown output to extract product data using code.

@@ -12,7 +12,7 @@
         {"assertion": "has_indexes", "text": "Every FK column has a CREATE INDEX"},
         {"assertion": "has_relation_summary", "text": "Includes a relation summary showing table→table: relation type"},
         {"assertion": "serial_pks", "text": "All tables use serial or bigserial primary keys"},
-        {"assertion": "no_forbidden_types", "text": "No ENUM, ARRAY, jsonb, UUID, INHERITS used anywhere"}
+        {"assertion": "safe_default_types", "text": "Uses only the safe-default types (no ENUM, ARRAY, jsonb, UUID, INHERITS) because the user did not ask for them"}
       ]
     }
   ]

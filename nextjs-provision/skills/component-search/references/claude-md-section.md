@@ -3,31 +3,29 @@
 When creating UI — ALWAYS search for existing components before building from scratch.
 
 ### How to search
-Two MCP servers are configured:
-- `shadcn` — official MCP. Searches across all registries listed in components.json (260+ registries pre-configured).
-- `shadcn-community` — community MCP. Searches component source code, demos, and block implementations on GitHub.
+The official `shadcn` MCP server is configured. It searches across all registries listed in components.json (populate them with the registries from the official directory — skip `unavailable` and hidden ones). Without the MCP use the CLI: `npx shadcn@latest search @registry -q "<term>"` and `npx shadcn@latest view @registry/item`.
 
 ### How to install
-- Official components: `npx shadcn@latest add [component]`
+- Official components: `npx shadcn@latest add [component]` (forms: `field` + React Hook Form; date picker: `popover` + `calendar` — there are no `form` or `date-picker` items)
 - From any registry: `npx shadcn@latest add @[registry]/[component]`
 - From a GitHub repo: `npx shadcn@latest add <user>/<repo>/<item>`
 
 ### Key registries by category
 
 **Animated components & effects:**
-- @magicui, @aceternity, @animate-ui, @cult-ui, @motion-primitives, @chamaac
+- @magicui, @aceternity (degraded), @animate-ui, @cult-ui, @motion-primitives
 
 **Extra UI components:**
 - @coss (ex-Origin UI), @diceui, @basecn, @8bitcn, @boldkit, @8starlabs-ui, @cardcn
 
 **Blocks & sections (marketing, landing pages, dashboards):**
-- @bundui, @blocks-so, @efferd, @doras-ui, @creative-tim
+- @bundui, @blocks-so, @efferd (degraded)
 
 **E-commerce:**
 - @commercn
 
 **AI components:**
-- @ai-elements, @assistant-ui, @tool-ui, @ai-blocks
+- @ai-elements, @assistant-ui, @tool-ui
 
 **Editors & kits:**
 - @plate, @kibo-ui, @kokonutui, @reui

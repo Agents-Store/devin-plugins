@@ -32,7 +32,8 @@ request.form['key']     # POST form data (raises 400 if missing)
 request.form.get('key') # POST form data (returns None if missing)
 request.args.get('q')   # URL query parameters (?q=value)
 request.files['file']   # Uploaded file
-request.json            # Parsed JSON body
+request.json            # Parsed JSON body: 415 if Content-Type is not JSON, 400 if the body is malformed
+request.get_json(silent=True)  # Same, but returns None instead of raising
 request.headers['X-Key'] # Request headers
 request.cookies.get('k') # Cookies
 request.endpoint        # Current endpoint name (e.g., 'auth.login')
@@ -48,7 +49,7 @@ from flask import render_template, redirect, url_for, flash, jsonify, abort, mak
 render_template('page.html', var=value)  # Render Jinja2 template
 redirect(url_for('blueprint.view'))      # HTTP redirect
 url_for('blueprint.view', id=1)          # Generate URL from endpoint name
-url_for('static', filename='css/style.css') # Static file URL
+url_for('static', filename='css/style.css') # Static file URL (no cache busting built in)
 flash('Message text', 'success')         # Flash message (success/error/warning/info)
 jsonify({'key': 'value'})                # JSON response with correct Content-Type
 abort(404)                               # Raise HTTP error
@@ -70,10 +71,15 @@ make_response(body, status, headers)     # Custom response
 ```python
 app.config['SECRET_KEY']                 # Required for sessions/CSRF
 app.config['SQLALCHEMY_DATABASE_URI']    # Database connection string
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS']  # Set to False
-app.config['MAX_CONTENT_LENGTH']         # Max upload size in bytes
+app.config['MAX_CONTENT_LENGTH']         # Max request body size in bytes
 app.config['PERMANENT_SESSION_LIFETIME'] # Session timeout (timedelta)
+app.config['SECRET_KEY_FALLBACKS']       # Flask 3.1: old keys still accepted (rotation)
+app.config['TRUSTED_HOSTS']              # Flask 3.1: allowed Host values, others get 400
+app.config['MAX_FORM_MEMORY_SIZE']       # Flask 3.1: max bytes per non-file form field (default 500_000)
+app.config['MAX_FORM_PARTS']             # Flask 3.1: max fields per multipart body (default 1_000)
 ```
+
+Debug mode is not a config setting to change in code: use `flask run --debug` or `FLASK_DEBUG=1`. `SQLALCHEMY_TRACK_MODIFICATIONS` has been off by default since Flask-SQLAlchemy 3.0, so it no longer needs to be set.
 
 ## Decorators and Hooks
 

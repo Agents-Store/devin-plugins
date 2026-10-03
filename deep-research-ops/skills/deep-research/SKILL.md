@@ -37,14 +37,14 @@ If ambiguous: ask user to clarify
 |-------|---------|-------|-------------|
 | quick | 2-3 | 3 | Quick overview |
 | standard | 4-5 | 5 | Standard research |
-| deep | 6-7 | 8-10 | Deep analysis |
+| deep | 6-7 | 8-10 | Deep analysis; adds one `~~deep_agent` pass (Step 3) |
 
 ### Step 2: PLAN
 
-Form 3-7 search queries from different angles.
+Form 3-7 search queries from different angles. Planning is a step you perform yourself — there is no query-expansion tool.
 
 ```
-1. expand_query(topic) → related terms
+1. Think of related terms, synonyms and the vocabulary of the field
 2. Generate queries covering different angles:
    - Direct: "{topic} overview"
    - Comparison: "{topic} vs alternatives"
@@ -77,16 +77,25 @@ Search using `~~search` / `~~batch_search` with automatic fallback (see CONNECTO
    → Run Exhaustive Discovery Protocol FIRST
    → Use found URLs as primary sources
 
-2. ~~batch_search(queries) — parallel search
+2. ~~batch_search(queries) — parallel search, up to 5 queries per call
    Fallback: ~~search(query) for each query individually
 
 3. For scientific topics:
-   ~~academic_search(query) — add academic results
+   ~~academic_search(query) — paper search first (papers, full-text passages,
+   citation graph), arXiv/SSRN next; add academic results
 
-4. For facts:
-   ~~search(query) — AI-synthesized answers
+4. For code and technical topics:
+   ~~code_search(query) — repositories, issues, PRs, docs
 
-5. On error from any provider → try next in chain (see CONNECTORS.md)
+5. For facts:
+   ~~answer(question) — a short AI answer with numbered citations
+   (`~~search` returns links and snippets only, no synthesis)
+
+6. depth = deep only — one heavy pass:
+   ~~deep_agent(research objective) — slow and costs credits; cross-check its
+   claims against pages you read yourself, never use it as the only source
+
+7. On error from any provider → try next in chain (see CONNECTORS.md)
 ```
 
 **Tool selection by type:**
@@ -108,8 +117,13 @@ Read top-5 pages using `~~scrape` / `~~batch_scrape` with fallback.
 1. Collect all URLs from search results
 2. Rank by relevance → top results
 3. Select top-5 (or top-N based on depth)
-4. ~~batch_scrape(top_urls) → get content
-   Fallback: ~~scrape per URL individually
+4. ~~batch_scrape(top_urls, question: <the research question>, topk: 3)
+   → only the passages that answer the question — far cheaper than whole pages
+   Fallback: ~~scrape per URL individually — the fallbacks return full pages
+   (no `question`), so pick the relevant passages yourself or use the
+   Firecrawl "query" format per URL
+5. Read a page in full only when passages are not enough: exact quotes,
+   tables, a page that is the primary source
 
 Priority:
 - Official sites > reputable sources > blogs
@@ -129,9 +143,13 @@ From each page extract:
 - Dates and timeline events
 
 Tools:
-- Text classification → categorize content
-- ~~extract(urls, schema) → structured data
-- For PDFs: PDF extraction → full text
+- Categorizing content is a step you perform yourself
+- ~~extract(url, schema) → structured data, one URL per call;
+  for URLs you do not know yet → the agent variant of ~~extract
+- For PDFs: ~~scrape reads the PDF text; PDF extraction pulls figures,
+  tables and equations
+- For papers: ~~academic_search read-paper step → passages of one paper
+  that answer a question
 ```
 
 ### Step 6: SYNTHESIZE
@@ -139,7 +157,7 @@ Tools:
 Combine data, deduplicate, cross-check.
 
 ```
-1. Deduplicate → remove redundant info
+1. Deduplicate → remove redundant info (`deduplicate_strings` for long lists of facts)
 2. Cross-check: compare facts from different sources
    - Same fact from 3+ sources → High confidence
    - Same fact from 2 sources → Medium confidence

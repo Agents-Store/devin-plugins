@@ -1,6 +1,6 @@
 ---
 title: Workflow Triggers
-description: Detailed description of workflow trigger types, configuration items, and variable outputs.
+description: "Use this directory when selecting the workflow entry point: collection changes, schedules, UI or API actions, approvals, request interception, or webhooks."
 ---
 
 # Workflow Triggers
@@ -21,10 +21,15 @@ Each trigger document with an `Output Variables` section describes the exact tre
 
 Subsequent nodes can reference these variables in their configuration items based on business needs to achieve dynamic workflow logic.
 
+If a trigger exposes a JSON object/array only as a root value, do not manually append child paths even if the server can resolve them. Add `json-variable-mapping` or `json-query` as the first node, explicitly model the required fields, and make all later nodes use that modeled output. See [Common Conventions - Modeling Raw JSON](../conventions/index.md#modeling-raw-json-before-downstream-use).
+
 ## Usage Notes
 
 * **Only type values explicitly listed in the documentation can be used**; other values will cause the workflow to be unrecognized.
+* Before authoring a persisted trigger `condition` or `filter`, load the `nocobase-utils` skill with topic `filter`, then read [Filter Condition Format](../../../nocobase-utils/references/filter/index.md), resolve each terminal field's live frontend interface/type, and use only that group's operator allowlist. Date fields must use date-specific comparison operators, never `$lt`, `$lte`, `$gt`, or `$gte`.
 * Variables are NOT supported in trigger configuration items. Only static values are allowed.
+* `approval` and `webhook` are commercial capabilities. Their matching plugins must be installed and activated before these trigger types are used. Apply the [Commercial Workflow Plugin Gate](../commercial-plugin-gate.md); if a required plugin is inactive, do not use the trigger type.
+* An explicit approval request must remain an approval workflow. Never replace it with a `manual` node when the Approval plugin is inactive.
 
 ## Execution Mode Matrix
 
@@ -56,5 +61,5 @@ Execution mode semantics are defined by the workflow's `sync` field. See [workfl
 | `action` | Post-action Events | plugin-workflow-action-trigger | [action.md](action.md) |
 | `custom-action` | Custom Action Event | plugin-workflow-custom-action-trigger | [custom-action.md](custom-action.md) |
 | `request-interception` | Pre-action Event | plugin-workflow-request-interceptor | [request-interception.md](request-interception.md) |
-| `webhook` | Webhook | plugin-workflow-webhook | [webhook.md](webhook.md) |
-| `approval` | Approval | plugin-workflow-approval | [approval.md](approval.md) |
+| `webhook` | Webhook | `@nocobase/plugin-workflow-webhook` (commercial; activation required) | [webhook.md](webhook.md) |
+| `approval` | Approval | `@nocobase/plugin-workflow-approval` (commercial; activation required) | [approval.md](approval.md) |

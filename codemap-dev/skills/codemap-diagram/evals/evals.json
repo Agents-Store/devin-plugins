@@ -11,7 +11,7 @@
         "Generates mxGraph XML with real names from code",
         "Applies color coding per layer (data=blue, logic=green, interface=yellow, external=red)",
         "Saves to docs/codemap/diagrams/architecture.drawio",
-        "Calls create_diagram MCP tool for preview"
+        "Calls create_diagram MCP tool for preview (inline only in MCP Apps clients)"
       ]
     },
     {

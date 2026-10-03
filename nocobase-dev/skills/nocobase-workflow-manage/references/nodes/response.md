@@ -1,9 +1,13 @@
 ---
 title: "Webhook Response"
-description: "Explains the status code, response headers, and body configuration for the Webhook response node, which terminates the workflow on execution."
+description: "Use in synchronous Webhook workflows to return a custom HTTP status, headers, or JSON body to the caller and then stop execution."
 ---
 
 # Webhook Response
+
+## Commercial Plugin Prerequisite
+
+This node requires the commercial plugin `@nocobase/plugin-workflow-webhook` to be installed and activated in the target application. Apply the [Commercial Workflow Plugin Gate](../commercial-plugin-gate.md) before creating or updating a Webhook response node. If the plugin is missing or disabled, do not use this node.
 
 ## Node Type
 

@@ -4,26 +4,49 @@
     {
       "id": 1,
       "prompt": "I need to create a PostgreSQL table for blog posts that will be connected to NocoDB as an external database. The table should have a title, body text, and timestamps. What's the correct SQL?",
-      "expected_output": "CREATE TABLE with serial PK named id, text columns for title and body, timestamp columns with DEFAULT now() for created_at and updated_at, PRIMARY KEY (id). No ENUM, no UUID, no jsonb.",
+      "expected_output": "CREATE TABLE with serial PK named id, text columns for title and body, timestamp columns with DEFAULT now() for created_at and updated_at, PRIMARY KEY (id). Uses the safe defaults — no ENUM, ARRAY, UUID or jsonb unless the user asks for them.",
       "files": [],
       "expectations": [
-        {"assertion": "uses_serial_pk", "text": "Uses serial (not bigserial, UUID, or other) as primary key type with name 'id'"},
+        {"assertion": "uses_serial_pk", "text": "Uses serial as the default primary key type with name 'id'"},
         {"assertion": "has_timestamps", "text": "Includes created_at and updated_at columns with timestamp type and DEFAULT now()"},
         {"assertion": "uses_text_type", "text": "Uses 'text' type for title and body columns (not varchar or character varying)"},
         {"assertion": "has_primary_key", "text": "Includes PRIMARY KEY (\"id\") declaration"},
-        {"assertion": "no_forbidden_types", "text": "Does not use ENUM, ARRAY, UUID, jsonb, or INHERITS"}
+        {"assertion": "uses_safe_default_types", "text": "Does not introduce ENUM, ARRAY, UUID, jsonb, or INHERITS when the user did not ask for them"}
       ]
     },
     {
       "id": 2,
       "prompt": "What primary key type should I use for my PostgreSQL tables if I'm connecting this database to NocoBase as an external data source? We expect millions of records.",
-      "expected_output": "Recommends bigserial for large tables. Explains that both serial and bigserial work with NocoDB and NocoBase. Shows the CREATE TABLE template with bigserial. Mentions that NocoBase reads any PK type.",
+      "expected_output": "Recommends bigserial for large tables. Explains that both serial and bigserial work with NocoDB and NocoBase. Shows the CREATE TABLE template with bigserial. Mentions that NocoBase maps serial to integer and bigserial to bigInt.",
       "files": [],
       "expectations": [
         {"assertion": "recommends_bigserial", "text": "Recommends bigserial for large record counts"},
         {"assertion": "mentions_serial_alternative", "text": "Mentions serial as the default/alternative for smaller tables"},
         {"assertion": "explains_both_platforms", "text": "Explains that both NocoDB and NocoBase support both serial and bigserial"},
         {"assertion": "shows_sql_example", "text": "Shows a CREATE TABLE SQL example with bigserial"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Can I connect my PostgreSQL database to NocoBase as an external data source on the free Community edition?",
+      "expected_output": "No — the external PostgreSQL data source is the plugin @nocobase/plugin-data-source-external-postgres, which requires a commercial license (Standard edition or above). Mentions PostgreSQL 9.5 or later as the documented minimum and that NocoBase only reads the external schema.",
+      "files": [],
+      "expectations": [
+        {"assertion": "states_commercial_license", "text": "States that external PostgreSQL in NocoBase needs a commercial license and is not available in Community"},
+        {"assertion": "names_edition", "text": "Names Standard edition (or above) as the entry level"},
+        {"assertion": "reads_schema_only", "text": "Says NocoBase reads the external schema and does not change it"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Our existing tables use UUID primary keys with gen_random_uuid() defaults. Do we have to convert them to serial before connecting NocoDB and NocoBase?",
+      "expected_output": "No — not required. NocoDB keeps an existing external primary key as is and NocoBase maps uuid. serial/bigserial stays the recommended default for new tables. Warns to test inserts from the NocoDB Grid view because of an open bug report for keys with a function default, and notes that tables without any primary key can only be read and added to in NocoDB and need a Record unique key in NocoBase.",
+      "files": [],
+      "expectations": [
+        {"assertion": "does_not_require_conversion", "text": "Does not claim UUID primary keys are unsupported or must be converted"},
+        {"assertion": "keeps_serial_as_default", "text": "Keeps serial/bigserial as the recommended default for new tables"},
+        {"assertion": "mentions_function_default_caveat", "text": "Mentions testing inserts for a primary key with a function default"},
+        {"assertion": "mentions_no_pk_rules", "text": "Mentions the no-primary-key limits: NocoDB cannot update/delete, NocoBase needs a Record unique key"}
       ]
     }
   ]

@@ -8,7 +8,7 @@
       "files": [],
       "expectations": [
         "Consults connector-bootstrap",
-        "Calls list_intake_work_items and sorts by age",
+        "Calls intake(action=list, project_id) (following next_cursor) and sorts by age",
         "Classifies each item per the routing rules",
         "Produces a triage session summary table"
       ]
@@ -20,7 +20,7 @@
       "files": [],
       "expectations": [
         "Classifies as Accept+escalate (crash, all users)",
-        "Creates a work item with priority=urgent",
+        "Accepts the item with intake(action=update, status=1) and sets priority=urgent with workitem(action=update) - no separate create",
         "Assigns to on-call",
         "Links the original intake source in the description"
       ]
@@ -32,8 +32,8 @@
       "files": [],
       "expectations": [
         "Classifies as Defer (single customer, low signal)",
-        "Records a rationale and revisit date",
-        "Does not create a backlog item immediately"
+        "Snoozes it with intake(action=update, status=0, snoozed_till=<date>) and records a rationale",
+        "Does not accept it into the backlog now"
       ]
     },
     {
@@ -42,10 +42,10 @@
       "expected_output": "Reject as duplicate, link the existing PROJ-148 in the rejection comment so the reporter feels heard.",
       "files": [],
       "expectations": [
-        "Classifies as Reject (duplicate)",
+        "Classifies as Reject (duplicate) and marks it with intake(action=update, status=2, duplicate_to=<PROJ-148 id>)",
         "Posts a comment or rejection note linking PROJ-148",
         "Does not create a new work item",
-        "Confirms deletion/resolution of the intake entry"
+        "Confirms the intake entry is resolved (duplicate status), and does not delete it without asking"
       ]
     }
   ]

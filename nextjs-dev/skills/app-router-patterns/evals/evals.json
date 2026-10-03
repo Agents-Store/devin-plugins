@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "I'm building a Next.js 16 e-commerce app with App Router. I need a product detail page at /products/[slug] that:\n1. Uses ISR to revalidate every 60 seconds\n2. Pre-renders all product pages at build time using generateStaticParams\n3. Has dynamic OpenGraph metadata for each product (title, description, image)\n4. Shows the product image using next/image with proper optimization\n5. Has an \"Add to Cart\" button that uses client-side state\n\nPlease show me the complete implementation with all the files I need, including the correct Server/Client component split. Use TypeScript throughout.",
+      "prompt": "I'm building a Next.js 16 e-commerce app with App Router. I need a product detail page at /products/[slug] that:\n1. Uses ISR to revalidate every 60 seconds (say whether you assume the previous caching model or Cache Components, and use the matching API)\n2. Pre-renders all product pages at build time using generateStaticParams\n3. Has dynamic OpenGraph metadata for each product (title, description, image)\n4. Shows the product image using next/image with proper optimization\n5. Has an \"Add to Cart\" button that uses client-side state\n\nPlease show me the complete implementation with all the files I need, including the correct Server/Client component split. Use TypeScript throughout.",
       "expected_output": "Complete implementation with page.tsx as async Server Component, generateStaticParams, generateMetadata with OG, next/image with dimensions, separate AddToCartButton client component, ISR config, notFound() handling, server-only import in data layer, and shared types file",
       "files": [],
       "expectations": [
@@ -11,7 +11,7 @@
         "params is typed as Promise<{ slug: string }> and awaited before use (Next.js 15+ pattern)",
         "generateStaticParams is exported and returns an array of slug objects",
         "generateMetadata is exported as an async function with openGraph.images in the return",
-        "export const revalidate = 60 is present for ISR",
+        "ISR is expressed in the caching model the answer states: `export const revalidate = 60` when cacheComponents is off (previous model), or 'use cache' + cacheLife('minutes') when cacheComponents is on — never `revalidate` together with cacheComponents: true",
         "next/image is used with either fill or explicit width/height, and includes sizes prop",
         "The add-to-cart button is in a separate file marked with 'use client'",
         "notFound() from next/navigation is called when the product doesn't exist",

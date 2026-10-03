@@ -7,6 +7,8 @@ description: Query Trigger.dev data with TRQL, build dashboards, and inspect aut
 
 Trigger.dev v4.4.4 introduced first-class analytics on top of the runs + spans ClickHouse store: **TRQL** (Trigger.dev Query Language), built-in and custom **dashboards**, and automatic **LLM cost tracking** for GenAI spans.
 
+> **Self-hosted:** TRQL, dashboards, metrics and LLM cost data read from ClickHouse, which the Docker stack bundles (ClickHouse 25.8 or newer is required if you bring your own). Without it these features are empty or fail. The built-in health report (`get_report`, `trigger report health`) is available in CLI 4.7.x.
+
 ## When to Use
 
 - Answering "how many runs failed in the last 7d?" style questions
@@ -15,6 +17,8 @@ Trigger.dev v4.4.4 introduced first-class analytics on top of the runs + spans C
 - Drilling into a specific run's spans to inspect AI enrichment (model, tokens, cost)
 
 ## Data Model
+
+> `llm_metrics` columns (checked against the live `get_query_schema` of CLI 4.7.2): `run_id`, `task_identifier`, `gen_ai_system`, `request_model`, `response_model`, `operation_id`, `finish_reason`, `input_tokens`, `output_tokens`, `total_tokens`, `cached_read_tokens`, `cache_creation_tokens`, `reasoning_tokens`, `input_cost`, `output_cost`, `total_cost`, `ms_to_first_chunk`, `tokens_per_second`, `start_time`, `duration`, `prompt_slug`, `prompt_version`, `metadata`. There is no `model`, `cost_usd` or `bucket_start` column here; always call `get_query_schema(table)` before writing a query.
 
 Three tables are exposed via TRQL — all backed by ClickHouse under the hood.
 
@@ -37,7 +41,8 @@ Three tables are exposed via TRQL — all backed by ClickHouse under the hood.
 | `run_id` | string | Associated run ID |
 | `task_identifier` | string | Task slug |
 | `attempt_number` | number | Attempt number |
-| `machine_id` / `machine_name` | string | Machine that produced the metric |
+| `machine_id` | string | ID of the machine that produced the metric |
+| `machine_name` | string | Machine preset used for execution (`small-1x`, `medium-2x`, ...) |
 | `worker_version` | string | Worker version |
 | `environment_type` | string | `PRODUCTION`, `STAGING`, `DEVELOPMENT`, `PREVIEW` |
 | `attributes` | json | Raw JSON attributes for custom data — use dot notation |
@@ -129,8 +134,9 @@ Built-in dashboards ship with widgets for common metrics (runs volume, failure r
 ### MCP-driven flow
 
 ```
-1. list_dashboards()                                     → dashboardId + widgetIds
-2. run_dashboard_query(dashboardId, widgetId, period)    → data
+1. list_dashboards()                                          → dashboard keys (overview, llm, ...) + widget IDs
+2. run_dashboard_query(dashboardKey, widgetId, period)        → data (also from/to/scope)
+3. get_report(key="health", period="24h")                     → interpreted health verdict (flow, execution, liveness)
 ```
 
 ### Creating custom dashboards (UI)
@@ -209,9 +215,9 @@ LIMIT 10
 
 ```sql
 SELECT
-  toDate(bucket_start) AS day,
-  model,
-  sum(cost_usd)        AS total_cost_usd,
+  toDate(start_time)   AS day,
+  request_model        AS model,
+  sum(total_cost)      AS total_cost_usd,
   sum(input_tokens)    AS input_tokens,
   sum(output_tokens)   AS output_tokens
 FROM llm_metrics

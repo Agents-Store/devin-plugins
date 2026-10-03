@@ -9,7 +9,10 @@ A revision is a snapshot of a document at a point in time. Restore a document to
 | Method | Purpose & key fields |
 |--------|----------------------|
 | `revisions.info` | Retrieve one revision. `{"id"}`. |
-| `revisions.list` | List a document's revisions, newest activity first. `{"documentId"}` + pagination + sorting. |
+| `revisions.list` | List a document's revisions, newest activity first. `{"documentId"}` + pagination + sorting. The listing omits `data`/`text` for speed — call `revisions.info` for a revision's full content. |
+| `revisions.update` | Name (label) a revision so significant versions are easy to find. `{"id","name"(required, ≤255; `null` removes the name)}`. Only the name is editable. |
+| `revisions.delete` | Delete one revision. `{"id"}`. The **latest** revision of a document cannot be deleted. **Confirm first** — history is not recoverable. |
+| `revisions.export` | Export a single revision to a file. `{"id"}` → `{fileOperation}`; poll `fileOperations.info` and download with `fileOperations.redirect` (→ `attachments-fileops.md`). |
 
 ## Templates
 
@@ -17,10 +20,10 @@ A template is a reusable document starting point, scoped to a collection or work
 
 | Method | Purpose & key fields |
 |--------|----------------------|
-| `templates.create` | `{"title"(required),"data"(required, ProseMirror JSON body),"icon"?,"color"?(hex `^#[0-9A-Fa-f]{6}$`),"collectionId"?}`. Omit `collectionId` for a workspace-wide template. |
-| `templates.list` | List accessible templates. Pagination + sorting + `{"collectionId"?}`. |
+| `templates.create` | `{"title"(≤255),"data"(ProseMirror JSON body),"icon"?,"color"?(hex `^#[0-9A-Fa-f]{6}$`),"collectionId"?,"publish"?(bool, default `true`),"id"?(client-chosen UUID)}`. `title` and `data` are required **when publishing**; `publish:false` creates a draft template visible only to its creator. Omit `collectionId` for a workspace-wide template. |
+| `templates.list` | List accessible templates. Pagination + sorting + `{"collectionId"?,"query"?(title filter)}`. |
 | `templates.info` | Retrieve one template. `{"id"}` (UUID or `urlId`). |
-| `templates.update` | `{"id"}` + any of `{"title","data","icon","color","fullWidth","collectionId"}` (`collectionId:null` makes it workspace-wide). |
+| `templates.update` | `{"id"}` + any of `{"title","data","icon","color","fullWidth","collectionId","publish"}` (`collectionId:null` makes it workspace-wide; `publish:true` publishes a draft template to other members). |
 | `templates.delete` | Soft-delete (restorable). `{"id"}`. |
 | `templates.restore` | Restore a soft-deleted template. `{"id"}`. |
 | `templates.duplicate` | Copy a template. `{"id","title"?,"collectionId"?}`. |

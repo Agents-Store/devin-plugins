@@ -1,0 +1,24 @@
+{
+  "name": "stack-directus-nextjs-trigger",
+  "version": "3.0.0",
+  "description": "Directus + Next.js + Trigger.dev architecture plugin. How Directus (content, files, access), a Next.js App Router frontend and self-hosted Trigger.dev (durable and scheduled work) fit together: who holds which token, how the cache is invalidated, how a Directus change reaches a task and the result reaches the page, who owns the session, and a production checklist. Tool knowledge comes from its dependencies.",
+  "author": {
+    "name": "Agents Store",
+    "url": "https://github.com/agents-store"
+  },
+  "license": "MIT",
+  "keywords": [
+    "stack",
+    "directus-nextjs-trigger",
+    "architecture",
+    "agents-store",
+    "directus",
+    "nextjs",
+    "trigger.dev",
+    "background-jobs",
+    "scheduled-tasks",
+    "self-hosted",
+    "durable-execution",
+    "app-router"
+  ]
+}

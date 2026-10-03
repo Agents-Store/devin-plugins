@@ -14,11 +14,11 @@ Diagnose and fix the common failure modes for the Chatwoot API, CLI, and webhook
 curl -sI "${CHATWOOT_BASE_URL}" | head -1
 
 # 2. Is the token valid and which identity is it?
-curl -s -H "api_access_token: ${CHATWOOT_API_KEY}" \
+curl -s -H "api-access-token: ${CHATWOOT_API_KEY}" \
   "${CHATWOOT_BASE_URL}/api/v1/profile" | jq '{id, name, role}'
 
 # 3. Does the account scope resolve?
-curl -s -o /dev/null -w "%{http_code}\n" -H "api_access_token: ${CHATWOOT_API_KEY}" \
+curl -s -o /dev/null -w "%{http_code}\n" -H "api-access-token: ${CHATWOOT_API_KEY}" \
   "${CHATWOOT_BASE_URL}/api/v1/accounts/${CHATWOOT_ACCOUNT_ID}/conversations"
 ```
 
@@ -26,10 +26,29 @@ curl -s -o /dev/null -w "%{http_code}\n" -H "api_access_token: ${CHATWOOT_API_KE
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| `401 Unauthorized` | Missing/typo'd `api_access_token` header | Send `-H "api_access_token: ${CHATWOOT_API_KEY}"` — not `Authorization: Bearer` |
+| `401 Unauthorized` | Missing/typo'd `api-access-token` header | Send `-H "api-access-token: ${CHATWOOT_API_KEY}"` |
+| `401` with a valid token, only behind a reverse proxy | Proxy drops request headers with underscores (nginx default `underscores_in_headers off`; Caddy 2.6.4+) so `api_access_token` never arrives | Send the hyphenated `api-access-token` (same header for Chatwoot). The CLI needs v0.7.0+. See "Header check behind a proxy" below |
+| `401` with `Authorization: Bearer <token>` | Bearer is accepted only by Chatwoot v4.19.0+ (v4.18.0 is the latest release as of 2026-10-03) | Use `api-access-token` until the instance runs v4.19.0 or later |
 | `401` with a valid token | Right token, **wrong API family** | User token works on `/api/v1/...`, not `/platform/...`. Use the platform app token for Platform endpoints |
 | `403 Forbidden` | Token role too low | The action needs admin/agent permission the token lacks — use a token with the right role |
 | Platform calls all `401` | Platform API not enabled / wrong token | Platform token comes from the installation Super Admin, not Profile Settings |
+
+### Header check behind a proxy
+
+Send the same token with both spellings and compare the status codes. Hyphen `200` plus underscore
+`401` means the proxy is eating the underscore header, not that the token is bad:
+
+```bash
+for h in api-access-token api_access_token; do
+  printf '%s -> ' "$h"
+  curl -s -o /dev/null -w "%{http_code}\n" -H "$h: ${CHATWOOT_API_KEY}" \
+    "${CHATWOOT_BASE_URL}/api/v1/profile"
+done
+```
+
+Fix: use `api-access-token` everywhere (scripts, CI, webhooks that call back, CLI >= 0.7.0). If a
+legacy client cannot change, set `underscores_in_headers on;` in the nginx `http`/`server`
+block (for another proxy, look for its setting on underscore headers).
 
 ## Wrong scope / not found
 
@@ -51,6 +70,8 @@ curl -s -o /dev/null -w "%{http_code}\n" -H "api_access_token: ${CHATWOOT_API_KE
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
+| `401` on every command behind nginx/Caddy | CLI older than v0.7.0 sends the underscore header, which the proxy drops | Upgrade the CLI to v0.7.0 or newer |
+| Second command on the same conversation fails at once | v0.7.0 per-conversation write lock is held by another process | Wait for the other writer or re-read the conversation; don't retry in a loop |
 | `auth login` hangs/fails | Run in a non-TTY (CI/agent) | Don't script `auth login`; export `CHATWOOT_API_KEY` and keep `~/.chatwoot/config.yaml` (or pass `-a`) |
 | Agent can't parse output | Default text format | Pass `-o json` (or `-q`); never grep text output |
 | `convs` returns "too few" | Defaults to your open queue | Add `--assignee all` and the right `-s` status |

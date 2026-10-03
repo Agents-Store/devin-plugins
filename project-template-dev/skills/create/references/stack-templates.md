@@ -30,7 +30,7 @@ SUPABASE_KEY=           # anon/public key
 SUPABASE_SERVICE_KEY=   # service_role key (server-side only)
 
 # Trigger.dev
-TRIGGER_API_KEY=
+TRIGGER_SECRET_KEY=
 TRIGGER_API_URL=http://localhost:3030
 
 # App
@@ -133,15 +133,15 @@ NEXTAUTH_SECRET=
 ### .env.example
 ```bash
 # NocoDB
-NOCODB_BASE_URL=http://localhost:8080
-NOCODB_API_TOKEN=
+NOCODB_URL=http://localhost:8080
+NOCODB_TOKEN=
 
 # n8n
 N8N_BASE_URL=http://localhost:5678
 N8N_API_KEY=
 
 # Trigger.dev
-TRIGGER_API_KEY=
+TRIGGER_SECRET_KEY=
 TRIGGER_API_URL=http://localhost:3030
 
 # App
@@ -203,12 +203,13 @@ CMD ["pnpm", "dev"]
 
 ### trigger.config.ts
 ```typescript
-import { defineConfig } from "@trigger.dev/sdk/v3"
+import { defineConfig } from "@trigger.dev/sdk"
 
 export default defineConfig({
   project: "<project-ref>",
   runtime: "node",
   logLevel: "log",
+  maxDuration: 300,           // required: seconds, at least 5
   retries: {
     enabledInDev: true,
     default: { maxAttempts: 3, minTimeoutInMs: 1000, maxTimeoutInMs: 10000, factor: 2 },

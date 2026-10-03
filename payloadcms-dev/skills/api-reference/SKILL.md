@@ -31,7 +31,7 @@ Typed external client: `@payloadcms/sdk` — the official REST SDK (same 3.x ver
 | Header | Purpose |
 | --- | --- |
 | `Authorization: JWT <token>` | Authenticate as a user. Token comes from `/api/<auth-collection>/login`. |
-| `Authorization: <api-key-collection> API-Key <key>` | API key auth (when `auth.useAPIKey: true`). |
+| `Authorization: <api-key-collection> API-Key <key>` | API key auth (when `auth.useAPIKey` is `true` or `{ reveal: true }`). Since 3.90 the key is shown once at generation and is not readable afterwards unless `reveal: true`. |
 | `Cookie: payload-token=<jwt>` | HTTP-only cookie set by `/login`. Browser sessions use this. |
 
 ## Base URL

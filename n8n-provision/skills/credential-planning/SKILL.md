@@ -51,7 +51,9 @@ Query the target instance for already-configured credentials:
 
 ```
 1. ~~credential_manage (action: list)
-   → Returns all credentials on the instance with types and names
+   → Returns the credentials on the instance with types and names (never the secrets)
+   → Listing through the API needs an Owner or Admin user; a 403 here is a role problem
+   → Fallback: n8n-native-mcp list_credentials (read-only)
 
 2. Match existing credentials against extracted requirements:
    → MATCH: credential type exists → reuse it
@@ -113,16 +115,29 @@ Follow this sequence to minimize back-and-forth:
 
 | Practice | Implementation |
 |----------|---------------|
-| **Use environment variables** | Store secrets in n8n environment variables, reference as `{{ $env.SLACK_TOKEN }}` |
+| **Prefer n8n credentials** | Keep secrets in n8n credentials, not in node parameters or expressions. Avoid `{{ $env.SLACK_TOKEN }}`: n8n 2.0 added a switch that blocks environment access from nodes (`N8N_BLOCK_ENV_ACCESS_IN_NODE`) and the n8n docs disagree about its default (the 2.0 breaking-changes page says blocked, the environment-variables page says not blocked) — check the target instance before relying on `$env` |
 | **Least privilege** | Grant only the permissions each workflow needs — no admin tokens for read-only operations |
 | **Rotate keys regularly** | Set a rotation schedule (90 days for API keys, 365 for OAuth) |
 | **No shared admin credentials** | Each service integration gets its own credential, not a personal admin account |
 | **Audit credential usage** | Periodically check which workflows use which credentials via `~~credential_manage` |
 | **Document credential owners** | Track who created each credential and who manages the underlying service account |
 
+## Creating Credentials Through the API
+
+Not every credential needs the editor. `~~credential_manage` (n8n-mcp `n8n_manage_credentials`) has the actions `list`, `get`, `getSchema`, `create`, `update` and `delete`:
+
+```
+1. ~~credential_manage (action: getSchema, type: <credential type>)
+   → The fields the type needs (REST: GET /credentials/schema/{type})
+2. ~~credential_manage (action: create, name, type, data)
+   → Ask the user for the values; never invent or echo secrets
+```
+
+Token, API-key, header-auth, basic-auth and connection-string credentials work this way. **OAuth2 credentials need a browser consent** and are authorized in the editor. Confirm with the user before creating anything — the credential holds their secret.
+
 ## Post-Import Credential Linking
 
-After workflows are imported (inactive), link credentials in the n8n editor: open each workflow, click nodes with credential warnings, select or create the matching credential, save, and test with sample data before activating.
+After workflows are imported (unpublished drafts), link credentials in the n8n editor: open each workflow, click nodes with credential warnings, select or create the matching credential, save, and test with sample data before publishing.
 
 ## Credential Planning Checklist
 
@@ -131,6 +146,6 @@ After workflows are imported (inactive), link credentials in the n8n editor: ope
 - [ ] Requirements matched against existing credentials
 - [ ] Shared credentials identified and prioritized
 - [ ] Setup order determined (shared first, specific second)
-- [ ] Security practices reviewed (env vars, least privilege)
+- [ ] Security practices reviewed (credentials rather than `$env`, least privilege)
 - [ ] All credentials created and tested
 - [ ] All imported workflows linked to correct credentials

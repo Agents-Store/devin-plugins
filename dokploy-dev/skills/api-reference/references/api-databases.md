@@ -15,7 +15,7 @@ All database types share the same operations. Replace `{db}` with the database p
 | Method | Path | operationId | Description |
 |--------|------|-------------|-------------|
 | GET | `/{db}.one` | {db}.one | Get database service by ID |
-| GET | `/{db}.search` | {db}.search | Search database services by name |
+| GET | `/{db}.search` | {db}.search | Search database services — free-text param is `q` (plus `name`, `appName`, `projectId`, `environmentId`, `limit`, `offset`; not for libsql) |
 | POST | `/{db}.create` | {db}.create | Create a new database service |
 | POST | `/{db}.update` | {db}.update | Update database configuration |
 | POST | `/{db}.remove` | {db}.remove | Delete a database service |

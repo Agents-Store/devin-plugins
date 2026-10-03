@@ -1,0 +1,29 @@
+{
+  "skill_name": "postgrest-api",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a curl call that upserts an order into PostgREST, matching on the unique column external_ref, and returns the stored row.",
+      "expected_output": "POST to /orders?on_conflict=external_ref with Prefer: resolution=merge-duplicates,return=representation. on_conflict is a query parameter, not a header.",
+      "files": [],
+      "expectations": [
+        "Puts on_conflict=external_ref in the URL query string",
+        "Sends Prefer: resolution=merge-duplicates,return=representation",
+        "Does not send on_conflict as an HTTP header",
+        "Uses ${POSTGRESQL_API_URL} and ${POSTGRESQL_API_TOKEN}, no hardcoded host or token"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "An n8n workflow must set status=queued for all pending orders through PostgREST, and it must never touch more than 50 rows. Which node settings and headers do I use?",
+      "expected_output": "HTTP Request node, PATCH /orders?status=eq.pending, Prefer: handling=strict,max-affected=50, token in a Header Auth credential, no $env in expressions (blocked by default in n8n 2.x).",
+      "files": [],
+      "expectations": [
+        "Uses PATCH with a status=eq.pending filter",
+        "Sends Prefer with both handling=strict and max-affected=50 (max-affected is ignored without handling=strict)",
+        "Keeps the token in a credential (Header Auth) rather than an $env expression",
+        "Mentions that n8n 2.x blocks $env in expressions and Code nodes by default"
+      ]
+    }
+  ]
+}

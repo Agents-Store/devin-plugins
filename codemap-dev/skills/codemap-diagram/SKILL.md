@@ -28,7 +28,9 @@ Before doing ANY work, ask the user:
 
 Generate all diagrams as native mxGraph XML. Save as `.drawio` files and render via drawio-mcp `create_diagram` tool.
 
-Available drawio-mcp tools: `create_diagram` (render XML), `search_shape` (find shapes).
+Available drawio-mcp tools: `create_diagram` (render XML), `search_shapes` (find shapes, optional — use it only for diagrams that need cloud, vendor or pictorial icons; flowcharts, ERDs and C4 boxes use basic shapes).
+
+The plugin declares the `drawio` server itself, so the full tool names are `mcp__plugin_codemap-dev_drawio__create_diagram` and `mcp__plugin_codemap-dev_drawio__search_shapes`. This document uses the short names.
 
 ## Diagram Type Selection
 
@@ -68,12 +70,12 @@ For every diagram, follow these steps:
 
 ### Step 4: Render via drawio-mcp
 - Call the `create_diagram` MCP tool with the generated XML
-- Present the interactive URL to the user
+- The inline interactive preview appears only if the client supports MCP Apps; otherwise the tool returns the XML as text and no URL — the saved `.drawio` file is the deliverable. Do not promise a preview URL
 - If drawio-mcp is unavailable, report the error — do NOT fall back to Mermaid or text diagrams
 
 ### Step 5: Report to User
 - Show the file path where `.drawio` was saved
-- Show the interactive preview URL from drawio-mcp
+- Mention the interactive preview only if `create_diagram` actually rendered one (MCP Apps clients); otherwise point to the `.drawio` file
 - Brief description of what the diagram shows
 
 ## mxGraph XML Rules

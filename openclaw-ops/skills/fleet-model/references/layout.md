@@ -24,7 +24,7 @@ until the next `up`.
 | Container destination | Role | Holds | Sharing |
 |---|---|---|---|
 | `/home/node/.openclaw` | `state_dir` | `openclaw.json`, memory DB, sessions, schedules, state-side skills and plugins | **never shared** — startup enforces unique state-directory ownership |
-| `/home/node/.config/openclaw` | `auth_secrets` | the key that encrypts stored auth profiles | per instance |
+| `/home/node/.config/openclaw` | `auth_secrets` | the **legacy** auth-profile encryption key (upstream's "legacy OAuth migration-key mount"). It only recovers an older encrypted sidecar; current OAuth material lives in the state database under `state_dir`, in plaintext. **Optional** — not a layout marker | per instance; when present it is still a credential directory |
 | `/home/node/.claude` | `claude_dir` | native credentials and settings of the Claude CLI backend | shareable, and sharing is the fix for the token-sink failure |
 | `/home/node/.claude.json` | `claude_json` | project state, MCP registrations, onboarding flags | **keep per instance** — sharing leaks project state between instances |
 | `/home/node/.codex` | `codex_home` | native credentials of the Codex CLI backend | shareable on the same terms as `claude_dir` |
@@ -75,7 +75,7 @@ services:
 | Survives container recreation | Dies with the container |
 |---|---|
 | everything under `state_dir` (config, memory, sessions, schedules) | packages installed at runtime inside the container |
-| auth-secret key material under `auth_secrets` | edits to files that are part of the image |
+| the legacy key material under `auth_secrets`, when mounted | edits to files that are part of the image |
 | credential directories, shared skill and plugin trees | anything written to a path that is not in the mount table |
 | host-side wrappers, identity files, compose files | in-memory secrets from the injection wrapper |
 
@@ -93,13 +93,16 @@ Practical consequence: a repair is durable only if it lands in a mounted path or
 
 ## Template versus legacy
 
-`discovery.layout_profile()` decides from four markers: `state_mount`, `auth_secrets_mount`,
-`compose_file`, `gateway_container`. The project prefix proves nothing — it matches a legacy instance
-too.
+`discovery.layout_profile()` decides from three markers: `state_mount`, `compose_file`,
+`gateway_container`. The project prefix proves nothing — it matches a legacy instance too. The mount at
+the legacy auth-key path is **not** a marker: requiring it refused healthy instances (they were read as
+`legacy` and locked against every mutation) for a directory current releases no longer need. Whether it
+is mounted is recorded under `fingerprint.optional.legacy_auth_key_mount`, because a copy of that
+directory is a credential artefact either way.
 
 | | template | legacy | alien |
 |---|---|---|---|
-| all four markers | yes | no — some are missing | irrelevant |
+| all three markers | yes | no — some are missing | irrelevant |
 | looks like OpenClaw at all | yes | yes | no |
 | config location | mounted state dir | often a home directory outside any mount | unknown |
 | secrets | injected by the wrapper, referenced by name | frequently plaintext on disk | unknown |
@@ -109,6 +112,13 @@ too.
 
 A legacy instance is a migration project, not a maintenance target — red line
 `legacy-instance-mutation`. Say that out loud rather than "fixing" it in place.
+
+**Fleet cells are `alien` on purpose.** The runtime's experimental multi-tenant `fleet` command runs
+each tenant as its own container, named after the tenant, **not** as a compose project. Discovery
+therefore lists them as inventory rows and refuses every mutation — a deliberate outcome, not a gap:
+this plugin manages compose-project gateways, and a cell has its own lifecycle (`openclaw fleet …`).
+Its state and legacy-key directories sit under per-tenant host paths and carry the same plaintext
+OAuth material, so a copy of one is a credential artefact too.
 
 ## Two traps in this layout
 

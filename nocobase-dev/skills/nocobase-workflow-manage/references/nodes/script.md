@@ -1,6 +1,6 @@
 ---
 title: "JavaScript"
-description: "Run custom JavaScript code in a workflow node, could use arguments and return results, suitable for complex logic that built-in nodes cannot handle."
+description: "Use when built-in nodes cannot express the logic and a server-side JavaScript snippet should compute or transform data for later nodes."
 ---
 
 # JavaScript
@@ -58,5 +58,6 @@ This node exposes a single root result value, referenced directly as `{{$jobsMap
 
 - Exposed root: the value returned by `return` in the script.
 - No child field tree is provided.
-- If the script returns an object or array and you want named downstream variables, follow this node with `json-query` or `json-variable-mapping`.
+- If the script returns an object or array and any downstream node needs a child field, you must follow this node with `json-variable-mapping` or `json-query`, model the required fields, and make later nodes use only the JSON node's outputs.
+- Do not manually append child paths to the script node root. Only the JSON modeling node should consume the raw object/array.
 - Example reference: `{{$jobsMapByNodeKey.script_total}}`.

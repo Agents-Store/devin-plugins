@@ -59,7 +59,7 @@ On SQL adapters (Postgres/SQLite), a new collection or field also needs a migrat
 | Form Builder | `@payloadcms/plugin-form-builder` | `forms` + `form-submissions` collections, email actions, redirects | Editors must build contact/lead forms without code |
 | Nested Docs | `@payloadcms/plugin-nested-docs` | `parent` relationship + computed `breadcrumbs` | You need parent/child page trees and nested URLs |
 | Search | `@payloadcms/plugin-search` | Indexed `search` collection synced via hooks | You want fast native search with no third-party service |
-| Stripe | `@payloadcms/plugin-stripe` | Two-way sync, `stripeID` field, webhook + REST proxy routes | Stripe handles billing; Payload owns content/logic |
+| Stripe | `@payloadcms/plugin-stripe` | Two-way sync, `stripeID` field, webhook route, optional REST proxy (off unless `rest: { allowedMethods }` is set) | Stripe handles billing; Payload owns content/logic |
 | Multi-Tenant | `@payloadcms/plugin-multi-tenant` | `tenants` collection + tenant field/selector + scoped access | One admin panel serves many isolated tenants |
 | Redirects | `@payloadcms/plugin-redirects` | `redirects` collection (`from`/`to`/type) | Editors manage 301/302 redirects after a URL restructure |
 | Sentry | `@payloadcms/plugin-sentry` | Error + performance reporting into Sentry | You run on Next.js and want server-side error tracking |
@@ -151,11 +151,12 @@ Adds a `redirects` collection with `from`, `to` (relationship or custom URL), an
 
 Stripe, Multi-Tenant, Nested Docs, Sentry, Import/Export, MCP, and Ecommerce follow the identical pattern — install the package, call the factory in `plugins`, regenerate types. Their package names, minimal snippets, and full option tables are in `references/plugin-catalog.md`. Quick reminders:
 
-- **Stripe** needs `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOKS_ENDPOINT_SECRET` env vars and a webhook endpoint (`/api/stripe/webhooks`) registered in the Stripe dashboard.
+- **Stripe** needs `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOKS_ENDPOINT_SECRET` env vars and a webhook endpoint (`/api/stripe/webhooks`) registered in the Stripe dashboard. Since 3.90 `rest` is an object `{ allowedMethods, access? }`, never a boolean — omit it to keep the `/api/stripe/rest` proxy off.
+- **Form Builder** (3.90+) limits reading `form-submissions` and `forms.emails` to the admin collection by default — set `formSubmissionOverrides.access` explicitly if a second auth collection must read them.
 - **Sentry** requires the `@sentry/nextjs` peer dependency and an initialized `Sentry` instance passed as `{ Sentry }`.
 - **Multi-Tenant** takes a `collections` *map* (`{ pages: {} }`), not an array.
 - **Import/Export** takes `collections` as `{ slug }[]` objects, and async jobs need a running jobs queue.
-- **MCP** exposes `/api/mcp` and needs a Bearer API key created in the `MCP → API Keys` admin collection.
+- **MCP** exposes `/api/mcp` and needs a Bearer API key created in the `MCP → API Keys` admin collection (shown once at creation since 3.90 — copy it).
 
 ## Choosing a Plugin
 

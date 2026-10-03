@@ -9,34 +9,47 @@ The intake inbox is where unvetted requests, bug reports, and ideas land before 
 
 ## Tool Name Resolution
 
-Resolve real tool names via the `connector-bootstrap` skill.
+Plane MCP exposes one `intake` tool and the operation goes into the `action` parameter: `intake(action=list, ...)`. This skill writes calls in that form. Resolve the real tool name (`mcp__<server>__intake`) through the `connector-bootstrap` skill - never assume a server prefix.
 
-## Available Actions
+## Available Calls
 
-| Action | Purpose |
-|--------|---------|
-| `list_intake_work_items` | List all items waiting for triage |
-| `retrieve_intake_work_item` | Get a single intake item |
-| `create_intake_work_item` | Create an intake item (usually by integration — see caveat below) |
-| `update_intake_work_item` | Edit intake item (status, notes) |
-| `delete_intake_work_item` | Reject and remove an intake item |
+| Call | Purpose |
+|------|---------|
+| `intake(action=list, project_id)` | List all items waiting for triage (paginated: `next_cursor`) |
+| `intake(action=retrieve, project_id, workitem_id)` | Get a single intake item |
+| `intake(action=create, project_id, name, ...)` | Create an intake item (usually done by an integration) |
+| `intake(action=update, project_id, workitem_id, status=...)` | Make the triage decision (accept, decline, snooze, mark duplicate) |
+| `intake(action=delete, project_id, workitem_id)` | Remove an intake item permanently (spam only; confirmation required) |
 
-## Creating Intake Items — Schema Caveat
+`workitem_id` is the **`issue` field** of an intake record - the id of the work item behind it - not the record's own id. The project needs the `intakes` feature: check `project(action=get_features, project_id)` and, with the user's consent, enable it with `project(action=update_features, project_id, intakes=true)`.
 
-`create_intake_work_item` on most Plane deployments expects a **single `data` object wrapping all work item fields**, not flat top-level parameters:
+## Creating Intake Items
+
+`intake(action=create)` takes flat fields; the server nests them as the API requires:
 
 ```
-create_intake_work_item({
-  project_id,
-  data: {
-    name: "User reports: ...",
-    description_html: "<p>…</p>",
-    priority: "medium"
-  }
-})
+intake(action=create,
+  project_id=<id>,
+  name="User reports: ...",
+  description_html="<p>…</p>",
+  priority="medium")      // urgent | high | medium | low | none
 ```
 
-Passing `name`, `description_html`, `priority` as top-level arguments will be rejected as "unexpected keyword arguments". Note that some MCP bridges also have trouble serializing the nested `data` dict — if the call fails with "Input should be a valid dictionary", check the bridge's list/dict parameter handling.
+## Triage Statuses
+
+`intake(action=update, status=...)` is the decision itself. The status codes:
+
+| `status` | Meaning | Extra parameter |
+|----------|---------|-----------------|
+| `-2` | Pending (untriaged) | - |
+| `-1` | Declined | - |
+| `0` | Snoozed | `snoozed_till` (required; the tool description gives no format, use an ISO 8601 timestamp) |
+| `1` | Accepted | - |
+| `2` | Duplicate | `duplicate_to` (required; the tool description names no format, use the id of the original work item) |
+
+`intake(action=update)` without a status only edits `source` / `source_email`.
+
+> **Confirm on your instance:** the tool description defines the status codes and the two required parameters, but not their formats or what each decision does to the item. The behaviour described below (an accepted item leaves the queue as a regular backlog work item; a snoozed item comes back on its date) is Plane's triage behaviour as commonly documented, not something the tool states. Check the first accept and the first snooze on your instance.
 
 ## Triage Workflow
 
@@ -44,45 +57,44 @@ Passing `name`, `description_html`, `priority` as top-level arguments will be re
 
 ```
 1. connector-bootstrap → resolve tools
-2. list_projects       → pick project_id
-3. list_intake_work_items({ project_id })
+2. project(action=list) → pick project_id
+3. intake(action=list, project_id=<id>)       → items waiting (follow next_cursor)
 4. Sort by age (oldest first) and source
 ```
+
+The items are work items, so PQL can also find them: `workitem(action=list, project_id=<id>, pql='isIntake()')`, or count them with `workitem(action=count, project_id=<id>, pql='isIntake()')`.
 
 ### Step 2 — Classify Each Item
 
 For each intake item, make one of four decisions:
 
-| Decision | Action | Rationale |
-|----------|--------|-----------|
-| **Accept** | Convert to work item, add to backlog | Valid work aligned with product goals |
-| **Accept + escalate** | Convert to work item, prioritize `urgent`/`high`, assign lead | Critical bug or time-sensitive request |
-| **Defer** | Update intake status to "deferred" with rationale | Valid but not now; revisit in N weeks |
-| **Reject** | Delete intake item with comment | Duplicate, out of scope, or invalid |
+| Decision | Call | Rationale |
+|----------|------|-----------|
+| **Accept** | `intake(action=update, status=1)`, then groom the item with `workitem(action=update)` | Valid work aligned with product goals |
+| **Accept + escalate** | `status=1`, then `workitem(action=update, priority="urgent"\|"high", assignees=[<lead>])` | Critical bug or time-sensitive request |
+| **Defer** | `intake(action=update, status=0, snoozed_till=<date>)` with a rationale comment | Valid but not now; it returns to the queue on that date (confirm on your instance) |
+| **Reject** | `intake(action=update, status=-1)` with a comment explaining why; duplicates use `status=2, duplicate_to=<id>` | Out of scope, invalid or duplicate; declining keeps the trace, `delete` does not |
 
-### Step 3 — Convert to Work Item
+### Step 3 — Finish the Accepted Item
 
-When accepting, resolve required IDs and create the item (see `work-items` skill):
+Accepting should turn the intake record into a regular work item in the project (per Plane's triage model, not stated by the tool description - confirm on your instance), so there is no second "create" step. Complete it with the fields the intake form did not carry (see the `work-items` skill):
 
 ```
-create_work_item({
-  project_id,
-  name,
-  description_html,     // include source link and original reporter
-  priority,
-  state_id,             // usually backlog state
-  label_ids             // e.g. "bug", "feature-request"
-})
+workitem(action=update,
+  project_id=<id>,
+  workitem_id=<intake item's issue id>,
+  description_html="...",   // add the source link and the original reporter
+  priority="high",
+  state=<backlog state uuid>,
+  labels=[<label uuid>])    // e.g. "bug", "feature-request"
 ```
-
-Then remove or mark the intake item as processed per the tool schema.
 
 ### Step 4 — Communicate
 
-Always tell the reporter what happened:
-- Accepted → link to the new work item
+Always tell the reporter what happened, with a comment on the item (`workitem_comment(action=create, comment_html="<p>…</p>")`):
+- Accepted → link to the work item
 - Deferred → explain when it will be reconsidered
-- Rejected → explain why
+- Rejected or duplicate → explain why, link the existing item
 
 ## Routing Rules
 
@@ -92,7 +104,7 @@ Define routing rules up front so triage is fast:
 |--------|----------|
 | "Crashes", "data loss", "can't log in" | Bug → urgent, assign on-call |
 | "Would be nice", "suggestion" | Feature request → label and defer until next grooming |
-| Duplicate keywords match existing item | Reject → link to existing item |
+| Duplicate keywords match existing item | Mark duplicate (`status=2`, `duplicate_to`) → link to existing item |
 | Missing reproduction steps (bug) | Request info via comment, keep in intake |
 | Single customer with low impact | Defer with rationale |
 | Multiple customers report same issue | Escalate |

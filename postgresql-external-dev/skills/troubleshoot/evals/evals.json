@@ -4,29 +4,52 @@
     {
       "id": 1,
       "prompt": "I created a PostgreSQL schema with ENUM types for status fields, ARRAY columns for tags, and UUID primary keys. Now NocoDB can't properly read some of these. What did I do wrong and how do I fix it?",
-      "expected_output": "Identifies all three issues: ENUM→text, ARRAY→json, UUID→serial/bigserial. Provides ALTER TABLE migration SQL for each fix. References the verification checklist.",
+      "expected_output": "Explains each type per platform rather than calling them wrong: native ENUM is read by NocoDB 2026.04.5 or later as SingleSelect but is not in NocoBase's documented mapping (safe default text); ARRAY is read by NocoBase and not mapped by NocoDB (safe default json); UUID primary keys are accepted but serial/bigserial is the recommended default. Asks for or checks the NocoDB version, offers ALTER TABLE migration SQL if the user wants the safe defaults, and references the verification checklist.",
       "files": [],
       "expectations": [
-        {"assertion": "identifies_enum_issue", "text": "Identifies ENUM as incompatible and recommends replacing with text"},
-        {"assertion": "identifies_array_issue", "text": "Identifies ARRAY as incompatible and recommends replacing with json"},
-        {"assertion": "identifies_uuid_issue", "text": "Identifies UUID PK as incompatible and recommends serial/bigserial"},
-        {"assertion": "provides_fix_sql", "text": "Provides ALTER TABLE SQL to fix at least one of the issues"},
+        {"assertion": "explains_enum_per_platform", "text": "Explains ENUM per platform: NocoDB 2026.04.5+ reads it as SingleSelect, NocoBase has no documented mapping; text is the safe default"},
+        {"assertion": "explains_array_per_platform", "text": "Explains ARRAY per platform: NocoBase reads it as array, NocoDB has no field type for it; json is the safe default"},
+        {"assertion": "explains_uuid_accepted", "text": "Says UUID primary keys are accepted and serial/bigserial is the recommended default, not a requirement"},
+        {"assertion": "provides_fix_sql", "text": "Offers ALTER TABLE SQL to move to the safe defaults for at least one of the issues"},
         {"assertion": "mentions_checklist", "text": "References or presents the verification checklist"}
       ]
     },
     {
       "id": 2,
       "prompt": "Before I connect my PostgreSQL database to NocoBase as an external source, what should I check? Give me a validation checklist.",
-      "expected_output": "The 10-item verification checklist covering: serial PK, FK type matching, ON DELETE NO ACTION, indexes on FKs, UNIQUE for 1:1, composite PK for M2M, no ARRAY/ENUM/POINT/INHERITS, json not jsonb, text for selects, snake_case naming.",
+      "expected_output": "The verification checklist covering: serial PK (or a deliberate tested alternative), a primary key on every table, FK type matching, ON DELETE NO ACTION, indexes on FKs, UNIQUE for 1:1, composite PK for M2M, default types (ARRAY/ENUM/geometric only when deliberate), no INHERITS, json by default with jsonb only where needed, text for selects, snake_case naming, the NocoBase commercial plugin license, and Meta Sync / refresh after the last change.",
       "files": [],
       "expectations": [
         {"assertion": "serial_pk_check", "text": "Check that PKs use serial or bigserial"},
         {"assertion": "fk_type_match", "text": "Check that FK column types match parent PK types"},
         {"assertion": "on_delete_check", "text": "Check FK constraints use ON DELETE NO ACTION"},
         {"assertion": "index_check", "text": "Check indexes exist on all FK columns"},
-        {"assertion": "forbidden_types_check", "text": "Check for absence of ARRAY, ENUM, POINT, POLYGON, INHERITS"},
-        {"assertion": "json_not_jsonb", "text": "Check json is used instead of jsonb"},
+        {"assertion": "default_types_check", "text": "Check ARRAY, ENUM, POINT, POLYGON are absent or deliberate, and INHERITS is absent"},
+        {"assertion": "json_default_check", "text": "Check json is the default and jsonb is used only where indexes or operators are needed"},
+        {"assertion": "license_check", "text": "Mentions that the NocoBase external PostgreSQL plugin needs a commercial license"},
+        {"assertion": "sync_check", "text": "Mentions Meta Sync in NocoDB and refresh in NocoBase after schema changes"},
         {"assertion": "naming_check", "text": "Check snake_case naming, no reserved words"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I want to add my PostgreSQL database in NocoBase but PostgreSQL is not in the Add new list under Data source management. What is wrong?",
+      "expected_output": "The external PostgreSQL plugin (@nocobase/plugin-data-source-external-postgres) is not installed, enabled or licensed. It needs a commercial license (Standard edition or above, not Community). Check the plugin is enabled, the license includes it and the user may manage data sources.",
+      "files": [],
+      "expectations": [
+        {"assertion": "names_plugin", "text": "Names the external PostgreSQL data source plugin"},
+        {"assertion": "states_commercial_license", "text": "States that it requires a commercial license (Standard or above, not Community)"},
+        {"assertion": "gives_checks", "text": "Lists the checks: plugin installed and enabled, license includes it, user can manage data sources"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I added a column in PostgreSQL but neither NocoDB nor NocoBase shows it. What should I do?",
+      "expected_output": "Run Meta Sync in NocoDB (Base Settings, Manage, External Database, Meta Sync, Sync Now) and the refresh action on the external data source in NocoBase.",
+      "files": [],
+      "expectations": [
+        {"assertion": "nocodb_meta_sync", "text": "Tells the user to run Meta Sync for the data source in NocoDB"},
+        {"assertion": "nocobase_refresh", "text": "Tells the user to refresh the external data source in NocoBase"}
       ]
     }
   ]

@@ -1,6 +1,6 @@
 ---
 title: "Workflow Output"
-description: "Explains the output value configuration and usage scenarios for the Workflow Output node."
+description: "Use inside a called workflow to define the value returned to the parent workflow's Call Workflow node."
 ---
 
 # Workflow Output
@@ -40,5 +40,6 @@ Not supported. This node cannot use CLI `workflow flow-nodes test` or HTTP `flow
 This node exposes a single root result value, referenced directly as `{{$jobsMapByNodeKey.<nodeKey>}}`.
 
 - Exposed root: the configured workflow output value of this node.
-- No child field tree is provided. If the output is a complex JSON object and you need named child variables in the selector, follow this node with `json-query` or `json-variable-mapping`.
+- No child field tree is provided. If the output is an object/array and a later node needs any child field, you must follow this node with `json-variable-mapping` or `json-query`, model the required fields, and make later nodes use only the JSON node's outputs.
+- Do not manually append child paths to the output node root. Only the JSON modeling node should consume the raw root.
 - Example reference: `{{$jobsMapByNodeKey.workflow_output}}`.

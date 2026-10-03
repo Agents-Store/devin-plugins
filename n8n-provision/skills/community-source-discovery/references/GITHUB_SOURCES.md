@@ -2,16 +2,20 @@
 
 Catalog of GitHub repositories hosting importable n8n workflow JSON files. Use these as fallback when the official n8n template library (api.n8n.io) lacks a suitable match.
 
+Figures below were read from GitHub on 2026-10-02/03 and drift fast — re-check stars, license and last push (`gh api repos/<owner>/<name>`) before relying on them.
+
 ## Repository Catalog
 
-| Repo | Stars | Workflows | License | Last Active |
-|------|-------|-----------|---------|-------------|
-| Zie619/n8n-workflows | ~53,500 | 4,300+ | Unspecified | Monthly scrape from n8n.io |
-| enescingoz/awesome-n8n-templates | ~20,900 | 280+ | MIT | Active maintenance |
-| Danitilahun/n8n-workflow-templates | ~606 | 2,053 | MIT | Periodic updates |
-| ritik-prog/n8n-automation-templates-5000 | ~335 | 5,000+ | MIT | Bulk upload |
-| zengfr/n8n-workflow-all-templates | ~100 | 8,615+ | Unspecified | Monthly auto-sync |
-| EtienneLescot/n8n-as-code | ~636 | 7,700+ | MIT | Active development |
+| Repo | Stars | Workflows | License | Last push |
+|------|-------|-----------|---------|-----------|
+| Zie619/n8n-workflows | ~56,900 | 4,343 files | MIT | 2026-06 |
+| enescingoz/awesome-n8n-templates | ~25,700 | 280+ | none stated (GitHub reports NOASSERTION) | 2026-09 |
+| EtienneLescot/n8n-as-code | ~1,590 | 7,700+ | MIT | 2026-10 (active) |
+| ritik-prog/n8n-automation-templates-5000 | ~510 | 5,000+ | MIT | 2026-07 |
+| zengfr/n8n-workflow-all-templates | ~116 | 12,333 files | Apache-2.0 | 2026-09 |
+| Danitilahun/n8n-workflow-templates | ~720 | 2,053 | none | **2025-07 — stale** (over a year without a push: Caution) |
+
+A repo with no license gives you no stated right to reuse its workflows — say so when recommending one. The official n8n library itself is **not** in git; its only public source is `api.n8n.io`.
 
 ---
 
@@ -23,114 +27,91 @@ The largest community collection. Scraped from n8n.io and community submissions.
 - Browse by category, search by keyword
 - Each workflow has a detail page with description, node list, and raw JSON link
 
+**Directory structure** (one folder per integration, one file per workflow):
+```
+workflows/<Integration>/<NNNN_Name_Trigger>.json
+```
+Example: `workflows/Telegram/0001_Telegram_Schedule_Automation_Scheduled.json`.
+
 **Raw JSON access pattern:**
 ```
-https://raw.githubusercontent.com/Zie619/n8n-workflows/main/workflows/{id}.json
+https://raw.githubusercontent.com/Zie619/n8n-workflows/main/workflows/<Integration>/<file>.json
 ```
+There is no flat `workflows/<id>.json` — that URL answers 404. Find the file name first: list the integration folder through the GitHub API (`https://api.github.com/repos/Zie619/n8n-workflows/contents/workflows/<Integration>`).
 
 **Search strategy:**
 1. Use `~~search` with query: `site:github.com/Zie619/n8n-workflows {keyword}`
 2. Or scrape `https://zie619.github.io/n8n-workflows` and search the index page
-3. Workflow IDs map to n8n.io template IDs when sourced from the official library
+3. The numeric file prefix is the repo's own counter. A match with an n8n.io template ID is **not** confirmed — do not assume one
 
 **Quality notes:**
 - Mixed quality — includes raw scrapes and curated submissions
 - Always validate JSON schema before import
-- Some workflows reference deprecated node types (pre-n8n 1.0)
+- Some workflows reference deprecated node types (pre-n8n 1.0) or nodes removed in n8n 2.0 and 3.0
 - Check `nodes[].typeVersion` to detect outdated node versions
 
 ---
 
 ## enescingoz/awesome-n8n-templates
 
-Curated, high-quality collection organized by integration category.
+Curated collection organized by integration or use-case folders.
 
-**Directory structure:**
+**Directory structure** (examples; the list of folders changes):
 ```
-Telegram/
-Discord/
-OpenAI/
-Slack/
-WhatsApp/
-DevOps/
-Google/
+AI_Research_RAG_and_Data_Analysis/
+Gmail_and_Email_Automation/
+Google_Drive_and_Google_Sheets/
+OpenAI_and_LLMs/
+Database_and_Storage/
+Forms_and_Surveys/
 Notion/
-Airtable/
+Slack/
 ...
 ```
 
-**Raw JSON access pattern:**
+**Raw JSON access pattern** (file names contain spaces — URL-encode them):
 ```
-https://raw.githubusercontent.com/enescingoz/awesome-n8n-templates/main/{Category}/{filename}.json
+https://raw.githubusercontent.com/enescingoz/awesome-n8n-templates/main/{Folder}/{filename}.json
 ```
 
 **Search strategy:**
-1. Browse category directories matching the user's target integration
-2. File names are descriptive (e.g., `Slack-GitHub-PR-Notification.json`)
+1. Browse folders matching the user's target integration
+2. File names are descriptive
 3. Use `~~search` with query: `site:github.com/enescingoz/awesome-n8n-templates {keyword}`
 
 **Quality notes:**
-- Higher quality than bulk collections — each template is manually reviewed
-- Fewer workflows but better documentation per workflow
+- Fewer workflows than the bulk collections, with a README per folder
 - Good starting point before checking larger repos
-- Regularly updated with new integrations
-
----
-
-## Danitilahun/n8n-workflow-templates
-
-Well-organized collection with a searchable backend.
-
-**Directory structure:**
-```
-workflows/
-  {id}.json
-  {id}.json
-  ...
-```
-
-**FastAPI search backend:** The repo includes a Python FastAPI backend for searching workflows. Not always running publicly, but the JSON files are directly accessible.
-
-**Raw JSON access pattern:**
-```
-https://raw.githubusercontent.com/Danitilahun/n8n-workflow-templates/main/workflows/{id}.json
-```
-
-**Search strategy:**
-1. Use `~~search` targeting the repo for keyword matches
-2. Workflow file names are numeric IDs — use the repo's README or search to map IDs to descriptions
-3. The `workflows/` directory can be listed via GitHub API for bulk access
-
-**Quality notes:**
-- Clean JSON format, ready for import
-- Numeric IDs make browsing harder — search is essential
-- Good coverage of common automation patterns
+- No license is declared — mention it to the user
 
 ---
 
 ## ritik-prog/n8n-automation-templates-5000
 
-Large bulk collection organized by category.
+Large bulk collection.
 
-**Directory structure:**
+**Directory structure** (top level):
 ```
-{category}/
-  {workflow-name}.json
+Templates based on paltforms/     (sic)
+n8n_2000_workflows/
+n8n advance/
+workflows by Zie619/
 ```
+Each folder holds `*.json` workflow files. Folder and file names contain spaces — URL-encode them.
 
 **Raw JSON access pattern:**
 ```
-https://raw.githubusercontent.com/ritik-prog/n8n-automation-templates-5000/main/{category}/{filename}.json
+https://raw.githubusercontent.com/ritik-prog/n8n-automation-templates-5000/main/{folder}/{filename}.json
 ```
 
 **Search strategy:**
-1. Browse category directories for the target integration
+1. List the folder through the GitHub API, or browse it on github.com
 2. File names are descriptive
 3. Use `~~search` for specific keywords within the repo
 
 **Quality notes:**
-- MIT licensed — safe for production use
-- Large volume but variable quality
+- MIT licensed
+- Large volume but variable quality; `workflows by Zie619/` duplicates another repo in this list
 - Some workflows may use older n8n node versions
 - Always validate before importing
 
@@ -138,28 +119,35 @@ https://raw.githubusercontent.com/ritik-prog/n8n-automation-templates-5000/main/
 
 ## zengfr/n8n-workflow-all-templates
 
-Most comprehensive mirror — auto-synced monthly from n8n.io official library.
+Mirror of the official library, synchronized roughly monthly (12,333 files).
 
-**Raw JSON access pattern:**
+**Directory structure:**
 ```
-https://raw.githubusercontent.com/zengfr/n8n-workflow-all-templates/main/{filename}.json
+n8n-workflow-all-templates/00/00/00/{id}_{Title}.json
+index_files_1.md, index_files_2.md, ...   (searchable index of all files)
 ```
+
+**Raw JSON access pattern:** take the path from an index file or from GitHub, then
+```
+https://raw.githubusercontent.com/zengfr/n8n-workflow-all-templates/main/{path}/{id}_{Title}.json
+```
+Files are not at the repo root — a root-level URL answers 404.
 
 **Search strategy:**
-1. This repo mirrors the official library — use it when `~~template_search` is unavailable or rate-limited
-2. Files are named by template ID or title
+1. Search the `index_files_N.md` pages for the keyword (they list ID and title), or use `~~search` with `site:github.com/zengfr/n8n-workflow-all-templates {keyword}`
+2. The file name starts with the n8n.io template ID, so a hit can also be fetched from `api.n8n.io` — prefer that when the API is reachable
 3. Monthly sync means it may lag 1-4 weeks behind the live library
 
 **Quality notes:**
 - Mirrors official library quality — generally high
 - Auto-generated, so no curation beyond what n8n.io provides
-- Useful as a backup data source when the API is down
+- Useful as a backup data source when the API is down; Apache-2.0
 
 ---
 
 ## EtienneLescot/n8n-as-code
 
-Workflows in TypeScript SDK format rather than raw JSON.
+Workflows in TypeScript SDK format rather than raw JSON, plus tooling that gives an AI agent node schemas.
 
 **Format:** TypeScript files using the n8n SDK
 ```typescript
@@ -171,7 +159,7 @@ import { Workflow } from 'n8n-workflow';
 **Conversion required:** These are NOT raw JSON workflow files. To import:
 1. Extract the workflow definition from the TypeScript code
 2. Convert to n8n JSON format
-3. Or use them as reference for building workflows via `n8n-native-mcp`
+3. Or use them as reference for building workflows via `n8n-native-mcp` (`create_workflow_from_code` takes TypeScript SDK code)
 
 **Search strategy:**
 1. Best for understanding patterns and architecture
@@ -183,6 +171,20 @@ import { Workflow } from 'n8n-workflow';
 - Not directly importable — needs conversion
 - Excellent for learning n8n workflow patterns
 - Active development with regular additions
+
+---
+
+## Danitilahun/n8n-workflow-templates (stale)
+
+A collection with a Python search backend. **The last push was in 2025-07**, which is past this plugin's "over 1 year" threshold: treat it as Caution, prefer the repos above, and use it only when nothing else has a match. It carries no license.
+
+**Directory structure:** `workflows/<NNNN_Name>.json` (numeric prefix, like the Zie619 collection).
+
+**Raw JSON access pattern:**
+```
+https://raw.githubusercontent.com/Danitilahun/n8n-workflow-templates/main/workflows/<file>.json
+```
+List `workflows/` through the GitHub API to find file names.
 
 ---
 
@@ -217,8 +219,9 @@ Always validate fetched community JSON before importing:
 ```
 1. Parse JSON — must be valid
 2. Check for required fields: nodes, connections
-3. Check node types — look for deprecated types
+3. Check node types — look for deprecated types and nodes n8n removed (see workflow-analysis, Step 6)
 4. Check typeVersion — flag outdated versions
-5. Use ~~workflow_validate if available
-6. Then import via ~~workflow_create
+5. Build the payload (name, nodes, connections, settings; strip node credentials)
+6. Use ~~workflow_validate (validate_workflow) on the payload
+7. Then import via ~~workflow_create
 ```

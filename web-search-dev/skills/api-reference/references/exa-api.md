@@ -149,14 +149,18 @@ curl -s -X POST https://api.exa.ai/agent/runs \
   }' | jq .
 ```
 
-Effort tiers: `minimal`, `low`, `medium`, `high`, `xhigh`, `auto`, `max`. Supports `outputSchema` for structured results.
+Effort tiers: `minimal`, `low`, `medium`, `high`, `xhigh`, `auto`, `ultra` (default `auto`; `ultra` is the highest-effort tier). Supports `outputSchema` for structured results, `systemPrompt`, `previousRunId` for follow-ups, and a `budget` (maximum spend and, for `ultra`, a soft time limit) for the metered `auto` and `ultra` efforts. Agent runs are usage-billed.
 
-Poll a run:
+Poll a run (also `GET /agent/runs/{id}/events`, `POST /agent/runs/{id}/cancel`, and `/stop` for `ultra` runs):
 
 ```bash
 curl -s https://api.exa.ai/agent/runs/${RUN_ID} \
   -H "x-api-key: ${EXA_API_KEY}" | jq .
 ```
+
+## Monitors and Batches
+
+`/monitors` (create, list, update, delete, `/{id}/trigger`, `/{id}/runs`) schedules recurring searches; `/batches` runs bulk requests. See https://exa.ai/docs for the request bodies.
 
 ## Response Format
 
@@ -183,3 +187,4 @@ curl -s https://api.exa.ai/agent/runs/${RUN_ID} \
 - `text`, `highlights`, `summary` must be nested inside `contents`
 - `livecrawl: "always"` is deprecated — use `contents.maxAgeHours: 0`
 - `numSentences`, `highlightsPerUrl`, `tokensNum` do not exist
+- Looking up pages similar to a URL has no replacement endpoint — describe the source page in a normal `/search` query

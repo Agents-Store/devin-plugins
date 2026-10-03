@@ -1,23 +1,33 @@
 # Scenario — Message-extension search command
 
-A "compose extension" the user invokes from the message compose box to search a backing dataset and pick a result card to send.
+A "compose extension" the user opens from the compose box to search a dataset and pick a card to send.
 
-## Steps
+## 1. Scaffold and register
 
 ```bash
-teams project new typescript me-search --template echo
+teams project new typescript me-search -t echo --yes
 cd me-search
-npm install
+npm install @microsoft/teams.cards @microsoft/teams.api
 ```
 
-Add the command to `appPackage/manifest.json`:
+Register the app as in `echo-bot.md` (`teams app create … --env .env`) — the extension is tested in Teams, the Playground does not render compose-box menus.
+
+## 2. Add the command to the manifest
+
+The scaffolded project keeps no manifest file; the manifest lives in the Developer Portal. Download it, add the command, upload it:
+
+```bash
+teams app manifest download <teamsAppId> manifest.json
+```
+
+Add this under the manifest root, keeping the bot's real id in `botId`:
 
 ```jsonc
 {
   "composeExtensions": [{
-    "botId": "${BOT_ID}",
+    "botId": "<existing bot id from the manifest>",
     "commands": [{
-      "id": "searchIssues",
+      "id": "searchQuery",
       "type": "query",
       "title": "Search issues",
       "description": "Search the issue tracker and insert a card",
@@ -30,80 +40,76 @@ Add the command to `appPackage/manifest.json`:
 }
 ```
 
-Edit `src/index.ts`:
+```bash
+teams app manifest upload manifest.json <teamsAppId>
+```
+
+The upload bumps the patch version when the content changed; reinstall the app in Teams so the client picks the command up.
+
+## 3. The handler
+
+Replace `src/index.ts`:
 
 ```ts
+import { ThumbnailCard, cardAttachment } from '@microsoft/teams.api';
 import { App } from '@microsoft/teams.apps';
-import { DevtoolsPlugin } from '@microsoft/teams.dev';
-import { AdaptiveCard, TextBlock, FactSet, Fact } from '@microsoft/teams.cards';
-import { cardAttachment } from '@microsoft/teams.api';
+import { AdaptiveCard, Fact, FactSet, TextBlock } from '@microsoft/teams.cards';
 
 type Issue = { id: string; title: string; status: 'open' | 'closed'; assignee: string };
 
-async function searchIssues(q: string): Promise<Issue[]> {
-  // Replace with a real call to your issue tracker.
-  const sample: Issue[] = [
-    { id: 'BUG-1', title: 'Login fails on Safari', status: 'open', assignee: 'alice' },
-    { id: 'BUG-2', title: 'Card renders blank', status: 'closed', assignee: 'bob' },
-    { id: 'FEAT-9', title: 'Add SSO', status: 'open', assignee: 'carol' },
-  ];
+const SAMPLE: Issue[] = [
+  { id: 'BUG-1', title: 'Login fails on Safari', status: 'open', assignee: 'alice' },
+  { id: 'BUG-2', title: 'Card renders blank', status: 'closed', assignee: 'bob' },
+  { id: 'FEAT-9', title: 'Add SSO', status: 'open', assignee: 'carol' },
+];
+
+async function findIssues(q: string): Promise<Issue[]> {
+  // Replace with a call to your issue tracker.
   const needle = q.toLowerCase();
-  return sample.filter((i) => i.title.toLowerCase().includes(needle));
+  return SAMPLE.filter((i) => i.title.toLowerCase().includes(needle));
 }
 
 const issueCard = (i: Issue) =>
-  new AdaptiveCard()
-    .addBody(new TextBlock(`${i.id}: ${i.title}`).withWeight('Bolder'))
-    .addBody(
-      new FactSet()
-        .addFact(new Fact('Status', i.status))
-        .addFact(new Fact('Assignee', i.assignee)),
-    );
+  new AdaptiveCard(
+    new TextBlock(`${i.id}: ${i.title}`, { weight: 'Bolder', wrap: true }),
+    new FactSet(new Fact('Status', i.status), new Fact('Assignee', i.assignee)),
+  );
 
-const app = new App({
-  plugins: [new DevtoolsPlugin()],
-});
+const app = new App();
 
 app.on('message.ext.query', async ({ activity }) => {
-  const param = activity.value.parameters?.find((p) => p.name === 'q');
-  const q = String(param?.value ?? '');
+  const { commandId } = activity.value;
+  if (commandId !== 'searchQuery') return { status: 400 };
 
-  const results = await searchIssues(q);
+  const q = String(activity.value.parameters?.[0]?.value ?? '');
+  const attachments = (await findIssues(q)).map((issue) => {
+    const preview = { title: `${issue.id}: ${issue.title}`, text: `${issue.status}, ${issue.assignee}` } satisfies ThumbnailCard;
+    return { ...cardAttachment('adaptive', issueCard(issue)), preview: cardAttachment('thumbnail', preview) };
+  });
 
   return {
-    composeExtension: {
-      type: 'result',
-      attachmentLayout: 'list',
-      attachments: results.map((i) => cardAttachment('adaptive', issueCard(i))),
-    },
-  };
+    composeExtension: { type: 'result', attachmentLayout: 'list', attachments },
+  } as const;
 });
 
-(async () => {
-  await app.start();
-})();
+app.start(process.env.PORT || 3978).catch(console.error);
 ```
 
-## Run
+## 4. Run and verify
 
 ```bash
-devtunnel host -p 3978 --allow-anonymous
-teams app update $(teams app list --json | jq -r '.[0].teamsAppId') --endpoint "https://<tunnel-host>/api/messages"
-npm run dev
+npm run dev          # with the tunnel from echo-bot.md running and the endpoint registered
 ```
 
-## Verify
+1. In any chat's compose box, open the **+** menu and pick **Search issues**.
+2. Type `login`. The result list shows `BUG-1: Login fails on Safari`.
+3. Pick it: the issue card is inserted into the draft. Send the message; the card renders in the conversation.
 
-1. Sideload the updated manifest in Teams.
-2. In any chat compose box, click the **+** icon → pick **Search issues**.
-3. Type `login`. Results appear in the dropdown.
-4. Click **BUG-1** — the issue card is inserted in the message draft.
-5. Send the message. The card renders in the conversation.
-
-DevTools shows the `message.ext.query` activity with `value.parameters` containing your query.
+With `LOG_LEVEL=debug` the server logs the `composeExtension/query` invoke and its `value.parameters`.
 
 ## Common tweaks
 
-- Switch `attachmentLayout: 'list'` to `'grid'` for thumbnail previews.
-- Add caching keyed on query string to keep results snappy.
-- Add an `action` command (`type: 'action'`) for users to *create* an issue from a compose form — see `message-extensions` for the dialog flow.
+- `attachmentLayout: 'grid'` for thumbnail results.
+- Cache results by query string to keep the list snappy.
+- Open a detail view on tap: give the preview a `tap` of type `invoke`, then handle `message.ext.select-item` (`message-extensions`).
+- Add an action command that creates an issue from a form (`message.ext.submit`, with `fetchTask: true` for a dynamic form handled by `message.ext.open`).

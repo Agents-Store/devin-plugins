@@ -9,25 +9,22 @@ This skill covers configuring a Plane project with Agile-optimized states, label
 
 ## Tool Name Resolution
 
-Tools below are referenced by their **action name** only (e.g., `create_project`). Resolve the real tool names for your current Plane MCP server or connector through the `connector-bootstrap` skill. Match by action suffix — never assume a prefix.
+Plane MCP exposes one tool per resource and the operation goes into the `action` parameter: `project(action=create, ...)`. This skill writes calls in that form. Resolve the real tool names (`mcp__<server>__<resource>`) for your current Plane connection through the `connector-bootstrap` skill - never assume a server prefix.
 
 ## Available Tools
 
-| Tool | Description |
+| Call | Description |
 |------|-------------|
-| `list_projects` | Check existing projects |
-| `create_project` | Create new project |
-| `update_project` | Update project settings |
-| `update_project_features` | Enable/disable project features |
-| `get_project_features` | Check current feature flags |
-| `list_states` | List existing states |
-| `create_state` | Create workflow states |
-| `update_state` | Modify states |
-| `list_labels` | List existing labels |
-| `create_label` | Create categorization labels |
-| `list_work_item_types` | Check existing types |
-| `create_work_item_type` | Create work item types |
-| `create_work_item_property` | Add custom properties to types |
+| `project(action=list)` | Check existing projects (paginated: follow `next_cursor`) |
+| `project(action=create)` | Create new project (`name` and `identifier` are required) |
+| `project(action=update)` | Update project settings (timezone, default state, estimate, time tracking, ...) |
+| `project(action=get_features)` | Check current feature flags |
+| `project(action=update_features)` | Enable/disable project features |
+| `state(action=list)` / `state(action=create)` / `state(action=update)` | List, create and modify workflow states |
+| `label(action=list)` / `label(action=create)` | List and create categorization labels |
+| `workitem_type(action=list)` / `workitem_type(action=resolve)` | Check existing types / get-or-create a type |
+| `workitem_property(action=create)` | Add custom properties to types |
+| `project_estimate(action=create\|create_points\|link)` | Estimate system (points scale) for the project |
 
 ## Full Project Setup Workflow
 
@@ -35,30 +32,29 @@ Tools below are referenced by their **action name** only (e.g., `create_project`
 
 ```
 Option A — New project:
-create_project({
-  name: "My Startup App",
-  identifier: "MSA",
-  description: "Main product development project"
-})
+project(action=create,
+  name="My Startup App",
+  identifier="MSA",
+  description="Main product development project")
 
 Option B — Existing project:
-list_projects()
-→ Find project by name, get project_id
+project(action=list)
+→ Find project by name, get project_id (follow next_cursor if needed)
 ```
 
 ### Step 2: Enable Agile Features
 
 ```
-update_project_features({
-  project_id: "<id>",
-  cycles: true,      // Sprints
-  modules: true,     // Feature grouping
-  epics: true,       // Large feature tracking
-  pages: true,       // Documentation, retro notes
-  views: true,       // Custom filtered views
-  intakes: true,     // Bug/feature request intake
-  work_item_types: true  // Story, Task, Bug distinction
-})
+project(action=update_features,
+  project_id=<id>,
+  cycles=true,          // Sprints
+  modules=true,         // Feature grouping
+  epics=true,           // Large feature tracking
+  pages=true,           // Documentation, retro notes
+  views=true,           // Custom filtered views
+  intakes=true,         // Bug/feature request intake
+  workitem_types=true)  // Story, Task, Bug distinction
+// omitted flags are left as they are; also available: parallel_cycles, project_updates, workflows
 ```
 
 ### Step 3: Create Workflow States
@@ -66,12 +62,12 @@ update_project_features({
 Recommended state workflow for startups:
 
 ```
-create_state({ project_id, name: "Backlog",     color: "#a3a3a3", group: "backlog",    sequence: 1 })
-create_state({ project_id, name: "Todo",         color: "#3b82f6", group: "unstarted",  sequence: 2 })
-create_state({ project_id, name: "In Progress",  color: "#f59e0b", group: "started",    sequence: 3 })
-create_state({ project_id, name: "In Review",    color: "#8b5cf6", group: "started",    sequence: 4 })
-create_state({ project_id, name: "Done",         color: "#22c55e", group: "completed",  sequence: 5 })
-create_state({ project_id, name: "Cancelled",    color: "#ef4444", group: "cancelled",  sequence: 6 })
+state(action=create, project_id=<id>, name="Backlog", color="#a3a3a3", group="backlog", sequence=1)
+state(action=create, project_id=<id>, name="Todo", color="#3b82f6", group="unstarted", sequence=2)
+state(action=create, project_id=<id>, name="In Progress", color="#f59e0b", group="started", sequence=3)
+state(action=create, project_id=<id>, name="In Review", color="#8b5cf6", group="started", sequence=4)
+state(action=create, project_id=<id>, name="Done", color="#22c55e", group="completed", sequence=5)
+state(action=create, project_id=<id>, name="Cancelled", color="#ef4444", group="cancelled", sequence=6)
 ```
 
 **State group mapping:**
@@ -87,83 +83,59 @@ create_state({ project_id, name: "Cancelled",    color: "#ef4444", group: "cance
 
 **Type labels:**
 ```
-create_label({ project_id, name: "bug",         color: "#ef4444" })  // Red
-create_label({ project_id, name: "feature",     color: "#3b82f6" })  // Blue
-create_label({ project_id, name: "tech-debt",   color: "#8b5cf6" })  // Purple
-create_label({ project_id, name: "spike",       color: "#06b6d4" })  // Cyan
-create_label({ project_id, name: "chore",       color: "#6b7280" })  // Gray
+label(action=create, project_id=<id>, name="bug", color="#ef4444")  // Red
+label(action=create, project_id=<id>, name="feature", color="#3b82f6")  // Blue
+label(action=create, project_id=<id>, name="tech-debt", color="#8b5cf6")  // Purple
+label(action=create, project_id=<id>, name="spike", color="#06b6d4")  // Cyan
+label(action=create, project_id=<id>, name="chore", color="#6b7280")  // Gray
 ```
 
 **Status labels:**
 ```
-create_label({ project_id, name: "ready",            color: "#22c55e" })  // Green
-create_label({ project_id, name: "needs-refinement",  color: "#f59e0b" })  // Amber
-create_label({ project_id, name: "blocked",           color: "#ef4444" })  // Red
-create_label({ project_id, name: "retro-action",      color: "#ec4899" })  // Pink
-create_label({ project_id, name: "quick-win",         color: "#10b981" })  // Emerald
+label(action=create, project_id=<id>, name="ready", color="#22c55e")  // Green
+label(action=create, project_id=<id>, name="needs-refinement", color="#f59e0b")  // Amber
+label(action=create, project_id=<id>, name="blocked", color="#ef4444")  // Red
+label(action=create, project_id=<id>, name="retro-action", color="#ec4899")  // Pink
+label(action=create, project_id=<id>, name="quick-win", color="#10b981")  // Emerald
 ```
 
 **MoSCoW labels (optional, if using labels instead of priority field):**
 ```
-create_label({ project_id, name: "must-have",    color: "#dc2626" })  // Red
-create_label({ project_id, name: "should-have",  color: "#f97316" })  // Orange
-create_label({ project_id, name: "could-have",   color: "#eab308" })  // Yellow
-create_label({ project_id, name: "wont-have",    color: "#9ca3af" })  // Gray
+label(action=create, project_id=<id>, name="must-have", color="#dc2626")  // Red
+label(action=create, project_id=<id>, name="should-have", color="#f97316")  // Orange
+label(action=create, project_id=<id>, name="could-have", color="#eab308")  // Yellow
+label(action=create, project_id=<id>, name="wont-have", color="#9ca3af")  // Gray
 ```
 
 ### Step 5: Create Work Item Types
 
 ```
-create_work_item_type({
-  project_id: "<id>",
-  name: "Story",
-  description: "User-facing feature delivering business value"
-})
-
-create_work_item_type({
-  project_id: "<id>",
-  name: "Task",
-  description: "Technical work item supporting a story"
-})
-
-create_work_item_type({
-  project_id: "<id>",
-  name: "Bug",
-  description: "Defect or unexpected behavior to fix"
-})
-
-create_work_item_type({
-  project_id: "<id>",
-  name: "Spike",
-  description: "Time-boxed research to reduce uncertainty"
-})
+workitem_type(action=resolve, project_id=<id>, name="Story")   // User-facing feature delivering business value
+workitem_type(action=resolve, project_id=<id>, name="Task")    // Technical work item supporting a story
+workitem_type(action=resolve, project_id=<id>, name="Bug")     // Defect or unexpected behavior to fix
+workitem_type(action=resolve, project_id=<id>, name="Spike")   // Time-boxed research to reduce uncertainty
 ```
+
+`resolve` finds or creates the named type for the project (exact, case-sensitive match) and never duplicates it; where the workspace owns the type vocabulary it imports the workspace type instead, which is the only valid path there. Use `workitem_type(action=create, name, description, project_id)` only when you need to set a `description` and the project owns its types. The returned `id` is the `type_id` for `workitem(action=create)` and the `workitem_type_id` for properties.
 
 ### Step 6: Create Custom Properties (Optional)
 
 For WSJF scoring or additional metadata:
 
 ```
-create_work_item_property({
-  project_id: "<id>",
-  type_id: "<story_type_id>",
-  display_name: "Business Value",
-  property_type: "DECIMAL",
-  description: "Business value score for WSJF (1-10)"
-})
+workitem_property(action=create,
+  project_id=<id>,
+  workitem_type_id=<story_type_id>,
+  display_name="Business Value",
+  property_type="DECIMAL",
+  description="Business value score for WSJF (1-10)")
 
-create_work_item_property({
-  project_id: "<id>",
-  type_id: "<story_type_id>",
-  display_name: "Risk Level",
-  property_type: "OPTION",
-  options: [
-    { "name": "Low" },
-    { "name": "Medium" },
-    { "name": "High" },
-    { "name": "Critical" }
-  ]
-})
+workitem_property(action=create,
+  project_id=<id>,
+  workitem_type_id=<story_type_id>,
+  display_name="Risk Level",
+  property_type="OPTION",
+  options=[{"name": "Low"}, {"name": "Medium"}, {"name": "High"}, {"name": "Critical"}])
 ```
 
 ## Setup Templates
@@ -196,16 +168,16 @@ Properties: Business Value, Risk Level
 After setup, verify:
 
 ```
-1. list_states({ project_id })
-   → Should show 4-6 states in correct groups
+1. state(action=list, project_id=<id>)
+   → Should show 4-6 states in correct groups (Plane keeps its own Triage state, not listed)
 
-2. list_labels({ project_id })
+2. label(action=list, project_id=<id>)
    → Should show all created labels
 
-3. list_work_item_types({ project_id })
+3. workitem_type(action=list, project_id=<id>)
    → Should show Story, Task, Bug (at minimum)
 
-4. get_project_features({ project_id })
+4. project(action=get_features, project_id=<id>)
    → cycles: true, modules: true (at minimum)
 ```
 

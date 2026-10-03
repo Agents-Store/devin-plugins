@@ -30,7 +30,10 @@ Production patterns for Jinja2 templating in Flask applications.
     {% if current_user.is_authenticated %}
     <nav>
         <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('auth.logout') }}">Logout</a>
+        <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit">Logout</button>
+        </form>
     </nav>
     {% endif %}
 
@@ -59,7 +62,7 @@ Production patterns for Jinja2 templating in Flask applications.
 {# templates/clients.html #}
 {% extends "base.html" %}
 
-{% block title %}Clients - NailBook{% endblock %}
+{% block title %}Clients - myapp{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/clients.css') }}">
@@ -115,7 +118,7 @@ Loop variables: `loop.index` (1-based), `loop.index0` (0-based), `loop.first`, `
 {{ price|int }}               {# 19.99 → 19 #}
 {{ items|length }}            {# List length #}
 {{ text|truncate(50) }}       {# Truncate with ellipsis #}
-{{ date|default('N/A') }}     {# Default if None #}
+{{ date|default('N/A', true) }}  {# N/A if undefined, None or falsy (without true, only if undefined) #}
 {{ html_content|safe }}       {# Mark as safe HTML (no escaping) #}
 {{ list|join(', ') }}         {# Join list items #}
 {{ date_obj|string }}         {# Convert to string #}
@@ -127,7 +130,7 @@ Loop variables: `loop.index` (1-based), `loop.index0` (0-based), `loop.first`, `
 # In app.py or a filters module
 @app.template_filter('currency')
 def currency_filter(value):
-    return f"{value:,.0f} \u20B4"  # Ukrainian hryvnia
+    return f"{value:,.2f} USD"
 
 @app.template_filter('timeformat')
 def timeformat_filter(time_obj):
@@ -135,13 +138,15 @@ def timeformat_filter(time_obj):
 ```
 
 ```jinja2
-{{ appointment.price|currency }}   {# "1,500 ₴" #}
+{{ appointment.price|currency }}   {# "1,500.00 USD" #}
 {{ appointment.time|timeformat }}  {# "14:30" #}
 ```
 
 ## Forms
 
 ### Basic Form
+
+`csrf_token()` exists only when `CSRFProtect` is initialised (`csrf.init_app(app)`, see the `app-patterns` skill). Without it the template raises `UndefinedError: 'csrf_token' is undefined`, and with it every `POST` without a token gets a 400.
 
 ```jinja2
 <form method="POST" action="{{ url_for('clients.add_client') }}">
@@ -203,7 +208,25 @@ Reusable template components:
 <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
 ```
 
-Always use `url_for('static', ...)` instead of hardcoded paths — it handles URL prefixes and cache busting correctly.
+Always use `url_for('static', ...)` instead of hardcoded paths: it handles URL prefixes. It does **not** add cache busting (`/static/css/base.css` stays the same URL after the file changes). Add a version query string, or use hashed file names from your front-end build:
+
+```python
+# app.py: imports at the top of the file
+import os
+from flask import current_app, url_for
+
+# inside create_app()
+@app.template_global()
+def static_v(filename):
+    """url_for('static') plus ?v=<mtime>, so browsers refetch changed files."""
+    path = os.path.join(current_app.static_folder, filename)
+    version = int(os.stat(path).st_mtime) if os.path.exists(path) else 0
+    return url_for('static', filename=filename, v=version)
+```
+
+```jinja2
+<link rel="stylesheet" href="{{ static_v('css/base.css') }}">   {# /static/css/base.css?v=1760000000 #}
+```
 
 ## Context Variables
 
@@ -216,4 +239,5 @@ Variables available in all templates without explicit passing:
 | `session` | Flask | Session data |
 | `config` | Flask | App configuration |
 | `g` | Flask | Per-request globals |
+| `csrf_token()`, `csrf_meta_tag()` | Flask-WTF | Defined only after `CSRFProtect` is initialised (`csrf_meta_tag` needs 1.3+) |
 | Custom | `@app.context_processor` | User-defined globals |

@@ -9,12 +9,14 @@ description: |
 
 Assess whether an n8n instance is ready to receive new workflows. Produces a structured readiness report with pass/warn/fail ratings for each check category. All calls use `~~capability` with automatic fallback (see CONNECTORS.md).
 
+**Health is not security.** `~~instance_health` (`n8n_health_check`) answers "is the instance alive and is the API key accepted". `~~instance_audit` (`n8n_audit_instance`) is a **security audit** and belongs to Step 7. Do not use the audit as a health check.
+
 ## Readiness Assessment Overview
 
 Run the full assessment in this order:
 
 ```
-1. Health Check         → Is the instance alive and responsive?
+1. Health Check         → Is the instance alive, responsive, and what can the key do?
 2. Workflow Inventory   → What already exists? Any conflicts?
 3. Credential Inventory → What credentials are configured?
 4. Community Nodes      → Are required community nodes installed?
@@ -26,18 +28,25 @@ Run the full assessment in this order:
 ## Step 1: Health Check
 
 ```
-~~instance_audit
+~~instance_health
 ```
 
-Extract and evaluate:
+`n8n_health_check` returns `status` (`healthy` / `degraded` / `error`), `instanceId`, `features`, `mcpVersion` and `performance.responseTimeMs`. Use `mode: "diagnostic"` when it fails. Extract and evaluate:
 
 | Metric | Source | Pass | Warn | Fail |
 |--------|--------|------|------|------|
-| Instance reachable | Audit response | Responds < 5s | Responds 5-15s | No response / timeout |
-| n8n version | Audit `.version` | Latest stable or N-1 | N-2 or N-3 | More than 3 versions behind |
-| Uptime | Audit `.uptime` | > 24 hours | 1-24 hours | < 1 hour (recent restart) |
-| Queue health | Audit `.queue` | No backed-up executions | < 50 queued | > 50 queued |
-| Database | Audit `.database` | Connected, responsive | Slow queries detected | Connection errors |
+| Instance reachable | `status`, `performance.responseTimeMs` | `healthy`, responds < 5s | `degraded`, or 5-15s | `error` / no response / timeout |
+| API key accepted | The call itself succeeds | Works | — | 401 (expired or wrong key) |
+| Features | `features` | Features the plan needs are on | — | A needed feature is off |
+
+**There is no version, uptime, queue or database field.** n8n stopped reporting its version to API clients in 1.119.0, so `n8nVersion` is normally absent (a `n8nVersionNote` says so) — that is neither an error nor worth a retry. Check **capabilities** instead of comparing versions:
+
+| Question | How to find out |
+|----------|-----------------|
+| What can this API key do? | `GET /api/v1/discover` lists the surface and scopes the key can use; or try the call and read the `403`. Scopes exist only on Enterprise; elsewhere a key has the full rights of its user |
+| Can it publish? | Needs the `workflow:activate` scope and the `workflow:publish` permission (`PUBLISH_FORBIDDEN` otherwise, n8n 2.39+) |
+| Is the instance current? | When the owner knows the version: compare with the `stable` dist-tag (`npm view n8n dist-tags`). `latest` is the same as `stable` |
+| Uptime, queue, memory | `/healthz` always; `/metrics` only when the instance sets `N8N_METRICS=true` |
 
 ## Step 2: Workflow Inventory
 
@@ -50,8 +59,8 @@ Analyze the results:
 | Metric | Pass | Warn | Fail |
 |--------|------|------|------|
 | Total workflow count | < 50 | 50-100 | > 100 (performance risk) |
-| Active workflows | < 30 | 30-60 | > 60 |
-| Inactive workflows | Any count (no risk) | — | — |
+| Published workflows (`active`) | < 30 | 30-60 | > 60 |
+| Unpublished (draft) workflows | Any count (no risk) | — | — |
 
 **Conflict detection:** Compare each planned import name against existing workflows. Exact match = CONFLICT (must rename or skip). Partial match = WARNING (review for duplication). No match = CLEAR.
 
@@ -61,11 +70,22 @@ Call `~~credential_manage` (action: list) to map existing credentials by name, t
 
 ## Step 4: Community Node Verification
 
-Extract required node types from planned workflow JSONs (filter to non-core nodes — those NOT starting with `n8n-nodes-base.`). Compare against installed community nodes from `~~instance_audit` or n8n settings. Produce a gap report listing each required package with installed/missing status. **FAIL** if any required community node is missing.
+Extract required node types from planned workflow JSONs (filter to non-core nodes — those NOT starting with `n8n-nodes-base.` or `@n8n/n8n-nodes-langchain.`). Compare against the installed community packages: `GET /api/v1/community-packages` (needs the `communityPackage:*` scopes), or Settings > Community Nodes in the editor. Produce a gap report listing each required package with installed/missing status. **FAIL** if any required community node is missing.
+
+Ways to install a missing package (Owner or Admin):
+
+| Way | Notes |
+|-----|-------|
+| Settings > Community Nodes > Install | Easiest; verified packages only unless unverified packages are enabled |
+| `POST /api/v1/community-packages` with `{name, version}` | Scope `communityPackage:install` |
+| Environment: `N8N_COMMUNITY_PACKAGES_MANAGED_BY_ENV=true` plus `N8N_COMMUNITY_PACKAGES` (n8n 2.21+) | **Removes every package not on the list.** Check the full list with the owner before using it |
+| Manual `npm i` inside the n8n nodes directory (`~/.n8n/nodes`), then restart | Required for queue mode and private packages |
+
+From n8n 3.0 `N8N_UNVERIFIED_PACKAGES_ENABLED` defaults to `false`, so unverified packages need that variable set. Report the gap and the options; install only when the user agrees.
 
 ## Step 5: Webhook Conflict Detection
 
-Extract webhook paths from planned imports (look for `n8n-nodes-base.webhook` nodes, read `node.parameters.path`). Compare against webhook paths in existing active workflows from `~~workflow_list`. Duplicate path = FAIL (two workflows cannot share a webhook path). Similar paths = WARN (review for intent).
+Extract webhook paths from planned imports (look for `n8n-nodes-base.webhook` nodes, read `node.parameters.path`). Compare against webhook paths in existing published workflows from `~~workflow_list`. Duplicate path = FAIL (two workflows cannot share a webhook path). Similar paths = WARN (review for intent).
 
 ## Step 6: Resource Capacity
 
@@ -73,21 +93,29 @@ Estimate whether the instance can handle additional workflows:
 
 | Factor | Assessment Method | Threshold |
 |--------|------------------|-----------|
-| Active workflow count | Current active + planned active | Warn if total > 60 |
-| Trigger density | Count trigger/webhook/cron nodes | Warn if > 30 triggers total |
+| Published workflow count | Current published + planned to publish | Warn if total > 60 |
+| Trigger density | Count trigger/webhook/schedule nodes | Warn if > 30 triggers total |
 | Execution volume | Check recent execution history | Warn if > 1000 executions/day |
-| Memory usage | Instance audit resource metrics | Warn if > 80% utilized |
+| Memory usage | `/metrics` (when `N8N_METRICS=true`) or the host's own monitoring | Warn if > 80% utilized |
 | Storage | Database size trend | Warn if execution log growing rapidly |
 
 ## Step 7: Security Posture
 
-| Check | Pass | Warn | Fail |
-|-------|------|------|------|
-| API key configured | Key is set and non-default | — | No API key or using default |
-| HTTPS enabled | Instance served over HTTPS | HTTP with reverse proxy | Plain HTTP exposed |
-| Authentication | Users require login | Single-user mode | No authentication |
-| Environment variables | Secrets stored in env vars | Mixed (some hardcoded) | Secrets hardcoded in workflows |
-| Execution data pruning | Auto-prune enabled | Manual pruning only | No pruning (data growth risk) |
+```
+~~instance_audit   # security audit, not a health check
+```
+
+`n8n_audit_instance` is the security audit. It combines n8n's built-in audit with a scan of the stored workflows and returns a markdown report with severity ratings and a remediation playbook.
+
+| Check | Categories | Pass | Warn | Fail |
+|-------|-----------|------|------|------|
+| Built-in audit | `credentials`, `database`, `nodes`, `instance`, `filesystem` | No critical or high findings | Medium or low findings | Critical or high findings (for example a vulnerable community node, public registration) |
+| Hardcoded secrets | custom scan `hardcoded_secrets` | None | — | Any secret in a workflow parameter |
+| Webhooks | custom scan `unauthenticated_webhooks` | All webhooks authenticated | Some unauthenticated | Unauthenticated webhooks on workflows that write |
+| Error handling | custom scan `error_handling` | Error workflow or error output set | Missing on some workflows | — |
+| Data retention | custom scan `data_retention` | Pruning on | Manual pruning only | No pruning, data growth |
+
+Use `categories` and `customChecks` to narrow the run on large instances (it fetches every workflow and can take 30 seconds). HTTPS in front of the instance is not part of the audit — ask the owner or look at the instance URL.
 
 ## Readiness Report Format
 

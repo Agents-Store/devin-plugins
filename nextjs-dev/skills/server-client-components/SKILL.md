@@ -150,7 +150,7 @@ React context requires `'use client'`. Create a wrapper Client Component and use
 'use client'
 
 import { ThemeProvider } from 'next-themes'
-import { SessionProvider } from 'next-auth/react'
+import { SessionProvider } from 'next-auth/react'  // Auth.js v5 only — Better Auth needs no provider (use authClient.useSession())
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
