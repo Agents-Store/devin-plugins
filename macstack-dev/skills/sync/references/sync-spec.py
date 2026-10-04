@@ -68,6 +68,29 @@ SCREEN_APPLIABLE = {'name', 'path', 'roles'}
 # рендером и живёт в generated/, а не переписывается из прозы.
 CASE_APPLIABLE = {'name', 'priority', 'role', 'screens', 'triggers', 'workflow'}
 
+# Что допустимо в `human.gate` — решает СХЕМА, а не контракт документа: контракт знает ещё
+# и `none` («ничей»), и значение, записанное оттуда как есть, делало macstack.json
+# невалидным молча (файл записан, ошибки нет, схема отвергает его при следующем чтении).
+# Перечень читается из встроенной копии схемы, чтобы не завести второй список рядом с
+# каноном; запасной — на случай, когда копии рядом нет (плагин разобран на части).
+_SCHEMA = os.path.normpath(os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), '..', '..', 'lint', 'references',
+    'macstack.schema.json'))
+
+
+def schema_gates():
+    try:
+        with io.open(_SCHEMA, encoding='utf-8') as fh:
+            sch = json.load(fh)
+        human = (sch['properties']['processes']['items']['properties']['tasks']['items']
+                 ['properties']['human'])
+        return tuple(human['properties']['gate']['enum'])
+    except (IOError, OSError, ValueError, KeyError):
+        return ('approve', 'input', 'review', 'execute')
+
+
+SCHEMA_GATES = schema_gates()
+
 # Never written from a client document, whatever it says. These are the architect's,
 # measured against the code; generating them from a client's words would be a promise
 # the format cannot keep, and the failure would be silent.
@@ -357,7 +380,11 @@ def compare_tasks(doc_tasks, spec):
                     h = type(t)()
                     t['human'] = h
                 h['gate'] = dv
-            changed.append(mk_change('role_task', tid, 'gate', human.get('gate'), d['gate'], True, apply_gate))
+            # Расхождение остаётся в отчёте всегда; записывается только значение, которое
+            # схема знает. `none` из документа — вопрос человеку, а не правка спецификации.
+            known = d['gate'] in SCHEMA_GATES
+            changed.append(mk_change('role_task', tid, 'gate', human.get('gate'), d['gate'],
+                                     known, apply_gate if known else None))
         if d.get('role') is not None and d['role'] != human.get('role'):
             def apply_role(t=t, dv=d['role']):
                 h = t.get('human')
@@ -419,7 +446,10 @@ def compare_cases(doc_cases, spec_cases):
     значило бы объявлять пятнадцать штук `add` при каждом прогоне."""
     add, gone, changed = [], [], []
     spec_by_id = dict((c.get('id'), c) for c in spec_cases)
-    doc_by_id = dict((c['id'], c) for c in doc_cases if not (c['id'] or '').startswith('Z-'))
+    # `Z-14` и `CZ-14`: двухбуквенная форма начинается с `C`, и `startswith('Z-')` её не
+    # узнавал — каждый запрет проекта на новой форме id выходил строкой `add case`.
+    doc_by_id = dict((c['id'], c) for c in doc_cases
+                     if not re.match(r'^C?Z-', c['id'] or ''))
     for cid, d in doc_by_id.items():
         if cid not in spec_by_id:
             add.append(('case', cid, d['name']))

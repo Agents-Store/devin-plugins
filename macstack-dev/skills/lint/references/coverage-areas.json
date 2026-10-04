@@ -1,6 +1,6 @@
 {
   "$comment": "Canonical registry of coverage areas for macstack.json (field context.plugins.*[].covers). Answers 'which plugin do I open for this task?' — one shared vocabulary for all projects, checked by the macstack-dev linter. Two kinds: 'section' areas map 1:1 onto sections of the stack file (the plugin teaches you how to build that part of the stack); 'cross-cutting' areas are not tied to a single section. Extension: a new area = a kebab-case slug + a PR to this file (origin: extension).",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "areas": [
     {
       "id": "results",
@@ -14,7 +14,7 @@
       "kind": "section",
       "name": "Processes",
       "description": "Business processes, their steps and HITL points",
-      "examples": ["teleshop-ops", "sales-ops"]
+      "examples": ["teleshop-ops", "plane-ops"]
     },
     {
       "id": "triggers",
@@ -49,21 +49,21 @@
       "kind": "section",
       "name": "Interfaces",
       "description": "Everything a human or an external system touches: UI, admin panels, bots, notification channels",
-      "examples": ["nextjs-dev", "tg-client", "directus-dev"]
+      "examples": ["nextjs-dev", "grammy-dev", "directus-dev"]
     },
     {
       "id": "connections",
       "kind": "section",
       "name": "Connections",
       "description": "The stack's sockets: MCP servers, direct APIs, CLI access",
-      "examples": ["mcpware", "directus-dev"]
+      "examples": ["dokploy-dev", "directus-dev"]
     },
     {
       "id": "agents",
       "kind": "section",
       "name": "Agents",
       "description": "Stack agents and managed agents: hierarchy, delegation, tools",
-      "examples": ["macstack-dev", "agents-workspace"]
+      "examples": ["macstack-dev"]
     },
     {
       "id": "roles",
@@ -84,14 +84,14 @@
       "kind": "section",
       "name": "Integrations",
       "description": "External client systems the stack talks to",
-      "examples": ["stripe", "google-workspace-dev"]
+      "examples": ["chatwoot-dev", "google-workspace-dev"]
     },
     {
       "id": "deployment",
       "kind": "cross-cutting",
       "name": "Deployment & hosting",
       "description": "Build, deploy, domains, certificates, rollback",
-      "examples": ["dokploy-dev", "coolify-ops", "nextjs-provision"]
+      "examples": ["dokploy-dev", "vercel-dev", "nextjs-provision"]
     },
     {
       "id": "secrets-env",
@@ -112,14 +112,14 @@
       "kind": "cross-cutting",
       "name": "Testing",
       "description": "How this stack is tested and what counts as green",
-      "examples": ["superpowers"]
+      "examples": ["nextjs-dev"]
     },
     {
       "id": "observability",
       "kind": "cross-cutting",
       "name": "Observability",
       "description": "Logs, metrics, traces, error monitoring, alerts",
-      "examples": ["sentry", "beszel-plugin"]
+      "examples": ["dokploy-dev"]
     },
     {
       "id": "data-migration",
@@ -133,7 +133,7 @@
       "kind": "cross-cutting",
       "name": "Security & access",
       "description": "Authentication, authorization, network access, hardening, backups",
-      "examples": ["restic-dev", "cloudflare-ops"]
+      "examples": ["restic-dev", "infisical-dev"]
     },
     {
       "id": "conventions",
@@ -154,7 +154,7 @@
       "kind": "cross-cutting",
       "name": "Cost & billing",
       "description": "What the stack costs to run and how it charges its own clients",
-      "examples": ["stripe"]
+      "examples": []
     }
   ]
 }

@@ -39,6 +39,22 @@ def _fold(token):
     return ''.join(_CONFUSABLE.get(ch, ch) for ch in token)
 
 
+# ---------------------------------------------------------------- open-item ids
+# Один и тот же номер пишется в двух формах (`doc-contracts.json` -> id_spaces.open_item):
+# `A27` / `B3` — наследие, `QA27` / `QB3` — форма, в которую переводит `migrate_ids.py`.
+# Приставка `Q` называет ФАЙЛ (client/OPEN-QUESTIONS.md), а не состояние: закрытость
+# по-прежнему читается со строки заголовка — зачёркнуто `~~QA6~~` и/или слово CLOSED.
+# Правила этой группы раньше знали только `[AB]\d+`: пункт в новой форме не входил ни в
+# проверку повторов (12.3), ни в поиск закрытых (12.4/12.6), и миграция тихо отключала
+# каждую из них.
+OPEN_ITEM_ID = r'^Q?[AB][0-9]+$'
+
+
+def _open_item_number(token):
+    """`QA5` -> `A5`. Номер один, форм две: повтор в любой из них — повтор."""
+    return token[1:] if token.startswith('Q') else token
+
+
 # ---------------------------------------------------------------- raw-line extraction
 # "The first token after the hashes" - works for every heading-based id space this
 # project has (`### A1 · ...`, `### К-1 · ...`, `## M11 · ...`, `### BL-3 · ...`)
@@ -117,7 +133,7 @@ def _bullet_tokens(lines):
     return out
 
 
-def _check_space(out, seen, path, occurrences, strict, space):
+def _check_space(out, seen, path, occurrences, strict, space, canon=None):
     """Classify every candidate token against one id space.
 
     A token that matches `strict` outright is a normal id and goes into `seen` for
@@ -130,9 +146,12 @@ def _check_space(out, seen, path, occurrences, strict, space):
     shape, since the shape still demands the digits/hyphens land in the right spots.
     """
     strict_re = re.compile(strict)
+    # `canon` сводит разные написания одного номера к одному ключу (см. OPEN_ITEM_ID);
+    # без него у пространства ключ — сам токен.
+    key_of = canon or (lambda token: token)
     for lineno, raw, line in occurrences:
         if strict_re.match(raw):
-            seen.setdefault((space, raw), []).append((path, lineno, line))
+            seen.setdefault((space, key_of(raw)), []).append((path, lineno, line, raw))
             continue
         folded = _fold(raw)
         if folded != raw and strict_re.match(folded):
@@ -145,19 +164,19 @@ def _check_space(out, seen, path, occurrences, strict, space):
             # still register it under the id it was clearly TRYING to be, so a
             # second, genuine A1 elsewhere in the document is still caught as a
             # reuse rather than swallowed by this token's own ASCII finding.
-            seen.setdefault((space, folded), []).append((path, lineno, line))
+            seen.setdefault((space, key_of(folded)), []).append((path, lineno, line, folded))
 
 
 @rule('12.3', 'ID integrity - unique per space, ASCII-only, D has no gaps, '
       'A/B numbers are never reused after a strike')
 def r_12_3(c):
     out = []
-    seen = {}          # (space, id) -> [(path, line, raw_line)]
+    seen = {}          # (space, id) -> [(path, line, raw_line, token as written)]
 
-    def scan(lines, path, extractor, strict, space):
+    def scan(lines, path, extractor, strict, space, canon=None):
         if lines is None:
             return
-        _check_space(out, seen, path, extractor(lines), strict, space)
+        _check_space(out, seen, path, extractor(lines), strict, space, canon)
 
     # case - X-01..Z-15 &c, headings in USER-CASES.md
     if 'user_cases' in c.docs:
@@ -168,7 +187,8 @@ def r_12_3(c):
     # for why this reads raw lines instead of it.id)
     if 'open_questions' in c.docs:
         doc = c.docs['open_questions']
-        scan(doc.lines, c.rel(doc.path), _heading_tokens, r'^[AB][0-9]+$', 'open_item')
+        scan(doc.lines, c.rel(doc.path), _heading_tokens, OPEN_ITEM_ID, 'open_item',
+             canon=_open_item_number)
 
     # decision - D<n>, registry bullets in DECISIONS.md
     dtext = c.text.get('decisions')
@@ -221,14 +241,20 @@ def r_12_3(c):
     for (space, ident), occ in sorted(seen.items()):
         if len(occ) < 2:
             continue
-        first_path, first_line, _ = occ[0]
-        struck = any(('~~%s~~' % ident) in raw or 'CLOSED' in raw for _, _, raw in occ)
-        for path, lineno, raw in occ[1:]:
+        first_path, first_line, _, first_tok = occ[0]
+        # У открытого пункта ключ — номер без `Q`, а зачёркнут может быть любой из
+        # двух написаний: `~~A5~~` и `~~QA5~~` — одно и то же «закрыт».
+        pref = 'Q?' if space == 'open_item' else ''
+        struck = any(re.search(r'~~%s%s~~' % (pref, re.escape(ident)), raw) or 'CLOSED' in raw
+                     for _, _, raw, _ in occ)
+        for path, lineno, raw, tok in occ[1:]:
             why = (' - A/B numbers are never reused after a strike-through'
                    if space == 'open_item' and struck else '')
+            # Первое вхождение названо, когда оно написано иначе: «QA5 reused ... (as A5)».
+            as_ = ' (as %s)' % first_tok if first_tok != tok else ''
             out.append(Finding('12.3', ERROR, path, lineno,
-                                '%s %s reused: already assigned at %s:%d%s'
-                                % (space, ident, first_path, first_line, why)))
+                                '%s %s reused: already assigned at %s:%d%s%s'
+                                % (space, tok, first_path, first_line, as_, why)))
 
     # -------- D-numbering has no gaps --------
     dnums = sorted(int(i[1:]) for (sp, i) in seen if sp == 'decision')
@@ -244,7 +270,7 @@ def r_12_3(c):
 
 # ---------------------------------------------------------------- 12.4 shared lookups
 def _open_item_ids(c):
-    """{id: (line, closed)} for every A/B heading in OPEN-QUESTIONS.md.
+    """{id: (line, closed)} for every A/B (or QA/QB) heading in OPEN-QUESTIONS.md.
 
     Raw scan, not it.id - see the module docstring. `closed` follows the rule text
     verbatim: struck (`~~A6~~`) and/or the word CLOSED in the heading line.
@@ -254,7 +280,7 @@ def _open_item_ids(c):
         return None
     out = {}
     for n, tok, line in _heading_tokens(doc.lines):
-        if re.match(r'^[AB][0-9]+$', tok):
+        if re.match(OPEN_ITEM_ID, tok):
             closed = (('~~%s~~' % tok) in line) or ('CLOSED' in line)
             out[tok] = (n, closed)
     return out
@@ -341,7 +367,7 @@ def _ids_of(c, key, kind):
 
 
 D_CITE = re.compile(r'(?<![A-Za-z0-9_-])D([0-9]+)(?![A-Za-z0-9_-])')
-AB_CITE = re.compile(r'(?<![A-Za-z0-9_-])([AB][0-9]+)(?![A-Za-z0-9_-])')
+AB_CITE = re.compile(r'(?<![A-Za-z0-9_-])(Q?[AB][0-9]+)(?![A-Za-z0-9_-])')
 
 
 @rule('12.4', 'Cross-file refs - every id an ERROR resolves to a live target')
@@ -570,8 +596,10 @@ def r_12_6(c):
     items = _open_item_ids(c)
     if items is None:
         return out
+    # §A — это `A<n>` и `QA<n>`; `startswith('A')` не узнавал вторую форму, и открытый
+    # вопрос в ней молча выпадал из проверки «клиента спросят».
     a_open = sorted(i for i, (n, closed) in items.items()
-                     if i.startswith('A') and not closed)
+                     if re.match(r'^Q?A', i) and not closed)
     view = (c.spec.get('lifecycle') or {}).get('needs_from_client') or []
     view_ids = set()
     for entry in view:

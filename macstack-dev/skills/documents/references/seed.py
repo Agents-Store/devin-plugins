@@ -108,6 +108,8 @@ MISC = {
             "процесс на это отвечает. Заготовка ниже собрана из `macstack.json`; правьте её как свой\n"
             "текст — она больше не пересобирается."),
         no_roles="В спецификации нет ни одной роли.", no_tasks="В спецификации нет ни одной задачи.",
+        no_human_tasks=("В спецификации нет задач, которые ждут человека: машинные задачи "
+                        "описаны workflow, а не этим документом."),
         driven_by='Приводится в движение: %s.',
         no_triggers="В спецификации нет ни одного триггера.",
         sees_label="Что видит", can_label="Что может",
@@ -151,6 +153,8 @@ MISC = {
             "process answers. The seed below is built from `macstack.json`; edit it as your own text —\n"
             "it is never regenerated again."),
         no_roles="The spec declares no roles.", no_tasks="The spec declares no tasks.",
+        no_human_tasks=("The spec declares no task that waits for a person: machine tasks "
+                        "are described by their workflow, not by this document."),
         driven_by='Driven by: %s.',
         no_triggers="The spec declares no triggers.",
         sees_label="What it sees", can_label="What it can do",
@@ -184,8 +188,13 @@ MISC = {
     ),
 }
 
+# Один ключ на каждое значение `triggers[].type` схемы (их семь) — схема здесь канон, и
+# тип без записи давал триггер без `source`, а контракт требует `source` у каждого (12.21).
+# Письмо приходит снаружи — `integration`; очередь наполняет наш же код — `backend`.
+# Тест test_seed_lint.py читает перечень типов из схемы и краснеет на восьмом.
 SOURCE_BY_TYPE = {'schedule': 'schedule', 'form': 'interface', 'webhook': 'integration',
-                   'db_event': 'backend', 'manual': 'manual'}
+                   'db_event': 'backend', 'manual': 'manual',
+                   'email': 'integration', 'queue': 'backend'}
 CFG_PRIORITY = ('schedule', 'entity', 'event', 'condition', 'path', 'form', 'queue')
 SCREENISH = {'web', 'admin_ui', 'dashboard', 'approval_center', 'form'}
 
@@ -237,6 +246,12 @@ def seed_automation(spec, lang):
     wfs = {w['id']: w for w in (spec.get('workflows') or [])}
     trigs = {x['id']: x for x in (spec.get('triggers') or [])}
     any_task = False
+    # Только задача с блоком `human` — дело этого документа: машинную половину он себе
+    # не берёт (правило 12.22 и запись контракта «человек ЛИБО машина, не смутное
+    # обоих»). `gate: none` такой задаче писали, но `none` нет в `human.gate` схемы —
+    # `approve | input | review | execute` — и роли у неё нет, так что запись
+    # не проходила ни 12.21, ни 12.22 на схемно-валидной спецификации.
+    machine_only = False
     for p in procs:
         pid = p.get('id')
         # Процесс — заголовок, его задачи — под ним. Парадигма плагина это
@@ -260,13 +275,16 @@ def seed_automation(spec, lang):
                                         lang=lang, level=3, form='slug')
             out_lines.append('')
         for task in (p.get('tasks') or []):
-            any_task = True
             human = task.get('human') or {}
+            if not human:
+                machine_only = True
+                continue
+            any_task = True
             wf = wfs.get(task.get('workflow'))
             trig = (wf.get('triggers') or []) if wf else []
             fields = {
                 'role': human.get('role'),
-                'gate': human.get('gate') or ('none' if task.get('workflow') else None),
+                'gate': human.get('gate'),
                 # связь «триггер → задача» записана ОДИН раз, на самом триггере
                 # («Чьи задачи двигает»). Здесь она была бы вторым экземпляром,
                 # который расходится с первым при первой же правке.
@@ -285,7 +303,7 @@ def seed_automation(spec, lang):
                                          form='slug', order=list(fields))
             out_lines.append('')
     if not any_task:
-        out_lines += ['_%s_' % m['no_tasks'], '']
+        out_lines += ['_%s_' % m['no_human_tasks' if machine_only else 'no_tasks'], '']
 
     out_lines += ['## ' + h['triggers'], '']
     trgs = spec.get('triggers') or []

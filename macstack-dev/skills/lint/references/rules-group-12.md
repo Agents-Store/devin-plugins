@@ -59,9 +59,10 @@ ever cited one.
      rule: a Cyrillic capital KA (U+041A) renders exactly like `K` (U+004B), greps as
      absent and silently breaks every cross-reference check, so compare codepoints
      rather than glyphs; no gaps in D-numbering; A/B numbers never reused after a
-     strike.
+     strike — `A5` and `QA5` are one number in two spellings, so reuse across them counts.
 12.4 **Cross-file refs** — every `D<n>` cited anywhere resolves in `DECISIONS.md`;
-     every `A<n>` **and every `B<n>`** in `lifecycle.*` resolves to a live item; every
+     every `A<n>` **and every `B<n>`** (also `QA<n>` / `QB<n>`) in `lifecycle.*` resolves to a
+     live item; every
      `roles[].cases` prefix yields ≥1 case heading; every case-section letter maps to
      exactly one role; every `<case>.T<n>` carries a case that still exists; every
      `covers` in `TEST-CASES.md` names an acceptance id that still exists; every

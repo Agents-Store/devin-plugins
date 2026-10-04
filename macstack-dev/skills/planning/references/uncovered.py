@@ -53,7 +53,10 @@ from i18n import doc_lang, msg  # noqa: E402
 
 CASE_ID = re.compile(r'\b(C?[A-Z]-\d{2})\b')
 CASE_HEADING = re.compile(r'^C?[A-Z]-\d{2}$')    # a case's own heading id, full match
-OPEN_ID = re.compile(r'\b([AB]\d+)\b')
+# `A5` и `QA5` — один вопрос в двух написаниях (id_spaces.open_item); приставка `Q`
+# называет файл, а не состояние. Без `Q?` шаблон не видел ни заголовок `### QA5 · …`,
+# ни упоминание `QA5` в кейсе: границы слова между `Q` и `A` нет.
+OPEN_ID = re.compile(r'\b(Q?[AB]\d+)\b')
 # Fallback for the v1 table format: | C-01 | Implemented | evidence... |
 LEGACY_ROW = re.compile(r'^\|\s*\*?\*?([A-Z]-\d+)\*?\*?\s*\|\s*([^|]+?)\s*\|', re.M)
 DONE_SYNONYMS = ('implemented', 'выполнено', 'реализовано', 'passes', 'ok')
