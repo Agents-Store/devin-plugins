@@ -23,7 +23,7 @@ nocodb_api GET /meta/bases/$BASE_ID/views/$VIEW_ID/filters
 
 A saved filter looks like this -- `field_id`, `operator`, `value`, plus a `sub_operator` on date fields:
 
-```json
+```jsonc
 { "field_id": "cjkl3456opq", "operator": "eq", "value": "active" }
 { "field_id": "cdue123abcd", "operator": "gte", "sub_operator": "exactDate", "value": "2026-06-01" }
 ```

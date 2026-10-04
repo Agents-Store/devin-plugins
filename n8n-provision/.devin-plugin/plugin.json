@@ -1,6 +1,6 @@
 {
   "name": "n8n-provision",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "n8n instance provisioning plugin. Discover workflows from the official template library (12,900+ templates), GitHub repos, and community platforms, then analyze, import, and batch-deploy them to provision an n8n instance.",
   "author": {
     "name": "AGENTS.STORE"

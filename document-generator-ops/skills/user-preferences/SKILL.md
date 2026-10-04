@@ -223,7 +223,7 @@ When a user wants to add a company logo:
    ```
 
 4. Update preferences.json — set `logoFile` in the company profile:
-   ```json
+   ```jsonc
    "companies": {
      "acme": {
        "name": "Acme Corp",

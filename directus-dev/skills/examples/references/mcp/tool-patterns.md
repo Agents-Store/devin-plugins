@@ -4,7 +4,7 @@ Complete parameter reference for every Directus MCP tool and action.
 
 ## system-prompt
 
-```json
+```text
 Tool: system-prompt
 Input: {}
 ```
@@ -15,7 +15,7 @@ No parameters. Returns role context and instance-specific guidance.
 
 ### Discovery Mode
 
-```json
+```text
 Tool: schema
 Input: {}
 ```
@@ -24,7 +24,7 @@ Returns: `{ collections: [...], collection_folders: [...], notes: {...} }`
 
 ### Detailed Mode
 
-```json
+```text
 Tool: schema
 Input: { "keys": ["posts", "categories"] }
 ```
@@ -35,7 +35,7 @@ Returns: field definitions, types, validation rules, defaults, and relationship 
 
 ### Create
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -59,7 +59,7 @@ Input: {
 
 ### Create Folder (no table)
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -73,21 +73,21 @@ Input: {
 
 ### Read
 
-```json
+```text
 Tool: collections
 Input: { "action": "read" }
 ```
 
 ### Read Specific
 
-```json
+```text
 Tool: collections
 Input: { "action": "read", "keys": ["articles"] }
 ```
 
 ### Update
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "update",
@@ -100,7 +100,7 @@ Input: {
 
 ### Delete
 
-```json
+```text
 Tool: collections
 Input: { "action": "delete", "keys": ["old_collection"] }
 ```
@@ -109,7 +109,7 @@ Input: { "action": "delete", "keys": ["old_collection"] }
 
 ### Create
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -148,21 +148,21 @@ Input: {
 
 ### Read All Fields for Collection
 
-```json
+```text
 Tool: fields
 Input: { "action": "read", "collection": "articles" }
 ```
 
 ### Read Specific Field
 
-```json
+```text
 Tool: fields
 Input: { "action": "read", "collection": "articles", "field": "title" }
 ```
 
 ### Update
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "update",
@@ -176,7 +176,7 @@ Input: {
 
 ### Delete
 
-```json
+```text
 Tool: fields
 Input: { "action": "delete", "collection": "articles", "field": "deprecated_field" }
 ```
@@ -185,7 +185,7 @@ Input: { "action": "delete", "collection": "articles", "field": "deprecated_fiel
 
 ### Create M2O
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -203,7 +203,7 @@ Input: {
 
 ### Create M2M (junction)
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -221,21 +221,21 @@ Input: {
 
 ### Read
 
-```json
+```text
 Tool: relations
 Input: { "action": "read" }
 ```
 
 ### Read for Specific Collection
 
-```json
+```text
 Tool: relations
 Input: { "action": "read", "collection": "articles" }
 ```
 
 ### Delete
 
-```json
+```text
 Tool: relations
 Input: { "action": "delete", "collection": "articles", "field": "author" }
 ```
@@ -244,7 +244,7 @@ Input: { "action": "delete", "collection": "articles", "field": "author" }
 
 ### Create
 
-```json
+```text
 Tool: items
 Input: {
   "action": "create",
@@ -258,7 +258,7 @@ Input: {
 
 ### Read (with full query)
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",
@@ -284,7 +284,7 @@ Input: {
 
 ### Update
 
-```json
+```text
 Tool: items
 Input: {
   "action": "update",
@@ -296,7 +296,7 @@ Input: {
 
 ### Delete
 
-```json
+```text
 Tool: items
 Input: {
   "action": "delete",
@@ -307,7 +307,7 @@ Input: {
 
 ### Aggregate
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",
@@ -324,7 +324,7 @@ Input: {
 
 ### Import
 
-```json
+```text
 Tool: files
 Input: {
   "action": "import",
@@ -342,7 +342,7 @@ Input: {
 
 ### Read
 
-```json
+```text
 Tool: files
 Input: {
   "action": "read",
@@ -357,7 +357,7 @@ Input: {
 
 ### Update
 
-```json
+```text
 Tool: files
 Input: {
   "action": "update",
@@ -368,14 +368,14 @@ Input: {
 
 ### Delete
 
-```json
+```text
 Tool: files
 Input: { "action": "delete", "keys": ["file-uuid"] }
 ```
 
 ## assets
 
-```json
+```text
 Tool: assets
 Input: { "id": "file-uuid" }
 ```
@@ -386,7 +386,7 @@ Returns: `{ "data": "base64...", "mimeType": "image/jpeg" }`
 
 ### Create
 
-```json
+```text
 Tool: folders
 Input: {
   "action": "create",
@@ -399,7 +399,7 @@ Input: {
 
 ### Read
 
-```json
+```text
 Tool: folders
 Input: { "action": "read", "query": { "fields": ["id", "name", "parent"], "sort": ["name"] } }
 ```
@@ -408,7 +408,7 @@ Input: { "action": "read", "query": { "fields": ["id", "name", "parent"], "sort"
 
 ### Create
 
-```json
+```text
 Tool: flows
 Input: {
   "action": "create",
@@ -427,7 +427,7 @@ Input: {
 
 ### Read
 
-```json
+```text
 Tool: flows
 Input: {
   "action": "read",
@@ -439,7 +439,7 @@ Input: {
 
 ### Create
 
-```json
+```text
 Tool: operations
 Input: {
   "action": "create",
@@ -459,7 +459,7 @@ Input: {
 
 ## trigger-flow
 
-```json
+```text
 Tool: trigger-flow
 Input: {
   "id": "flow-uuid",

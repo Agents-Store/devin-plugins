@@ -1,6 +1,6 @@
 {
   "name": "trigger-dev",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Trigger.dev dev plugin for Agents Store. Comprehensive development knowledge for building background tasks, AI agent workflows, and durable execution on self-hosted Trigger.dev v4 (baseline server 4.4.4; newer features are marked with the server version they need) — SDK patterns, CLI recipes, deployment, full 41-tool MCP reference, TRQL queries and dashboards, managed prompts, chat agents, dev-server control, realtime API, and troubleshooting.",
   "author": {
     "name": "Agents Store",

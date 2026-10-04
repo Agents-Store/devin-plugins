@@ -21,7 +21,7 @@ Reference for the `files`, `assets`, and `folders` MCP tools.
 
 ### Import Files from URL
 
-```json
+```text
 Tool: files
 Input: {
   "action": "import",
@@ -38,7 +38,7 @@ Input: {
 
 ### Batch Import
 
-```json
+```text
 Tool: files
 Input: {
   "action": "import",
@@ -57,7 +57,7 @@ Input: {
 
 ### List Files
 
-```json
+```text
 Tool: files
 Input: {
   "action": "read",
@@ -72,7 +72,7 @@ Input: {
 
 ### Filter by Folder
 
-```json
+```text
 Tool: files
 Input: {
   "action": "read",
@@ -86,7 +86,7 @@ Input: {
 
 ### Update File Metadata
 
-```json
+```text
 Tool: files
 Input: {
   "action": "update",
@@ -102,7 +102,7 @@ Input: {
 
 ### Delete Files
 
-```json
+```text
 Tool: files
 Input: {
   "action": "delete",
@@ -138,7 +138,7 @@ Input: {
 
 Retrieve file content as base64 for AI analysis:
 
-```json
+```text
 Tool: assets
 Input: { "id": "file-uuid" }
 ```
@@ -157,7 +157,7 @@ Supports images and audio files. Use for:
 
 ### Create Folder
 
-```json
+```text
 Tool: folders
 Input: {
   "action": "create",
@@ -170,7 +170,7 @@ Input: {
 
 ### Create Nested Folder
 
-```json
+```text
 Tool: folders
 Input: {
   "action": "create",
@@ -183,7 +183,7 @@ Input: {
 
 ### List Folders
 
-```json
+```text
 Tool: folders
 Input: {
   "action": "read",
@@ -196,7 +196,7 @@ Input: {
 
 ### Update Folder
 
-```json
+```text
 Tool: folders
 Input: {
   "action": "update",
@@ -207,7 +207,7 @@ Input: {
 
 ### Delete Folder
 
-```json
+```text
 Tool: folders
 Input: {
   "action": "delete",
@@ -222,7 +222,7 @@ Input: {
 ### Organize Files into Folders
 
 1. Create folder structure:
-```json
+```text
 Tool: folders
 Input: {
   "action": "create",
@@ -235,7 +235,7 @@ Input: {
 ```
 
 2. Move files to folders:
-```json
+```text
 Tool: files
 Input: {
   "action": "update",
@@ -248,7 +248,7 @@ Input: {
 
 1. Create target folder
 2. Import files from URLs with metadata:
-```json
+```text
 Tool: files
 Input: {
   "action": "import",
@@ -267,7 +267,7 @@ Input: {
 ### Rename and Tag Files in Bulk
 
 1. List files to rename:
-```json
+```text
 Tool: files
 Input: {
   "action": "read",
@@ -285,7 +285,7 @@ Input: {
 
 1. Get file UUID from files list
 2. Retrieve content:
-```json
+```text
 Tool: assets
 Input: { "id": "file-uuid" }
 ```

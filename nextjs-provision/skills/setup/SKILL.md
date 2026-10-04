@@ -169,7 +169,7 @@ echo ".env" >> .gitignore
 
 Premium access requires converting the registry entries in `components.json` to objects with `params` — the CLI expands `${EMAIL}` and `${LICENSE_KEY}` from the environment:
 
-```json
+```jsonc
 "@ss-components": {
   "url": "https://shadcnstudio.com/r/components/{style}/{name}.json",
   "params": { "email": "${EMAIL}", "license_key": "${LICENSE_KEY}" }

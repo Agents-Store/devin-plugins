@@ -32,21 +32,21 @@ End-to-end walkthroughs and reference implementations for common Directus tasks.
 
 ### 1. Explore the Instance (always do this first)
 
-```json
+```text
 Tool: schema
 Input: {}
 ```
 
 ### 2. Inspect a Collection
 
-```json
+```text
 Tool: schema
 Input: { "keys": ["posts"] }
 ```
 
 ### 3. Create a New Collection
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -60,7 +60,7 @@ Input: {
 
 ### 4. Add Fields
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -75,7 +75,7 @@ Input: {
 
 ### 5. Create Items
 
-```json
+```text
 Tool: items
 Input: {
   "action": "create",
@@ -89,7 +89,7 @@ Input: {
 
 ### 6. Query Items
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",

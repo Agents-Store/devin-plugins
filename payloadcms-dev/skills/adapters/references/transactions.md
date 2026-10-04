@@ -86,7 +86,9 @@ For most apps `read committed` is fine. Use `serializable` if you have strict co
 - Single-node MongoDB has **no transactions**. Use a replica set in dev:
   ```bash
   mongod --replSet rs0 --port 27017
-  # In a mongosh session:
+  ```
+  ```javascript
+  // In a mongosh session:
   rs.initiate()
   ```
 - Set `transactionOptions: {}` (or any object) on `mongooseAdapter` to enable.

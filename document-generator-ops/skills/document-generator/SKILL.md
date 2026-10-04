@@ -73,7 +73,7 @@ If user preferences are loaded, pre-fill company info, currency, and language fr
 4. Write the complete JSON input to a temp file: `{cwd}/.doc_input.json`
 
 **Input JSON structure:**
-```json
+```jsonc
 {
   "type": "proposal|invoice|estimate|report|contract|nda|act",
   "engine": "playwright|pdfkit",

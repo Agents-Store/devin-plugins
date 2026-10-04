@@ -7,7 +7,7 @@ Invoice variant that includes a company logo in the header. Uses the same corpor
 Two ways to provide a logo:
 
 **Option 1 — Base64 encoded (recommended, works offline):**
-```json
+```jsonc
 "companyInfo": {
   "name": "Acme Ltd.",
   "logoBase64": "iVBORw0KGgoAAAANSUhEUg..."
@@ -15,7 +15,7 @@ Two ways to provide a logo:
 ```
 
 **Option 2 — URL (requires internet during PDF generation):**
-```json
+```jsonc
 "companyInfo": {
   "name": "Acme Ltd.",
   "logoUrl": "https://yoursite.com/logo.png"

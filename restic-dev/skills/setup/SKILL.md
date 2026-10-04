@@ -45,8 +45,8 @@ cd /tmp
 # resolve the latest version tag from the releases "latest" redirect
 ver=$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
       https://github.com/restic/restic/releases/latest | xargs basename); ver=${ver#v}
-arch=$(dpkg --print-architecture 2>/dev/null || { case "$(uname -m)" in
-        x86_64) echo amd64;; aarch64) echo arm64;; *) uname -m;; esac; })
+arch=$(dpkg --print-architecture 2>/dev/null)
+[ -n "$arch" ] || case "$(uname -m)" in x86_64) arch=amd64;; aarch64) arch=arm64;; *) arch=$(uname -m);; esac
 curl -fsSL -o restic.bz2 \
   "https://github.com/restic/restic/releases/download/v${ver}/restic_${ver}_linux_${arch}.bz2"
 bunzip2 restic.bz2

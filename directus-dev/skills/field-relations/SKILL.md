@@ -13,7 +13,7 @@ Complete reference for the `fields` and `relations` MCP tools — field types, i
 
 **Critical: `data` is ALWAYS an array**, even for a single field.
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -35,21 +35,21 @@ Input: {
 
 ### Reading Fields
 
-```json
+```text
 Tool: fields
 Input: { "action": "read", "collection": "posts" }
 ```
 
 Or read a specific field:
 
-```json
+```text
 Tool: fields
 Input: { "action": "read", "collection": "posts", "field": "title" }
 ```
 
 ### Deleting Fields
 
-```json
+```text
 Tool: fields
 Input: { "action": "delete", "collection": "posts", "field": "deprecated_field" }
 ```
@@ -100,7 +100,7 @@ Example: Many posts belong to one author.
 
 **Step 1: Create the M2O field** (uuid type in the "many" collection):
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -121,7 +121,7 @@ Input: {
 
 **Step 2: Create the relation:**
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -143,7 +143,7 @@ Example: One author has many posts. This is the reverse side of M2O — an alias
 
 **The M2O side must exist first.** Then add an alias field to the "one" collection:
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -162,7 +162,7 @@ Input: {
 
 Then create the relation from the O2M side:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -184,7 +184,7 @@ Example: Posts can have many tags, tags can belong to many posts.
 
 **Step 1: Create junction collection:**
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -198,7 +198,7 @@ Input: {
 
 **Step 2: Create M2O fields in junction:**
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -220,7 +220,7 @@ Input: {
 
 **Step 3: Create alias fields on both parent collections:**
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -238,7 +238,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -257,7 +257,7 @@ Input: {
 
 **Step 4: Create relations:**
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -273,7 +273,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -295,7 +295,7 @@ Polymorphic relation — items can relate to different collection types. Used fo
 
 **Step 1: Create junction collection** with `item` (uuid) and `collection` (string) fields:
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -309,7 +309,7 @@ Input: {
 
 **Step 2: Add junction fields:**
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -325,7 +325,7 @@ Input: {
 
 **Step 3: Add M2A alias on parent:**
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -348,7 +348,7 @@ Input: {
 
 Relate a field to `directus_files`:
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -367,7 +367,7 @@ Input: {
 
 Then create the relation to `directus_files`:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",

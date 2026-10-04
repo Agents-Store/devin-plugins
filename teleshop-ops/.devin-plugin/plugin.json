@@ -1,6 +1,6 @@
 {
   "name": "teleshop-ops",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Teleshop store management plugin. Manage products, orders, categories, attributes, customers, webhooks, and addons for your Telegram store via 50 MCP tools.",
   "author": {
     "name": "AGENTS.STORE"

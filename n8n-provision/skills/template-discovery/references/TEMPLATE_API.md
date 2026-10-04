@@ -101,7 +101,7 @@ GET /workflows/templates/<id>
 
 **Response:**
 
-```json
+```jsonc
 {
   "id": 2947,
   "name": "National Weather Service 7-day forecast in Slack",
@@ -130,7 +130,7 @@ GET /templates/workflows/<id>
 
 **Response** (single top-level key):
 
-```json
+```jsonc
 {
   "workflow": {
     "id": 2947,

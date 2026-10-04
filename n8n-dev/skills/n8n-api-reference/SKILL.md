@@ -555,7 +555,7 @@ The n8n API uses **cursor-based pagination**.
 
 ### Response Structure
 
-```json
+```jsonc
 {
   "data": [...],
   "nextCursor": "eyJsaW1pdCI6MTAsIm9mZnNldCI6MTB9"

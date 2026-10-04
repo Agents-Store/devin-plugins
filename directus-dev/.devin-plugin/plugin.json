@@ -1,6 +1,6 @@
 {
   "name": "directus-dev",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Directus development plugin. Knowledge base for working with Directus MCP tools (12 tools), REST API, and @directus/sdk. Covers collections, items, fields, relations, files, flows, operations, and schema design.",
   "author": {
     "name": "AGENTS.STORE"

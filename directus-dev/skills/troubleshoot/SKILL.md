@@ -13,7 +13,7 @@ Common errors, diagnostics, and fixes for Directus MCP and API.
 
 Call the `schema` tool with no parameters. If it returns collections, MCP is connected.
 
-```json
+```text
 Tool: schema
 Input: {}
 ```
@@ -241,7 +241,7 @@ curl "${DIRECTUS_URL}/users/me" \
 **Cause:** Wrong filter syntax in condition operation.
 
 **Fix:** Use nested objects, NOT dot notation:
-```json
+```jsonc
 // CORRECT
 { "$trigger": { "payload": { "status": { "_eq": "published" } } } }
 

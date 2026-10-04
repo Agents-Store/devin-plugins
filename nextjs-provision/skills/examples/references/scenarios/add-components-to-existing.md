@@ -127,7 +127,7 @@ export function Button({ variant, children, ...props }) {
 
 Once base shadcn/ui is working, add studio registries:
 
-```json
+```jsonc
 // Add to components.json
 {
   "registries": {

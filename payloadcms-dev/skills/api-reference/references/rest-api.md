@@ -23,7 +23,7 @@ curl 'https://app.example.com/api/posts?where[status][equals]=published&sort=-pu
 ```
 
 Response:
-```json
+```jsonc
 {
   "docs": [/* … */],
   "totalDocs": 234,

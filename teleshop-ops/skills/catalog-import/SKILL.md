@@ -105,7 +105,7 @@ Categories are linked via `externalId` / `parentExternalId` — build hierarchy 
 
 ### Attribute Format in Import
 
-```json
+```jsonc
 { "name": "Size", "value": "XL", "type": "string" }
 { "name": "Color", "value": "Red,#FF0000", "type": "color" }
 ```

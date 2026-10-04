@@ -91,7 +91,7 @@ echo ".env" >> .gitignore
 
 Then convert the premium registry entries to objects with `params`:
 
-```json
+```jsonc
 "@ss-components": {
   "url": "https://shadcnstudio.com/r/components/{style}/{name}.json",
   "params": { "email": "${EMAIL}", "license_key": "${LICENSE_KEY}" }

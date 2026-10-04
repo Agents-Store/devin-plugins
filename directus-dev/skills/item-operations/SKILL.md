@@ -311,7 +311,7 @@ In a collection with content versioning the Studio shows the published item read
 1. Read schema to understand fields: `schema` tool with `keys: ["target_collection"]`
 2. Map external data to Directus fields
 3. Batch create in groups of 25:
-```json
+```jsonc
 { "action": "create", "collection": "products", "data": [/* batch of items */] }
 ```
 

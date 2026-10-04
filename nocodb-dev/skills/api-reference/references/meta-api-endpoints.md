@@ -51,7 +51,7 @@ Workspace create payload:
 
 Workspace member bodies are **arrays** — one object per user (`WorkspaceUserCreate` / `WorkspaceUserUpdate` / `WorkspaceUserDelete`). A new member is identified by `user_id` **or** `email` (not both); updates and deletes key on `user_id`:
 
-```json
+```jsonc
 // POST   /workspaces/{workspaceId}/members
 [ { "email": "user@example.com", "workspace_role": "workspace-level-editor" } ]
 
@@ -84,7 +84,7 @@ Base update payload (`BaseUpdate`):
 
 Base member bodies are **arrays** too (`BaseMemberCreate` / `BaseMemberUpdate` / `BaseMemberDelete`). An invite carries `user_id` **or** `email` (not both), a `base_role`, and optionally `user_name`; updates and deletes key on `user_id`:
 
-```json
+```jsonc
 // POST   /bases/{base_id}/members
 [ { "email": "user@example.com", "base_role": "editor" } ]
 
@@ -123,7 +123,7 @@ Create-table payload (`TableCreate`):
 
 Update-table payload (`TableUpdate`):
 
-```json
+```jsonc
 { "title": "Renamed Customers" }
 { "description": "New description" }
 { "display_field_id": "c_abc123" }
@@ -146,7 +146,7 @@ Fields are addressed under the table for create, then by their own ID for read/u
 
 Create-field payload (`CreateField` — discriminated by `type`, see `field-types.md` for all 35 types). Type-specific settings go inside `options`; only `title`, `type`, `description`, `default_value` and `unique` sit at the top level:
 
-```json
+```jsonc
 { "title": "Phone", "type": "PhoneNumber" }
 { "title": "Price", "type": "Currency", "options": { "currency_code": "USD", "currency_locale": "en-US" } }
 { "title": "Status", "type": "SingleSelect", "options": { "choices": [
@@ -158,7 +158,7 @@ Create-field payload (`CreateField` — discriminated by `type`, see `field-type
 
 Update-field payload (`FieldUpdate`):
 
-```json
+```jsonc
 { "title": "Mobile" }
 { "type": "LongText" }
 ```
@@ -167,7 +167,7 @@ NocoDB validates type changes against existing data — incompatible changes ret
 
 Select choices (`FieldOptionsAddReq` / `FieldOptionsDeleteReq`) — the add call is idempotent (existing titles are skipped), the delete call ignores unknown titles, removing a choice clears it from existing records, and at least one choice must remain:
 
-```json
+```jsonc
 // POST   .../fields/{fieldId}/options
 { "choices": [ { "title": "Blocked", "color": "#fee2d5" } ] }
 
@@ -189,7 +189,7 @@ Select choices (`FieldOptionsAddReq` / `FieldOptionsDeleteReq`) — the add call
 
 Create-view payloads (`ViewCreate` — `oneOf` per view type, discriminator on `type`; per-type settings go inside `options`):
 
-```json
+```jsonc
 // Grid
 { "title": "All", "type": "grid",
   "options": { "row_height": "medium", "groups": [ { "field_id": "c_status_id", "direction": "asc" } ] } }
@@ -293,7 +293,7 @@ Sort payload (`SortCreate`):
 
 Create-hook payload (`HookV3Create`):
 
-```json
+```jsonc
 {
   "title":         "<display name>",
   "description":   "Optional",
@@ -318,7 +318,7 @@ Required: `title`, `operation`, `notification`. Hook APIs need a cloud Business 
 
 Notification subschemas (`HookNotificationV3*`, discriminated by `type`):
 
-```json
+```jsonc
 // URL
 { "type": "URL", "payload": {
   "method": "POST",

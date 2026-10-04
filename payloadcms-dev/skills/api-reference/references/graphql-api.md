@@ -67,7 +67,7 @@ mutation CreatePost($data: mutationPostInput!) {
 ```
 
 Variables:
-```json
+```jsonc
 {
   "data": {
     "title": "Hello",

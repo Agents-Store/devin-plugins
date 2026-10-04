@@ -193,7 +193,7 @@ jobs: {
 ```
 
 Vercel cron config:
-```json
+```jsonc
 // vercel.json
 { "crons": [{ "path": "/api/payload-jobs/run", "schedule": "*/5 * * * *" }] }
 ```

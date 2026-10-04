@@ -66,7 +66,7 @@ Always begin a session with these two calls:
 
 ### Discovery Mode (list all collections)
 
-```json
+```text
 Tool: schema
 Input: {}
 ```
@@ -75,7 +75,7 @@ Returns: `collections` (names), `collection_folders` (UI grouping), `notes` (des
 
 ### Detailed Mode (specific collections)
 
-```json
+```text
 Tool: schema
 Input: { "keys": ["posts", "categories"] }
 ```
@@ -86,7 +86,7 @@ Returns: field definitions (type, validation, defaults) and relationship mapping
 
 ### Read with Query
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",
@@ -104,7 +104,7 @@ Input: {
 
 **Critical: `data` is ALWAYS an array**, even for a single item.
 
-```json
+```text
 Tool: items
 Input: {
   "action": "create",
@@ -119,7 +119,7 @@ Input: {
 
 ### Update Items
 
-```json
+```text
 Tool: items
 Input: {
   "action": "update",
@@ -131,7 +131,7 @@ Input: {
 
 ### Delete Items
 
-```json
+```text
 Tool: items
 Input: {
   "action": "delete",
@@ -144,7 +144,7 @@ Input: {
 
 ### Create Collection
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -168,7 +168,7 @@ Use `"schema": {}` for real tables, `"schema": null` for folder-only collections
 
 **Critical: `data` is ALWAYS an array** of field objects.
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -190,7 +190,7 @@ Input: {
 
 ### Create M2O Relation
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -229,7 +229,7 @@ Shared across `items`, `files`, `folders`, `flows`, `operations`:
 
 For collections with `versioning: true`, read the pending draft of an item instead of the published item:
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",

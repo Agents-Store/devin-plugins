@@ -15,7 +15,7 @@ Complete schema build for a blog CMS with posts, authors, categories, and tags.
 
 ## Step 1: Create Independent Collections
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -41,7 +41,7 @@ Input: {
 
 ## Step 2: Add Fields to Authors
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -58,7 +58,7 @@ Input: {
 
 Create file relation for avatar:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -76,7 +76,7 @@ Input: {
 
 ## Step 3: Add Fields to Categories
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -91,7 +91,7 @@ Input: {
 
 ## Step 4: Add Fields to Tags
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -105,7 +105,7 @@ Input: {
 
 ## Step 5: Create Posts Collection
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -127,7 +127,7 @@ Input: {
 
 ## Step 6: Add Fields to Posts
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -151,7 +151,7 @@ Input: {
 
 ## Step 7: Add M2O Relation (Posts → Authors)
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -164,7 +164,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -182,7 +182,7 @@ Input: {
 
 Featured image relation:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -202,7 +202,7 @@ Input: {
 
 ### posts_categories
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -210,7 +210,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -224,7 +224,7 @@ Input: {
 
 Add alias fields:
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -233,7 +233,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -244,7 +244,7 @@ Input: {
 
 Create relations:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -254,7 +254,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -266,7 +266,7 @@ Input: {
 
 ### posts_tags (same pattern)
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -274,7 +274,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -286,7 +286,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -295,7 +295,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -304,7 +304,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -314,7 +314,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -326,7 +326,7 @@ Input: {
 
 ## Step 9: Create Sample Data
 
-```json
+```text
 Tool: items
 Input: {
   "action": "create",
@@ -338,7 +338,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: items
 Input: {
   "action": "create",
@@ -351,7 +351,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: items
 Input: {
   "action": "create",
@@ -364,7 +364,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: items
 Input: {
   "action": "create",
@@ -383,7 +383,7 @@ Input: {
 
 ## Step 10: Verify
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",

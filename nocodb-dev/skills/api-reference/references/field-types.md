@@ -38,7 +38,7 @@ The `type` value is the NocoDB internal type name (matches the OpenAPI schema). 
 
 Free-form text. Optional rich-text mode.
 
-```json
+```jsonc
 { "title": "Notes", "type": "LongText" }
 { "title": "Notes", "type": "LongText", "options": { "rich_text": true } }
 ```
@@ -47,7 +47,7 @@ Other `options`: `generate_text_using_ai`, `smart_mode`.
 
 ### PhoneNumber / URL / Email
 
-```json
+```jsonc
 { "title": "Phone",   "type": "PhoneNumber" }
 { "title": "Website", "type": "URL",   "options": { "validate": true } }
 { "title": "Email",   "type": "Email", "options": { "validate": true } }
@@ -59,7 +59,7 @@ Other `options`: `generate_text_using_ai`, `smart_mode`.
 
 Integer. The default goes in the top-level `default_value`.
 
-```json
+```jsonc
 { "title": "Count", "type": "Number" }
 { "title": "Count", "type": "Number", "default_value": "0", "options": { "separator": "comma_period" } }
 ```
@@ -82,7 +82,7 @@ Integer. The default goes in the top-level `default_value`.
 
 ### Percent
 
-```json
+```jsonc
 { "title": "Discount", "type": "Percent", "options": { "precision": 1 } }
 { "title": "Progress", "type": "Percent", "options": { "show_as_progress": true, "shape": "bar" } }
 ```
@@ -188,7 +188,7 @@ Same options structure as SingleSelect.
 
 ### Attachment
 
-```json
+```jsonc
 { "title": "Files", "type": "Attachment" }
 { "title": "Files", "type": "Attachment", "options": { "max_number_of_attachments": 5, "max_attachment_size": 10485760 } }
 ```
@@ -288,7 +288,7 @@ Other `options`: `display_type`, `display_column_meta` (how the result is render
 
 `options.type` selects the action: `url`, `webhook`, `script`, `ai` or `formula`.
 
-```json
+```jsonc
 { "title": "Open Doc", "type": "Button",
   "options": { "type": "url", "formula": "CONCAT(\"https://docs.example.com/\", {Id})", "label": "Open", "color": "brand", "theme": "solid" } }
 
@@ -337,14 +337,14 @@ Auto-incrementing integer; no options.
 
 ### CreatedTime / LastModifiedTime
 
-```json
+```jsonc
 { "title": "CreatedAt", "type": "CreatedTime" }
 { "title": "UpdatedAt", "type": "LastModifiedTime" }
 ```
 
 ### CreatedBy / LastModifiedBy
 
-```json
+```jsonc
 { "title": "CreatedBy", "type": "CreatedBy" }
 { "title": "UpdatedBy", "type": "LastModifiedBy" }
 ```

@@ -139,7 +139,7 @@ import type { User, Media, Post } from '@/payload-types'
 ```
 
 Set up a watch task (optional):
-```json
+```jsonc
 // package.json
 {
   "scripts": {

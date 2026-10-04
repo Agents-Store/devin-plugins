@@ -25,7 +25,7 @@ From conversation context, it extracts:
 
 ### 3. Plugin reads stack.json
 
-```json
+```jsonc
 // acme-website/stack.json
 {
   "stack": "directus-nextjs",

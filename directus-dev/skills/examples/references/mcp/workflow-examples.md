@@ -4,28 +4,28 @@
 
 ### Step 1: Get System Context
 
-```json
+```text
 Tool: system-prompt
 Input: {}
 ```
 
 ### Step 2: Discover All Collections
 
-```json
+```text
 Tool: schema
 Input: {}
 ```
 
 ### Step 3: Inspect Specific Collection
 
-```json
+```text
 Tool: schema
 Input: { "keys": ["posts"] }
 ```
 
 ### Step 4: Read Sample Data
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",
@@ -36,7 +36,7 @@ Input: {
 
 ### Step 5: Check Relations
 
-```json
+```text
 Tool: relations
 Input: { "action": "read", "collection": "posts" }
 ```
@@ -47,7 +47,7 @@ Input: { "action": "read", "collection": "posts" }
 
 ### Step 1: Create the Collection
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -65,7 +65,7 @@ Input: {
 
 ### Step 2: Add Basic Fields
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -85,7 +85,7 @@ Input: {
 
 First, ensure the `brands` collection exists. Then:
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -98,7 +98,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -116,7 +116,7 @@ Input: {
 
 ### Step 4: Add Featured Image (File Relation)
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -129,7 +129,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -147,14 +147,14 @@ Input: {
 
 ### Step 5: Verify Schema
 
-```json
+```text
 Tool: schema
 Input: { "keys": ["products"] }
 ```
 
 ### Step 6: Create Sample Data
 
-```json
+```text
 Tool: items
 Input: {
   "action": "create",
@@ -172,14 +172,14 @@ Input: {
 
 ### Step 1: Check Target Collection Schema
 
-```json
+```text
 Tool: schema
 Input: { "keys": ["contacts"] }
 ```
 
 ### Step 2: Create Items in Batches
 
-```json
+```text
 Tool: items
 Input: {
   "action": "create",
@@ -196,7 +196,7 @@ Repeat with next batch (10-25 items per call).
 
 ### Step 3: Verify Import
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",
@@ -213,7 +213,7 @@ Input: {
 
 ### Step 1: Create the Flow
 
-```json
+```text
 Tool: flows
 Input: {
   "action": "create",
@@ -233,7 +233,7 @@ Input: {
 
 ### Step 2: Create Log Operation
 
-```json
+```text
 Tool: operations
 Input: {
   "action": "create",
@@ -251,7 +251,7 @@ Input: {
 
 ### Step 3: Create Email Operation
 
-```json
+```text
 Tool: operations
 Input: {
   "action": "create",
@@ -273,7 +273,7 @@ Input: {
 
 ### Step 4: Connect Operations
 
-```json
+```text
 Tool: operations
 Input: {
   "action": "update",
@@ -284,7 +284,7 @@ Input: {
 
 ### Step 5: Set Flow Entry Point
 
-```json
+```text
 Tool: flows
 Input: {
   "action": "update",
@@ -299,7 +299,7 @@ Input: {
 
 ### Step 1: Create Folder Structure
 
-```json
+```text
 Tool: folders
 Input: {
   "action": "create",
@@ -313,7 +313,7 @@ Input: {
 
 ### Step 2: Import Images
 
-```json
+```text
 Tool: files
 Input: {
   "action": "import",
@@ -326,7 +326,7 @@ Input: {
 
 ### Step 3: Verify Files
 
-```json
+```text
 Tool: files
 Input: {
   "action": "read",

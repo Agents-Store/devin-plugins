@@ -22,7 +22,7 @@ jq '.components.schemas.HookV3Create' skills/api-reference/references/nocodb-met
 
 ## Hook Anatomy (v3)
 
-```json
+```jsonc
 {
   "title":          "<display name>",
   "description":    "Optional",

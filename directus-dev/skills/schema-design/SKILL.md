@@ -29,7 +29,7 @@ Build schema in this exact order to avoid dependency errors:
 
 ## Creating a Collection
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -77,7 +77,7 @@ Group collections in the sidebar:
 
 Then assign collections to the folder:
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "update",
@@ -104,7 +104,7 @@ Add these recommended fields to every content collection:
 
 ### Adding System Fields
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -209,7 +209,7 @@ Singletons show as a single form (no list view) in the Directus app.
 
 Enable version tracking for editorial workflows:
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "update",
@@ -232,7 +232,7 @@ Allows creating content versions (drafts) before publishing changes. This is the
 
 Control how items appear in relation dropdowns and lists:
 
-```json
+```jsonc
 "meta": {
   "display_template": "{{title}} — {{author.first_name}} {{author.last_name}}"
 }
@@ -244,7 +244,7 @@ Supports field references with `{{field_name}}` and relation traversal with dot 
 
 Soft-delete pattern using archive fields:
 
-```json
+```jsonc
 "meta": {
   "archive_field": "status",
   "archive_value": "archived",
@@ -257,7 +257,7 @@ When `archive_app_filter: true`, archived items are hidden by default in the app
 
 **Directus 12:** collections created through the Studio wizard get an optional boolean `archived` field (archive value `true`, unarchive value `false`) instead of a string `status`. Existing collections with a string `status` keep working with no migration. For a new collection, prefer:
 
-```json
+```jsonc
 "meta": {
   "archive_field": "archived",
   "archive_value": "true",

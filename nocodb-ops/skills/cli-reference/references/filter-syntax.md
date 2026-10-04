@@ -106,7 +106,7 @@ Sub-operator (value = YYYY-MM-DD): exactDate
 
 ### Date range — two bounds (`btw` / `nbtw` are not supported on dates)
 
-```bash
+```text
 (event_date,gte,exactDate,2024-01-01)~and(event_date,lte,exactDate,2024-12-31)    # Events in year 2024
 ```
 
@@ -127,7 +127,7 @@ Sub-operator (value = YYYY-MM-DD): exactDate
 
 **IMPORTANT:** Use `~and`, `~or`, `~not` (with tilde prefix). Plain "and"/"or" will error.
 
-```bash
+```text
 # AND
 (filter1)~and(filter2)
 (name,eq,John)~and(age,gte,18)
@@ -144,7 +144,7 @@ Sub-operator (value = YYYY-MM-DD): exactDate
 Lowercase only: `~AND` / `~OR` error. **Never put whitespace after `~and` / `~or` / `~not`** -- `(a,eq,1)~and (b,eq,2)` is a parse error (a space *before* is fine). `~not` only starts an expression or a group; to negate a later term wrap it: `(a,eq,1)~and(~not(b,checked))`.
 
 **Tip:** Use `in` operator instead of nested OR conditions:
-```bash
+```text
 # Instead of: ((status,eq,active)~or(status,eq,pending))~and(country,eq,USA)
 # Use:
 (status,in,active,pending)~and(country,eq,USA)
@@ -164,7 +164,7 @@ A field name must not carry a trailing space (`(name ,eq,John)` reports `field '
 
 ## Complex Examples
 
-```bash
+```text
 # Active users created this month
 (status,eq,active)~and(created_at,isWithin,pastMonth)
 

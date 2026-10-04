@@ -186,7 +186,7 @@ A browser SSO login gives a browser session. For agents and scripts, create an A
 
 The full spec at `${CLAUDE_PLUGIN_ROOT}/references/openapi/nocobase.json` declares:
 
-```json
+```jsonc
 "securitySchemes": {
   "api-key": { "type": "http", "scheme": "bearer" }
 }

@@ -98,6 +98,8 @@ Reply by adding `"parentCommentId":"<id>"`. (→ `comments-attachments.md`)
 ## Workflow: add a label (v1 endpoint)
 
 Label writes aren't in v2 — use the v1 REST API:
+<!-- reason: Confluence REST v1 endpoint: label writes exist only in v1, the v2 spec has no equivalent -->
+<!-- plugin-test: skip -->
 ```bash
 curl -s -u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" "${JSON[@]}" -X POST \
   "${CONF_ROOT}/wiki/rest/api/content/${PAGE_ID}/label" \
@@ -107,6 +109,8 @@ Read labels via v2: `GET ${CONF}/pages/${PAGE_ID}/labels`. (→ `labels-content-
 
 ## Workflow: attach a file (v1 endpoint, multipart)
 
+<!-- reason: Confluence REST v1 endpoint: attachment upload exists only in v1, the v2 spec has no equivalent -->
+<!-- plugin-test: skip -->
 ```bash
 curl -s -u "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" \
   -H "X-Atlassian-Token: nocheck" \
@@ -118,6 +122,8 @@ Read attachment metadata via v2: `GET ${CONF}/pages/${PAGE_ID}/attachments`. (�
 ## Workflow: full-text search (v1 CQL)
 
 v2 lists filter by `space-id`/`title`/`status`. For real search use CQL on v1:
+<!-- reason: Confluence REST v1 endpoint: CQL search exists only in v1, the v2 spec has no equivalent -->
+<!-- plugin-test: skip -->
 ```bash
 curl -s "${AUTH[@]}" \
   "${CONF_ROOT}/wiki/rest/api/search?cql=space=PROJ%20AND%20text~%22login%20error%22"

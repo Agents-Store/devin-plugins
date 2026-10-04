@@ -49,7 +49,7 @@ Endpoints follow `POST /v3/{api_module}/{engine or vendor}/{endpoint}/{mode}`:
 
 Full (non-`.ai`) response:
 
-```json
+```jsonc
 {
   "version": "0.1.20241203",
   "status_code": 20000,

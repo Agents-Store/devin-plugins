@@ -159,7 +159,7 @@ Button (URL action — the URL is produced by a formula):
 
 Barcode / QrCode (refer to another field):
 
-```json
+```jsonc
 { "title": "SKU Barcode", "type": "Barcode", "options": { "barcode_value_field_id": "<sourceFieldId>", "barcode_format": "CODE128" } }
 { "title": "Order QR",    "type": "QrCode",  "options": { "qrcode_value_field_id": "<sourceFieldId>" } }
 ```

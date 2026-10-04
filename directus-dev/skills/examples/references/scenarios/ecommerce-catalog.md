@@ -16,7 +16,7 @@ Complete schema build for an e-commerce catalog with products, variants, categor
 
 ## Step 1: Create Independent Collections
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -42,7 +42,7 @@ Input: {
 
 ## Step 2: Add Fields to Brands
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -59,7 +59,7 @@ Input: {
 
 ## Step 3: Add Fields to Categories (with self-referencing parent)
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -78,7 +78,7 @@ Input: {
 
 Self-referencing relation:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -96,7 +96,7 @@ Input: {
 
 ## Step 4: Create Products Collection
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -117,7 +117,7 @@ Input: {
 
 ## Step 5: Add Product Fields
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -143,7 +143,7 @@ Input: {
 
 Brand relation:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -155,7 +155,7 @@ Input: {
 
 Featured image relation:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -167,7 +167,7 @@ Input: {
 
 ## Step 6: Create Variants Collection
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -179,7 +179,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -198,7 +198,7 @@ Input: {
 
 Product → Variants relation:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -210,7 +210,7 @@ Input: {
 
 Add O2M alias on products:
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -221,7 +221,7 @@ Input: {
 
 ## Step 7: Create M2M Product ↔ Categories
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -229,7 +229,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -241,7 +241,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -250,7 +250,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -260,7 +260,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -272,7 +272,7 @@ Input: {
 
 ## Step 8: Create Orders and Order Items
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -288,7 +288,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: collections
 Input: {
   "action": "create",
@@ -296,7 +296,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -312,7 +312,7 @@ Input: {
 
 Relations:
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -322,7 +322,7 @@ Input: {
 }
 ```
 
-```json
+```text
 Tool: relations
 Input: {
   "action": "create",
@@ -334,7 +334,7 @@ Input: {
 
 O2M alias on orders:
 
-```json
+```text
 Tool: fields
 Input: {
   "action": "create",
@@ -347,7 +347,7 @@ Input: {
 
 ### Products with Brand and Categories
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",
@@ -363,7 +363,7 @@ Input: {
 
 ### Order Summary with Items
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",
@@ -378,7 +378,7 @@ Input: {
 
 ### Sales Report
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",
@@ -392,7 +392,7 @@ Input: {
 
 ### Low Stock Variants
 
-```json
+```text
 Tool: items
 Input: {
   "action": "read",

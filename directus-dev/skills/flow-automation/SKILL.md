@@ -26,7 +26,7 @@ Complete reference for the `flows`, `operations`, and `trigger-flow` MCP tools.
 
 ## Creating a Flow
 
-```json
+```text
 Tool: flows
 Input: {
   "action": "create",
@@ -50,7 +50,7 @@ Input: {
 ### Trigger Options by Type
 
 **Event trigger:**
-```json
+```jsonc
 "options": {
   "type": "action",
   "scope": ["items.create", "items.update"],
@@ -61,14 +61,14 @@ Input: {
 - `type: "action"` — runs after the operation
 
 **Schedule trigger:**
-```json
+```jsonc
 "options": {
   "cron": "0 */6 * * *"
 }
 ```
 
 **Manual trigger:**
-```json
+```jsonc
 "options": {
   "collections": ["posts"],
   "requireSelection": true,
@@ -79,7 +79,7 @@ Input: {
 ```
 
 **Webhook trigger:**
-```json
+```jsonc
 "options": {
   "method": "POST",
   "async": false
@@ -116,7 +116,7 @@ Target items with **either** `key` (one primary key or an array) **or** `query`,
 - 12.4.0+: update and delete by `query` apply the **read** permissions of the operation's accountability. The role needs read on the primary key, and only readable items are touched. Fields used in `filter` and `sort` must be readable.
 - Both operations also take `emitEvents` (fire hooks and flows for the change) and `permissions` (`$trigger`, `$full`, `$public` or a role UUID) to choose whose permissions apply.
 
-```json
+```text
 Tool: operations
 Input: {
   "action": "create",
@@ -143,7 +143,7 @@ A `query` without a `limit` is capped at `QUERY_LIMIT_DEFAULT` (100 unless confi
 
 ## Creating Operations
 
-```json
+```text
 Tool: operations
 Input: {
   "action": "create",
@@ -177,7 +177,7 @@ Operations form a chain through `resolve` and `reject` UUIDs:
 2. Update each operation with the correct `resolve`/`reject` UUIDs
 3. Update the flow with `operation: "first-op-uuid"` to set the entry point
 
-```json
+```text
 Tool: flows
 Input: {
   "action": "update",
@@ -203,7 +203,7 @@ Access data from triggers and previous operations:
 ### Critical Syntax Rules
 
 1. **Condition filters** — Use nested objects, NOT dot notation:
-   ```json
+   ```jsonc
    // CORRECT
    { "$trigger": { "payload": { "status": { "_eq": "published" } } } }
 
@@ -212,7 +212,7 @@ Access data from triggers and previous operations:
    ```
 
 2. **Request headers** — Array of `{header, value}` objects, NOT key-value:
-   ```json
+   ```jsonc
    // CORRECT
    "headers": [
      { "header": "Content-Type", "value": "application/json" },
@@ -224,7 +224,7 @@ Access data from triggers and previous operations:
    ```
 
 3. **Request body** — Stringified JSON, NOT native objects:
-   ```json
+   ```jsonc
    // CORRECT
    "body": "{\"message\": \"{{ $trigger.payload.title }}\"}"
 
@@ -233,7 +233,7 @@ Access data from triggers and previous operations:
    ```
 
 4. **Data chain references** — Use explicit operation keys:
-   ```json
+   ```jsonc
    // CORRECT (using operation key)
    "{{ read_user.email }}"
 
@@ -246,7 +246,7 @@ Access data from triggers and previous operations:
 ### "Send Slack Notification on New Published Post"
 
 **Step 1: Create the flow:**
-```json
+```text
 Tool: flows
 Input: {
   "action": "create",
@@ -264,7 +264,7 @@ Input: {
 ```
 
 **Step 2: Create condition operation:**
-```json
+```text
 Tool: operations
 Input: {
   "action": "create",
@@ -289,7 +289,7 @@ Input: {
 ```
 
 **Step 3: Create HTTP request operation:**
-```json
+```text
 Tool: operations
 Input: {
   "action": "create",
@@ -313,7 +313,7 @@ Input: {
 ```
 
 **Step 4: Connect operations:**
-```json
+```text
 Tool: operations
 Input: {
   "action": "update",
@@ -323,7 +323,7 @@ Input: {
 ```
 
 **Step 5: Set flow entry point:**
-```json
+```text
 Tool: flows
 Input: {
   "action": "update",
@@ -336,14 +336,14 @@ Input: {
 
 **Important:** Always read the flow definition first to understand requirements.
 
-```json
+```text
 Tool: flows
 Input: { "action": "read", "key": "flow-uuid" }
 ```
 
 Then trigger:
 
-```json
+```text
 Tool: trigger-flow
 Input: {
   "id": "flow-uuid",
@@ -359,7 +359,7 @@ A flow with a `manual` trigger needs an authenticated user. For flows that unaut
 
 ### List All Flows
 
-```json
+```text
 Tool: flows
 Input: {
   "action": "read",
@@ -372,7 +372,7 @@ Input: {
 
 ### Activate/Deactivate
 
-```json
+```text
 Tool: flows
 Input: {
   "action": "update",
@@ -385,12 +385,12 @@ Input: {
 
 Flows can be grouped in flow folders. A folder created with the `folders` tool needs `"type": "flows"` (the default is `files`, which is the file library). Then point the flow at it with `folder`:
 
-```json
+```text
 Tool: folders
 Input: { "action": "create", "data": [{ "name": "Notifications", "type": "flows" }] }
 ```
 
-```json
+```text
 Tool: flows
 Input: {
   "action": "update",

@@ -60,6 +60,8 @@ curl -s "${AUTH[@]}" "${JSON[@]}" -X PUT "${CONF}/pages/${PARENT_ID}" -d "{
 
 ## 5. Label the parent (v1 endpoint — labels aren't writable in v2)
 
+<!-- reason: Confluence REST v1 endpoint: label writes exist only in v1, the v2 spec has no equivalent -->
+<!-- plugin-test: skip -->
 ```bash
 curl -s "${AUTH[@]}" "${JSON[@]}" -X POST \
   "${CONF_ROOT}/wiki/rest/api/content/${PARENT_ID}/label" \

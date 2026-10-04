@@ -99,7 +99,7 @@ Ask the user if they want to create the GitHub repo now or later.
 
 Generate `stack.json` based on user input from Step 1:
 
-```json
+```jsonc
 {
   "stack": "{stack-name}",
   "version": "1.0.0",

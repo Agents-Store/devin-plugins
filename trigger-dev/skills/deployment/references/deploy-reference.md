@@ -18,7 +18,7 @@ npx trigger.dev@<version> deploy --env preview --branch feature/new-task
 
 ### List Preview Branches
 
-```bash
+```text
 # Via MCP
 list_preview_branches()
 

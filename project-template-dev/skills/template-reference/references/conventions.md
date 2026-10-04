@@ -103,7 +103,7 @@ Take names from the marketplace listing or the plugin's `plugin.json`, never fro
 ```
 
 **Level 1.5:**
-```json
+```jsonc
 {
   "stack": "directus-nextjs",
   "level": 1.5,
@@ -113,7 +113,7 @@ Take names from the marketplace listing or the plugin's `plugin.json`, never fro
 ```
 
 **Level 2:**
-```json
+```jsonc
 {
   "stack": "directus-nextjs",
   "level": 2,
