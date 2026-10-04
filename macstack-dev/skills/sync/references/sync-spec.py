@@ -61,18 +61,23 @@ SCREEN_FIELDS = ('name', 'path', 'roles')
 # not own what the contract's feeds.not names, and that list is short and stable.
 ROLE_APPLIABLE = {'name', 'sees', 'can', 'cases', 'isolation'}
 TASK_APPLIABLE = {'name', 'gate', 'role', 'workflow'}
-TRIGGER_APPLIABLE = {'name', 'type', 'source', 'schedule', 'entity', 'event', 'condition', 'path'}
+# `source` здесь была: у триггера в схеме такого поля нет (есть id, name, type, config, software,
+# instance, status); `source` существует только как пункт документа AUTOMATION.md, выводимый
+# из `type`, и записывать его в спецификацию некуда.
+TRIGGER_APPLIABLE = {'name', 'type', 'schedule', 'entity', 'event', 'condition', 'path'}
 SCREEN_APPLIABLE = {'name', 'path', 'roles'}
 # Кейс: документ владеет тем, ЧТО человек должен получить и насколько это важно.
 # `acceptance` сюда не входит намеренно — список пунктов приёмки выделяется
 # рендером и живёт в generated/, а не переписывается из прозы.
 CASE_APPLIABLE = {'name', 'priority', 'role', 'screens', 'triggers', 'workflow'}
 
-# Что допустимо в `human.gate` — решает СХЕМА, а не контракт документа: контракт знает ещё
-# и `none` («ничей»), и значение, записанное оттуда как есть, делало macstack.json
-# невалидным молча (файл записан, ошибки нет, схема отвергает его при следующем чтении).
-# Перечень читается из встроенной копии схемы, чтобы не завести второй список рядом с
-# каноном; запасной — на случай, когда копии рядом нет (плагин разобран на части).
+# Что допустимо в `human.gate` — решает СХЕМА. Контракт документа допускал ещё и `none`
+# («ничей»), и значение, записанное оттуда как есть, делало macstack.json невалидным молча
+# (файл записан, ошибки нет, схема отвергает его при следующем чтении). С 2026-10-04 `none`
+# из контракта убран, но документ, где он уже стоит, по-прежнему читается — поэтому защита
+# остаётся: такой гейт попадёт в отчёт и не будет записан. Перечень читается из встроенной
+# копии схемы, чтобы не завести второй список рядом с каноном; запасной — на случай, когда
+# копии рядом нет (плагин разобран на части).
 _SCHEMA = os.path.normpath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', '..', 'lint', 'references',
     'macstack.schema.json'))
@@ -91,10 +96,43 @@ def schema_gates():
 
 SCHEMA_GATES = schema_gates()
 
+
+def schema_role_isolation():
+    """Что схема говорит о `roles[].isolation`: `{'type': 'string', ...}`.
+
+    Контракт документа называл поле булевым («Чужого не видит: да/нет»), схема — строкой
+    с описанием («Tenant isolation, e.g. by the company field»), и живая спецификация
+    несёт строки. Читатель, встретив в документе `да`, возвращает `True`; записанное как
+    есть, оно делало macstack.json невалидным молча — как гейт `none`. Поэтому тип берётся
+    у схемы, а не угадывается; запасной — на случай, когда копии рядом нет."""
+    try:
+        with io.open(_SCHEMA, encoding='utf-8') as fh:
+            sch = json.load(fh)
+        return dict(sch['properties']['roles']['items']['properties']['isolation'])
+    except (IOError, OSError, ValueError, KeyError):
+        return {'type': 'string'}
+
+
+SCHEMA_ISOLATION = schema_role_isolation()
+_JSON_TYPES = {'string': (str,), 'boolean': (bool,), 'array': (list, tuple),
+               'object': (dict,), 'integer': (int,), 'number': (int, float)}
+
+
+def isolation_valid(value):
+    """Допустимо ли значение для `roles[].isolation` по схеме (тип и `enum`, если есть)."""
+    want = _JSON_TYPES.get(SCHEMA_ISOLATION.get('type'), (str,))
+    if isinstance(value, bool) and bool not in want:
+        return False
+    if not isinstance(value, want):
+        return False
+    return value in SCHEMA_ISOLATION['enum'] if SCHEMA_ISOLATION.get('enum') else True
+
 # Never written from a client document, whatever it says. These are the architect's,
 # measured against the code; generating them from a client's words would be a promise
-# the format cannot keep, and the failure would be silent.
-NEVER = {'location', 'engine', 'software', 'entities', 'status', 'instances'}
+# the format cannot keep, and the failure would be silent. (`source` is the path of a
+# workflow in the code, schema rev 15; `technical` flags infrastructure, rev 14.)
+NEVER = {'location', 'source', 'engine', 'software', 'entities', 'status', 'instances',
+         'technical'}
 
 # An interface a person does not open cannot appear in UX-UI.md, so its absence there is
 # not a disagreement. v1 carried this whitelist and v2 lost it, which made every API and
@@ -331,6 +369,11 @@ def compare_roles(doc_roles, spec_roles):
         s = spec_by_id[rid]
         for f in ROLE_FIELDS:
             dv, sv = d.get(f), s.get(f)
+            if f == 'isolation' and dv is not None:
+                ch = isolation_change(rid, s, dv, sv)
+                if ch is not None:
+                    changed.append(ch)
+                continue
             if dv is not None and dv != sv:
                 appliable = f in ROLE_APPLIABLE
                 fn = (lambda s=s, f=f, dv=dv: s.__setitem__(f, dv)) if appliable else None
@@ -339,6 +382,25 @@ def compare_roles(doc_roles, spec_roles):
         if rid not in doc_by_id:
             gone.append(('role', rid, s.get('name')))
     return add, gone, changed
+
+
+def isolation_change(rid, role, dv, sv):
+    """The change for `roles[].isolation`, or None when the two already agree.
+
+    Only a value the schema allows is ever APPLIED. The document may answer with a bare
+    yes/no (`да`, `нет`) — a boolean — and the schema wants a description, so a boolean
+    is compared with what the spec says and reported, never written: `да` agrees with
+    any described isolation, `нет` with none; every other pairing is a disagreement a
+    human resolves, because a boolean cannot say WHAT the isolation is."""
+    if isinstance(dv, bool):
+        if dv == (not is_blank(sv)):
+            return None
+        return mk_change('role', rid, 'isolation', sv, dv, False, None)
+    if dv == sv:
+        return None
+    ok = isolation_valid(dv)
+    return mk_change('role', rid, 'isolation', sv, dv, ok,
+                     (lambda r=role, v=dv: r.__setitem__('isolation', v)) if ok else None)
 
 
 def all_spec_tasks(spec):

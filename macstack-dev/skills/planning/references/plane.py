@@ -88,6 +88,24 @@ def summary(task):
             % (closes, first[:400], task['id']))
 
 
+def _status_problem(status):
+    """Почему статус не годится для трекера: устаревший токен называет замену.
+
+    Три старых токена линтер допускает, но предупреждает о них (решение владельца,
+    2026-10-04); трекер их не знает вовсе, поэтому здесь это остановка, а не вывод.
+    """
+    try:
+        with io.open(os.path.join(HERE, '..', '..', 'documents', 'references',
+                                  'doc-contracts.json'), encoding='utf-8') as fh:
+            dep = (json.load(fh)['fields']['status'].get('deprecated') or {}).get(status)
+    except (IOError, OSError, ValueError, KeyError):
+        dep = None
+    if dep:
+        return 'status %r is deprecated — %s; the tracker has no such state, and it is' % (
+            status, dep.get('fix') or 'use %r' % dep.get('replace_with'))
+    return 'status %r is' % status
+
+
 def plan(root, tracker=None):
     """-> {'create': [...], 'update': [...], 'conflict': [...], 'binding': {...}}."""
     tasks = read_tasks(root)
@@ -99,8 +117,8 @@ def plan(root, tracker=None):
     create, update, conflict = [], [], []
     for t in tasks:
         if t['status'] not in STATES:
-            conflict.append({'task': t['id'], 'why': 'status %r is not one of %s'
-                             % (t['status'], ', '.join(STATES))})
+            conflict.append({'task': t['id'], 'why': '%s not one of %s'
+                             % (_status_problem(t['status']), ', '.join(STATES))})
             continue
         w = known.get(t['id'])
         payload = {'external_id': t['id'], 'external_source': SOURCE,

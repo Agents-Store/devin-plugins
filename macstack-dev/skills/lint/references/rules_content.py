@@ -369,6 +369,11 @@ def r_12_12(c):
 
 
 # ---------------------------------------------------------------- 12.22
+def _is_gate_none(value):
+    """The retired `none` gate, as a document carries it."""
+    return isinstance(value, str) and value.strip().strip('`').lower() == 'none'
+
+
 @rule('12.22', "The spec agrees with AUTOMATION.md")
 def r_12_22(c):
     doc = c.docs.get('automation')
@@ -402,8 +407,20 @@ def r_12_22(c):
         out.append(Finding('12.22', ERROR, path, 0,
                            'task %s has a human gate in the spec, named by no document'
                            % tid))
+    # `gate: none` is never written (owner's ruling, 2026-10-04): the schema's `human.gate`
+    # has no such value, a task with no person in it has no `human` block, and the old
+    # seed and the old migration wrote it anyway. A document that already carries it is
+    # reported as a WARNING with the fix, not an error — the mistake was the tool's.
     for tid in sorted(set(doc_tasks) - set(spec_human)):
         it = doc_tasks[tid]
+        if _is_gate_none(it.fields.get('gate')):
+            out.append(Finding('12.22', WARNING, path, (it.head_line or 0) + 1,
+                               'task %s: gate: none is never written — the spec has no '
+                               'human gate for this task, so it is the machine half and '
+                               'does not belong in AUTOMATION.md: remove the entry '
+                               '(macstack.json owns the workflow), or declare a human '
+                               'gate for it in the spec' % tid))
+            continue
         out.append(Finding('12.22', ERROR, path, (it.head_line or 0) + 1,
                            'task %s is in the document, but the spec has no human '
                            'gate for it' % tid))
@@ -411,7 +428,20 @@ def r_12_22(c):
         it = doc_tasks[tid]
         want = spec_human[tid].get('gate')
         got = it.fields.get('gate')
-        if got != want:
+        if _is_gate_none(got):
+            if _is_gate_none(want):
+                # The spec itself carries `none`, which the schema's human.gate never
+                # allowed: copying it into the document would only move the error.
+                fix = ('the spec says none too, and the schema has no such gate — drop '
+                       'the human block for this task in macstack.json, or give it a real '
+                       'gate, then mirror that here')
+            elif want:
+                fix = 'set it to %r, the gate the spec declares' % want
+            else:
+                fix = 'delete the line: the spec declares no gate for it'
+            out.append(Finding('12.22', WARNING, path, (it.head_line or 0) + 1,
+                               'task %s: gate: none is never written — %s' % (tid, fix)))
+        elif got != want:
             out.append(Finding('12.22', ERROR, path, (it.head_line or 0) + 1,
                                'task %s: document says gate %r, spec says %r'
                                % (tid, got, want)))

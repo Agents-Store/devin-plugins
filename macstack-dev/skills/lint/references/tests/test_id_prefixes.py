@@ -69,9 +69,10 @@ class Folder(unittest.TestCase):
     def tasks_v2(self, blocked_by):
         """TASKS.md в форме, которую читает ветка `blocked_by` правила 12.4.
 
-        Ветка идёт через `mdblocks`, то есть видит только записи с якорем
-        `<!-- macstack:task= -->` и yaml-блоком; про v3-заголовки без якоря см.
-        LEARNINGS.md — там это записано как отдельная находка.
+        Форма v2 по-прежнему читается (`<!-- macstack:task= -->` и yaml-блок);
+        v3-заголовки читает та же ветка — см. `test_blocked_by_v3.py`. Находки этой
+        ветки — ПРЕДУПРЕЖДЕНИЯ, пока владелец не решит иначе (2026-10-04), поэтому
+        проверки ниже просят их явно.
         """
         write(os.path.join(self.root, 'history', 'TASKS.md'),
               '\n'.join([
@@ -82,8 +83,8 @@ class Folder(unittest.TestCase):
                   '```yaml', 'status: todo', 'blocked_by: [%s]' % blocked_by,
                   '```', '']))
 
-    def lint(self, *rules):
-        found, _ = lf.run(self.root, only=list(rules))
+    def lint(self, *rules, **kw):
+        found, _ = lf.run(self.root, only=list(rules), warnings=kw.get('warnings', False))
         self.assertIsNotNone(found, 'линтер не смог загрузить папку')
         return found
 
@@ -172,28 +173,31 @@ class BlockedByAnOpenItem(Folder):
         self.questions('QA1 · Still open', '~~QA5~~ · CLOSED D1, 2026-09-02')
         self.spec({'needs_from_client': [{'id': 'QA1'}]})
 
-    def test_an_existing_closed_q_item_is_not_an_error(self):
+    def test_an_existing_closed_q_item_is_not_a_finding(self):
         self.tasks_v2('QA5')
-        self.assertEqual(self.lint('12.4'), [])
+        self.assertEqual(self.lint('12.4', warnings=True), [])
 
-    def test_an_existing_open_q_item_is_not_an_error(self):
+    def test_an_existing_open_q_item_is_not_a_finding(self):
         self.tasks_v2('QA1')
-        self.assertEqual(self.lint('12.4'), [])
+        self.assertEqual(self.lint('12.4', warnings=True), [])
 
-    def test_a_missing_q_item_is_still_an_error(self):
-        # Починка не должна превратиться в «принимать любое QA…».
+    def test_a_missing_q_item_is_still_reported(self):
+        # Починка не должна превратиться в «принимать любое QA…». С 2026-10-04 это
+        # предупреждение, а не ошибка: ветка `blocked_by` идёт «сначала предупреждения».
         self.tasks_v2('QA7')
-        got = self.lint('12.4')
+        got = self.lint('12.4', warnings=True)
         self.assertEqual(len(got), 1, got)
         self.assertIn('QA7', got[0].message)
+        self.assertEqual(got[0].severity, lf.WARNING)
+        self.assertEqual(self.lint('12.4'), [], 'ошибок эта ветка больше не даёт')
 
     def test_the_legacy_form_is_unchanged(self):
         self.questions('A1 · Still open', '~~A5~~ · CLOSED D1, 2026-09-02')
         self.spec({'needs_from_client': [{'id': 'A1'}]})
         self.tasks_v2('A5')
-        self.assertEqual(self.lint('12.4'), [])
+        self.assertEqual(self.lint('12.4', warnings=True), [])
         self.tasks_v2('A7')
-        self.assertEqual(len(self.lint('12.4')), 1)
+        self.assertEqual(len(self.lint('12.4', warnings=True)), 1)
 
 
 if __name__ == '__main__':

@@ -49,6 +49,17 @@ Layer classification: full-stack frameworks (nextjs, django) → logic + interfa
 BaaS and headless CMS (directus, nocodb, supabase) → data; job runners (trigger-dev,
 n8n, bullmq) → logic; Docker, CI, Terraform → infrastructure.
 
+**Infrastructure gets a flag, not silence.** A reverse proxy or a queue worker
+(`software[]`), a file store, a delivery log or a numbering sequence (`entities[]`), a
+cleanup job nobody asked for (`workflows[]`) exist in the system and have no place in the
+client documents. Put them in the spec like anything else and mark them
+`technical: true` (schema rev 14 — the flag is on `software[]`, `entities[]` and
+`workflows[]`, not on entities alone). Without it "not described to the client" and "must
+not be described to the client" are indistinguishable, so the audit reports the same
+infrastructure on every run and the report stops being read; leaving it out of the spec
+has the same effect. Everything without the flag is expected to be named in the client
+documents, and its absence there is a finding.
+
 ## A2 — Ask only the business gaps
 
 The audit yields the technical half. Ask the rest in ONE compact message:
@@ -95,7 +106,7 @@ a question nobody has asked yet.
 | 3 | How exactly is each one done? | `workflows[]`, `triggers[]` |
 | 4 | What is it done with? | `software[]`, `connections`, `entities[]` |
 | 5 | Who confirms? Where must a person decide? | human gates in `processes[].tasks` |
-| 6 | What does the agent need to know to do it alone? | `agents[]`, `context` |
+| 6 | What does the agent need to know to do it alone? | `agents`, `context` |
 
 **Ask each one through AskUserQuestion, never as plain text in a reply.** Two to four
 concrete options, the recommendation first and labelled so. A free-text question at this
@@ -136,8 +147,11 @@ measurable result must the bot produce, and what is it worth per month?*
 **processes[]** — which processes produce the results; `type`, `automation_mode`
 (workflow · agent · hybrid), and tasks with human gates wherever a person is
 mandatory. **triggers[]** — a separate collection: what starts the automation, of
-which `type`, from which `source`, and in which software it lives. **workflows[]** —
-deterministic implementations: engine, trigger refs, invocation, named
+which `type`, with what `config`, and in which software it lives. (AUTOMATION.md shows
+each trigger's origin — interface · backend · integration · schedule · manual — as a
+`source` bullet derived from the `type`; that bullet exists in the document only, the
+spec has no such field.) **workflows[]** — deterministic implementations: engine, trigger
+refs, invocation, `source` (the path in the code where it lives, schema rev 15), named
 `[Domain] - [Action] - [Trigger]`.
 
 ## B3 — Software selection

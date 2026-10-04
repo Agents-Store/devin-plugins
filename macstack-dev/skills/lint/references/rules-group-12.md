@@ -36,6 +36,10 @@ ever cited one.
      still matched the old collection and silently returned zero.
      Any rule that can return "nothing to check" must be able to tell that apart from
      "checked, and it was fine" — otherwise it is decoration.
+     It asks the spec before it fires: when `macstack.json` holds **none** of the kind
+     (an `AUTOMATION.md` whose tasks are all machine ones, which the document does not
+     own, or whose spec declares no triggers), an empty result is the right answer and
+     the rule stays silent. It fires whenever the spec expects the kind.
 
 12.1 **Layout** — `docs.root` resolves and holds exactly SIX entries: `README.md`,
      `macstack.json` and the four folders `client/`, `generated/`, `inbox/`,
@@ -48,7 +52,13 @@ ever cited one.
      lazily and their absence in a fresh folder is correct.
      **`docs.files` must name every fixed-path document.** Checking only that the
      entries present resolve is a rule that passes in a vacuum: `docs.files` is
-     authored, so naming nothing at all used to approve an empty folder.
+     authored, so naming nothing at all used to approve an empty folder. The expected
+     keys are read from the bundled schema mirror, with two rev-18 refinements: the four
+     keys the schema only declared in rev 18 (`ledger`, `requirements`, `review`,
+     `inbox_manifest`) are a **warning** when missing — a project written before rev 18
+     could not name them, and the schema does not make them `required` — and `log`, the
+     v2 name of the journal, is accepted as an alias of `ledger` (it draws a deprecation
+     warning naming the replacement). A key the schema knew before rev 18 stays an error.
      Exactly one `macstack.json` in the repo.
 12.2 **Headers and pointers** — each document carries its `<!-- macstack:doc= -->`
      header, and every entity heading carries a `<!-- macstack:ref= -->` pointer unless
@@ -59,14 +69,20 @@ ever cited one.
      rule: a Cyrillic capital KA (U+041A) renders exactly like `K` (U+004B), greps as
      absent and silently breaks every cross-reference check, so compare codepoints
      rather than glyphs; no gaps in D-numbering; A/B numbers never reused after a
-     strike — `A5` and `QA5` are one number in two spellings, so reuse across them counts.
+     strike — `A5` and `QA5` are one number in two spellings, so reuse across them counts;
+     so are `X-01` and `CX-01` (and `C-01` / `CC-01`) in the case space.
 12.4 **Cross-file refs** — every `D<n>` cited anywhere resolves in `DECISIONS.md`;
      every `A<n>` **and every `B<n>`** (also `QA<n>` / `QB<n>`) in `lifecycle.*` resolves to a
      live item; every
      `roles[].cases` prefix yields ≥1 case heading; every case-section letter maps to
      exactly one role; every `<case>.T<n>` carries a case that still exists; every
      `covers` in `TEST-CASES.md` names an acceptance id that still exists; every
-     `blocked_by` in `TASKS.md` resolves to a live task or open item; every `screens`
+     `blocked_by` in `TASKS.md` resolves to a live task or open item — **as a WARNING for
+     now, not an error** (owner, 2026-10-04: warnings first, errors later). The leg used
+     to read only the anchored v2 shape and saw nothing in a v3 `TASKS.md` (headings and
+     bullet labels), so a dangling `blocked_by` passed; it reads v3 now, and the finding
+     says it will become an error once the projects that carry the field are clean.
+     Every `screens`
      entry in a case resolves to a screen in `UX-UI.md`; every `triggers` entry
      resolves to a trigger in `AUTOMATION.md`.
 12.5 **Checked copies** — `open_questions[].summary` equals the first sentence of its
@@ -260,8 +276,14 @@ ever cited one.
 12.14 **Every task is tracked in both places** — every task in `TASKS.md` declares a
       `tracker` id. The file is the source of truth for what the work IS; the team's
       tracker is where the conversation about it happens, and a task in only one of
-      them is a task half the team cannot see. Also: `status` declared and one of the
-      five; a struck task states why.
+      them is a task half the team cannot see. Also: `status` declared and in the
+      vocabulary; a struck task states why. The vocabulary is the tracker's five
+      (`backlog · todo · in_progress · done · cancelled`); `doing`, `blocked` and
+      `dropped` stay accepted but each draws a **warning** naming the replacement
+      (`doing` → `in_progress`, `dropped` → `cancelled`, `blocked` → keep a real status
+      and record the blocker in `blocked_by`), on tasks and on milestones alike. A task
+      token outside the vocabulary is an error; a milestone token outside it is a
+      warning (milestones had no vocabulary check before).
 12.15 **A release is paired** — every `release` row in `history/ledger.jsonl` has a `CHANGELOG.md`
       entry with the same id, and every `CHANGELOG.md` entry has its `release` entry in
       the log. `CHANGELOG.md` is ordered newest first.
@@ -309,7 +331,12 @@ ever cited one.
       roles, same human tasks, same gates, same triggers. A spec that disagrees with the
       document the client signed off on is the failure the whole folder exists to
       prevent. Additions and removals are ERRORS here even though `sync` will not apply
-      them: they mean a human still owes an id.
+      them: they mean a human still owes an id. **`gate: none` is never written** (owner's
+      ruling, 2026-10-04): the schema's `human.gate` is `approve · input · review ·
+      execute`, and a task with no person in it has no `human` block and no entry in
+      `AUTOMATION.md`. A document that already carries `gate: none` draws a **warning**
+      with the fix (set the gate the spec declares, or remove the machine task's entry),
+      not an error — the mistake was the seed's and the migration's, not the author's.
 12.23 **Every screen is declared** — every `interfaces[]` entry a person opens (`web`,
       `admin_ui`, `dashboard`, `approval_center`, `form`) has an entity in
       `client/UX-UI.md`, and every screen's `path` belongs to a declared interface. The

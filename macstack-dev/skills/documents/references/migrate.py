@@ -38,6 +38,11 @@ TODO = '_TODO —'
 # the English enum silently set `gate: none` on every task of a Russian project — 33 of
 # them on the live one — and `none` reads as "nobody owns this", which is the opposite
 # of what the row said.
+#
+# `none` is not a gate and is never written (owner's ruling, 2026-10-04; the schema's
+# `human.gate` has no such value). An empty cell means "no person in this task" — the
+# machine half — and a task like that gets no gate line at all. A word that is neither a
+# gate nor empty is not guessed at either: no line, and the row's other fields survive.
 GATES = {
     'input': 'input', 'ввод': 'input', 'eingabe': 'input', 'ввід': 'input',
     'execute': 'execute', 'исполнение': 'execute', 'выполнение': 'execute',
@@ -46,7 +51,6 @@ GATES = {
     'freigabe': 'approve', 'рішення': 'approve',
     'review': 'review', 'проверка': 'review', 'ревью': 'review',
     'prüfung': 'review', 'перевірка': 'review',
-    '—': 'none', '-': 'none', '': 'none',
 }
 
 MOVES = [
@@ -412,7 +416,8 @@ def convert_roles_tasks(text, lang, spec=None):
                 y = {}
                 if cur_role:
                     y['role'] = cur_role[0]
-                y['gate'] = GATES.get(gate.strip().lower(), 'none')
+                if GATES.get(gate.strip().lower()):
+                    y['gate'] = GATES[gate.strip().lower()]
                 if starts and starts not in ('—', '-'):
                     y['trigger'] = starts
                 if wf and wf not in ('—', '-'):
@@ -626,6 +631,22 @@ def convert_decisions(text):
     return out, n
 
 
+# Слова и глифы таблицы вех v1 -> статус из пятёрки трекера. Решение владельца
+# (2026-10-04): `doing`, `blocked` и `dropped` допустимы, но устарели — линтер
+# предупреждает о каждом, поэтому миграция их не пишет. `blocked` — не статус: у вехи
+# остаётся настоящий (`todo`), а то, что она ждала, миграция называет вслух
+# (MILESTONE_NOTES): поля `blocked_by` у вехи нет, и молча стереть «⏸» значило бы
+# потерять сведение, которое в документе было.
+MILESTONE_STATUS = (
+    ('in_progress', 'in_progress'), ('in progress', 'in_progress'),
+    ('doing', 'in_progress'), ('done', 'done'), ('blocked', 'todo'),
+    ('dropped', 'cancelled'), ('cancelled', 'cancelled'), ('backlog', 'backlog'),
+    ('todo', 'todo'),
+)
+MILESTONE_GLYPH = {u'✓': 'done', u'▶': 'in_progress', u'⏸': 'todo', u'⊘': 'cancelled'}
+MILESTONE_NOTES = []        # [(milestone id, what the author must still do)]
+
+
 def convert_milestones(text):
     """TASKS.md milestone table -> milestone entities with a falsifiable done_when list.
 
@@ -641,19 +662,19 @@ def convert_milestones(text):
             r = (r + [''] * 4)[:4]
             ident, title, status, done = [x.strip(' `*') for x in r]
             ident = re.sub(r'[~*`]', '', ident)
-            st = 'todo'
-            for k in ('done', 'doing', 'blocked', 'dropped', 'todo'):
+            st, blocked = 'todo', False
+            for k, canon in MILESTONE_STATUS:
                 if k in status.lower():
-                    st = k
+                    st, blocked = canon, (k == 'blocked')
                     break
-            if '✓' in status:
-                st = 'done'
-            elif '▶' in status:
-                st = 'doing'
-            elif '⏸' in status:
-                st = 'blocked'
-            elif '⊘' in status:
-                st = 'dropped'
+            for glyph, canon in MILESTONE_GLYPH.items():
+                if glyph in status:
+                    st, blocked = canon, (glyph == u'⏸')
+                    break
+            if blocked:
+                MILESTONE_NOTES.append((ident, 'was blocked: written as `todo`, because '
+                                        '`blocked` is not a status - record the blocker '
+                                        'in the milestone text'))
             crit = [c.strip(' ·-') for c in re.split(r'<br\s*/?>', done) if c.strip(' ·-')]
             body = ['- ' + c for c in crit] if crit else ['%s no falsifiable checks were recorded._' % TODO]
             out.append(M.entity('milestone', ident, title, {'status': st},
@@ -780,6 +801,7 @@ def migrate_format(mroot, spec, lang, apply_):
     p = resolve(mroot, 'history/TASKS.md')
     if p:
         tx = read(p)
+        del MILESTONE_NOTES[:]
         ents, n = convert_milestones(tx)
         if n:
             lines = tx.splitlines()
@@ -795,7 +817,8 @@ def migrate_format(mroot, spec, lang, apply_):
                         keep.extend('\n'.join(ents).split('\n'))
                     continue
                 keep.append(l)
-            write(p, '\n'.join(keep), '%d milestones converted' % n)
+            write(p, '\n'.join(keep), '%d milestones converted%s' % (n, ''.join(
+                '; %s %s' % kv for kv in MILESTONE_NOTES)))
 
     # --- generated documents are deleted, not converted: they regenerate
     for rel in ('generated/ARCHITECTURE.md', 'generated/INDEX.md', 'README.md'):

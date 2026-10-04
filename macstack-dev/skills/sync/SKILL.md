@@ -28,7 +28,7 @@ Dry run by default. `--apply` writes only what it can write safely.
 |---|---|
 | roles, what they see and may do | `roles[]` |
 | role tasks with their gates | `processes[].tasks[]` |
-| triggers, type, source, schedule | `triggers[]` |
+| triggers: name, type, schedule and the other settings | `triggers[]` name, type, config — the document's `source` bullet is derived from the `type` and has no field in the spec |
 | which workflow answers which trigger | `workflows[]` name, triggers, implements |
 | screens and their addresses | `interfaces[]` id, name, path, roles |
 | goals and high-level processes | `goals[]`, `processes[]` |
@@ -56,9 +56,13 @@ is actually implemented. Those are the architect's, measured against the code.
 Walk the project and compare:
 
 - software, versions and instances against the manifests and compose files
-- workflows against the files `workflows[].location` names — a location that no longer
-  resolves is an error, not a warning
+- workflows against the files `workflows[].source` names (schema rev 15: the path from
+  the project root to where the workflow lives in code) — a path that no longer resolves
+  is an error, not a warning
 - entities against the schema or the generated types
+- infrastructure the code has and the client documents never will — a file store, a delivery
+  log, a queue worker — gets `technical: true` on its `software[]`, `entities[]` or
+  `workflows[]` record (schema rev 14), not silence and not a place in a client document
 - interfaces against the routes
 - `resources.accesses` against `.env.example`, and regenerate `.env.example` from the
   spec, never the other way round: the spec holds names, the env file holds values, and

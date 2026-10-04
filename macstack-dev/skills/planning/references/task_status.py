@@ -33,10 +33,10 @@
 ## Словарь статусов
 
 Берётся из контракта (`fields.status.enum`) — того же места, по которому судит
-правило линтера 12.14. Захардкоженный список разошёлся бы с ним молча, и скрипт
-писал бы статус, который линтер тут же назовёт ошибкой. Карту
-`documents.tasks.statuses` не читает никто, и её токены (`doing`, `blocked`)
-правило 12.14 как раз отвергает — поэтому она здесь не источник.
+правило линтера 12.14, — за вычетом токенов из `fields.status.deprecated` (`doing`,
+`blocked`, `dropped`): их линтер допускает, но предупреждает о каждом, и писать их
+скрипт не должен. Захардкоженный список разошёлся бы с контрактом молча. Карту
+`documents.tasks.statuses` не читает никто — поэтому она здесь не источник.
 
 Usage: task_status.py <macstack-dir> [--apply] [--json]
        выход 1, если есть расхождения (без --apply), 0 если применено или чисто
@@ -160,9 +160,20 @@ def decide(status, cases, verdicts, claim):
     return None, 'status %s agrees with the verdicts' % (status or '—'), why
 
 
+def writable_statuses(contract):
+    """Статусы, которые скрипт вправе ЗАПИСАТЬ: словарь контракта без устаревших.
+
+    `doing`, `blocked` и `dropped` линтер допускает (иначе рухнул бы каждый
+    существующий файл), но предупреждает о каждом, поэтому писать их нельзя:
+    скрипт, записавший токен, о котором линтер тут же предупредит, сам создаёт
+    находки (решение владельца, 2026-10-04)."""
+    f = (contract.get('fields') or {}).get('status') or {}
+    return set(f.get('enum') or []) - set(f.get('deprecated') or {})
+
+
 def run(root, apply=False):
     contract = _contract()
-    allowed = set((contract.get('fields') or {}).get('status', {}).get('enum') or [])
+    allowed = writable_statuses(contract)
     tasks_p = os.path.join(root, 'history', 'TASKS.md')
     if not os.path.exists(tasks_p):
         return {'error': 'missing: %s' % tasks_p}

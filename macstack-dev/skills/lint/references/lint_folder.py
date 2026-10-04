@@ -61,9 +61,18 @@ class Ctx(object):
         # требовать записи для документа, которого схема туда не пустит:
         # inbox/README.md — манифест папки, а не документ проекта, и его там нет.
         sch = self._json(os.path.join(HERE, 'macstack.schema.json'))
-        self.docs_files_keys = set(
-            (((sch.get('properties') or {}).get('docs') or {})
-             .get('properties', {}).get('files', {}).get('properties') or {}))
+        _files_props = (((sch.get('properties') or {}).get('docs') or {})
+                        .get('properties', {}).get('files', {}).get('properties') or {})
+        self.docs_files_keys = set(_files_props)
+        # Верхнеуровневые коллекции спецификации — массивы схемы (roles, triggers,
+        # cases, …). Нужны правилу 12.0: отсутствие такой коллекции в спеке равно
+        # «ни одной записи», а не «не знаю».
+        self.spec_lists = set(k for k, v in ((sch.get('properties') or {}).items())
+                              if isinstance(v, dict) and v.get('type') == 'array')
+        # Ключи, которые сама схема объявила устаревшими (`log` с rev 18): они
+        # допустимы, но называть их в новом файле не нужно.
+        self.docs_files_deprecated = set(k for k, v in _files_props.items()
+                                         if isinstance(v, dict) and v.get('deprecated'))
         self.docs = {}          # contract key -> v3.Doc
         self.text = {}          # contract key -> raw text
         for key, decl in (self.contract.get('documents') or {}).items():
@@ -122,7 +131,9 @@ class Ctx(object):
     def entity_kind(self, item):
         """Which contract entity kind this heading is. None when it is not one."""
         if not item.ref:
-            return 'case' if item.id and re.match(r'^[XSZ]-\d\d$', item.id) else None
+            # Сквозной кейс, сценарий и запрет могли не нести указателя; `C` перед буквой
+            # вида — двухбуквенная форма того же id (`CX-01`), а не другой вид сущности.
+            return 'case' if item.id and re.match(r'^C?[XSZ]-\d\d$', item.id) else None
         tail = item.ref.split('.')[-1] if '.' in item.ref else ''
         if tail.startswith('tasks'):
             return 'role_task'
@@ -161,12 +172,42 @@ _CONTRACT_KIND = {'screen': 'interfaces', 'trigger': 'triggers', 'role': 'roles'
                   'process': 'processes', 'goal': 'goals', 'result': 'results',
                   'integration': 'integrations', 'open_item': 'lifecycle'}
 
+# Ключи `docs.files`, которые схема объявила только в rev 18. Контракт документов знал
+# эти документы и раньше, но схема о них молчала, и проект, написанный до rev 18, не мог
+# назвать их, не выйдя за схему. Правило 12.1 строит перечень обязательных записей из
+# встроенной копии схемы, поэтому обновление копии молча делало бы ошибкой отсутствие
+# записи, которую никто не просил: схема не ставит их в `required`. Для этих ключей
+# отсутствие записи — предупреждение с исправлением; ошибка остаётся за ключами, которые
+# схема знала до rev 18.
+SCHEMA_REV18_FILE_KEYS = frozenset(('ledger', 'requirements', 'review', 'inbox_manifest'))
+# Устаревшее имя -> текущее. `log` — v2-название журнала (history/log.md); с rev 18 он
+# называется `ledger` (history/ledger.jsonl). Запись под любым из двух имён закрывает
+# вопрос «проект назвал журнал».
+FILE_KEY_ALIASES = {'log': 'ledger'}
+
 CODE = re.compile(r'`[^`]*`')
 FENCE = re.compile(r'^\s*```')
 TABLE = re.compile(r'^\s*\|')
 
 
 # ---------------------------------------------------------------- rules
+def _spec_expects(c, decl):
+    """Does macstack.json hold at least one entity of this kind?
+
+    True / False, or None when it cannot be told from the spec's top-level collections —
+    and then 12.0 keeps its old strictness, because "cannot tell" is not "none".
+    `role_task` is not a collection: it is a task that has a `human` block (a
+    workflow-only task is the machine half, which AUTOMATION.md does not own)."""
+    if decl.get('kind') == 'role_task':
+        return any(isinstance(t, dict) and t.get('human')
+                   for p in (c.spec.get('processes') or []) if isinstance(p, dict)
+                   for t in (p.get('tasks') or []))
+    names = decl.get('collections') or [_CONTRACT_KIND.get(decl.get('kind'), decl.get('kind'))]
+    if not all(n in c.spec_lists for n in names):
+        return None
+    return any(c.spec.get(n) for n in names)
+
+
 @rule('12.0', 'A declared entity kind is actually found in its document')
 def r_12_0(c):
     """The guard against the failure this whole pass exists to catch.
@@ -179,6 +220,13 @@ def r_12_0(c):
 
     So: if the contract declares an entity kind for a document and the document has
     headings, finding none of that kind is an ERROR, not silence.
+
+    One exception, and it is the whole point of asking the spec: when the SPEC holds
+    none of that kind, an empty result is the right answer, not a broken filter. An
+    AUTOMATION.md of a project whose tasks are all machine ones (which the document does
+    not own) has no `role_task`; one whose spec declares no triggers has no `trigger`.
+    The rule used to call both documents broken. It still fires whenever the spec expects
+    the kind — which is the situation it was written for.
     """
     out = []
     for key in sorted(c.docs):
@@ -189,7 +237,7 @@ def r_12_0(c):
             if e.get('status') == 'unrealised':
                 continue
             _, items = c.entities_of(key, e['kind'])
-            if not items:
+            if not items and _spec_expects(c, e) is not False:
                 out.append(Finding('12.0', ERROR, c.rel(doc.path), 0,
                                    'the contract declares a %s here and not one was '
                                    'matched — the document has %d headings, so this is '
@@ -213,6 +261,15 @@ def r_12_1(c):
     if missing:
         out.append(Finding('12.1', ERROR, c.rel(c.root), 0,
                            'missing from the root: %s' % ', '.join(missing)))
+    named = set(c.files)
+    for old, new in FILE_KEY_ALIASES.items():
+        if old in c.files:
+            named.add(new)
+            if old in c.docs_files_deprecated:
+                out.append(Finding('12.1', WARNING, 'macstack.json', 0,
+                                   'docs.files.%s is the v2 name of `%s` and is deprecated '
+                                   '(schema rev 18) — rename the key to `%s` and point its '
+                                   'path at the ledger' % (old, new, new)))
     for key, decl in (c.contract.get('documents') or {}).items():
         p = decl.get('path') or ''
         if not p or '<' in p:
@@ -220,10 +277,17 @@ def r_12_1(c):
         if not os.path.exists(os.path.join(c.root, p)):
             out.append(Finding('12.1', ERROR, p, 0,
                                'the contract names this document; it does not exist'))
-        elif key not in c.files and key in c.docs_files_keys:
-            out.append(Finding('12.1', ERROR, 'macstack.json', 0,
-                               'docs.files does not name %s — an authored map that '
-                               'names nothing approves an empty folder' % key))
+        elif key not in named and key in c.docs_files_keys:
+            if key in SCHEMA_REV18_FILE_KEYS:
+                out.append(Finding('12.1', WARNING, 'macstack.json', 0,
+                                   'docs.files does not name %s — schema rev 18 declares '
+                                   'it; add {"path": "%s"} (a warning, not an error: a '
+                                   'project written before rev 18 could not name it)'
+                                   % (key, p)))
+            else:
+                out.append(Finding('12.1', ERROR, 'macstack.json', 0,
+                                   'docs.files does not name %s — an authored map that '
+                                   'names nothing approves an empty folder' % key))
     return out
 
 

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/macstacks/macstack/main/schema/macstack.schema.json",
   "title": "macstack.json",
-  "$comment": "rev 17 - 2026-10-04: rev 15 widened the id grammar in two places and left two behind. `$defs/openItemRef` took the struck-through `Q` (`QA5`) and `cases[].id` the case-scoped `C` (`CA-03`), but the pointer form of `lifecycle.needs_from_client[]` still narrowed the id to `^A[0-9]+$` and `prohibitions[].id` still read `^Z-[0-9]{2}$`. The plugin's id migration rewrites both (`A5` -> `QA5`, `Z-14` -> `CZ-14`) as the document contract prescribes, so applying it turned a valid macstack.json into one this schema rejects, and nothing said why. Both now accept the prefix: `^Q?A[0-9]+$` and `^C?Z-[0-9]{2}$`. Additive: format version stays 1.0, no $def removed, every file valid under rev 16 stays valid. Mirrors: plugins/macstack-dev/skills/lint/references/ and any project mirror - canon macstacks/macstack pushed alongside.",
+  "$comment": "rev 18 - 2026-10-04: the `docs` section still described the v2 document model after the plugin that writes the folder moved to v3, and several statements in this file had stopped being true. (1) `docs.files` carried `log` (history/log.md) where v3 keeps `ledger` (history/ledger.jsonl, append-only JSONL, one row per edit and per client comment, keyed by the id of the thing that changed), and said nothing of `requirements`, `review` and `inbox_manifest`, three documents the v3 contract declares. A spec that named them was valid (the object is open) but described nothing, so an author got no help and nothing said which key was meant. All four are now declared; `log` stays valid as a deprecated alias of `ledger`. Three descriptions promising v2 behaviour were corrected: `docRef.version` pointed at 'the last row of its journal table' (a v3 document has none - the version is in its `<!-- macstack:doc= -->` header), `test_cases` promised 'one test per bullet' (v3 collects test headings and counts coverage per case), `changelog` was curated 'from the log' (from the ledger). `docs.dirs` is now described as optional and informational: nothing reads it, the folder names come from the document contract. (2) `$defs/taskRef.status` and `$defs/milestoneRef.status`: the tracker five `backlog · todo · in_progress · done · cancelled` are canonical; `doing`, `blocked` and `dropped` stay valid so no file breaks, but are marked deprecated with replacements (doing -> in_progress, dropped -> cancelled, blocked -> keep a real status and state the blocker as a dependency, not as a status) and the reference linter warns on each. (3) `human.gate` is stated to have no `none` value and never to get one: a task that only runs a workflow has no `human` block. (4) `$defs/coverageArea` named 21 areas where the registry holds 22 (`seo` was missing); it now names the registry file as the vocabulary and lists all 22. Additive: format version stays 1.0, no $def removed, no enum value added or removed, every file valid under rev 17 stays valid. Mirrors: plugins/macstack-dev/skills/lint/references/ and any project mirror - canon macstacks/macstack pushed alongside.",
   "description": "MACSTACK stack file: meta-information for configuring a Claude project + the business and technical specification of the stack in one standardized JSON. Lives in the project root; CLAUDE.md references it; the macstack-dev Claude plugin (agents.store) parses the file and scaffolds the project structure (nextjs in software → Next.js skeleton). Inheritance: prototype points to a parent macstack.json (GitHub or absolute path); the current file extends/overrides the parent — merge by id (see the spec). Section order is result-first: goals → results → processes → triggers → workflows → software → entities → interfaces → connections → agents → context → resources.",
   "type": "object",
   "required": [
@@ -493,7 +493,7 @@
                 },
                 "human": {
                   "type": "object",
-                  "description": "Human-in-the-loop point",
+                  "description": "Human-in-the-loop point: a person acts on this task. Present only where a person is in the loop - a task that only runs a workflow simply has no `human` block (there is no `gate: none`).",
                   "properties": {
                     "role": {
                       "type": "string",
@@ -505,7 +505,8 @@
                         "input",
                         "review",
                         "execute"
-                      ]
+                      ],
+                      "description": "What the person must do: approve, input, review or execute. There is no `none` value and there will not be one: a workflow-only task has no `human` block at all, and a `human` block means a person is involved."
                     }
                   }
                 }
@@ -1364,7 +1365,7 @@
                   },
                   "apis": {
                     "$ref": "#/$defs/refList",
-                    "description": "→ connections.apis (software id) | external APIs"
+                    "description": "→ software[].id, or an API declared in connections.apis[].software (declare an external API there first). The linter resolves every entry against that set; a cross-stack '<stack-id>:<id>' resolves against the declared stacks."
                   },
                   "workflows": {
                     "$ref": "#/$defs/refList",
@@ -1477,7 +1478,7 @@
     },
     "docs": {
       "type": "object",
-      "description": "The project's specification working set — the macstack/ folder. POINTERS ONLY: the markdown files own their text; this section owns where they live, which language their prose is written in, and which ID spaces they allocate. Section anchors (<!-- macstack:section=... -->) and ID tokens are NEVER translated; only headings and prose follow docs.language. docs/ stays the engineering folder — architecture, API conventions and runbooks do not move here.",
+      "description": "The project's specification working set — the macstack/ folder. POINTERS ONLY: the markdown files own their text; this section owns where they live, which language their prose is written in, and which ID spaces they allocate. Section anchors (<!-- macstack:section=... -->) and ID tokens are NEVER translated; only headings and prose follow docs.language. docs/ stays the engineering folder — architecture, API conventions and runbooks do not move here. The document model is v3 (the macstack-dev plugin's doc-contracts.json): client/ is written by a human, generated/ is built, inbox/ is immutable, history/ is the working record.",
       "properties": {
         "root": {
           "type": "string",
@@ -1490,6 +1491,7 @@
         },
         "files": {
           "type": "object",
+          "description": "One entry per document, keyed by the DOCUMENT KEYS of the v3 document contract (doc-contracts.json), never by file name: overview, user_cases, ux_ui, automation, handbook, open_questions (client/), test_cases, architecture, requirements, index, readme (generated/ and the root), tasks, decisions, changelog, ledger, review (history/), inbox_manifest (inbox/). `log` is the v2 key for the journal and is deprecated: use `ledger`.",
           "properties": {
             "overview": {
               "$ref": "#/$defs/docRef",
@@ -1517,11 +1519,15 @@
             },
             "test_cases": {
               "$ref": "#/$defs/docRef",
-              "description": "How each acceptance bullet is verified - one test per bullet, tagged auto or manual. Derived from user_cases, automation and ux_ui; its version names the versions it was derived from."
+              "description": "How each user case is verified, tagged auto or manual. GENERATED from the headings of the tests in tests/ and from client/USER-CASES.md (also derived from automation and ux_ui), never authored: it used to be kept by hand and lied from the day a test was deleted. The unit of coverage is the CASE, not the acceptance bullet — a bullet is a checklist line inside a case, not a test of its own. A dropped test stays as a struck-through entry. Its version names the versions it was derived from."
             },
             "architecture": {
               "$ref": "#/$defs/docRef",
               "description": "How the project is built, for the agent building in it - generated from software[], entities[], workflows[], connections and context.plugins."
+            },
+            "requirements": {
+              "$ref": "#/$defs/docRef",
+              "description": "Every checkable statement of the client documents, each with a permanent address — what an agent compares the code against without reading six documents of prose (generated/REQUIREMENTS.md). GENERATED from client/*.md, never hand-edited; lint rule 12.35 keeps it complete."
             },
             "index": {
               "$ref": "#/$defs/docRef",
@@ -1537,15 +1543,28 @@
             },
             "decisions": {
               "$ref": "#/$defs/docRef",
-              "description": "D-id registry grouped by the rulings file that holds the argument."
+              "description": "D-id registry grouped by the rulings file that holds the argument. Since the decisions/ folder was absorbed the argued rulings live in the same file, under the ruling they argue. Append-only; internal."
             },
             "changelog": {
               "$ref": "#/$defs/docRef",
-              "description": "What reached the people who use the product, newest first. Curated from the work and release entries of the log - never a commit history in disguise."
+              "description": "What reached the people who use the product, newest first. Curated from the work and release rows of the ledger - never a commit history in disguise."
+            },
+            "ledger": {
+              "$ref": "#/$defs/docRef",
+              "description": "history/ledger.jsonl — the append-only record of every edit and every client comment, one JSON object per line keyed by the id of the thing that changed (required: date, doc, item, kind; kinds: added, changed, removed, comment, answer, audit, handoff, release, work). It replaces the v2 `log` (history/log.md), whose entries were about the session and never said which statement moved — so a review package could not show a client what had changed since they last read it. JSONL, not markdown: it has no header, hence no `version`."
+            },
+            "review": {
+              "$ref": "#/$defs/docRef",
+              "description": "The conformance reviews of history/reviews/: dated pairs YYYY-MM-DD-<slug>-conformance.md (the technical audit) and YYYY-MM-DD-<slug>-business.md (the same findings in the client's language), same date, slug and commit — the twin is required. Write-once records. An individual dated review carries no entry of its own here; this entry, if present, points at the family."
+            },
+            "inbox_manifest": {
+              "$ref": "#/$defs/docRef",
+              "description": "inbox/README.md — the manifest of what the client sent, and the ONLY writable file under inbox/ (the files themselves are immutable). Append-only: one entry per received file (received, from, channel, supersedes, processed_in)."
             },
             "log": {
               "$ref": "#/$defs/docRef",
-              "description": "Append-only journal of intakes, handoffs, merges, work and releases; the unprocessed signal and the development log are both read from it."
+              "deprecated": true,
+              "description": "DEPRECATED — the v2 name of the journal (history/log.md). v3 keeps it as `ledger` (history/ledger.jsonl, append-only JSONL). Still valid so no existing spec breaks; migrate by renaming the key to `ledger` and pointing `path` at history/ledger.jsonl. Do not use it in new files."
             }
           }
         },
@@ -1557,7 +1576,7 @@
         },
         "dirs": {
           "type": "object",
-          "description": "The four folders of the macstack/ layout, plus README.md and macstack.json at the root — six entries in all. The count is deliberate: a specification spread over many files becomes more tedious to review than the code it describes, which is the field's own criticism of spec-driven tooling. A fifth folder needs an argument that beats that.",
+          "description": "OPTIONAL and INFORMATIONAL. Names the four folders of the macstack/ layout (plus README.md and macstack.json at the root — six entries in all) for a human reading the spec. Nothing reads this object: the macstack-dev plugin takes the layout from its document contract, so changing a value here moves no folder and changes no check. The count is deliberate: a specification spread over many files becomes more tedious to review than the code it describes, which is the field's own criticism of spec-driven tooling. A fifth folder needs an argument that beats that.",
           "properties": {
             "client": {
               "type": "string",
@@ -2089,7 +2108,7 @@
     },
     "coverageArea": {
       "$ref": "#/$defs/slug",
-      "description": "An area a plugin covers, from registry/coverage-areas.json. Two kinds: a SECTION of this stack file (results, processes, triggers, workflows, software, entities, interfaces, connections, agents, roles, resources, integrations) — meaning the plugin teaches you how to build that part of the stack; or a CROSS-CUTTING area not tied to one section (deployment, secrets-env, testing, observability, data-migration, security-access, conventions, documentation, cost-billing). Extension: a new area = a kebab-case slug + a PR to the registry."
+      "description": "An area a plugin covers. The vocabulary is registry/coverage-areas.json (macstacks/registry): that file is the list, and this description only mirrors it — 22 areas in two kinds. A SECTION of this stack file (results, processes, triggers, workflows, software, entities, interfaces, connections, agents, roles, resources, integrations) — meaning the plugin teaches you how to build that part of the stack; or a CROSS-CUTTING area not tied to one section (deployment, secrets-env, seo, testing, observability, data-migration, security-access, conventions, documentation, cost-billing). Extension: a new area = a kebab-case slug + a PR to the registry."
     },
     "pluginRef": {
       "description": "A plugin wired into the stack. The object form is canonical: it says what the plugin covers here. A bare slug is the legacy short form, equivalent to {\"id\": slug} with no coverage declared — valid, but the linter warns, because an agent cannot route to a plugin whose coverage is unknown.",
@@ -2197,7 +2216,7 @@
     },
     "docRef": {
       "type": "object",
-      "description": "A pointer to one markdown document of the macstack/ folder. The document owns its text; this holds only where it is, who it is for, and which version the spec was reconciled against.",
+      "description": "A pointer to one document of the macstack/ folder (markdown, or the JSONL ledger). The document owns its text; this holds only where it is, who it is for, and which version the spec was reconciled against.",
       "required": [
         "path"
       ],
@@ -2208,7 +2227,7 @@
         },
         "version": {
           "type": "string",
-          "description": "CHECKED COPY: must equal the version in the document's own header and the last row of its journal table. Mismatch is a lint ERROR."
+          "description": "CHECKED COPY: must equal the `version=` of the document's own header (`<!-- macstack:doc=<type> lang=<code> version=<v> -->`), and the `**Version X**` byline some documents still carry in their first lines. Mismatch is a lint ERROR (rule 12.5). A v3 document carries no journal of its own: what changed, and when, is in history/ledger.jsonl. A document with no header (the ledger) has no version to check."
         },
         "updated": {
           "type": "string",
@@ -2340,7 +2359,7 @@
             "cancelled",
             "dropped"
           ],
-          "description": "State of the task. TASKS.md is the source of truth for it; this pointer mirrors it, and the two must agree. The vocabulary is the union of two that used to disagree: `history/TASKS.md` is checked by lint 12.14 against the document contract (`backlog · todo · in_progress · done · cancelled`), while this enum used to allow only `todo · doing · blocked · done · dropped` — so a spec mirroring a real TASKS.md status failed schema validation, and nothing said why. Prefer the tracker five for new files; `doing`, `blocked` and `dropped` remain valid so no existing spec breaks."
+          "description": "State of the task. TASKS.md is the source of truth for it; this pointer mirrors it, and the two must agree. Canonical vocabulary - the tracker five, the one history/TASKS.md is written in: `backlog · todo · in_progress · done · cancelled`. Three older tokens stay VALID so no existing spec breaks, but are DEPRECATED, and the reference linter warns on each: `doing` -> use `in_progress`; `dropped` -> use `cancelled`; `blocked` -> it is not a status: keep the real one (`todo` or `in_progress`) and express the blocker as a dependency (`blocked_by`), not as a status. Why the union exists: TASKS.md was written in the tracker five while this enum allowed only `todo · doing · blocked · done · dropped`, so a spec mirroring a real TASKS.md status failed validation and nothing said why."
         },
         "blocked_by": {
           "$ref": "#/$defs/refList",
@@ -2374,7 +2393,7 @@
             "cancelled",
             "dropped"
           ],
-          "description": "State of the task. TASKS.md is the source of truth for it; this pointer mirrors it, and the two must agree. The vocabulary is the union of two that used to disagree: `history/TASKS.md` is checked by lint 12.14 against the document contract (`backlog · todo · in_progress · done · cancelled`), while this enum used to allow only `todo · doing · blocked · done · dropped` — so a spec mirroring a real TASKS.md status failed schema validation, and nothing said why. Prefer the tracker five for new files; `doing`, `blocked` and `dropped` remain valid so no existing spec breaks."
+          "description": "State of the milestone. TASKS.md is the source of truth for it; this pointer mirrors it, and the two must agree. Canonical vocabulary - the tracker five, the one history/TASKS.md is written in: `backlog · todo · in_progress · done · cancelled`. Three older tokens stay VALID so no existing spec breaks, but are DEPRECATED, and the reference linter warns on each: `doing` -> use `in_progress`; `dropped` -> use `cancelled`; `blocked` -> it is not a status: keep the real one (`todo` or `in_progress`) and express the blocker as a dependency (`blocked_by`), not as a status. Why the union exists: TASKS.md was written in the tracker five while this enum allowed only `todo · doing · blocked · done · dropped`, so a spec mirroring a real TASKS.md status failed validation and nothing said why."
         },
         "ref": {
           "type": "string"

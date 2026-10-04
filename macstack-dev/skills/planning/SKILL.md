@@ -64,10 +64,9 @@ dropped task is struck, not deleted:
 
 ## Status vocabulary
 
-The tokens are the tracker's, and they come from **one place** — `fields.status.enum`
-in the document contract, which is what lint rule 12.14 judges against. Do not write a
-status from memory: this table used to list `doing` and `blocked`, which that rule
-rejects, so following it produced a lint error on the next run.
+The canonical tokens are the tracker's five, and they come from **one place** —
+`fields.status` in the document contract, which is what lint rule 12.14 judges
+against. Do not write a status from memory.
 
 | Status | Glyph | Means |
 |---|---|---|
@@ -76,7 +75,19 @@ rejects, so following it produced a lint error on the next run.
 | `in_progress` | ▶ | active now |
 | `done` | ✓ | acceptance passed |
 | `cancelled` | ✕ | called off; exempt from needing a `tracker` id |
-| `dropped` | ⊘ | struck — see the form above |
+
+Three older tokens are still **accepted** — no existing file breaks — but are
+**deprecated**: lint 12.14 warns on each (tasks and milestones alike) and names the
+replacement, and nothing in this plugin writes them. Owner's ruling, 2026-10-04.
+
+| Deprecated | Write instead |
+|---|---|
+| `doing` | `in_progress` |
+| `dropped` | `cancelled` — a struck task keeps the form above |
+| `blocked` | not a status: keep the real one (`todo` or `in_progress`) and record what holds the work up in `blocked_by` |
+
+Any other token (`planned`, `building`, `live`, …) is a lint ERROR on a task: no
+vocabulary here or in the schema knows it.
 
 `status` and `tracker` are the two REQUIRED task fields. A task with no `tracker`
 id is a lint ERROR — see Tracker sync below.
@@ -86,9 +97,11 @@ that stays `todo`; a task waiting on a client answer does not exist yet at all (
 rule at the top).
 
 **The same status is written twice** — the bullet in `TASKS.md` and, when the spec
-mirrors it, `lifecycle.tasks[].status` in `macstack.json`. They must agree, and nothing
-cross-checks them yet; the schema accepts both vocabularies so that a mirror of a real
-`TASKS.md` validates, but writing the tracker five in both is what keeps them readable.
+mirrors it, `lifecycle.next_steps[].status` (a task, `$defs/taskRef`) or
+`lifecycle.milestones[].status` (a milestone, `$defs/milestoneRef`) in `macstack.json`.
+They must agree, and nothing cross-checks them yet. The schema accepts the tracker five
+plus the three deprecated tokens, so a mirror of an older `TASKS.md` validates; write the
+tracker five in both.
 
 ## One task, worked
 
@@ -234,7 +247,7 @@ ending `(M11-T9)` links a commit to its task for free — worth the convention.
 |---|---|
 | No `TASKS.md` yet | `macstack-dev:documents` scaffolds it |
 | "add a task" / "завести задачу" | Append under its milestone (or `backlog`), `todo`, `tracker` filled or created |
-| "what's left" / "что осталось сделать" / "what should I work on next" | List `todo`/`doing` tasks not `blocked`, ordered by milestone |
+| "what's left" / "что осталось сделать" / "what should I work on next" | List `todo`/`in_progress` tasks with no live `blocked_by`, ordered by milestone |
 | "milestone status" | Report the milestone's `done_when` checks, pass/fail |
 | "sync tasks with the tracker" / "синхронизировать задачи" | Run the reconcile procedure above |
 | Debt that's fine to sit | `OPEN-QUESTIONS.md` §B, not here |

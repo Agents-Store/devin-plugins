@@ -152,7 +152,7 @@ is not actionable and "cell 4 of row 12 is 876 characters" is.
   `scope`.
 - **Unprocessed source**: a file in `inbox/` with no `merge` entry naming it.
 - `lifecycle.updated` older than the newest `history/ledger.jsonl` row (name the date).
-- **The project has gone quiet**: a task sitting in `doing` while the ledger has had no
+- **The project has gone quiet**: a task sitting in `in_progress` while the ledger has had no
   `work` entry for 14 days. The older staleness check compares `lifecycle.updated`
   against the newest log entry, and with no client input both freeze in agreement — a
   project can run for months with a perfectly green lint and no record of the work.
@@ -212,7 +212,7 @@ printing it.
 
 Spec        🟢 schema + 11 rules
 Documents   🟡 3 warnings          (12.17 ×2 · 12.11 ×1)
-Milestone   M11 · doing ▶ · 6/9 tasks · 3 of 5 done_when recorded
+Milestone   M11 · in_progress ▶ · 6/9 tasks · 3 of 5 done_when recorded
 Client      2 open §A · oldest 21 days · 1 blocking M11-T9
 Quiet for   4 days since the last `work` entry
 

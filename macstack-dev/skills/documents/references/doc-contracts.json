@@ -935,7 +935,7 @@
       "note": "The forward-looking half of the folder. OPEN-QUESTIONS.md §B records debt the team consciously accepted and argues why NOT to act; this document says what will be done, in what order. Do not merge them: an item can sit in §B for a year and only becomes a task when its trigger fires.",
       "format": "v3",
       "journal": false,
-      "$comment_statuses": "Glyphs for the INDEX.md render. The KEYS are the tokens lint 12.14 accepts — they come from fields.status.enum and nowhere else. The map used to be keyed by `doing` and `blocked`, which that rule rejects, so it documented statuses no file was allowed to carry."
+      "$comment_statuses": "Glyphs for the INDEX.md render. The KEYS are canonical tokens from fields.status.enum, plus `dropped`, which is deprecated but still accepted. `doing` and `blocked` carry no glyph on purpose: they are deprecated (see fields.status.deprecated), lint 12.14 warns on them, and a glyph here would document them as a way to write a status."
     },
     "decisions": {
       "path": "history/DECISIONS.md",
@@ -1396,8 +1396,7 @@
         "input",
         "execute",
         "approve",
-        "review",
-        "none"
+        "review"
       ],
       "value_label": {
         "ru": {
@@ -1408,7 +1407,7 @@
         }
       },
       "render": "text",
-      "$comment": "label_aliases is read-only: the reader accepts them, the writer never emits one. The shipped table said \"что требуется от человека\" while all 33 live bullets say \"что от человека требуется\" — the words are transposed, and 33 fields vanished."
+      "$comment": "label_aliases is read-only: the reader accepts them, the writer never emits one. The shipped table said \"что требуется от человека\" while all 33 live bullets say \"что от человека требуется\" — the words are transposed, and 33 fields vanished. `none` is NOT a gate and is never written (owner's ruling, 2026-10-04): the enum is exactly the schema's `human.gate`, which has no `none` — a task with no human gate has no `human` block in the spec and no gate bullet (indeed no entry at all) in AUTOMATION.md, because the machine half is not the document's. A document that already carries `gate: none` still reads; lint 12.22 warns on it and names the fix."
     },
     "goes_to": {
       "label": {
@@ -1458,8 +1457,9 @@
         "ru": "Чужого не видит",
         "en": "Sees nothing else"
       },
-      "type": "bool",
-      "render": "text"
+      "type": "text",
+      "render": "text",
+      "$comment": "A description, not a yes/no: the schema's roles[].isolation is a STRING (\"Tenant isolation, e.g. by the company field\") and the live spec carries strings (`own records only`). The contract used to declare `bool`; the seed wrote the spec's string into the bullet anyway, and a reader that met `да` returned True — which `sync-spec.py --apply` then wrote into a string field. sync-spec still reads a bare yes/no from a document but only COMPARES it, and never writes a boolean."
     },
     "kind": {
       "label": {
@@ -1748,11 +1748,22 @@
         "in_progress",
         "done",
         "cancelled",
-        "planned",
-        "building",
-        "live",
+        "doing",
+        "blocked",
         "dropped"
-      ]
+      ],
+      "deprecated": {
+        "doing": {
+          "replace_with": "in_progress"
+        },
+        "dropped": {
+          "replace_with": "cancelled"
+        },
+        "blocked": {
+          "fix": "`blocked` is not a status: keep a real one (`todo` or `in_progress`) and record what holds the work up in `blocked_by`"
+        }
+      },
+      "$comment": "Owner's ruling, 2026-10-04. The canonical vocabulary is the tracker's five: backlog, todo, in_progress, done, cancelled — the same five history/TASKS.md is written in and the same five the tracker holds. `doing`, `blocked` and `dropped` stay ACCEPTED (every existing file keeps working) but are DEPRECATED: lint 12.14 warns on each and names the replacement, and no writer emits them. The enum IS the union that schema rev 18 declares for $defs/taskRef.status and $defs/milestoneRef.status — a test holds the two equal, so the contract cannot accept a token the schema would then reject when the task is mirrored into macstack.json. `planned`, `building` and `live` used to be here too: introduced together with the tracker five (9c57f96), written by no script, read by none, taught by no skill, and known to NO schema enum — a task carrying `live` passed 12.14 and failed the schema. They were removed; nothing in the live corpus used them."
     },
     "stores": {
       "label": {

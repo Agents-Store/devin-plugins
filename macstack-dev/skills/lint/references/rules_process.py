@@ -39,12 +39,10 @@ block's own lines, because "the milestone has a bullet somewhere" is not the
 question 12.16 asks: an empty `done_when` beside a chatty `notes` passed, and a
 `не выполнено` written in `notes` about something else failed a done milestone.
 
-Rewiring note for whoever restructures `history/`: 12.13, 12.19, 12.20 and
-12.26 all read `log.md`'s `entries` section directly; 12.14, 12.16 and 12.26
-read `TASKS.md`'s `milestones`/`tasks` sections; 12.15 reads both `log.md` and
-`CHANGELOG.md`'s `releases` section. Whatever replaces `log.md` with a machine
-ledger needs equivalents of `_log_entries()` and of `_fields()`'s bold/plain/yaml
-union — nothing here assumes markdown past that one call site per rule.
+Rewiring note (updated for the ledger): 12.13, 12.15, 12.19, 12.20 and 12.26 read the
+journal through `_ledger()` (`ledger.py`, history/ledger.jsonl) — `log.md` is the v2
+journal and no rule reads it. 12.14, 12.16 and 12.26 read `TASKS.md`'s
+`milestones`/`tasks` sections; 12.15 also reads `CHANGELOG.md`'s `releases` section.
 """
 import datetime, os, re
 
@@ -266,15 +264,27 @@ def _relpath(c, key, fallback):
     return c.rel(p) if p else fallback
 
 
-def _log_entries(c):
-    """Every `log.md` journal entry, anchored or written the documented way."""
-    text = c.text.get('log')
-    if text is None:
-        return []
-    return _entities(text, 'entry', section='entries', dated_head=True)
+# `_log_entries()` читала `c.text.get('log')` — документ, которого в контракте нет с тех
+# пор, как журнал стал `ledger` (history/ledger.jsonl). Она всегда возвращала пустой
+# список и не имела ни одного вызова; журнал читает `_ledger()` ниже, через `ledger.py`.
 
 
 # ---------------------------------------------------------------- 12.13
+
+def _status_vocabulary(c):
+    """(accepted tokens, {deprecated token: how to fix it}) from the contract.
+
+    One place, `fields.status` in `doc-contracts.json`: the enum is the union the
+    schema declares for `taskRef.status` / `milestoneRef.status`, and `deprecated`
+    marks the tokens that stay valid but are no longer the way to write a status.
+    """
+    f = (c.contract.get('fields') or {}).get('status') or {}
+    fixes = {}
+    for tok, d in (f.get('deprecated') or {}).items():
+        d = d or {}
+        fixes[tok] = d.get('fix') or ('use %r' % d.get('replace_with'))
+    return set(f.get('enum') or []), fixes
+
 
 @rule('12.14', 'Every task is tracked in both places')
 def r_12_14(c):
@@ -283,6 +293,13 @@ def r_12_14(c):
     A task living in only one of the two is a task half the team cannot see. A task
     still in `backlog` is exempt: it has not been sent anywhere yet, and demanding a
     tracker id from it demands that somebody invent one.
+
+    Also the status vocabulary of tasks AND milestones. The canonical five are the
+    tracker's (`backlog · todo · in_progress · done · cancelled`); `doing`, `blocked`
+    and `dropped` stay accepted so no existing file breaks, but each draws a WARNING that
+    names the replacement (owner's ruling, 2026-10-04). A task token outside the
+    vocabulary is an ERROR; a milestone token outside it is a warning, because milestones
+    had no vocabulary check at all before and a new error would redden existing projects.
     """
     out = []
     doc = c.docs.get('tasks')
@@ -292,7 +309,7 @@ def r_12_14(c):
     for e in ((c.contract.get('documents') or {}).get('tasks') or {}).get('entities') or []:
         if e['kind'] == 'task':
             decl = e
-    states = set((c.contract.get('fields') or {}).get('status', {}).get('enum') or [])
+    states, deprecated = _status_vocabulary(c)
     exempt = {'backlog', 'cancelled'}
     for it in doc.items:
         if it.level < 3 or not it.id or not re.match(r'^M\d+-T\d+$', it.id):
@@ -305,7 +322,11 @@ def r_12_14(c):
         elif states and st not in states:
             out.append(Finding('12.14', ERROR, 'history/TASKS.md', ln,
                                '%s has status %r, not one of %s'
-                               % (it.id, st, ', '.join(sorted(states)))))
+                               % (it.id, st, ', '.join(sorted(states - set(deprecated))))))
+        elif st in deprecated:
+            out.append(Finding('12.14', WARNING, 'history/TASKS.md', ln,
+                               '%s has status %r, which is deprecated — %s'
+                               % (it.id, st, deprecated[st])))
         if not it.get('tracker') and st not in exempt:
             out.append(Finding('12.14', ERROR, 'history/TASKS.md', ln,
                                '%s is %s and carries no tracker id' % (it.id, st or '—')))
@@ -314,6 +335,19 @@ def r_12_14(c):
                 and not re.search(r'снят|cancel|отменен', ' '.join(it.body), re.I):
             out.append(Finding('12.14', ERROR, 'history/TASKS.md', ln,
                                '%s is struck through and does not say why' % it.id))
+    # milestones: the same vocabulary, warnings only (see the docstring)
+    _, milestones = c.entities_of('tasks', 'milestone')
+    for it in milestones:
+        st = str(it.get('status') or '').strip().lower()
+        ln = (it.head_line or 0) + 1
+        if st in deprecated:
+            out.append(Finding('12.14', WARNING, 'history/TASKS.md', ln,
+                               'milestone %s has status %r, which is deprecated — %s'
+                               % (it.id, st, deprecated[st])))
+        elif st and states and st not in states:
+            out.append(Finding('12.14', WARNING, 'history/TASKS.md', ln,
+                               'milestone %s has status %r, not one of %s'
+                               % (it.id, st, ', '.join(sorted(states - set(deprecated))))))
     return out
 
 @rule('12.16', 'Milestones are falsifiable')
