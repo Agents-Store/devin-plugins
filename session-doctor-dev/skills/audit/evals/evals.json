@@ -1,0 +1,12 @@
+{
+  "skill_name": "audit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "audit my claude code session",
+      "expected_output": "a session audit table with skills, HTTP and token sections",
+      "files": [],
+      "expectations": []
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "skill_name": "examples",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "show me a sample session audit",
+      "expected_output": "a rendered session audit with skills, HTTP and token sections",
+      "files": [],
+      "expectations": [
+        {
+          "assertion": "has_three_tables",
+          "text": "Shows the Skills, HTTP and Tokens tables"
+        },
+        {
+          "assertion": "placeholders_only",
+          "text": "Uses placeholder hosts (example.test / example.com) and <token>, never a real host, port or secret value"
+        },
+        {
+          "assertion": "token_status_from_codes",
+          "text": "Token Status reflects an HTTP code shown in the session, not a guess"
+        }
+      ]
+    }
+  ]
+}

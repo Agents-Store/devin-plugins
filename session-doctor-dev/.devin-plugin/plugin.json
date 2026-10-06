@@ -1,0 +1,19 @@
+{
+  "name": "session-doctor-dev",
+  "version": "0.1.0",
+  "description": "Read-only audit of a Claude Code session: where it runs, what context it loaded, which model and effort it used, the skills it invoked, every HTTP request with its status code, and the status of each API token seen in the session — with concrete fixes.",
+  "author": {
+    "name": "AGENTS.STORE"
+  },
+  "license": "MIT",
+  "keywords": [
+    "session",
+    "audit",
+    "diagnostics",
+    "debug",
+    "http",
+    "tokens",
+    "skills",
+    "observability"
+  ]
+}
