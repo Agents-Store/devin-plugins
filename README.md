@@ -11,7 +11,7 @@ git clone <this-repo>
 cp -r agents-store-devin-plugins/<plugin-name> ~/.devin/plugins/<plugin-name>
 ```
 
-## Плагины (43)
+## Плагины (44)
 
 | Плагин | Описание | Skills | Agents | Commands | MCP |
 |---|---|---|---|---|---|
@@ -56,5 +56,6 @@ cp -r agents-store-devin-plugins/<plugin-name> ~/.devin/plugins/<plugin-name>
 | [teams-dev](./teams-dev) | Microsoft Teams SDK dev plugin for Agents Store. TypeScript guidance for building Teams bots, message extensions, tabs, dialogs and AI agents on Teams SDK 2.1 a | 17 | 1 | 2 | — |
 | [teleshop-ops](./teleshop-ops) | Teleshop store management plugin. Manage products, orders, categories, attributes, customers, webhooks, and addons for your Telegram store via 50 MCP tools. | 9 | 2 | 13 | ✓ |
 | [trigger-dev](./trigger-dev) | Trigger.dev dev plugin for Agents Store. Comprehensive development knowledge for building background tasks, AI agent workflows, and durable execution on self-ho | 14 | 1 | 4 | — |
+| [vaultwarden-dev](./vaultwarden-dev) | Vaultwarden dev plugin for Agents Store. Script and integrate a self-hosted Vaultwarden (Bitwarden-compatible) server: what the client API can and cannot do und | 9 | 1 | 1 | — |
 | [vercel-dev](./vercel-dev) | Vercel ecosystem plugin. Deployment, AI SDK, Edge Functions, storage, routing, performance optimization. Includes CLI deploy troubleshooting for non-Git project | 32 | 3 | 4 | ✓ |
 | [web-search-dev](./web-search-dev) | Developer reference for web search, scraping and documentation lookup — Firecrawl, Exa, Jina, Perplexity, Context7 MCP tools and REST/SDK/CLI — plus Pexels and  | 10 | 1 | 0 | ✓ |
