@@ -263,7 +263,11 @@ ever cited one.
 12.11 **Every acceptance bullet is verified** — each acceptance bullet in
       `USER-CASES.md` is covered by at least one test in `TEST-CASES.md`, matched by
       the bullet's id. An uncovered bullet is an unverified promise; that is the whole
-      point of the document.
+      point of the document. A test is found by its title: `it()`/`test()` in
+      JS/TS, `*_test.py`, `*_spec.rb`, and in shell suites (`*.test.sh`, `*_test.sh`,
+      `*.spec.sh`, `*.bats`) the first quoted argument of a call at line start
+      (`ok "C-04 …"`) or bats' `@test "…"`. Only a test under `e2e/` or a path
+      containing `scenario` proves a case; others show as support.
 12.12 **Test cases are well formed** — every test declares `covers` and `kind`; a
       `manual` test also declares preconditions and steps; an `auto` test names the
       test title that proves it (a bare filename is not evidence, and a `file.ts:NNN`

@@ -289,8 +289,10 @@ def render_architecture(spec, lang):
             for master in sorted(by_master):
                 out_lines += ['**%s:** `%s`' % (m['master_label'], master or '—'), '']
                 for e in by_master[master]:
+                    # Без `master`: сущность уже стоит под заголовком своего master,
+                    # а метка `master` не заявлена в doc-contracts.json — 12.31
+                    # ругался на каждую сущность сгенерированного файла.
                     bullets = [
-                        _bullet('master', e.get('master'), lang),
                         _bullet('stores', [st.get('software') for st in (e.get('stores') or [])], lang),
                         _bullet('volume', e.get('volume'), lang),
                     ]
@@ -485,7 +487,15 @@ SKIP_DIRS = ('node_modules', '.git', '.next', 'dist', 'build', 'coverage',
              '.turbo', '.claude', '.codex', '.venv', '__pycache__')
 
 TEST_EXT = ('.spec.ts', '.test.ts', '.spec.tsx', '.test.tsx', '.spec.js', '.test.js',
-            '_test.py', '_spec.rb')
+            '_test.py', '_spec.rb') + ('.test.sh', '_test.sh', '.spec.sh', '.bats')
+
+# Тесты на shell. В bash-наборе нет `it()`: название — первая строка-аргумент
+# вызова в начале строки (`ok "C-04 …"`, `expect_fail "C-04 …" …`), у bats —
+# `@test "…"`. Без этого сценарный тест на bash не мог доказать кейс вообще, и
+# 12.11 называл «не покрыт» каждый кейс проекта, чьи тесты — shell. Строка без id
+# кейса (`echo "…"`) ничего не значит: её отсекает COVERS.
+SHELL_EXT = ('.test.sh', '_test.sh', '.spec.sh', '.bats')
+SHELL_TITLE = re.compile(r"""^\s*(?:@test|[A-Za-z_][\w-]*)\s+(['"])(.*?)\1""", re.M)
 
 
 def scan_tests(project_root):
@@ -518,7 +528,8 @@ def scan_tests(project_root):
             except IOError:
                 continue
             rel = os.path.relpath(p, project_root)
-            for m in TEST_TITLE.finditer(text):
+            titles = SHELL_TITLE if f.endswith(SHELL_EXT) else TEST_TITLE
+            for m in titles.finditer(text):
                 title = m.group(2)
                 for c in COVERS.finditer(title):
                     key = c.group(1) + (c.group(2) or '')
