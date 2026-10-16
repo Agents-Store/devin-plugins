@@ -1,6 +1,7 @@
 ---
 name: documents
-description: This skill should be used when the user asks to "create the macstack folder", "set up project docs", "where do user cases live", "add a screen", "add a trigger", "standardize the project documents", "repair the macstack folder", "migrate docs into macstack", mentions `macstack/`, OVERVIEW, USER-CASES, UX-UI, AUTOMATION, HANDBOOK, OPEN-QUESTIONS, DECISIONS, the client inbox or the document log — and BEFORE any other skill reads or writes anything under `macstack/`. Defines the folder standard AND the document shape: layout, path resolution, ID spaces, the pointer bindings, the bullet-label form, the language rule, the immutability guardrails, rendering and migration.
+description: >-
+  This skill should be used when the user asks to "create the macstack folder", "set up project docs", "where do user cases live", "add a screen", "add a trigger", "standardize the project documents", "repair the macstack folder", "migrate docs into macstack", mentions `macstack/`, OVERVIEW, USER-CASES, UX-UI, AUTOMATION, HANDBOOK, OPEN-QUESTIONS, DECISIONS, the client inbox or the document log — and BEFORE any other skill reads or writes anything under `macstack/`. Defines the folder standard AND the document shape: layout, path resolution, ID spaces, the pointer bindings, the bullet-label form, the language rule, the immutability guardrails, rendering and migration.
 ---
 
 # The `macstack/` folder — standard
