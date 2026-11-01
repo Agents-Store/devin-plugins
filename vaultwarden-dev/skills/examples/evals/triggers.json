@@ -1,0 +1,18 @@
+[
+  {"query": "Walk me through onboarding a new hire into our Vaultwarden org end to end: the account, the org membership and read access to the Infra collection.", "should_trigger": true},
+  {"query": "Someone leaves the company tomorrow. Give me the full offboarding runbook for Vaultwarden: block the account, revoke the org membership, list what has to be rotated, with the calls in the right order.", "should_trigger": true},
+  {"query": "Покажи пример полного сценария выдачи секретов из Vaultwarden в CI-пайплайн, чтобы пароли не попадали в лог.", "should_trigger": true},
+  {"query": "Give me a step-by-step runbook for backing up Vaultwarden and upgrading to a new release without breaking the bw CLI and the mobile apps.", "should_trigger": true},
+  {"query": "Нужен пошаговый пример оффбординга сотрудника в Vaultwarden: заблокировать аккаунт, отозвать членство в организации, затем составить список паролей на ротацию.", "should_trigger": true},
+  {"query": "I want an end-to-end example that combines the admin panel, the client API and bw: invite someone to the org, then confirm them after they accept.", "should_trigger": true},
+  {"query": "What does a cron job look like that reads database credentials from Vaultwarden at run time with its own service account?", "should_trigger": true},
+  {"query": "Is there a worked example of rolling back a failed Vaultwarden upgrade, restoring the data folder and the previous image?", "should_trigger": true},
+  {"query": "What is the bw command to delete an item permanently instead of sending it to the trash?", "should_trigger": false},
+  {"query": "Which admin route forces every client to resync?", "should_trigger": false},
+  {"query": "Invitation emails from our Vaultwarden never arrive. Where do I look?", "should_trigger": false},
+  {"query": "What arguments does python-vaultwarden's VaultwardenAdminClient take?", "should_trigger": false},
+  {"query": "Is it okay to keep the master password in an environment variable of my script?", "should_trigger": false},
+  {"query": "Which MCP server fits Vaultwarden better: warden-mcp or the official Bitwarden one?", "should_trigger": false},
+  {"query": "Show me an end-to-end onboarding example for a new employee in Keycloak with groups and roles.", "should_trigger": false},
+  {"query": "Show me a GitHub Actions example that injects secrets from HashiCorp Vault into a deploy job.", "should_trigger": false}
+]

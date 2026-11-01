@@ -1,0 +1,18 @@
+[
+  {"query": "Clone the reference OpenClaw instance into a new 'canary' instance for testing a new model chain", "should_trigger": true},
+  {"query": "Add a new OpenClaw instance for a new tenant on this host: pick a free gateway port and decide what it may share with the source", "should_trigger": true},
+  {"query": "I cloned an OpenClaw instance and now it answers on the source's port and has no credentials. What went wrong?", "should_trigger": true},
+  {"query": "Stand up a throwaway test instance from the reference and prove it's isolated from it", "should_trigger": true},
+  {"query": "Создай новый инстанс OpenClaw из эталонного для нового клиента: порт, секреты, что можно делить, а что нельзя", "should_trigger": true},
+  {"query": "Клонированный инстанс OpenClaw ведёт себя как оригинал и отвечает на чужом порту. Как проверить изоляцию?", "should_trigger": true},
+  {"query": "which gateway port is free for a new OpenClaw instance? And which directories must not be copied from the source?", "should_trigger": true},
+  {"query": "I need an extra instance for a new workload that shares the shared skills tree but not the credentials directory", "should_trigger": true},
+  {"query": "Clone a git repository with submodules and a shallow history", "should_trigger": false},
+  {"query": "Duplicate my Postgres database to a staging server with pg_dump and restore", "should_trigger": false},
+  {"query": "Clone a Docker volume into a new container for testing", "should_trigger": false},
+  {"query": "Create a clone of an AWS EC2 instance from an AMI in another region", "should_trigger": false},
+  {"query": "Upgrade all OpenClaw instances to the new stable release", "should_trigger": false},
+  {"query": "Copy my VM template in Proxmox and set a new hostname and IP", "should_trigger": false},
+  {"query": "Show the inventory of all OpenClaw instances and their ports", "should_trigger": false},
+  {"query": "Duplicate a Notion workspace page with all its sub-pages", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "I want the agent to publish a weekly metrics report every Monday at 9:00 on its own, without me prompting it. How do I define that for OpenClaw?", "should_trigger": true},
+  {"query": "Design a standing order with the execute-verify-report pattern: check disk usage on the host, clean up if above 85%, report the result", "should_trigger": true},
+  {"query": "How do I give my agent permanent authority for content scheduling: draft, queue and post twice a day?", "should_trigger": true},
+  {"query": "Set up recurring cron jobs with OpenClaw for periodic reports and automated monitoring of our service", "should_trigger": true},
+  {"query": "Нужны постоянные поручения для агента OpenClaw: еженедельный отчёт, который он делает сам по расписанию", "should_trigger": true},
+  {"query": "Как оформить автономную программу для агента: что делать, как проверять результат и когда отчитываться?", "should_trigger": true},
+  {"query": "what are standing orders in OpenClaw and how do they differ from heartbeat checks?", "should_trigger": true},
+  {"query": "Set up an OpenClaw standing order so the agent triages my inbox every morning on its own, executes the cleanup, verifies it and reports the result, without me asking each time.", "should_trigger": true},
+  {"query": "Reduce the heartbeat token costs and set quiet hours", "should_trigger": false},
+  {"query": "Add a group chat rule to the agent's AGENTS.md", "should_trigger": false},
+  {"query": "Schedule a nightly pg_dump with cron and rotate the backups", "should_trigger": false},
+  {"query": "Create a GitHub Actions workflow that runs on a schedule every Monday", "should_trigger": false},
+  {"query": "Set up an Airflow DAG that sends a weekly report email", "should_trigger": false},
+  {"query": "Write a systemd timer that runs a script every 15 minutes", "should_trigger": false},
+  {"query": "Create a recurring task in Todoist for the weekly review", "should_trigger": false},
+  {"query": "Set up an n8n Schedule Trigger that posts a Slack digest every morning", "should_trigger": false}
+]

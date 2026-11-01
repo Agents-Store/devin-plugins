@@ -1,0 +1,18 @@
+[
+  {"query": "Build the review package for the client from the six documents: one HTML page they can read and answer, which I will send by email.", "should_trigger": true},
+  {"query": "I built the review package with the --artifact flag. Can I send that file to the client as it is, how do I publish it, and how do I record the URL that comes back in the ledger?", "should_trigger": true},
+  {"query": "Give the client something to comment on: publish the documents as an artifact and record the URL in the ledger.", "should_trigger": true},
+  {"query": "I need to hand off only the user cases and the UX-UI sections to the client and skip the handbook. How do I split the package?", "should_trigger": true},
+  {"query": "Show the client what changed since they last read the documents, with each statement marked with its history", "should_trigger": true},
+  {"query": "Собери пакет для клиента на согласование: один HTML-файл, который открывается в браузере и печатается в PDF.", "should_trigger": true},
+  {"query": "Нужно отправить клиенту только пользовательские кейсы и экраны, без руководства. Собери пакет с этими разделами и отметь в нём, что изменилось с прошлого раза.", "should_trigger": true},
+  {"query": "Turn the documents in macstack/client into one page a non-technical client can read and answer, dated today", "should_trigger": true},
+  {"query": "The client sent edits as a Word file. Merge their changes into the user cases.", "should_trigger": false},
+  {"query": "Export my README to a PDF with pandoc", "should_trigger": false},
+  {"query": "Write the client-facing changelog for the release from the ledger", "should_trigger": false},
+  {"query": "Make a Next.js landing page where clients can leave comments on our design", "should_trigger": false},
+  {"query": "Publish a project status dashboard as an artifact for my team", "should_trigger": false},
+  {"query": "Validate that the client documents follow the format rules", "should_trigger": false},
+  {"query": "Send an email to the client asking for approval of the proposal", "should_trigger": false},
+  {"query": "Generate TEST-CASES.md from the acceptance bullets in USER-CASES.md", "should_trigger": false}
+]

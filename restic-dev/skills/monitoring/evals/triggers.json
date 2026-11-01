@@ -1,0 +1,18 @@
+[
+  {"query": "How do I get alerted when a restic backup fails or silently stops running? I want a healthcheck or dead-man's-switch ping after each successful backup", "should_trigger": true},
+  {"query": "Set up healthchecks.io for my restic backup script: when do I ping start, success and fail?", "should_trigger": true},
+  {"query": "How can I detect stale restic snapshots - for example no new snapshot in the last 26 hours - and notify me in Telegram?", "should_trigger": true},
+  {"query": "Add a Prometheus or file-based metric for the age of the latest restic snapshot and the repository size", "should_trigger": true},
+  {"query": "What should ongoing backup health monitoring check besides 'the cron ran': snapshot age, restic check results, repo growth?", "should_trigger": true},
+  {"query": "Как настроить оповещение, если бэкап restic не выполнился или перестал запускаться? Нужен dead-man's-switch", "should_trigger": true},
+  {"query": "Хочу мониторить свежесть снапшотов restic и получать уведомление в Telegram, когда бэкап устарел", "should_trigger": true},
+  {"query": "How often should I run restic check in a monitored setup, and how do I alert on its failure?", "should_trigger": true},
+  {"query": "Verify that a new restic backup can be restored before enabling the timer", "should_trigger": false},
+  {"query": "Set up Uptime Kuma to monitor my website", "should_trigger": false},
+  {"query": "Configure Beszel to monitor server CPU and memory", "should_trigger": false},
+  {"query": "restic backup fails with SignatureDoesNotMatch", "should_trigger": false},
+  {"query": "Write a cron job that runs a backup every night", "should_trigger": false},
+  {"query": "Configure Prometheus alert rules for disk space on a Linux server", "should_trigger": false},
+  {"query": "How do I send a Telegram message from a bash script?", "should_trigger": false},
+  {"query": "Create the backup script with retention", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "My Server Action calls an LLM and takes 40 seconds, and the serverless limit cuts it off at 10. How do I offload it to Trigger.dev from the action and return something useful?", "should_trigger": true},
+  {"query": "My CI build fails with: You need to set the TRIGGER_SECRET_KEY environment variable, on a route that calls tasks.trigger(). Why does it happen during the build?", "should_trigger": true},
+  {"query": "How do I show a task's progress in a Client Component without exposing TRIGGER_SECRET_KEY to the browser? We are self-hosted", "should_trigger": true},
+  {"query": "Which things should run inline in a Server Action and which should become a Trigger.dev task? Give me the rules", "should_trigger": true},
+  {"query": "My Next.js route returns the Trigger.dev run id to the browser. Which token does the client component get to watch that run, and what stays server-side?", "should_trigger": true},
+  {"query": "Нужно из Server Action запустить фоновую задачу Trigger.dev для обработки загруженного видео и показать прогресс в браузере. Как сделать это без утечки ключей?", "should_trigger": true},
+  {"query": "Сборка Next.js падает с «You need to set the TRIGGER_SECRET_KEY environment variable» на странице, которая запускает задачу Trigger.dev. Почему это происходит при сборке и как исправить?", "should_trigger": true},
+  {"query": "Do I need to set TRIGGER_API_URL in the Next.js environment too? What happens if I forget it?", "should_trigger": true},
+  {"query": "Trigger a Trigger.dev task when a Directus item is created, with a Flow and a webhook receiver", "should_trigger": false},
+  {"query": "Write a Trigger.dev schedules.task that runs every day at 02:00 UTC and cleans old records", "should_trigger": false},
+  {"query": "Deploy my Trigger.dev project to production with the CLI and set env vars with syncEnvVars", "should_trigger": false},
+  {"query": "How do I use React Server Actions with useActionState and form validation?", "should_trigger": false},
+  {"query": "Which login approach fits Directus, NextAuth or Better Auth?", "should_trigger": false},
+  {"query": "Run a BullMQ worker next to Express to process image resizing jobs", "should_trigger": false},
+  {"query": "Write a Vercel cron route that calls an API every hour", "should_trigger": false}
+]

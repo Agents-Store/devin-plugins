@@ -1,0 +1,18 @@
+[
+  {"query": "Convert Model.query.filter_by(...).all() to the SQLAlchemy 2.0 select() style with session.scalars. Show filtering, ordering and first()", "should_trigger": true},
+  {"query": "How do I avoid the N+1 problem when listing posts with their authors and tags in SQLAlchemy - selectinload vs joinedload?", "should_trigger": true},
+  {"query": "Implement pagination in SQLAlchemy 2.0: offset/limit versus keyset, and db.paginate in Flask-SQLAlchemy", "should_trigger": true},
+  {"query": "How do I write an aggregate query with group_by, func.count and having, and then join it back to the parent table?", "should_trigger": true},
+  {"query": "Bulk insert and update thousands of rows in SQLAlchemy 2.0 efficiently - insert().values, bulk update, session.execute?", "should_trigger": true},
+  {"query": "Нужно ограничить все запросы текущим пользователем (owner-scoped queries) в Flask-SQLAlchemy. Как это сделать аккуратно?", "should_trigger": true},
+  {"query": "What changed in SQLAlchemy 2.1 query behaviour and how do I upgrade queries that used the legacy Query API?", "should_trigger": true},
+  {"query": "Как переписать запросы Model.query.filter_by(...).all() на стиль select() из SQLAlchemy 2.0 и чем заменить Query.get()?", "should_trigger": true},
+  {"query": "Define a SQLAlchemy model with Mapped columns and a unique constraint", "should_trigger": false},
+  {"query": "IntegrityError: duplicate key value violates unique constraint - how do I handle it?", "should_trigger": false},
+  {"query": "Generate and run an Alembic migration", "should_trigger": false},
+  {"query": "Write a raw SQL window function query for running totals in Postgres", "should_trigger": false},
+  {"query": "Django ORM: select_related vs prefetch_related for the N+1 problem", "should_trigger": false},
+  {"query": "Prisma findMany with include and pagination", "should_trigger": false},
+  {"query": "Why is my Postgres query slow? Explain how to read EXPLAIN ANALYZE output", "should_trigger": false},
+  {"query": "Set up the SQLAlchemy engine and session factory for a FastAPI app", "should_trigger": false}
+]

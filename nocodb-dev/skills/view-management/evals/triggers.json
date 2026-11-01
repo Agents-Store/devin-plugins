@@ -1,0 +1,18 @@
+[
+  {"query": "Create a Kanban view on the Tasks table in NocoDB grouped by the Status field, with Priority shown on the cards", "should_trigger": true},
+  {"query": "add a Calendar view and a Gantt view to the Projects table in NocoDB using StartDate and EndDate", "should_trigger": true},
+  {"query": "Build a Form view in NocoDB for intake requests: only Name, Email and Message visible, with a share link", "should_trigger": true},
+  {"query": "Make a gallery view of the Products table with the Photo attachment as cover image", "should_trigger": true},
+  {"query": "Создай в NocoDB представление Kanban для таблицы Задачи с группировкой по статусу и фильтром по исполнителю", "should_trigger": true},
+  {"query": "В таблице Заказы в NocoDB (tbl_orders) у представления 'Склад' (vw_stock) нужно скрыть поля Цена и Маржа и поставить Артикул первым, не затрагивая остальные представления. Как это сделать через Meta API v3?", "should_trigger": true},
+  {"query": "set up filters and sorts on a NocoDB grid view: only Active customers, sorted by CreatedAt descending", "should_trigger": true},
+  {"query": "delete the old Timeline view from the Projects table and share a read-only view publicly", "should_trigger": true},
+  {"query": "Build a monthly sales report in NocoDB summarising the Orders table by region", "should_trigger": false},
+  {"query": "Create a dashboard with a bar chart widget in NocoDB", "should_trigger": false},
+  {"query": "Add a Single Select field Priority to the Tasks table in NocoDB", "should_trigger": false},
+  {"query": "Create a view in PostgreSQL that joins orders and customers and filter by date", "should_trigger": false},
+  {"query": "Make a Kanban board in Trello with three lists and an automation that moves cards", "should_trigger": false},
+  {"query": "Build a Notion calendar view of a database sorted by due date", "should_trigger": false},
+  {"query": "Set up a form in Google Forms with conditional sections and send responses to a sheet", "should_trigger": false},
+  {"query": "A NocoDB Kanban view isn't grouping, the view config validation fails", "should_trigger": false}
+]

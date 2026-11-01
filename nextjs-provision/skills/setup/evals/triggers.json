@@ -1,0 +1,18 @@
+[
+  {"query": "Set up shadcn/ui in my existing Next.js 15 project - I use Tailwind v4 and the app router", "should_trigger": true},
+  {"query": "install shadcn/ui and initialize it, then configure the shadcn studio registries in components.json", "should_trigger": true},
+  {"query": "init shadcn in next.js, I'm starting from create-next-app with TypeScript. What are the prerequisites and steps?", "should_trigger": true},
+  {"query": "How do I configure premium access for shadcn studio with my license email and key?", "should_trigger": true},
+  {"query": "Настрой shadcn/ui в проекте на Next.js: init, проверка установки и тестовая установка компонента", "should_trigger": true},
+  {"query": "Добавь shadcn в мой проект: нужно разобраться с Tailwind v3 против v4 и сделать init", "should_trigger": true},
+  {"query": "Add shadcn to my project and verify the base installation works by installing a Button", "should_trigger": true},
+  {"query": "set up a component library for my Next.js app - I want shadcn with the studio registries", "should_trigger": true},
+  {"query": "shadcn init fails with 'No Tailwind CSS configuration found at /app'", "should_trigger": false},
+  {"query": "Add the shadcn Dialog component to my page", "should_trigger": false},
+  {"query": "Set up Material UI in my Next.js app with the emotion cache for the app router", "should_trigger": false},
+  {"query": "Set up Prisma with Postgres in my Next.js app", "should_trigger": false},
+  {"query": "Initialize Tailwind CSS v4 in a Vite project from scratch", "should_trigger": false},
+  {"query": "Set up Storybook 8 for my Next.js project with Tailwind", "should_trigger": false},
+  {"query": "Set up ESLint flat config and Prettier for Next.js", "should_trigger": false},
+  {"query": "Change the primary color and the border radius of my shadcn theme in globals.css", "should_trigger": false}
+]

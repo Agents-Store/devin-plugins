@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete, runnable grammY bot file with imports and an entry point that echoes every message back, so I can copy it and start from there", "should_trigger": true},
+  {"query": "I'm new to grammY. Is there a complete session counter bot I can copy as a starting point? I want the whole file with imports, types and the entry point, then a note on how to run it.", "should_trigger": true},
+  {"query": "Give me a full example of a grammY bot with a persistent per-user counter using sessions, all in one file I can paste", "should_trigger": true},
+  {"query": "Do you have an end-to-end example of a grammY webhook bot running on Cloudflare Workers, including the wrangler config?", "should_trigger": true},
+  {"query": "I want to see which complete reference scenarios you have for grammY (echo bot, menu, form, session counter, webhook on Workers) and pick one to start from. List them and open the session counter one in full.", "should_trigger": true},
+  {"query": "Покажи полный пример бота на grammY с меню и колбэками, весь файл целиком, чтобы я мог скопировать и запустить", "should_trigger": true},
+  {"query": "Есть готовый end-to-end пример grammY-бота с сессиями и счётчиком нажатий? Нужен весь код, а не отдельные куски.", "should_trigger": true},
+  {"query": "I'm new to grammY. In what order should I read complete example bots to learn it, starting from the simplest one? Show me the files, runnable ones with imports and an entry point.", "should_trigger": true},
+  {"query": "Explain how the grammY middleware onion model works and why the order of bot.use calls matters", "should_trigger": false},
+  {"query": "Show me a complete example of a Dockerfile for a Node.js TypeScript service with a multi-stage build", "should_trigger": false},
+  {"query": "Give me a full working example of a Slack Bolt app with a slash command and a modal", "should_trigger": false},
+  {"query": "How do I persist sessions in PostgreSQL for grammY? I need the storage adapter package name.", "should_trigger": false},
+  {"query": "Why does my grammY bot throw 409 Conflict when I start it?", "should_trigger": false},
+  {"query": "Which grammY plugins exist for internationalization and rate limiting?", "should_trigger": false},
+  {"query": "Show me a worked example of a Next.js route handler that receives Stripe webhooks and verifies the signature", "should_trigger": false},
+  {"query": "Explain the three ways to specify a file when sending media in grammY: file_id, URL and InputFile", "should_trigger": false}
+]

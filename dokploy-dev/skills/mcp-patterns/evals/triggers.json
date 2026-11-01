@@ -1,0 +1,18 @@
+[
+  {"query": "Using the Dokploy MCP tools, create a project, add an application from my GitHub repo (branch main, Dockerfile build) and trigger the first deploy. Which tools in what order?", "should_trigger": true},
+  {"query": "Through the Dokploy MCP tools I need to attach shop.example.com to my application 'storefront' with HTTPS from Let's Encrypt, container port 3000. Which tool do I call, with which parameters, and what do I verify afterwards?", "should_trigger": true},
+  {"query": "I want my app and its Postgres to share one Docker network in Dokploy instead of the deprecated isolated deployment. Which MCP tools and parameters do I use to create the network and attach each service to it?", "should_trigger": true},
+  {"query": "I need to change a single environment variable on a Dokploy app without wiping the others. The MCP tools show [REDACTED]. How do I do it?", "should_trigger": true},
+  {"query": "dokploy compose via MCP: create a compose app from raw YAML, set the env, deploy it and check its status", "should_trigger": true},
+  {"query": "which dokploy MCP tools list all applications across projects, and how do I search by name? the search tool ignores my filter", "should_trigger": true},
+  {"query": "Как через MCP-инструменты Dokploy создать проект, приложение и домен? Покажи последовательность вызовов и параметры", "should_trigger": true},
+  {"query": "Через MCP-инструменты Dokploy нужно создать в проекте shop базу PostgreSQL, задать пароль, запустить её и открыть внешний порт 5433. Какие инструменты вызывать и с какими параметрами?", "should_trigger": true},
+  {"query": "Verify the Dokploy MCP connection and that my API key is accepted", "should_trigger": false},
+  {"query": "Why did my deployment fail? Read the build logs and tell me", "should_trigger": false},
+  {"query": "Use the dokploy command line to deploy my application", "should_trigger": false},
+  {"query": "How do I build an MCP server in Python with FastMCP?", "should_trigger": false},
+  {"query": "Use the Vercel MCP server to list my projects and recent deployments", "should_trigger": false},
+  {"query": "Create a Kubernetes namespace and deploy Postgres with Helm", "should_trigger": false},
+  {"query": "How do I install the n8n MCP server?", "should_trigger": false},
+  {"query": "Explain what Dokploy is and how it compares to Coolify", "should_trigger": false}
+]

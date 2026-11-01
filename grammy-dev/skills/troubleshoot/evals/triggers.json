@@ -1,0 +1,18 @@
+[
+  {"query": "My grammY bot replies twice to every message since I deployed it with a webhook. Locally it works fine. What's going on?", "should_trigger": true},
+  {"query": "Getting \"409 Conflict: terminated by other getUpdates request\" when I start my grammY bot. I only have one process, I think.", "should_trigger": true},
+  {"query": "ctx.session is undefined in my handler and TypeScript says Property 'session' does not exist on type 'Context'. I call bot.use(session()) and create const bot = new Bot(token).", "should_trigger": true},
+  {"query": "my grammy bot isn't responding at all after I changed the hosting. no errors in the logs. is there a checklist?", "should_trigger": true},
+  {"query": "The bot answers the first message and then stops answering. I use conversations and a filter on message:text.", "should_trigger": true},
+  {"query": "Бот на grammY перестал отвечать после деплоя, в логах тишина. Как диагностировать: токен, вебхук, polling?", "should_trigger": true},
+  {"query": "Получаю 401 Unauthorized при запуске grammY-бота, хотя токен скопировал из BotFather. Что проверить?", "should_trigger": true},
+  {"query": "grammy conversations not working: ctx.conversation.enter does nothing after /start. what are the usual causes?", "should_trigger": true},
+  {"query": "Write the bot.catch handler that logs GrammyError and HttpError separately for my grammY bot", "should_trigger": false},
+  {"query": "Set up webhooks for my grammY bot on Vercel with the right adapter", "should_trigger": false},
+  {"query": "Debug \"Cannot read properties of undefined\" in my React component that maps over props", "should_trigger": false},
+  {"query": "Why do I get a CORS error when calling my Express API from the browser?", "should_trigger": false},
+  {"query": "My docker compose service on a VPS keeps restarting right after startup with exit code 1 and the container log is empty. How do I find out why it dies?", "should_trigger": false},
+  {"query": "Show me how the session middleware works in grammY with Redis storage", "should_trigger": false},
+  {"query": "My Docker container exits with code 137 on Fly.io. What does it mean?", "should_trigger": false},
+  {"query": "How do I install grammY and create my first bot?", "should_trigger": false}
+]

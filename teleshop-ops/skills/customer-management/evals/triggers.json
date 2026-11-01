@@ -1,0 +1,17 @@
+[
+  {"query": "Find the customer with the phone +380991234567 in my store and show their full order history", "should_trigger": true},
+  {"query": "Search Teleshop customers by Telegram username and show when they registered", "should_trigger": true},
+  {"query": "Show the 20 newest customers of the store sorted by registration date", "should_trigger": true},
+  {"query": "Which fields does a customer profile have in Teleshop, and do I need to create customers manually?", "should_trigger": true},
+  {"query": "Who is customer 789 and what have they bought so far?", "should_trigger": true},
+  {"query": "Найди клиента магазина по имени «Иван» и покажи его заказы", "should_trigger": true},
+  {"query": "Как найти покупателя в Teleshop по email или номеру телефона одним поиском?", "should_trigger": true},
+  {"query": "look up the Telegram user id of a customer who complained about delivery yesterday", "should_trigger": true},
+  {"query": "Change the status of order 1042 to shipped", "should_trigger": false},
+  {"query": "Create a customer segment in HubSpot for people who bought twice", "should_trigger": false},
+  {"query": "Delete a customer account in Stripe", "should_trigger": false},
+  {"query": "Write a SQL query for the top 10 customers by revenue", "should_trigger": false},
+  {"query": "List the orders paid by Telegram Stars", "should_trigger": false},
+  {"query": "Set up a customer support bot in Telegram with grammY", "should_trigger": false},
+  {"query": "Update a customer's phone number on an order", "should_trigger": false}
+]

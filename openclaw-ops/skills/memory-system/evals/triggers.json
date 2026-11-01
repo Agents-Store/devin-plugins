@@ -1,0 +1,18 @@
+[
+  {"query": "How does my OpenClaw agent remember things between sessions? Explain MEMORY.md, daily logs and memory flush", "should_trigger": true},
+  {"query": "What should go into MEMORY.md versus the daily log files? I'm setting up memory curation for my agent", "should_trigger": true},
+  {"query": "Write a memory curation procedure for the agent: review the last 7 daily logs weekly and promote durable facts into MEMORY.md", "should_trigger": true},
+  {"query": "Is it safe to load MEMORY.md in group chats? How does memory security work in groups?", "should_trigger": true},
+  {"query": "Как настроить память агента OpenClaw: что хранить в MEMORY.md, а что в ежедневных логах?", "should_trigger": true},
+  {"query": "Как работает memory flush перед сжатием контекста в OpenClaw и когда включается векторный поиск по памяти?", "should_trigger": true},
+  {"query": "how does the agent remember? it forgot a decision we made last Tuesday", "should_trigger": true},
+  {"query": "configure memory management so the agent writes important facts down before the session context gets compacted", "should_trigger": true},
+  {"query": "OpenClaw embedding calls fail with an invalid token and vector search is paused", "should_trigger": false},
+  {"query": "Add persistent memory to my LangChain chatbot with a vector store retriever", "should_trigger": false},
+  {"query": "Explain Redis persistence modes RDB versus AOF", "should_trigger": false},
+  {"query": "How do I give ChatGPT custom instructions so it remembers my preferences?", "should_trigger": false},
+  {"query": "Update the agent's tone to be shorter and less formal", "should_trigger": false},
+  {"query": "Map Telegram user ids to names for the agent's users", "should_trigger": false},
+  {"query": "Set up the auto-memory MEMORY.md for Claude Code in my repo", "should_trigger": false},
+  {"query": "Why does my Python service leak memory? Use tracemalloc to find it", "should_trigger": false}
+]

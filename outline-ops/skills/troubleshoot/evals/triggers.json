@@ -1,0 +1,18 @@
+[
+  {"query": "My Outline API call returns 401 Unauthorized. The key starts with ol_api_ and I put it in a Bearer header. What else can be wrong?", "should_trigger": true},
+  {"query": "documents.update on our Outline wiki returns 409 Conflict when two people edit the same doc. How do I resolve it?", "should_trigger": true},
+  {"query": "Outline gives 429 Too Many Requests when I loop over all documents with curl. How should I back off?", "should_trigger": true},
+  {"query": "documents.info says not found for the title 'Welcome' but I can see the doc in the browser - what am I doing wrong?", "should_trigger": true},
+  {"query": "Мой вызов Outline API возвращает 403 Forbidden на users.suspend, хотя auth.info проходит. В чём причина?", "should_trigger": true},
+  {"query": "Outline API возвращает пустой data при поиске документа, а я точно знаю, что он есть. Куда смотреть?", "should_trigger": true},
+  {"query": "I publish a document through the Outline API and get a 400 validation error. What fields does publishing require?", "should_trigger": true},
+  {"query": "Self-hosted Outline: curl to https://wiki.example.com/api fails with an SSL certificate error. How do I diagnose it?", "should_trigger": true},
+  {"query": "Set up my Outline API key and base URL from scratch", "should_trigger": false},
+  {"query": "Create a new collection in Outline and add three nested documents", "should_trigger": false},
+  {"query": "Show me an end-to-end example of a document lifecycle in Outline", "should_trigger": false},
+  {"query": "My GitHub Actions workflow fails with 403 when pushing to a protected branch", "should_trigger": false},
+  {"query": "Why does my Confluence REST call return 401 when I use an API token?", "should_trigger": false},
+  {"query": "Stripe webhook returns 429 Too Many Requests - how do I implement exponential backoff?", "should_trigger": false},
+  {"query": "My nginx reverse proxy shows an SSL handshake error with a Let's Encrypt certificate", "should_trigger": false},
+  {"query": "Write a bash function that retries a curl call three times on failure", "should_trigger": false}
+]

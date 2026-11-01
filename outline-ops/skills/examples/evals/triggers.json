@@ -1,0 +1,18 @@
+[
+  {"query": "Show me the full lifecycle of a document in Outline through the API: draft, update, move to another collection, archive, restore, trash and restore from trash", "should_trigger": true},
+  {"query": "Give me a worked scenario for standing up a new knowledge base in Outline - collection, nested docs, publish, public share of the homepage, star - with real curl calls chained together", "should_trigger": true},
+  {"query": "Walk me through onboarding a new team in Outline: invite the users, create a group, add the members, and grant the group access to a collection and one document", "should_trigger": true},
+  {"query": "Show me an example of an Outline usage report: search, list by collection, view counts, document insights and the audit-log events for the last month", "should_trigger": true},
+  {"query": "Покажи сквозной пример в Outline: создать коллекцию, вложенные документы, опубликовать и расшарить главную страницу по публичной ссылке", "should_trigger": true},
+  {"query": "Хочу пример сценария «поиск и отчёт» для Outline: полнотекстовый поиск, список документов коллекции, просмотры и события аудита - цепочкой вызовов API", "should_trigger": true},
+  {"query": "Show me how several Outline API calls chain together for a real scenario, e.g. onboarding users and permissions, so I can adapt it to our workspace", "should_trigger": true},
+  {"query": "Give me an end-to-end walkthrough for publishing a doc via the Outline API and sharing it, with all the curl commands in order", "should_trigger": true},
+  {"query": "Move the document 'Q4 plan' to the Archive collection in Outline", "should_trigger": false},
+  {"query": "My Outline API call returns 401 even though the key was created yesterday - what should I check?", "should_trigger": false},
+  {"query": "Set up my Outline API key and base URL so curl calls work in this session", "should_trigger": false},
+  {"query": "Show me a full example of publishing pages in Confluence with the REST API, from space creation to page tree", "should_trigger": false},
+  {"query": "Walk me through an end-to-end example of building a knowledge base in Notion with databases and linked views", "should_trigger": false},
+  {"query": "Give me a worked example of paginating through a REST API with limit and offset in Python", "should_trigger": false},
+  {"query": "Which parameters does the Outline documents.list endpoint accept for sorting?", "should_trigger": false},
+  {"query": "Show me a sample onboarding checklist for new employees in a wiki, as plain markdown", "should_trigger": false}
+]

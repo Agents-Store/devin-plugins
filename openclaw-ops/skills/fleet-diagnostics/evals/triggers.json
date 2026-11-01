@@ -1,0 +1,18 @@
+[
+  {"query": "OpenClaw health check says green but the agent isn't doing anything: no replies, no heartbeats. Where do I look?", "should_trigger": true},
+  {"query": "One OpenClaw container keeps restarting and docker ps shows it unhealthy. The config was fine yesterday - diagnose it", "should_trigger": true},
+  {"query": "The OpenClaw gateway reports healthy but its log has not moved for three days. How do I tell whether it is really alive?", "should_trigger": true},
+  {"query": "Schedules fire twice on one of our OpenClaw instances while a sibling is fine. How do I diagnose that?", "should_trigger": true},
+  {"query": "Один инстанс OpenClaw в состоянии restarting, health unhealthy, в логе пусто. С чего начать диагностику и какие id находок каталога применимы?", "should_trigger": true},
+  {"query": "Один инстанс OpenClaw отвечает на странном порту, а версия не совпадает с соседними. Проведи диагностику и дай стабильные id находок", "should_trigger": true},
+  {"query": "shared skills look installed in OpenClaw but do nothing, and API keys are missing inside the container - run the diagnostics", "should_trigger": true},
+  {"query": "I need a report with stable finding ids for everything wrong with my OpenClaw instances - audit and a repair plan", "should_trigger": true},
+  {"query": "My Django app container exits with code 137 right after starting, why?", "should_trigger": false},
+  {"query": "A Kubernetes pod is in CrashLoopBackOff because of a failing readiness probe", "should_trigger": false},
+  {"query": "Upgrade the OpenClaw fleet to the newest stable version", "should_trigger": false},
+  {"query": "Prometheus alerts fire twice for the same condition, deduplicate them in Alertmanager", "should_trigger": false},
+  {"query": "My cron job on a Linux server runs twice per tick - check crontab and systemd timers", "should_trigger": false},
+  {"query": "Set up autovacuum tuning for a Postgres database that grows without limit", "should_trigger": false},
+  {"query": "Why is my Node app's memory usage rising? Profile it with heapdump", "should_trigger": false},
+  {"query": "Elasticsearch search returns nothing after a reindex", "should_trigger": false}
+]

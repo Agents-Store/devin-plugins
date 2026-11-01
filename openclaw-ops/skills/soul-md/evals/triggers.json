@@ -1,0 +1,18 @@
+[
+  {"query": "Make my OpenClaw agent more friendly: it sounds too corporate. Update SOUL.md", "should_trigger": true},
+  {"query": "add a boundary to the agent's personality: it shouldn't give medical or legal advice. Where does that go?", "should_trigger": true},
+  {"query": "Write SOUL.md for a dry-witted research assistant: values, tone, communication style and boundaries", "should_trigger": true},
+  {"query": "the agent sounds too robotic in Telegram, change its tone and add a bit of humour", "should_trigger": true},
+  {"query": "Как поменять характер агента OpenClaw: сделать его вежливее и короче в ответах? Это SOUL.md?", "should_trigger": true},
+  {"query": "Опиши личность и ценности агента для OpenClaw: тон, границы, стиль общения", "should_trigger": true},
+  {"query": "refine the persona of my domain-specific agent: a cautious financial analyst that never speculates", "should_trigger": true},
+  {"query": "is tone defined in SOUL.md or in AGENTS.md? the agent is too verbose", "should_trigger": true},
+  {"query": "Add an operating procedure: the agent must always confirm before running destructive commands", "should_trigger": false},
+  {"query": "Name the agent and choose its emoji and avatar", "should_trigger": false},
+  {"query": "Write a system prompt persona for a customer service chatbot built on the OpenAI Assistants API", "should_trigger": false},
+  {"query": "Make my Alexa skill sound more natural with SSML pauses and emphasis", "should_trigger": false},
+  {"query": "Create character sheets for my D&D campaign NPCs with personality traits", "should_trigger": false},
+  {"query": "Rewrite my cover letter so it sounds less corporate and more human", "should_trigger": false},
+  {"query": "Fine-tune a model on my company's brand voice with LoRA", "should_trigger": false},
+  {"query": "Write a tone-of-voice guideline for our marketing team", "should_trigger": false}
+]

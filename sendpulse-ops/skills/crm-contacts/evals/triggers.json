@@ -1,0 +1,18 @@
+[
+  {"query": "Find the SendPulse CRM contact with the email john@example.com, show their details and all their deals", "should_trigger": true},
+  {"query": "Create a CRM contact in SendPulse for Maria Ivanova, phone +380501234567, company Acme, then start a deal for her", "should_trigger": true},
+  {"query": "Update the phone number and position of an existing SendPulse CRM contact and add a comment about the call", "should_trigger": true},
+  {"query": "Which SendPulse MCP tools find a CRM contact by email and list the deals associated with that contact, and what input does each tool take?", "should_trigger": true},
+  {"query": "List all contacts in my SendPulse CRM and search for those from the company 'Globex'", "should_trigger": true},
+  {"query": "Как через SendPulse MCP создать CRM-контакт с несколькими emails и телефонами и добавить к нему комментарий? Нужны имена инструментов и входные поля", "should_trigger": true},
+  {"query": "Какой инструмент SendPulse MCP обновляет поля CRM-контакта и какой возвращает список его сделок? Нужны имена инструментов и входные поля", "should_trigger": true},
+  {"query": "Show the full record of a CRM contact in SendPulse and review the history of comments", "should_trigger": true},
+  {"query": "Send a direct message to a SendPulse chatbot contact in Telegram", "should_trigger": false},
+  {"query": "Create a deal and move it between pipeline stages", "should_trigger": false},
+  {"query": "Add this person to an email addressbook as a subscriber", "should_trigger": false},
+  {"query": "Look up a person in HubSpot by email", "should_trigger": false},
+  {"query": "Import contacts from a CSV into Pipedrive", "should_trigger": false},
+  {"query": "Design a database schema for a CRM with contacts and companies", "should_trigger": false},
+  {"query": "Which products are attached to the deal?", "should_trigger": false},
+  {"query": "Create a board with tasks in the SendPulse CRM", "should_trigger": false}
+]

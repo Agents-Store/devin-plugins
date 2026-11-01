@@ -1,0 +1,18 @@
+[
+  {"query": "Bootstrap a fresh n8n instance with 12 workflows from our templates folder: order them by credential dependency, tag this batch, and give me a rollback plan", "should_trigger": true},
+  {"query": "Batch import our lead-gen workflow suite into n8n - 8 workflows, some call each other as sub-workflows. What order should they go in and how do I verify afterwards?", "should_trigger": true},
+  {"query": "I want a dry run for deploying multiple templates to a new n8n instance: show what would be created, nothing written yet", "should_trigger": true},
+  {"query": "Set up n8n with a preset suite of workflows for a small agency (CRM sync, invoice reminders, Slack digests) in one operation", "should_trigger": true},
+  {"query": "Нужно развернуть на новом n8n сразу десять workflow из шаблонов: сгруппируй по credentials, определи порядок и проведи проверку после деплоя", "should_trigger": true},
+  {"query": "Сделай массовый импорт workflows в n8n: сначала проверки, потом батч с идентификатором, при ошибке откат", "should_trigger": true},
+  {"query": "bulk deploy workflows to our staging n8n and if the 5th one fails I want everything from this batch removed again", "should_trigger": true},
+  {"query": "Install a whole workflow suite into n8n with progress tracking per workflow", "should_trigger": true},
+  {"query": "Import the one workflow saved in /tmp/lead-sync.json into my n8n instance", "should_trigger": false},
+  {"query": "Search the n8n template library for something that syncs HubSpot contacts to Google Sheets", "should_trigger": false},
+  {"query": "Is my n8n instance healthy enough to start importing? Check it first", "should_trigger": false},
+  {"query": "Which credentials do I need to create before I import these workflows?", "should_trigger": false},
+  {"query": "Provision a Postgres database with roles and schema migrations using Terraform", "should_trigger": false},
+  {"query": "Bulk import 20,000 contacts from a CSV into HubSpot without hitting the rate limit", "should_trigger": false},
+  {"query": "Roll out my Node app to Kubernetes in batches of two pods with Helm and a canary check", "should_trigger": false},
+  {"query": "Write an n8n workflow that processes 5,000 rows in batches of 50 with SplitInBatches", "should_trigger": false}
+]

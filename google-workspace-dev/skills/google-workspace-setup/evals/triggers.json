@@ -1,0 +1,18 @@
+[
+  {"query": "install gws on my mac - what's the recommended way and how do I verify the install?", "should_trigger": true},
+  {"query": "gws auth login fails with 'Access blocked: This app's request is invalid' - I created the OAuth client myself. What am I missing?", "should_trigger": true},
+  {"query": "I get redirect_uri_mismatch when running gws auth login. How do I fix it?", "should_trigger": true},
+  {"query": "gws says 403 accessNotConfigured when I list Drive files. What do I do?", "should_trigger": true},
+  {"query": "Set up the Google Workspace CLI on a headless server with no browser - how do I authenticate with a credentials file or a service account?", "should_trigger": true},
+  {"query": "gws auth login with the recommended scopes says too many scopes. How should I log in instead?", "should_trigger": true},
+  {"query": "Как установить gws (Google Workspace CLI) и авторизоваться? Пишет command not found", "should_trigger": true},
+  {"query": "При gws auth login получаю «Access blocked». Что нужно настроить на экране согласия OAuth?", "should_trigger": true},
+  {"query": "Use gws to create a calendar event tomorrow at 10:00 for a team sync", "should_trigger": false},
+  {"query": "Show me an example workflow that converts emails into tasks", "should_trigger": false},
+  {"query": "Set up Google sign-in in my Next.js app with NextAuth", "should_trigger": false},
+  {"query": "How do I install the gcloud CLI and authenticate with a service account for Cloud Run?", "should_trigger": false},
+  {"query": "Install the GitHub CLI and run gh auth login", "should_trigger": false},
+  {"query": "I get 403 accessNotConfigured in my Python script calling the YouTube Data API", "should_trigger": false},
+  {"query": "How do I enable two-step verification for my Google account?", "should_trigger": false},
+  {"query": "Read the latest five emails in my inbox with gws", "should_trigger": false}
+]

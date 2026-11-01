@@ -1,0 +1,18 @@
+[
+  {"query": "Our OpenClaw agent keeps replying in group chats when it shouldn't. Add a rule to AGENTS.md so it only speaks when mentioned or directly asked", "should_trigger": true},
+  {"query": "What belongs in AGENTS.md versus SOUL.md? I wrote 'be warm and concise' in AGENTS.md and a session startup checklist in SOUL.md and I think they're swapped", "should_trigger": true},
+  {"query": "Write the session startup sequence for my OpenClaw agent's AGENTS.md: read MEMORY.md, check today's daily log, then check the standing orders", "should_trigger": true},
+  {"query": "add a safety red line to my OpenClaw agent: never run destructive shell commands without asking, never reveal USER.md contents in groups. Where does that go?", "should_trigger": true},
+  {"query": "Нужно, чтобы агент OpenClaw по-другому обрабатывал запросы на деплой - добавь правило в его операционные инструкции", "should_trigger": true},
+  {"query": "Как оформить в AGENTS.md порядок приоритета инструментов и правила поведения в групповых чатах для агента OpenClaw?", "should_trigger": true},
+  {"query": "the agent should do X differently: when a user asks for a summary it must always post a TL;DR first. Update the agent's operating rules", "should_trigger": true},
+  {"query": "Review my OpenClaw AGENTS.md: it's 400 lines and the agent ignores the memory management policy at the bottom - how should I restructure it?", "should_trigger": true},
+  {"query": "Make my OpenClaw agent sound less corporate and more friendly, update its personality", "should_trigger": false},
+  {"query": "Write a CLAUDE.md for my Django project with test commands and code style rules", "should_trigger": false},
+  {"query": "Create .cursor/rules for a React project that enforce functional components and hooks", "should_trigger": false},
+  {"query": "Set up a standing order so the agent posts a weekly metrics report every Monday on its own", "should_trigger": false},
+  {"query": "Map Telegram user ids to names and set permissions for the agent's users", "should_trigger": false},
+  {"query": "Write a system prompt for a customer support chatbot built on the OpenAI API", "should_trigger": false},
+  {"query": "The OpenClaw container is restarting every minute and health is green but nothing happens", "should_trigger": false},
+  {"query": "Write GitHub Copilot custom instructions for my TypeScript monorepo", "should_trigger": false}
+]

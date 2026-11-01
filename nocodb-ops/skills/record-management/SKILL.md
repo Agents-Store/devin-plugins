@@ -1,15 +1,6 @@
 ---
 name: record-management
-description: |
-  Create, read, update, and delete NocoDB records. Use when:
-  - "add a new record"
-  - "create entries in NocoDB"
-  - "update a record"
-  - "delete records"
-  - "bulk import data"
-  - "search and edit records"
-  - "how many records match..."
-  - "restore deleted records"
+description: Create, read, update and delete records in NocoDB tables — single and bulk creates, finding a record and changing it, counting records that match a condition, deduplicating and restoring deleted records. Use when working with the data inside a NocoDB table. Filter syntax is search-filter, CSV import and export is import-export, reports are views-and-reports.
 ---
 
 # Record Management

@@ -1,0 +1,17 @@
+[
+  {"query": "Search the shadcn directory for a calendar component and tell me which registry it lives in", "should_trigger": true},
+  {"query": "What community shadcn registries are available? I need animated hero sections - try magicui and aceternity", "should_trigger": true},
+  {"query": "install from magicui: I want the animated beam and marquee components in my Next.js app", "should_trigger": true},
+  {"query": "Find UI blocks for a landing page in the community registries beyond shadcn studio and add those registries to components.json", "should_trigger": true},
+  {"query": "Найди в реестрах shadcn компонент date picker с выбором диапазона и установи его", "should_trigger": true},
+  {"query": "Какие есть сообщественные реестры shadcn, чтобы найти анимированные компоненты для лендинга?", "should_trigger": true},
+  {"query": "search for shadcn components for a kanban board - I heard there is something in the community registries", "should_trigger": true},
+  {"query": "Install the official shadcn Button and Card components", "should_trigger": false},
+  {"query": "Set up the shadcn MCP server for Claude Code", "should_trigger": false},
+  {"query": "Find an npm package for drag-and-drop kanban boards in React", "should_trigger": false},
+  {"query": "Find a Figma community kit for admin dashboards", "should_trigger": false},
+  {"query": "Search the Tailwind UI templates for a pricing section", "should_trigger": false},
+  {"query": "Search the Material UI docs for the DataGrid pagination props", "should_trigger": false},
+  {"query": "Add dark mode with next-themes and a toggle button", "should_trigger": false},
+  {"query": "Find a VS Code extension with snippets for shadcn components", "should_trigger": false}
+]

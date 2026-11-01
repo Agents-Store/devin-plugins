@@ -1,0 +1,18 @@
+[
+  {"query": "Which of the 29 tools of the PostgreSQL MCP server inspect replication, and what must I run before get_column_cardinality gives useful numbers?", "should_trigger": true},
+  {"query": "Which MCP tools can I use to find unused or invalid indexes, locks, long-running transactions and bloated tables in Postgres?", "should_trigger": true},
+  {"query": "What tools does the 29-tool PostgreSQL MCP server expose for schema inspection and monitoring? Give me the reference", "should_trigger": true},
+  {"query": "Check the database status over MCP - overview, table stats, active queries and query stats - and tell me what looks wrong", "should_trigger": true},
+  {"query": "How do I read replication slots and replication stats through the PostgreSQL MCP tools?", "should_trigger": true},
+  {"query": "Покажи через PostgreSQL MCP все индексы таблицы orders и проверь, нет ли невалидных индексов", "should_trigger": true},
+  {"query": "Как выполнить SQL через MCP-инструмент execute_sql и посмотреть план запроса? Нужен список инструментов сервера", "should_trigger": true},
+  {"query": "Using MCP Toolbox for Databases, list installed extensions and memory configuration settings of the Postgres server", "should_trigger": true},
+  {"query": "Explain how to read EXPLAIN ANALYZE output in PostgreSQL in general", "should_trigger": false},
+  {"query": "How do I read rows over HTTP from a Postgres table with PostgREST?", "should_trigger": false},
+  {"query": "Write an index to speed up this query: SELECT * FROM orders WHERE customer_id = 42 ORDER BY created_at DESC", "should_trigger": false},
+  {"query": "Add a column to a Postgres table that NocoDB reads", "should_trigger": false},
+  {"query": "Set up the Supabase MCP server for my project", "should_trigger": false},
+  {"query": "How do I tune shared_buffers and work_mem for a 16 GB server?", "should_trigger": false},
+  {"query": "Install and configure pgAdmin in Docker", "should_trigger": false},
+  {"query": "Back up a PostgreSQL database with pg_dump on a schedule", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "Create a NocoDB dashboard called 'Sales overview' on our base and add a metric widget that shows the total of the Amount field of the Orders table", "should_trigger": true},
+  {"query": "Add a bar chart widget to the NocoDB dashboard that groups Orders by Status. Use the Meta API v3", "should_trigger": true},
+  {"query": "list the widgets on my NocoDB dashboard and fetch the data of the KPI widget with id wgt_123", "should_trigger": true},
+  {"query": "Update the title of one widget on a NocoDB dashboard and then delete the old chart widget that nobody uses", "should_trigger": true},
+  {"query": "Создай в NocoDB дашборд 'Продажи' и добавь виджет-метрику с количеством заказов за месяц", "should_trigger": true},
+  {"query": "Нужно добавить столбчатую диаграмму на дашборд NocoDB: заказы по менеджерам. Как это сделать через API?", "should_trigger": true},
+  {"query": "What widget types does NocoDB support for dashboards and what is the pre-flight checklist before I create one?", "should_trigger": true},
+  {"query": "delete a NocoDB dashboard together with all its widgets, it was a test one", "should_trigger": true},
+  {"query": "Create a Grid view on the Orders table in NocoDB that hides the internal columns and sorts by date", "should_trigger": false},
+  {"query": "Create a Kanban view grouped by Status on the Tasks table in NocoDB", "should_trigger": false},
+  {"query": "Create a Grafana dashboard with a Postgres data source and a time series panel of orders per day", "should_trigger": false},
+  {"query": "Build a Metabase dashboard with filters for region and date", "should_trigger": false},
+  {"query": "Create a Power BI report with a bar chart of revenue by product category", "should_trigger": false},
+  {"query": "Create a Looker Studio dashboard from a Google Sheet with scorecards", "should_trigger": false},
+  {"query": "Add a Rollup field to Customers that sums Orders.Amount in NocoDB", "should_trigger": false},
+  {"query": "Make a Notion dashboard page with linked database views and a chart", "should_trigger": false}
+]

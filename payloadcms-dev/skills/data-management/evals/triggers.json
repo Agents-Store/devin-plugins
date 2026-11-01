@@ -1,0 +1,18 @@
+[
+  {"query": "Can I get soft delete in Payload so editors can restore deleted posts? How do I enable trash and query only trashed documents with the Local API?", "should_trigger": true},
+  {"query": "How do I save and share list-view filters in the Payload admin, i.e. query presets, and what collection do they live in?", "should_trigger": true},
+  {"query": "Turn on Payload folders for my media collection: which flag do I set, what is the payload-folders collection, and what do browseByFolder, fieldName and collectionOverrides do in the root folders config?", "should_trigger": true},
+  {"query": "How do I group the list view of a Payload collection by a field with admin.groupBy?", "should_trigger": true},
+  {"query": "I enabled trash: true on my Postgres-backed Payload collection and now queries fail. Do I need a migration for deletedAt?", "should_trigger": true},
+  {"query": "Как в Payload восстановить удалённый документ из корзины и как удалить его насовсем через Local API?", "should_trigger": true},
+  {"query": "Хочу, чтобы редакторы в Payload сохраняли свои фильтры списка как пресеты и делились ими с командой. Как включить?", "should_trigger": true},
+  {"query": "Which recent Payload v3 features let users recover deleted records and browse by folder?", "should_trigger": true},
+  {"query": "How do I enable drafts and versions on a Payload collection?", "should_trigger": false},
+  {"query": "Write a Payload where query that filters documents with deletedAt not set", "should_trigger": false},
+  {"query": "Implement soft delete in a Django model with a deleted_at timestamp", "should_trigger": false},
+  {"query": "How do I do cascading deletes of related documents in a Payload beforeDelete hook?", "should_trigger": false},
+  {"query": "How do I restore a deleted row in Postgres from a point-in-time backup?", "should_trigger": false},
+  {"query": "How do I bulk-delete documents in the Payload admin list view?", "should_trigger": false},
+  {"query": "Set up Postgres row level security for a multi-tenant table", "should_trigger": false},
+  {"query": "Explain Prisma soft delete middleware", "should_trigger": false}
+]

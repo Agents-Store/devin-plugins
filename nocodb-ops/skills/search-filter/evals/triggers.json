@@ -1,0 +1,18 @@
+[
+  {"query": "NocoDB where clause: find records where Status is Active and Amount is greater than 500, sorted by CreatedAt descending", "should_trigger": true},
+  {"query": "how to filter by date in NocoDB: records created this week, and records due in the next 7 days", "should_trigger": true},
+  {"query": "combine multiple filters in NocoDB with AND and OR groups: priority High or Urgent, and not Done", "should_trigger": true},
+  {"query": "query syntax for NocoDB: how do I filter a field whose name contains spaces, and values with commas or parentheses?", "should_trigger": true},
+  {"query": "Как в NocoDB найти записи, где поле Email пустое, и отсортировать по дате создания?", "should_trigger": true},
+  {"query": "Покажи синтаксис фильтров NocoDB для мультивыбора и чекбоксов: как найти записи с тегом 'VIP'?", "should_trigger": true},
+  {"query": "filter records in NocoDB between two numbers - I heard ranges always need two bounds", "should_trigger": true},
+  {"query": "find records matching a partial name in NocoDB and show the filter and the sort for it", "should_trigger": true},
+  {"query": "Build a sales-by-region report with aggregation from the NocoDB Orders table", "should_trigger": false},
+  {"query": "My NocoDB MCP calls time out on a table with 200,000 rows even for simple reads. What are the performance options and when do I escalate?", "should_trigger": false},
+  {"query": "Write a SQL WHERE clause that filters orders from the last 7 days and sorts by amount", "should_trigger": false},
+  {"query": "How do I filter a pandas DataFrame by date range and multiple conditions?", "should_trigger": false},
+  {"query": "Filter rows in a Google Sheet with the FILTER function and multiple conditions", "should_trigger": false},
+  {"query": "Set up filters on a NocoDB grid view so only Active customers are visible", "should_trigger": false},
+  {"query": "Write an Elasticsearch bool query with must and should clauses", "should_trigger": false},
+  {"query": "Create a Kanban view grouped by Status in NocoDB", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "restic backup works in the shell but fails under cron with exit code 1. What are the usual cron-only causes - PATH, env file, HOME, missing cache dir?", "should_trigger": true},
+  {"query": "restic exits with code 11 every night although no backup is running. Diagnose the stale lock, give the safe fix and how to prevent it with flock or retry-lock", "should_trigger": true},
+  {"query": "restic: Fatal: wrong password or no key found - but the password file looks right. What else can cause it?", "should_trigger": true},
+  {"query": "restic on Cloudflare R2 fails with SignatureDoesNotMatch and sometimes AccessDenied. What should I check in the endpoint, region and token?", "should_trigger": true},
+  {"query": "restic check reports errors in the index or missing pack files. How do I diagnose it and rebuild the index with repair?", "should_trigger": true},
+  {"query": "Бэкап restic падает по cron, а руками работает. Куда смотреть: переменные окружения, PATH, права на env-файл?", "should_trigger": true},
+  {"query": "restic пишет «repository is already locked». Как безопасно снять блокировку и понять, что её держит?", "should_trigger": true},
+  {"query": "My restic backup works by hand but fails from cron with command not found and an empty pg_dump. Diagnose the minimal cron PATH and docker exec TTY causes", "should_trigger": true},
+  {"query": "Set up the restic repository on R2 from scratch", "should_trigger": false},
+  {"query": "Restore a snapshot to a new server after a crash", "should_trigger": false},
+  {"query": "My cron job doesn't run at all - how do I debug a crontab on Ubuntu?", "should_trigger": false},
+  {"query": "Docker container exits with code 137, how to debug", "should_trigger": false},
+  {"query": "Schedule backups with systemd timers", "should_trigger": false},
+  {"query": "Fix 'Permission denied (publickey)' for SSH", "should_trigger": false},
+  {"query": "AWS S3 returns 403 SignatureDoesNotMatch in my Node.js SDK call", "should_trigger": false},
+  {"query": "How do I verify a backup before enabling the schedule?", "should_trigger": false}
+]

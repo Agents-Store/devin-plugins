@@ -1,0 +1,18 @@
+[
+  {"query": "Review the Plane intake queue: list pending requests, bug reports and ideas, and tell me which to accept, reject or defer", "should_trigger": true},
+  {"query": "Convert accepted intake items in Plane into work items with the right labels and priority, and decline the duplicates with a comment", "should_trigger": true},
+  {"query": "Set up a weekly triage ritual for incoming requests in Plane, including routing rules for bugs vs feature ideas", "should_trigger": true},
+  {"query": "Which routing rules should decide whether a Plane intake item is accepted, declined, snoozed or marked as a duplicate, and which status values do the intake calls take?", "should_trigger": true},
+  {"query": "Process the intake inbox of the project 'Support': snooze items needing more information and accept the urgent ones", "should_trigger": true},
+  {"query": "Разбери входящие заявки в Intake проекта Plane: что принять, что отклонить, что превратить в задачи", "should_trigger": true},
+  {"query": "Настрой процесс триажа входящих запросов в Plane: ежедневный и еженедельный ритуал и правила маршрутизации", "should_trigger": true},
+  {"query": "Set up the weekly intake triage ritual in Plane: which calls list pending intake items, accept one with intake(action=update) and create the work item?", "should_trigger": true},
+  {"query": "Groom the backlog and find stale items", "should_trigger": false},
+  {"query": "Create a work item for a bug I just found", "should_trigger": false},
+  {"query": "Triage emergency room patients by severity", "should_trigger": false},
+  {"query": "Set up an email-to-ticket integration in Zendesk", "should_trigger": false},
+  {"query": "Triage GitHub issues with labels automatically via an Action", "should_trigger": false},
+  {"query": "Design the states and labels of a Plane project", "should_trigger": false},
+  {"query": "Plan the sprint from the accepted items", "should_trigger": false},
+  {"query": "Explain what bug triage means", "should_trigger": false}
+]

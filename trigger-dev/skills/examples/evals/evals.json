@@ -3,14 +3,15 @@
   "evals": [
     {
       "id": 9,
-      "prompt": "Show me a complete example of a Trigger.dev scheduled task that syncs data from an external API every hour with batch processing and error handling.",
-      "expected_output": "Should show schedules.task with cron, batch processing pattern, retry/error handling, complete working code",
+      "prompt": "Use the examples skill. Walk me through its cron data sync scenario.",
+      "expected_output": "Should describe the cron-data-sync scenario: queue data-sync with concurrencyLimit 3, hourly cron, retry.fetch, small-2x machine, batchTriggerAndWait over the records",
       "files": [],
       "expectations": [
-        "Uses schedules.task or schedules from @trigger.dev/sdk",
-        "Includes cron expression",
-        "Shows batch or parallel processing",
-        "Includes error handling"
+        "The answer says the scenario defines a queue named data-sync with concurrencyLimit 3",
+        "The answer says the orchestrator runs on the cron expression 0 * * * *",
+        "The answer says the records are fetched with retry.fetch that retries on 429 or 5xx",
+        "The answer says the orchestrator uses the small-2x machine preset",
+        "The answer says the records are synced with batchTriggerAndWait and the runs where ok is true are counted"
       ]
     }
   ]

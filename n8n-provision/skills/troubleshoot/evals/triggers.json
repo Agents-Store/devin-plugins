@@ -1,0 +1,18 @@
+[
+  {"query": "My n8n template import failed with 'Cannot read properties of undefined' during deploy and the workflow was not created. Help me debug", "should_trigger": true},
+  {"query": "I imported a workflow and it won't activate - 'credential not found' on the Slack node. What do I do?", "should_trigger": true},
+  {"query": "The batch deploy failed halfway: 7 of 12 workflows imported, the rest errored with validation errors. How do I diagnose and clean up?", "should_trigger": true},
+  {"query": "community node missing after import: the workflow uses n8n-nodes-puppeteer but the instance doesn't have it", "should_trigger": true},
+  {"query": "workflow won't publish after import, the webhook path conflicts with another workflow", "should_trigger": true},
+  {"query": "Не импортируется шаблон в n8n: 'template not found', хотя id правильный. Что проверить?", "should_trigger": true},
+  {"query": "Импортированный workflow не публикуется - после деплоя ошибки валидации. Как диагностировать?", "should_trigger": true},
+  {"query": "n8n provisioning keeps failing: fetching a community workflow from GitHub returns 404 or a rate-limit error. What now?", "should_trigger": true},
+  {"query": "Check that my n8n instance is ready before I import anything", "should_trigger": false},
+  {"query": "My Zapier zap import fails with 'unsupported step' on the Formatter action", "should_trigger": false},
+  {"query": "Terraform apply fails with a 403 AccessDenied on the S3 backend bucket", "should_trigger": false},
+  {"query": "pg_restore fails with 'duplicate key value violates unique constraint' while loading the dump", "should_trigger": false},
+  {"query": "My n8n workflow Code node throws 'items is not defined' when it runs", "should_trigger": false},
+  {"query": "Plan the credentials I need before importing these workflows", "should_trigger": false},
+  {"query": "Make.com blueprint import fails with 'Invalid JSON' on a perfectly valid file", "should_trigger": false},
+  {"query": "WordPress says the plugin could not be activated because it triggered a fatal error", "should_trigger": false}
+]

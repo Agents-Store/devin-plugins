@@ -1,11 +1,6 @@
 ---
 name: theme-configuration
-description: >
-  Configure themes, CSS variables, colors, fonts, and dark mode for shadcn/ui and shadcn studio. This skill
-  should be used when the user asks to "set up a theme", "customize shadcn colors", "add dark mode",
-  "change shadcn theme", "use shadcn theme generator", "configure CSS variables for shadcn", "install a
-  shadcn studio theme", "customize fonts", "brand colors for shadcn", or needs to design and apply visual
-  themes to their shadcn/ui project.
+description: Theme shadcn/ui and shadcn studio projects — OKLCH CSS variables with @theme inline, light and dark variants, next-themes setup, next/font fonts, brand colors, style presets applied with shadcn apply, and installing shadcn studio themes. Use when changing colors, fonts or dark mode of a shadcn project.
 ---
 
 ## Theme System Overview

@@ -1,0 +1,18 @@
+[
+  {"query": "Set up @directus/sdk in my Next.js 15 app: a server-only client with a static token, typed schema for `articles` and `authors`, and a function that returns a published article by slug with its author.", "should_trigger": true},
+  {"query": "How do I log in with email and password using the Directus SDK in a Node script and make the script exit afterwards? login(email, password) throws for me on SDK 20.", "should_trigger": true},
+  {"query": "directus SDK: subscribe to real-time changes on `messages` over websockets and handle reconnects", "should_trigger": true},
+  {"query": "I get a TypeScript error when I write rest({ cache: 'no-store' }) with createDirectus. How do I control fetch caching per request in server components?", "should_trigger": true},
+  {"query": "How do I upload a file and then create an item that references it using @directus/sdk - uploadFiles then createItem?", "should_trigger": true},
+  {"query": "What's the right way to do aggregations (count plus sum grouped by status) with the SDK's aggregate()? And how do I type the result?", "should_trigger": true},
+  {"query": "Покажи, как подключить @directus/sdk в TypeScript-проекте: клиент, типы схемы и базовые CRUD-операции readItems, createItem, updateItem", "should_trigger": true},
+  {"query": "Как в Next.js server component получать данные из Directus по токену пользователя на каждый запрос, чтобы не светить токен в браузере?", "should_trigger": true},
+  {"query": "What are the REST endpoints and curl commands to read items from Directus without any library?", "should_trigger": false},
+  {"query": "Use the Directus MCP items tool to read all published posts", "should_trigger": false},
+  {"query": "How do I use the Supabase JS client to subscribe to realtime changes on a table?", "should_trigger": false},
+  {"query": "How do I use the Prisma client in a Next.js server component with connection pooling?", "should_trigger": false},
+  {"query": "Build the Next.js App Router layout with loading states and error boundaries", "should_trigger": false},
+  {"query": "Explain the filter operators _eq, _in and _contains in Directus and how nested _and/_or work", "should_trigger": false},
+  {"query": "My Directus returns 401 Invalid token with my static token. Why?", "should_trigger": false},
+  {"query": "How do I set up Axios interceptors for token refresh in a React app?", "should_trigger": false}
+]

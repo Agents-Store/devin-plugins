@@ -3,39 +3,41 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Review this file for me: routes/deals.py",
-      "expected_output": "Structured review with findings grouped by severity (Critical, Warning, Suggestion), each with location, issue, why-it-matters explanation, and suggested fix",
+      "prompt": "Use the codemap-review skill. Review this file for me: routes/deals.py. Inline please, no agent. I'm a junior developer.\n\n# routes/deals.py\n@deals_bp.route('/deals/search')\ndef search():\n    q = request.args.get('q')\n    rows = db.session.execute(f\"SELECT * FROM deal WHERE title LIKE '%{q}%'\").fetchall()\n    return jsonify([dict(r) for r in rows])\n\n@deals_bp.route('/deals/<int:deal_id>/delete', methods=['POST'])\ndef delete_deal(deal_id):\n    try:\n        Deal.query.filter_by(id=deal_id).delete()\n        db.session.commit()\n    except:\n        pass\n    return 'ok'",
+      "expected_output": "Structured review with findings grouped by severity, each with a why-it-matters explanation and a fix",
       "files": [],
       "expectations": [
-        "Reads the target file before reviewing",
-        "Applies 5 review dimensions: Security, Correctness, Readability, Patterns, Beginner Pitfalls",
-        "Each finding includes a why-it-matters explanation",
-        "Starts with positive observations before listing issues",
-        "Uses the severity format: CRITICAL, WARNING, SUGGESTION"
+        "The answer labels the SQL injection in search() as CRITICAL and explains how the f-string with user input can be exploited",
+        "The suggested fix for the SQL injection uses a parameterized query or bound parameters",
+        "The answer flags the bare except with pass in delete_deal as a problem and explains why swallowing errors hides failures",
+        "The answer flags that delete_deal has no authentication or ownership check",
+        "Every finding explains why it matters, not only what to change",
+        "The answer mentions something done well before or alongside the problems",
+        "The findings use the severity labels CRITICAL, WARNING or SUGGESTION"
       ]
     },
     {
       "id": 2,
       "prompt": "What's wrong with this code? Check my work please",
-      "expected_output": "Beginner-friendly review with educational tone, explaining issues as learning opportunities",
+      "expected_output": "Asks which file or code to review, in a patient tone, without inventing code",
       "files": [],
       "expectations": [
-        "Asks which file or code to review if not specified",
-        "Uses patient, non-condescending tone",
-        "Explains why each issue matters with concrete examples",
-        "Keeps findings proportional to code size"
+        "The answer asks the user which file or code to review, or to paste it",
+        "The answer does not invent code or fabricate review findings"
       ]
     },
     {
       "id": 3,
-      "prompt": "Review PR #42 and explain issues for a junior developer",
-      "expected_output": "PR diff review with beginner-friendly explanations for each finding",
+      "prompt": "Use the codemap-review skill. Review PR #42 and explain the issues for a junior developer, inline please. I can't give you gh access here, so this is the diff:\n\ndiff --git a/app/auth.py b/app/auth.py\n--- a/app/auth.py\n+++ b/app/auth.py\n@@ -10,3 +10,8 @@ def login(email, password):\n+    user = User.query.filter_by(email=email).first()\n+    if user and user.password == password:\n+        return user\n+    SECRET_KEY = 'prod-session-signing-secret'\n+    return None\ndiff --git a/app/utils.py b/app/utils.py\n--- a/app/utils.py\n+++ b/app/utils.py\n@@ -1,0 +1,6 @@\n+def f(x):\n+    r = []\n+    for i in x:\n+        if i is not None:\n+            r.append(i * 2)\n+    return r",
+      "expected_output": "PR diff review grouped by file, critical issues first, each with a learner-friendly explanation",
       "files": [],
       "expectations": [
-        "Fetches PR diff via gh pr diff",
-        "Groups findings by file",
-        "Prioritizes Critical issues first",
-        "Includes learn-more explanations for each finding"
+        "Each finding names the file it concerns, app/auth.py or app/utils.py",
+        "The answer flags the plain-text password comparison user.password == password as CRITICAL and recommends hashing, for example check_password_hash",
+        "The answer flags the hardcoded SECRET_KEY as CRITICAL and recommends an environment variable or secret manager",
+        "Critical issues come before warnings and suggestions",
+        "The answer suggests a clearer name than f or x in app/utils.py and explains why naming matters",
+        "Each finding includes a short explanation of the underlying concept for a learner"
       ]
     },
     {
@@ -44,8 +46,8 @@
       "expected_output": "Asks user to verify the file path",
       "files": [],
       "expectations": [
-        "Does not hallucinate a code review",
-        "Asks user to check the file path or provide the correct one"
+        "The answer does not invent a code review of a file it cannot see",
+        "The answer asks the user to check the file path or provide the correct one"
       ]
     }
   ]

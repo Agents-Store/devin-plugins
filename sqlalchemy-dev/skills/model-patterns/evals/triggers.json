@@ -1,0 +1,17 @@
+[
+  {"query": "Convert my old db.Column style Flask-SQLAlchemy models to the 2.0 Mapped and mapped_column style. Show the before and after for a User with a relationship", "should_trigger": true},
+  {"query": "How do I define many-to-many between Post and Tag in SQLAlchemy 2.0 with an association table and back_populates?", "should_trigger": true},
+  {"query": "Model a self-referential category tree in SQLAlchemy with parent and children, and choose loader strategies", "should_trigger": true},
+  {"query": "Where do I put created_at and updated_at with timezone-aware defaults and a reusable mixin in SQLAlchemy models?", "should_trigger": true},
+  {"query": "Flask-Login User model with Flask-SQLAlchemy, plus models owned by a user with a foreign key and cascade delete-orphan. What's the pattern?", "should_trigger": true},
+  {"query": "Как описать Enum-колонку в SQLAlchemy 2.0 и ограничения CheckConstraint, UniqueConstraint в __table_args__?", "should_trigger": true},
+  {"query": "Как в SQLAlchemy 2.1 использовать DeclarativeBase и dataclass-модели (MappedAsDataclass)? Что поменялось при апгрейде?", "should_trigger": true},
+  {"query": "Write a query that filters orders by status and paginates", "should_trigger": false},
+  {"query": "Create and apply a database migration after changing a model", "should_trigger": false},
+  {"query": "SQLAlchemy raises DetachedInstanceError when I access a relationship after the session closes", "should_trigger": false},
+  {"query": "Design a Postgres schema for multi-tenant SaaS with row level security", "should_trigger": false},
+  {"query": "Define a Django model with a ForeignKey and related_name", "should_trigger": false},
+  {"query": "Pydantic model with validators and nested models for a FastAPI request body", "should_trigger": false},
+  {"query": "Look up all options of mapped_column in the SQLAlchemy API reference", "should_trigger": false},
+  {"query": "Check that my Flask app initializes SQLAlchemy properly with the right database URI", "should_trigger": false}
+]

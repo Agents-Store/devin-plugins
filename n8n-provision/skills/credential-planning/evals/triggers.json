@@ -1,0 +1,18 @@
+[
+  {"query": "Before I import these 6 workflows (JSON files in ./flows), tell me which credentials I need to create on the n8n instance and in which order", "should_trigger": true},
+  {"query": "Extract the credential requirements from this n8n workflow JSON, check which ones already exist on my instance and give me a setup checklist", "should_trigger": true},
+  {"query": "what credentials needed for the 'Invoice reminder' template? I'm going to deploy it tomorrow", "should_trigger": true},
+  {"query": "Plan credentials for a batch import: group them by service (Google, Slack, Postgres) so I only do the OAuth dance once per service", "should_trigger": true},
+  {"query": "Составь чеклист credentials перед импортом workflows в n8n: что нужно завести и в каком порядке", "should_trigger": true},
+  {"query": "Какие credentials потребуются для этих трёх workflow? Проверь, что уже есть на инстансе, и сгруппируй по сервисам", "should_trigger": true},
+  {"query": "How should I create the credentials through the n8n API for an import and link them to the imported workflows afterwards?", "should_trigger": true},
+  {"query": "Prepare credentials for provisioning: list the credential type each node needs and the best practices for storing them", "should_trigger": true},
+  {"query": "n8n shows 'credential not found' on my imported workflow and it won't activate - fix it", "should_trigger": false},
+  {"query": "Import the workflow now and strip the credentials from it", "should_trigger": false},
+  {"query": "Rotate the API keys for all my third-party services and update them in Infisical", "should_trigger": false},
+  {"query": "Store my AWS access key in a Kubernetes secret and mount it into the deployment", "should_trigger": false},
+  {"query": "Plan the roles and permissions for a new Directus instance before I create the schema", "should_trigger": false},
+  {"query": "Check whether my n8n instance is ready for provisioning: health, inventory and capacity", "should_trigger": false},
+  {"query": "Analyze this n8n workflow JSON for security flags and complexity before I use it", "should_trigger": false},
+  {"query": "Plan the OAuth scopes my Slack app needs to read channel history and post messages", "should_trigger": false}
+]

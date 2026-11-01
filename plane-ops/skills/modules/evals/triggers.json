@@ -1,0 +1,16 @@
+[
+  {"query": "How do I report progress for the \"Billing v2\" module in Plane: the completion rate, the blocked items and the points still open?", "should_trigger": true},
+  {"query": "Which calls add work items to a Plane module, and how do I verify the result given that manage_workitems returns nothing?", "should_trigger": true},
+  {"query": "How should I archive completed or cancelled modules in Plane, and what is the module lifecycle from planned to cancelled?", "should_trigger": true},
+  {"query": "Когда в Plane использовать модуль, а когда цикл, и какие статусы жизненного цикла бывают у модуля? Перечисли их", "should_trigger": true},
+  {"query": "Track the workstream 'Payments migration' that spans several sprints - should that be a module and how do I set it up?", "should_trigger": true},
+  {"query": "Какой статус поставить модулю в Plane, который два спринта не двигается, и что сделать с командой до возобновления работы?", "should_trigger": true},
+  {"query": "Create a new cycle (sprint) for next week", "should_trigger": false},
+  {"query": "Create an epic 'Platform v2' and put it under an initiative", "should_trigger": false},
+  {"query": "Create a Node.js module that exports a helper function", "should_trigger": false},
+  {"query": "Explain Python modules vs packages", "should_trigger": false},
+  {"query": "Break the epic into smaller stories", "should_trigger": false},
+  {"query": "Show me the burndown for the current cycle", "should_trigger": false},
+  {"query": "Add a work item to the current sprint", "should_trigger": false},
+  {"query": "Create a Terraform module for a VPC", "should_trigger": false}
+]

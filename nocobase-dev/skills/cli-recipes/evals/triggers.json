@@ -1,0 +1,18 @@
+[
+  {"query": "install the nb CLI and bootstrap a new NocoBase 2.x app on my laptop, Node 22 is installed", "should_trigger": true},
+  {"query": "How do I start, stop and restart a NocoBase app with nb and pull a new release without losing data?", "should_trigger": true},
+  {"query": "Which nb command shows what is currently running for an env, and how do I point it at a different env with --env?", "should_trigger": true},
+  {"query": "Which channel of @nocobase/cli should I install - stable, beta or alpha - and what is the one-liner?", "should_trigger": true},
+  {"query": "Покажи шпаргалку по nb 2.2: установка CLI, окружения, запуск и остановка приложения", "should_trigger": true},
+  {"query": "Как обновить NocoBase до новой версии командой nb и посмотреть, что сейчас запущено?", "should_trigger": true},
+  {"query": "Мы обновляем NocoBase 2.1 до последнего релиза на своём сервере. Какими командами nb сделать бэкап, обновить приложение без потери данных и проверить, что оно запущено?", "should_trigger": true},
+  {"query": "upgrade NocoBase, take a backup first, and give me the nb 2.2 canonical forms of the commands", "should_trigger": true},
+  {"query": "How do I get a bearer token for NocoBase so I can call the REST API from a script?", "should_trigger": false},
+  {"query": "Back up and restore n8n workflows from the command line", "should_trigger": false},
+  {"query": "Create a Strapi 5 project with npx create-strapi and start it in develop mode", "should_trigger": false},
+  {"query": "Upgrade Directus to the latest version and take a snapshot of the schema first", "should_trigger": false},
+  {"query": "Write a NocoBase plugin that adds a custom block to the client", "should_trigger": false},
+  {"query": "Create a workflow in NocoBase that sends an email whenever an order record is created", "should_trigger": false},
+  {"query": "Install Node 22 with nvm and make it the default version", "should_trigger": false},
+  {"query": "Back up a Postgres database with pg_dump and restore it on another server", "should_trigger": false}
+]

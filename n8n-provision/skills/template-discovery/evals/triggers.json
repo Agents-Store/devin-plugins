@@ -1,0 +1,18 @@
+[
+  {"query": "Search the official n8n templates for something that syncs HubSpot contacts to Google Sheets", "should_trigger": true},
+  {"query": "Browse the n8n template library in the category AI and show me the most popular ones", "should_trigger": true},
+  {"query": "find an n8n workflow that uses the Telegram and OpenAI nodes together - search by node types", "should_trigger": true},
+  {"query": "Is there an n8n template for invoice processing with OCR? Search by task", "should_trigger": true},
+  {"query": "Найди в библиотеке шаблонов n8n что-нибудь для уведомлений о новых заказах Shopify в Telegram", "should_trigger": true},
+  {"query": "Поищи шаблоны n8n по узлам: Google Sheets, Slack и Schedule Trigger", "should_trigger": true},
+  {"query": "discover n8n automation patterns in the template catalog for RAG chatbots, ranked by views", "should_trigger": true},
+  {"query": "search n8n templates for lead enrichment, free ones only, and summarise what each does", "should_trigger": true},
+  {"query": "The official library has nothing - search GitHub for community n8n workflows for Notion to Linear", "should_trigger": false},
+  {"query": "Import template 4821 into my n8n instance", "should_trigger": false},
+  {"query": "Search the Zapier template gallery for Notion to Slack zaps", "should_trigger": false},
+  {"query": "Search the Home Assistant blueprint exchange for motion-activated lighting", "should_trigger": false},
+  {"query": "Find a Figma community plugin for generating icon sets", "should_trigger": false},
+  {"query": "Search npm for n8n community nodes for Telegram", "should_trigger": false},
+  {"query": "Search the Make.com template library for Shopify scenarios", "should_trigger": false},
+  {"query": "Find a Docker Compose template for running n8n with Postgres and Redis", "should_trigger": false}
+]

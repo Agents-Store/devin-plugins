@@ -1,0 +1,17 @@
+[
+  {"query": "Show me the idiomatic way to create a grammY Bot, read ctx.from and ctx.chat in a handler, and use ctx.reply versus ctx.api.sendMessage to notify an admin chat", "should_trigger": true},
+  {"query": "I use the session middleware and my own middleware that adds ctx.user in a grammY project, and TypeScript complains about ctx.session and ctx.user. Show me how to build the combined Context type with flavors and pass it to Bot<MyContext>.", "should_trigger": true},
+  {"query": "In grammy, what's the difference between ctx.reply and ctx.api.sendMessage and when should I use ctx.api?", "should_trigger": true},
+  {"query": "Give me idiomatic grammY code for a handler that replies to a message and sends the reply to a different admin chat via ctx.api, and explain when I must use ctx.api instead of ctx.reply.", "should_trigger": true},
+  {"query": "У меня cron-задача в том же Node-процессе, что и grammY-бот: каждое утро нужно написать в личку пользователю по сохранённому chat_id. Вне обработчика ctx нет. Как правильно отправить сообщение через bot.api и нужно ли что-то делать с bot.init? Покажи код на TypeScript.", "should_trigger": true},
+  {"query": "Что такое объект ctx в grammY и какие у него есть алиасы reply, editMessageText, deleteMessage? Покажи типичные паттерны.", "should_trigger": true},
+  {"query": "Show me the difference between bot.command, bot.hears and bot.on in grammY and when to choose each one for plain text handlers.", "should_trigger": true},
+  {"query": "Write the Dockerfile and webhook configuration to host my grammY bot on a VPS", "should_trigger": false},
+  {"query": "How do I call sendMessage on the Telegram Bot API directly with curl and a JSON body?", "should_trigger": false},
+  {"query": "Explain the React Context API and when to use useContext instead of props", "should_trigger": false},
+  {"query": "How do I make my grammY bot ask a user three questions in a row with the conversations plugin?", "should_trigger": false},
+  {"query": "Post a message to a Slack channel from Node.js using the Slack Web API chat.postMessage", "should_trigger": false},
+  {"query": "Set up the @grammyjs/hydrate plugin so messages have an edit() method", "should_trigger": false},
+  {"query": "Persist per-user language settings across restarts with the grammY session middleware and a file adapter", "should_trigger": false},
+  {"query": "Which ESLint rules should I enable for async handlers in a TypeScript backend?", "should_trigger": false}
+]

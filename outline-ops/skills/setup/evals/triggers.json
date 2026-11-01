@@ -1,0 +1,18 @@
+[
+  {"query": "I want to start using the Outline API from this repo. Where do OUTLINE_API_URL and OUTLINE_API_KEY go, and how do I verify they work before doing anything else?", "should_trigger": true},
+  {"query": "Connect to our Outline workspace using my API key and check that it works - self-hosted at https://wiki.example.com", "should_trigger": true},
+  {"query": "What is the first call I should run to make sure my Outline key is valid, and what should a good response look like?", "should_trigger": true},
+  {"query": "Does OUTLINE_API_URL have to include /api? I keep getting weird 404s when I append it myself", "should_trigger": true},
+  {"query": "Настрой доступ к Outline по API-ключу: куда положить ключ, какой базовый URL нужен для облака и для self-hosted, и как проверить, что всё работает", "should_trigger": true},
+  {"query": "Объясни глобальные соглашения Outline API: все методы - POST с JSON-телом, формат ответа с полем data, пагинация limit и offset, лимиты запросов", "should_trigger": true},
+  {"query": "Before I script against Outline, explain the global request conventions: POST-only RPC style, response envelope, pagination with limit and offset, rate limits", "should_trigger": true},
+  {"query": "I have a scoped Outline API key - how do scopes work and how do I verify what the key may do?", "should_trigger": true},
+  {"query": "My Outline call returns 403 Forbidden on webhookSubscriptions.create although auth.info works", "should_trigger": false},
+  {"query": "Which keyboard shortcuts does the Outline editor have for inserting tables and callout blocks", "should_trigger": false},
+  {"query": "Show me an example scenario of onboarding users into Outline groups", "should_trigger": false},
+  {"query": "How do I set up Confluence Cloud API tokens for a script?", "should_trigger": false},
+  {"query": "Set up a Notion integration token and share a page with it", "should_trigger": false},
+  {"query": "How do I load environment variables from a .env file in a bash script safely?", "should_trigger": false},
+  {"query": "Explain the difference between OAuth2 access tokens and personal API keys in general", "should_trigger": false},
+  {"query": "Install and configure the Outline desktop app on macOS", "should_trigger": false}
+]

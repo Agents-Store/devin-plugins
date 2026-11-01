@@ -1,0 +1,17 @@
+[
+  {"query": "This story is 21 points - split it into smaller stories that each deliver value. Which splitting patterns apply?", "should_trigger": true},
+  {"query": "Decompose the work item 'Build admin dashboard' into subtasks for backend, frontend, tests and docs with estimates", "should_trigger": true},
+  {"query": "What are the standard ways to split a 13-point story - by workflow step, business rule, data variation, CRUD - and how should the points of the pieces add up afterwards?", "should_trigger": true},
+  {"query": "Run the INVEST validation workflow on this story: 'Build the whole reporting module', 21 points, no acceptance criteria, blocked by the tags system", "should_trigger": true},
+  {"query": "Разбей эпик «Личный кабинет клиента» на истории и подзадачи по INVEST", "should_trigger": true},
+  {"query": "Как создать иерархию эпик, история, подзадача в Plane при декомпозиции и как распределяются очки после разбиения?", "should_trigger": true},
+  {"query": "Break down the large work item into smaller ones that fit within one sprint, and link them to the parent in Plane", "should_trigger": true},
+  {"query": "Estimate these stories in Fibonacci points", "should_trigger": false},
+  {"query": "Create a single work item 'Fix typo on pricing page'", "should_trigger": false},
+  {"query": "Group the work items into a module", "should_trigger": false},
+  {"query": "Write a work breakdown structure for a house construction project", "should_trigger": false},
+  {"query": "Decompose a monolith into microservices", "should_trigger": false},
+  {"query": "Break a large math problem into smaller steps", "should_trigger": false},
+  {"query": "Plan the sprint and select items", "should_trigger": false},
+  {"query": "Show dependencies between work items", "should_trigger": false}
+]

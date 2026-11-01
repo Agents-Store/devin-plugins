@@ -1,0 +1,18 @@
+[
+  {"query": "my dokploy deploy failed. Walk me through finding the failed run, reading the logs and recovering - it's a Node API and the error shows up at the 'npm run build' step", "should_trigger": true},
+  {"query": "deployment has been stuck in 'running' for 40 minutes in Dokploy and I can't cancel it. what do I do?", "should_trigger": true},
+  {"query": "Dokploy marks my redeploy of 'shop-api' as done, but the old version is still being served. How do I find out what actually happened and verify the fix once it is resolved?", "should_trigger": true},
+  {"query": "app crashed right after deploy in dokploy, the container keeps restarting. Diagnose it and tell me how to roll back safely", "should_trigger": true},
+  {"query": "My Dokploy deployment of 'billing-api' fails during the Docker build at 'RUN npm ci' with 'failed to solve: process /bin/sh -c npm ci did not complete successfully: exit code 1'. Where do I start looking and how do I get the last working version back?", "should_trigger": true},
+  {"query": "Our Dokploy compose stack 'shop' deployed, but the 'db' container exits with code 1 right after start and the web service shows 504. Walk me through diagnosing it and recovering.", "should_trigger": true},
+  {"query": "Деплой в Dokploy упал. Помоги найти причину: где смотреть логи сборки, что с контейнером и как безопасно откатиться", "should_trigger": true},
+  {"query": "После деплоя в Dokploy контейнер приложения уходит в бесконечный рестарт с кодом 137. Нужен порядок действий: где искать причину и как безопасно откатиться", "should_trigger": true},
+  {"query": "Set up an AI provider in Dokploy so it can analyze my logs", "should_trigger": false},
+  {"query": "Show me the dokploy CLI command to deploy an application", "should_trigger": false},
+  {"query": "How do I add a custom domain with HTTPS to an application in Dokploy?", "should_trigger": false},
+  {"query": "My GitHub Actions workflow fails on the build step. How do I read its logs?", "should_trigger": false},
+  {"query": "My Vercel deployment failed with 'Build failed' - what should I check?", "should_trigger": false},
+  {"query": "What causes 502 Bad Gateway in nginx when proxying to an upstream?", "should_trigger": false},
+  {"query": "List all my Dokploy projects and the applications in each", "should_trigger": false},
+  {"query": "How do I roll back a Kubernetes deployment with kubectl?", "should_trigger": false}
+]

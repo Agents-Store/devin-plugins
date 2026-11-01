@@ -1,0 +1,18 @@
+[
+  {"query": "Install the Infisical CLI on my Mac and log in, then check that it can actually read my project's secrets", "should_trigger": true},
+  {"query": "Our Infisical is self-hosted at https://secrets.example.com. How do I point the CLI at it so I don't pass --domain on every call?", "should_trigger": true},
+  {"query": "I need to work with two Infisical instances, the EU cloud and our self-hosted one. How do I set up login profiles for both?", "should_trigger": true},
+  {"query": "Install infisical in an Alpine Docker image and verify that it works", "should_trigger": true},
+  {"query": "How do I install the Infisical CLI with winget on Windows and confirm it with infisical --version?", "should_trigger": true},
+  {"query": "Как установить Infisical CLI на Ubuntu, залогиниться и убедиться, что всё работает?", "should_trigger": true},
+  {"query": "Нужно подключить Infisical CLI к нашему self-hosted инстансу, а не к облаку. Как это настроить?", "should_trigger": true},
+  {"query": "is infisical working? how do I verify my login and that .infisical.json links this folder to the right project", "should_trigger": true},
+  {"query": "Use machine identity universal-auth in a Jenkins pipeline to fetch secrets", "should_trigger": false},
+  {"query": "Set up the Vault CLI and log in with the userpass method", "should_trigger": false},
+  {"query": "Set up a pre-commit secret scan for my repository", "should_trigger": false},
+  {"query": "How do I run infisical secrets set for several keys at once?", "should_trigger": false},
+  {"query": "Install the AWS CLI v2 on Ubuntu and configure SSO login", "should_trigger": false},
+  {"query": "Self-host Infisical with docker compose and Postgres on my own server. Write the compose file.", "should_trigger": false},
+  {"query": "The Infisical CLI says \"failed to store credentials\" on my headless server", "should_trigger": false},
+  {"query": "Install the Doppler CLI on macOS and authenticate it", "should_trigger": false}
+]

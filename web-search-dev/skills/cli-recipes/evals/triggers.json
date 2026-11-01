@@ -1,0 +1,16 @@
+[
+  {"query": "How do I install the Firecrawl CLI and scrape a page from the terminal, saving only the main content to a file?", "should_trigger": true},
+  {"query": "Give me the jina CLI commands to read a page and to search the web for the last week from the shell", "should_trigger": true},
+  {"query": "I want to crawl a docs site from the command line with firecrawl and limit the depth. What is the command?", "should_trigger": true},
+  {"query": "Which flags does the firecrawl CLI have to get JSON output with timing, and how do I set the API key for a single call?", "should_trigger": true},
+  {"query": "How do I create a recurring change monitor from the firecrawl CLI, and what should I confirm before doing it?", "should_trigger": true},
+  {"query": "Как из терминала запустить firecrawl search и сохранить результат в файл? Какие флаги вывода есть?", "should_trigger": true},
+  {"query": "Как собрать цепочку команд jina CLI через pipe: прочитать страницу и сделать текстовую обработку?", "should_trigger": true},
+  {"query": "Write a TypeScript script with the Firecrawl SDK that scrapes a URL", "should_trigger": false},
+  {"query": "Which MCP tool should I use to read a single page?", "should_trigger": false},
+  {"query": "Use curl and jq to call the GitHub API and list issues", "should_trigger": false},
+  {"query": "Use wget to mirror a website for offline reading", "should_trigger": false},
+  {"query": "How do I verify that Firecrawl and Jina are connected?", "should_trigger": false},
+  {"query": "Firecrawl returns 402 Payment Required in my script", "should_trigger": false},
+  {"query": "Use the Vercel CLI to pull environment variables", "should_trigger": false}
+]

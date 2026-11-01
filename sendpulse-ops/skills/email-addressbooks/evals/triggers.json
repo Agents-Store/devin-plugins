@@ -1,0 +1,18 @@
+[
+  {"query": "Which SendPulse MCP tools add subscribers with custom variables to an addressbook, update the variables of one subscriber and find subscribers by variable value?", "should_trigger": true},
+  {"query": "What is the difference between email_addressbooks_emails_delete and email_addressbooks_emails_unsubscribe in SendPulse, and which one should I use to stop mailing someone?", "should_trigger": true},
+  {"query": "Calculate how much it will cost to send a campaign to my addressbook 'Customers' in SendPulse", "should_trigger": true},
+  {"query": "Find subscribers in a SendPulse addressbook whose variable 'plan' is 'pro' to segment a list", "should_trigger": true},
+  {"query": "Update the phone number and variables of an existing subscriber in a SendPulse mailing list and show the total subscriber count", "should_trigger": true},
+  {"query": "Добавь подписчиков в адресную книгу SendPulse и задай им переменные имя и город", "should_trigger": true},
+  {"query": "Покажи все адресные книги SendPulse, сколько в них подписчиков и стоимость отправки", "should_trigger": true},
+  {"query": "Show the campaign history of an addressbook in SendPulse and list the subscribers that bounced", "should_trigger": true},
+  {"query": "Create an email campaign for the addressbook with a template", "should_trigger": false},
+  {"query": "Add a CRM contact in SendPulse", "should_trigger": false},
+  {"query": "Import subscribers into a Mailchimp audience from a CSV", "should_trigger": false},
+  {"query": "Segment my newsletter list by engagement in Klaviyo", "should_trigger": false},
+  {"query": "Write the welcome email copy for new subscribers", "should_trigger": false},
+  {"query": "Check bounces and the unsubscribe list of SMTP transactional emails", "should_trigger": false},
+  {"query": "Set a variable on a chatbot contact", "should_trigger": false},
+  {"query": "Design a Postgres table for subscribers and consent", "should_trigger": false}
+]

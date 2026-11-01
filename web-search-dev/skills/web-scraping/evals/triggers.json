@@ -1,0 +1,14 @@
+[
+  {"query": "Scrape the product names and prices from https://shop.example.com/catalog into JSON for my app", "should_trigger": true},
+  {"query": "Crawl docs.example.com for a content migration with a conservative limit and only the paths under /guides", "should_trigger": true},
+  {"query": "Extract the pricing plans from https://example.com/pricing for my comparison table. Which scraping approach should I use?", "should_trigger": true},
+  {"query": "Нужно собрать данные о товарах с сайта-донора для моего каталога. Какой инструмент для скрейпинга брать и как извлечь поля по схеме?", "should_trigger": true},
+  {"query": "Какой паттерн из руководства по скрейпингу брать для страниц на JavaScript: Jina read_url или firecrawl_scrape с waitFor и onlyMainContent? Покажи вызов", "should_trigger": true},
+  {"query": "Which tool is best for taking screenshots of pages?", "should_trigger": false},
+  {"query": "Find stock photos for my site", "should_trigger": false},
+  {"query": "Fix BeautifulSoup AttributeError NoneType on find()", "should_trigger": false},
+  {"query": "Show Firecrawl SDK TypeScript usage for scrape", "should_trigger": false},
+  {"query": "Firecrawl crawl returns 402. What now?", "should_trigger": false},
+  {"query": "Build a REST API with FastAPI that returns product listings from my database", "should_trigger": false},
+  {"query": "Write a regex to extract emails from a text file", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "После импорта workflows в n8n через CLI все они оказались неактивными. Так и должно быть? Как сохранить состояние active из JSON при import:workflow?", "should_trigger": true},
+  {"query": "Run the n8n workflow with id 42 from the command line on the server instead of the UI - what's the CLI call inside the docker container?", "should_trigger": true},
+  {"query": "Reset the password of the owner account on my self-hosted n8n, I'm locked out of the UI. I have shell access to the host.", "should_trigger": true},
+  {"query": "I want to unpublish ALL workflows on our staging n8n before the migration, using the CLI", "should_trigger": true},
+  {"query": "Can I publish all workflows at once with the n8n CLI after a restore, like `n8n publish:workflow --all`? What is the difference to unpublish:workflow --all, and do I need to restart n8n afterwards?", "should_trigger": true},
+  {"query": "Я залочен из UI на своём self-hosted n8n в docker compose, нужно сбросить пароль владельца. SSH на хост есть - какая команда и как запустить её внутри контейнера?", "should_trigger": true},
+  {"query": "How do I run a security audit with the n8n CLI and what does it check?", "should_trigger": true},
+  {"query": "Install a community node package on a self-hosted n8n through the command line instead of the UI", "should_trigger": true},
+  {"query": "Create an n8n workflow from SDK code with create_workflow_from_code on the native MCP server and publish it", "should_trigger": false},
+  {"query": "Deploy n8n to a fresh Hetzner VPS with Docker Compose and Caddy so it gets automatic HTTPS", "should_trigger": false},
+  {"query": "Write a Code node in n8n that groups incoming items by customer id and sums the amounts", "should_trigger": false},
+  {"query": "Use curl against the n8n public REST API with an X-N8N-API-KEY header to list the executions of one workflow", "should_trigger": false},
+  {"query": "Export all Node-RED flows to JSON from the command line and import them on another host", "should_trigger": false},
+  {"query": "My n8n MCP connection fails with 401 Unauthorized, how do I debug it?", "should_trigger": false},
+  {"query": "How do I export a Make.com scenario blueprint and import it into a second account?", "should_trigger": false},
+  {"query": "Schedule a nightly n8n workflow with a Schedule Trigger at 02:00 Europe/Berlin that cleans old rows from a Data Table", "should_trigger": false}
+]

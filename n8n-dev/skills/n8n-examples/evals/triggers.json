@@ -1,0 +1,17 @@
+[
+  {"query": "I'm new to n8n. Show me a complete example of a workflow that receives a webhook and posts a notification to Slack, from the first step to published.", "should_trigger": true},
+  {"query": "Give me a sample scheduled report workflow for n8n: every Monday 08:00 pull rows from a database and email a summary. Walk me through the full creation.", "should_trigger": true},
+  {"query": "I'd like a worked example of record-driven background workflows in n8n: a table of jobs and a workflow that processes them one by one", "should_trigger": true},
+  {"query": "Покажи на примере, как с нуля собрать workflow в n8n: вебхук принимает заказ и отправляет уведомление в Slack", "should_trigger": true},
+  {"query": "Покажи сценарий 'Scheduled Report Generator' в n8n от начала до конца: триггер по расписанию, запрос данных и письмо с отчётом", "should_trigger": true},
+  {"query": "Show me the webhook-to-Slack notification scenario step by step: which MCP tools do I call to build and publish it?", "should_trigger": true},
+  {"query": "Is there a sample workflow I can follow for processing a queue of background jobs from a Data Table in n8n?", "should_trigger": true},
+  {"query": "Fix the validation error 'Missing required field' on my n8n HTTP Request node", "should_trigger": false},
+  {"query": "Which n8n CLI command exports credentials, and what does the --decrypted flag do?", "should_trigger": false},
+  {"query": "Which fields are required for the Google Sheets 'append row' operation in n8n and which depend on displayOptions?", "should_trigger": false},
+  {"query": "Show me a complete example of a Make.com scenario that sends a webhook payload to Slack", "should_trigger": false},
+  {"query": "Give me a full example of a Zapier zap that posts new Typeform responses to a Slack channel", "should_trigger": false},
+  {"query": "Explain the difference between 'Run once for all items' and 'Run once for each item' in an n8n Code node", "should_trigger": false},
+  {"query": "Show me how to build a Slack bot in Python with Bolt that answers inside threads", "should_trigger": false},
+  {"query": "Give me an Apache Airflow DAG example that sends a weekly report email from a SQL query", "should_trigger": false}
+]

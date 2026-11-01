@@ -1,0 +1,18 @@
+[
+  {"query": "check NocoDB dev setup: can I modify the schema with the token I have in my env?", "should_trigger": true},
+  {"query": "verify NocoDB API access for schema work - both MCP and REST on Meta API v3", "should_trigger": true},
+  {"query": "is my NocoDB token working? I want to change tables and fields, not only read data", "should_trigger": true},
+  {"query": "test the NocoDB MCP connection and tell me which edition (Community or Cloud/licensed) I'm on", "should_trigger": true},
+  {"query": "Проверь доступ к NocoDB для работы со схемой: токен, base id, MCP и REST", "should_trigger": true},
+  {"query": "Могу ли я менять схему в моей NocoDB? Проверь подключение и права", "should_trigger": true},
+  {"query": "Which env variables do I need for NocoDB schema development and how do I check the MCP discovery step?", "should_trigger": true},
+  {"query": "verify that the NocoDB Meta API v3 lists the workspaces and the tables of my base", "should_trigger": true},
+  {"query": "My NocoDB schema change returns 'field type change rejected', diagnose it", "should_trigger": false},
+  {"query": "Create a new table in NocoDB", "should_trigger": false},
+  {"query": "Verify my n8n API key works against the instance", "should_trigger": false},
+  {"query": "Test my Postgres connection string from the command line with psql", "should_trigger": false},
+  {"query": "Check that my Airtable personal access token has the schema.bases:write scope", "should_trigger": false},
+  {"query": "How do I set up the NocoDB CLI script nocodb.sh from nocodb/agent-skills?", "should_trigger": false},
+  {"query": "Check that my Supabase project URL and anon key work by listing a table through the REST API", "should_trigger": false},
+  {"query": "Is my Directus static token valid? Test it with curl", "should_trigger": false}
+]

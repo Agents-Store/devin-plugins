@@ -1,0 +1,17 @@
+[
+  {"query": "Find me a Pexels video of a city at night that I can use as a looping hero background on a landing page, short and not too heavy", "should_trigger": true},
+  {"query": "Search Unsplash for coffee shop photos and tell me what attribution I must render in my app", "should_trigger": true},
+  {"query": "How do I search Pexels in Russian with the right locale and pick the right image size for a responsive card?", "should_trigger": true},
+  {"query": "Find me royalty-free photos of mountain hiking for a travel blog hero section, landscape orientation", "should_trigger": true},
+  {"query": "I do not have any API keys. How can I still find web images for design inspiration without filling my context with base64?", "should_trigger": true},
+  {"query": "What are the rate limits for Pexels and Unsplash, and how should I cache the responses?", "should_trigger": true},
+  {"query": "Найди стоковые фото для главной страницы сайта кофейни и подскажи, как правильно указать авторов", "should_trigger": true},
+  {"query": "Какие лимиты запросов у Pexels и Unsplash и как кешировать ответы?", "should_trigger": true},
+  {"query": "Generate an image of a mountain with an AI image model", "should_trigger": false},
+  {"query": "Optimize PNG images in my build with sharp", "should_trigger": false},
+  {"query": "Resize images on upload with a Lambda function", "should_trigger": false},
+  {"query": "Scrape product images from a shop website", "should_trigger": false},
+  {"query": "Pexels returns 401 although I send a Bearer header", "should_trigger": false},
+  {"query": "Create a responsive image gallery component in React with lazy loading", "should_trigger": false},
+  {"query": "Which MCP tool takes screenshots of a page?", "should_trigger": false}
+]

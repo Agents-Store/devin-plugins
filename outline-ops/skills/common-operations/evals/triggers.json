@@ -1,0 +1,18 @@
+[
+  {"query": "I need a new 'Runbook: database failover' document in the Operations collection of our Outline wiki, published right away, with a short intro and a checklist. My OUTLINE_API_KEY is already set - can you create it with curl?", "should_trigger": true},
+  {"query": "append a new 'Known issues' section at the end of the 'Release notes 2.4' doc in Outline without overwriting the text that's already there", "should_trigger": true},
+  {"query": "Share our onboarding doc from Outline as a public link so contractors without an account can read it, and give me the URL", "should_trigger": true},
+  {"query": "Archive every document in the 'Old projects' collection of our Outline workspace, but list what would change first and wait for my OK before touching anything", "should_trigger": true},
+  {"query": "Создай в Outline коллекцию «Регламенты» и положи в неё три документа: «Отпуск», «Командировки» и «Больничные» - тексты я пришлю следом", "should_trigger": true},
+  {"query": "Найди в Outline документ «План релиза Q4» по названию и перенеси его в коллекцию «Архив 2025»", "should_trigger": true},
+  {"query": "Invite anna@example.com and ben@example.com to Outline as members, add them to the group Support and give that group read access to the Help Center collection", "should_trigger": true},
+  {"query": "Star the 'Team handbook' document in Outline and leave a comment on it saying the vacation policy section is out of date", "should_trigger": true},
+  {"query": "I get a 403 from documents.empty_trash on my Outline instance although documents.list works with the same key. Why?", "should_trigger": false},
+  {"query": "How do I connect to Outline for the first time - where do I put the API key and base URL, and what is the first call to check that they work?", "should_trigger": false},
+  {"query": "Walk me through a complete worked example of building a knowledge base in Outline end to end: collection, nested docs, publishing and a public share", "should_trigger": false},
+  {"query": "Create a Confluence page under the Engineering space and add the label 'runbook'", "should_trigger": false},
+  {"query": "Create a Notion page for meeting notes with a table of action items and owners", "should_trigger": false},
+  {"query": "Write me a markdown template for an incident runbook with sections for impact, mitigation and rollback", "should_trigger": false},
+  {"query": "Install a self-hosted Outline with docker compose and wire up Slack login", "should_trigger": false},
+  {"query": "Export the contents of my Google Drive folder 'Policies' as markdown files and zip them", "should_trigger": false}
+]

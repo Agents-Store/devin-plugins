@@ -1,0 +1,16 @@
+[
+  {"query": "I need a throwaway Directus 12 on my laptop to build a Nuxt frontend against. Write me a docker-compose.yml with Postgres and Redis, uploads and extensions on volumes, the first admin created from .env, and a healthcheck that doesn't flap", "should_trigger": true},
+  {"query": "How do I pin the Directus image tag in compose and later upgrade from 12.2 to 12.4 without losing the uploads volume or the database?", "should_trigger": true},
+  {"query": "Set up a local Directus stack for our team: Postgres 16, Redis cache, admin email and password coming from .env, CORS open for http://localhost:3000. Please keep the secrets out of the compose file itself.", "should_trigger": true},
+  {"query": "I mounted a custom hook extension from ./extensions into my local Directus container but nothing loads. The image is the hardened one. What do I change?", "should_trigger": true},
+  {"query": "Подними мне Directus локально через Docker Compose с PostgreSQL и Redis, чтобы разрабатывать фронтенд. Ключи и пароль админа должны браться из .env", "should_trigger": true},
+  {"query": "Контейнер directus в docker compose постоянно unhealthy, хотя админка открывается. Как правильно настроить healthcheck и проверить, что сервер жив?", "should_trigger": true},
+  {"query": "Write a Dockerfile for my Next.js 15 app that talks to a CMS over an internal docker network, multi-stage build with standalone output", "should_trigger": false},
+  {"query": "Add a many-to-many relation between posts and tags in my Directus data model - which fields and which relation calls?", "should_trigger": false},
+  {"query": "Which MCP tools does Directus expose and how do I call the items tool with a filter?", "should_trigger": false},
+  {"query": "Run PostgreSQL 16 locally in Docker Compose with a persistent volume and pgAdmin, for my Flask app's development database", "should_trigger": false},
+  {"query": "How do I write a Directus flow that fires when a post is published and posts to Slack?", "should_trigger": false},
+  {"query": "My Directus returns 403 when I try to create items through the REST API with a static token. What permission is missing?", "should_trigger": false},
+  {"query": "Set up Redis with Docker Compose for Celery workers and a Flask app, including a healthcheck and restart policy", "should_trigger": false},
+  {"query": "Use the Directus SDK in a Next.js server component with a per-request user token", "should_trigger": false}
+]

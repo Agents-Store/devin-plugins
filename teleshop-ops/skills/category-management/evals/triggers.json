@@ -1,0 +1,17 @@
+[
+  {"query": "Build a category tree for my Teleshop store: Clothing with Men and Women underneath, and T-Shirts under Men", "should_trigger": true},
+  {"query": "Create the categories Clothing, T-Shirts, Jeans and Shoes in one go", "should_trigger": true},
+  {"query": "Move the Smartphones category under Electronics and rename it", "should_trigger": true},
+  {"query": "How do I make a category show the newest products first by default?", "should_trigger": true},
+  {"query": "Delete the empty categories in the store. Find them first, then remove them in a batch", "should_trigger": true},
+  {"query": "Создай в Teleshop категорию «Смартфоны» внутри «Электроника» с сортировкой по популярности", "should_trigger": true},
+  {"query": "Как переименовать категорию в магазине и можно ли удалить категорию по умолчанию?", "should_trigger": true},
+  {"query": "list Teleshop categories matching Electronics sorted by position", "should_trigger": true},
+  {"query": "Create a product and put it into the Smartphones category", "should_trigger": false},
+  {"query": "Import categories and products from a JSON file", "should_trigger": false},
+  {"query": "Create a category taxonomy for the posts of my WordPress blog", "should_trigger": false},
+  {"query": "Design a nested categories table in Postgres with a closure table", "should_trigger": false},
+  {"query": "Create a Gmail label hierarchy for my inbox", "should_trigger": false},
+  {"query": "Add a size attribute with variants to the store", "should_trigger": false},
+  {"query": "Create a webhook for category.created events", "should_trigger": false}
+]

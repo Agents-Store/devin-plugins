@@ -1,0 +1,18 @@
+[
+  {"query": "How do I read Payload data in a Next.js 15 App Router server component with getPayload, and how do I type the result with generated types?", "should_trigger": true},
+  {"query": "Set up draft mode and live preview between Payload and my Next.js frontend, so editors see unpublished changes", "should_trigger": true},
+  {"query": "Wire my Next.js 15 frontend to Payload: fetch a post by slug in a server component with getPayload, add generateStaticParams for ISR and a revalidate-on-save route handler", "should_trigger": true},
+  {"query": "What's the project layout created by create-payload-app in Next.js - the (frontend) and (payload) route groups, and where does the admin live?", "should_trigger": true},
+  {"query": "Call a Payload Local API mutation from a Next.js server action, and authenticate the user from headers", "should_trigger": true},
+  {"query": "I'm bootstrapping a Payload plus Next.js App Router project: show the (frontend) and (payload) route group layout, the generated types and draft mode with live preview", "should_trigger": true},
+  {"query": "Подключи Payload к фронтенду на Next.js 15: server action, которая отправляет форму через Local API, кеширование запросов и revalidateTag после сохранения документа", "should_trigger": true},
+  {"query": "Нужно сделать статическую генерацию страниц по slug из Payload с ISR. Как организовать generateStaticParams и ревалидацию?", "should_trigger": true},
+  {"query": "Write a Payload where query with nested relationship filters and OR conditions", "should_trigger": false},
+  {"query": "Deploy a Payload app with Docker", "should_trigger": false},
+  {"query": "Next.js App Router caching: explain fetch cache, unstable_cache and revalidateTag", "should_trigger": false},
+  {"query": "Build a Next.js app with Directus as the headless backend", "should_trigger": false},
+  {"query": "Set up NextAuth in Next.js with Postgres adapter", "should_trigger": false},
+  {"query": "How do I add a global header to a Payload site?", "should_trigger": false},
+  {"query": "Next.js middleware for locale redirects", "should_trigger": false},
+  {"query": "Why do I get 'Cannot find module payload' after install?", "should_trigger": false}
+]

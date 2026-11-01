@@ -3,54 +3,54 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Plan Sprint 16 for TaskFlow. 1-week sprint starting Monday. Team: 3 devs, one of them (Bob) is part-time 50%. Our last 3 sprints completed 18, 22, 20 points. Set a sprint goal, calculate capacity, pick items from backlog, create the cycle.",
+      "prompt": "Use the sprint-planning skill. Plan Sprint 16 for TaskFlow. 1-week sprint starting Monday. Team: 3 devs, one of them (Bob) is part-time 50%. Our last 3 sprints completed 18, 22, 20 points. Set a sprint goal, calculate capacity, pick items from backlog, create the cycle. Candidates from the backlog: PROJ-201 (5 points, has acceptance criteria), PROJ-202 (3, has acceptance criteria), PROJ-203 (8, has acceptance criteria), PROJ-204 (13, no acceptance criteria), PROJ-205 (2, blocked by PROJ-204). Walk each candidate through the readiness checklist, and show the create-cycle call and how the items are added and checked. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Full planning ceremony: velocity avg 20 × 0.85 ≈ 17 → adjusted for Bob's 50% (team has 2.5 FTE not 3, so ~14-15 capacity), sprint goal in the 'users can X so that Y' format, item selection honoring DoR, cycle(action=create) call with owned_by, cycle(action=manage_workitems) with add_ids.",
       "files": [],
       "expectations": [
-        "Prefers velocity-based capacity (has 3+ sprints history, given by the user) over days-based, and does not re-derive it from the tracker",
-        "Calculates average velocity (20) and applies 15% buffer (×0.85)",
-        "Adjusts capacity for Bob's part-time status (not ignoring it)",
-        "Writes a sprint goal in the 'By end of sprint, [users] can [capability] so that [value]' format",
-        "Validates each selected item against DoR (estimated, ≤8 points, has AC, no unresolved blockers)",
-        "Creates the cycle via cycle(action=create) with owned_by and description (the goal)",
-        "Adds items via cycle(action=manage_workitems) with add_ids (an array of work item UUIDs), then reads them back with cycle(action=list_workitems)"
+        "The answer computes the capacity as 20 × 0.85 = 17 points before the part-time adjustment",
+        "The answer reduces the capacity for Bob's 50% part-time",
+        "The answer flags PROJ-204 for decomposition because it is above 8 points",
+        "The answer writes the sprint goal as By end of this sprint, [users] can [capability] so that [value]",
+        "The answer creates the cycle with cycle(action=create, ..., owned_by=<current user id>, description=<sprint goal>)",
+        "The answer adds the items with cycle(action=manage_workitems, add_ids=[...])"
       ]
     },
     {
       "id": 2,
-      "prompt": "Calculate next sprint capacity for our team of 5 devs, 2-week sprint. Our last 4 sprints completed 32, 28, 35, 30 points. Alice is on PTO for 3 days.",
+      "prompt": "Use the sprint-planning skill. Calculate next sprint capacity for our team of 5 devs, 2-week sprint. Our last 4 sprints completed 32, 28, 35, 30 points. Alice is on PTO for 3 days. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Uses velocity-based capacity (avg 31.25 × 0.85 ≈ 26.5), then adjusts for PTO (3/50 person-days lost), resulting in ~25 points.",
       "files": [],
       "expectations": [
-        "Prefers velocity-based capacity (has history) over days-based",
-        "Calculates average velocity ~31 points",
-        "Applies 15% buffer (×0.85)",
-        "Subtracts proportional PTO (3 person-days out of 50)",
-        "Lands on ~24-26 points as the recommended capacity"
+        "The answer prefers velocity-based capacity (has history) over days-based",
+        "The answer calculates average velocity ~31 points",
+        "The answer says to apply 15% buffer (×0.85)",
+        "The answer says to subtract proportional PTO (3 person-days out of 50)",
+        "The answer says to land on ~24-26 points as the recommended capacity"
       ]
     },
     {
       "id": 3,
-      "prompt": "I'm planning Sprint 1 for a brand new team. Nobody has ever worked together. Help me set capacity.",
+      "prompt": "Use the sprint-planning skill. I'm planning Sprint 1 for a brand new team. Nobody has ever worked together. Help me set capacity. The team has 5 people, the sprint is 2 weeks and nobody has PTO. Answer in text; everything you need is in this message.",
       "expected_output": "No velocity history → uses days-based formula with focus factor, then applies first-sprint 60% reduction for learning curve.",
       "files": [],
       "expectations": [
-        "Detects no velocity history available",
-        "Uses days-based formula: team_size × sprint_days × 0.7 × 0.85",
-        "Applies the additional first-sprint reduction to 60% of calculated capacity",
-        "Warns that Sprint 1 commitment is low-confidence and should be re-calibrated after"
+        "The answer says there is no velocity history, so it uses the days-based formula",
+        "The answer computes 50 available person-days from 5 people times 10 days",
+        "The answer applies the 0.7 focus factor to get 35 effective days",
+        "The answer applies the 15% buffer (× 0.85) to get about 30 points",
+        "The answer applies the first-sprint reduction to 60% and lands on about 18 points"
       ]
     },
     {
       "id": 4,
-      "prompt": "I want to add PROJ-148 'Complete checkout rewrite' — 13 story points — to next sprint. Our capacity is 30 points.",
+      "prompt": "Use the sprint-planning skill. I want to add PROJ-148 'Complete checkout rewrite' — 13 story points — to next sprint. Our capacity is 30 points. Answer in text; everything you need is in this message.",
       "expected_output": "Rejects — 13 > 8, item must be decomposed first via task-decomposition skill before entering sprint.",
       "files": [],
       "expectations": [
-        "Blocks adding the item based on DoR (point must be ≤ 8)",
-        "Routes to the task-decomposition skill for splitting",
-        "Explains why: >8 points have high estimation error and don't fit burndown well",
-        "Does NOT just warn-and-proceed — refuses to add"
+        "The answer says to block adding the item based on DoR (point must be ≤ 8)",
+        "The answer routes to the task-decomposition skill for splitting",
+        "The answer explains why: >8 points have high estimation error and don't fit burndown well",
+        "The answer does NOT just warn-and-proceed — refuses to add"
       ]
     }
   ]

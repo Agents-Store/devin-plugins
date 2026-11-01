@@ -1,0 +1,18 @@
+[
+  {"query": "Google Search Console says 'Crawled - currently not indexed' for my Next.js pages. How do I diagnose why they are not indexed?", "should_trigger": true},
+  {"query": "I added JSON-LD but there are no rich snippets in Google search. How do I debug the structured data?", "should_trigger": true},
+  {"query": "My OG image isn't showing when I share the link on Twitter and Facebook, although the og:image tag exists. What should I check?", "should_trigger": true},
+  {"query": "Search Console reports duplicate content and 'Duplicate without user-selected canonical' for my product variants. How do I fix it?", "should_trigger": true},
+  {"query": "Work through the Search Console statuses Crawled - currently not indexed, Excluded by noindex tag and Blocked by robots.txt for my site and tell me the fix for each", "should_trigger": true},
+  {"query": "Google не находит мою страницу на Next.js, хотя sitemap отправлен. В чём может быть проблема?", "should_trigger": true},
+  {"query": "SEO не работает: страницы не индексируются, в Search Console ошибки. С чего начать диагностику?", "should_trigger": true},
+  {"query": "Search Console says Discovered - currently not indexed for 400 of my product pages and Page with redirect for others. Work through each status and tell me what to check", "should_trigger": true},
+  {"query": "Set up SEO for a brand new Next.js project", "should_trigger": false},
+  {"query": "Create sitemap.ts with dynamic URLs", "should_trigger": false},
+  {"query": "Write the JSON-LD for an Article page", "should_trigger": false},
+  {"query": "Configure hreflang for a bilingual site", "should_trigger": false},
+  {"query": "Debug why my React component re-renders too often", "should_trigger": false},
+  {"query": "My Next.js build fails with a type error", "should_trigger": false},
+  {"query": "Fix a 500 error on my Express API", "should_trigger": false},
+  {"query": "What are good keywords for a pet store?", "should_trigger": false}
+]

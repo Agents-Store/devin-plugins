@@ -1,0 +1,17 @@
+[
+  {"query": "Calculate our team's velocity from the last six cycles in Plane and tell me the trend and the average to use for planning", "should_trigger": true},
+  {"query": "Analyze the burndown of the current sprint: are we on track, what is the ideal vs actual line?", "should_trigger": true},
+  {"query": "Compare estimated vs actual effort: how much time was logged per story point in the last sprints?", "should_trigger": true},
+  {"query": "What are the throughput and cycle time of our team for the last quarter, and are we exceeding the WIP limits?", "should_trigger": true},
+  {"query": "Посчитай скорость команды по последним циклам Plane и покажи тренд", "should_trigger": true},
+  {"query": "По каким формулам считать burndown, WIP-лимит и пропускную способность команды в Plane? Назови их", "should_trigger": true},
+  {"query": "How do I calculate our historical velocity from Plane cycles, judge how stable it is, and compare the hours logged per story point with the estimates?", "should_trigger": true},
+  {"query": "Plan the next sprint with capacity", "should_trigger": false},
+  {"query": "Run the sprint retro", "should_trigger": false},
+  {"query": "What are the formulas for velocity? I just need the definition", "should_trigger": false},
+  {"query": "Calculate the velocity of a car from distance and time", "should_trigger": false},
+  {"query": "Show me the web server request throughput from Grafana", "should_trigger": false},
+  {"query": "Log 2 hours on work item WEB-12", "should_trigger": false},
+  {"query": "Build a dashboard of GitHub commit metrics", "should_trigger": false},
+  {"query": "Estimate the backlog items", "should_trigger": false}
+]

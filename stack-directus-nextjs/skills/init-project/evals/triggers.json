@@ -1,0 +1,16 @@
+[
+  {"query": "Starting a new project with Directus 12 and Next.js 16. What do I set up first: versions, .env.local, SDK, client, and how do I verify the connection?", "should_trigger": true},
+  {"query": "Which variables does .env.local need for the Directus Next.js stack, and why are DIRECTUS_URL and DIRECTUS_TOKEN already there as references?", "should_trigger": true},
+  {"query": "How do I verify that the Directus MCP and the SDK token work from the Next.js project? Is there a temporary check route?", "should_trigger": true},
+  {"query": "I am filling .env.local for the Directus and Next.js starter. How do I create the user and policy behind DIRECTUS_ADMIN_TOKEN, and which of these variables may carry the NEXT_PUBLIC_ prefix?", "should_trigger": true},
+  {"query": "Как инициализировать проект Directus и Next.js: версии, переменные окружения, зависимости, клиент и проверка подключения?", "should_trigger": true},
+  {"query": "Создаю новый проект на Directus и Next.js. Какие переменные окружения заполнить и как правильно получить DIRECTUS_ADMIN_TOKEN?", "should_trigger": true},
+  {"query": "Bootstrap my new Next.js 16 project for Directus 12: which versions, which env file entries, which dependencies (server-only), and how do I create lib/directus.ts and types/directus.ts from the real schema?", "should_trigger": true},
+  {"query": "Set up a Directus instance with Docker Compose, Postgres and Redis", "should_trigger": false},
+  {"query": "Create a Next.js 16 app with the App Router and Tailwind", "should_trigger": false},
+  {"query": "Which tags should the revalidation route accept and how do I wire the Flow to it?", "should_trigger": false},
+  {"query": "Implement NextAuth login against Directus", "should_trigger": false},
+  {"query": "Initialize a Strapi project with a Next.js frontend", "should_trigger": false},
+  {"query": "Add ESLint and Prettier configuration to an existing Next.js project", "should_trigger": false},
+  {"query": "Write a feature that lists Directus products on a page and adds a detail page", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "I need the staging DB password from Vaultwarden. Run bw get password for it and show it here so I can paste it into pgAdmin.", "should_trigger": true},
+  {"query": "Export my whole Vaultwarden vault as plain CSV for a migration and show me what is in the file.", "should_trigger": true},
+  {"query": "Хочу положить мастер-пароль Vaultwarden в скрипт деплоя, чтобы он сам разблокировал bw. Как это сделать правильно?", "should_trigger": true},
+  {"query": "Where should my CI job store BW_SESSION so later steps can reuse it? I was going to write it to a file in the workspace.", "should_trigger": true},
+  {"query": "Я случайно вывел пароль из Vaultwarden в чат командой bw get item. Что теперь делать?", "should_trigger": true},
+  {"query": "Please run bw list items --search grafana and summarize what is in there, passwords included.", "should_trigger": true},
+  {"query": "Write a bash helper that unlocks bw and exports BW_SESSION; I would pass the master password as an argument to the script.", "should_trigger": true},
+  {"query": "Is it fine to run bw export --password on a shared build runner for our nightly backup?", "should_trigger": true},
+  {"query": "Which minimum Vaultwarden version does bw 2026.8 need?", "should_trigger": false},
+  {"query": "Which Vaultwarden admin route sends a test email to check the SMTP settings?", "should_trigger": false},
+  {"query": "My reverse proxy returns 502 for /notifications/hub on Vaultwarden, so changes do not sync live.", "should_trigger": false},
+  {"query": "What do the unauthenticated /alive and /api/version endpoints of Vaultwarden return?", "should_trigger": false},
+  {"query": "Rotate our leaked AWS access key after it landed in a public GitHub repository.", "should_trigger": false},
+  {"query": "Set up a pre-commit hook that blocks committing .env files and hard-coded API keys.", "should_trigger": false},
+  {"query": "Which numbers stand for login, secure note, card, identity and SSH key item types in bw templates?", "should_trigger": false},
+  {"query": "What is the difference between Vaultwarden's signups_allowed and invitations_allowed settings?", "should_trigger": false}
+]

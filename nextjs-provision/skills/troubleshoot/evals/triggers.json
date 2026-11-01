@@ -1,0 +1,18 @@
+[
+  {"query": "Running npx shadcn add button in my fresh Next.js 16 project fails with 'No Tailwind CSS configuration found at /app' (Tailwind v4, src/app layout, components.json exists). Find the cause and fix it", "should_trigger": true},
+  {"query": "My shadcn components render without any styling, the CSS variables don't seem to be applied. I'm on Tailwind v4", "should_trigger": true},
+  {"query": "components.json error: 'Invalid configuration found' after I moved everything into a src/ directory", "should_trigger": true},
+  {"query": "После npx shadcn add card в проекте на Next.js падает сборка: Cannot find module '@/lib/utils' - cn() не найден. components.json на месте, alias @/* есть в tsconfig. С чего начать диагностику?", "should_trigger": true},
+  {"query": "shadcn studio registry error 401 when I install a premium block", "should_trigger": true},
+  {"query": "Peer dependency conflict (ERESOLVE) when installing shadcn components with React 19", "should_trigger": true},
+  {"query": "Module not found: Can't resolve 'cn' after `npx shadcn@latest init` on CLI 4.21, lib/utils.ts re-exports cn. What do I install, and how do I migrate an old clsx and tailwind-merge helper?", "should_trigger": true},
+  {"query": "Ошибка при установке shadcn-компонента: components.json не найден, tailwind не работает. С чего начать диагностику?", "should_trigger": true},
+  {"query": "Set up shadcn/ui from scratch in a new Next.js project", "should_trigger": false},
+  {"query": "npm ERESOLVE unable to resolve dependency tree when installing react-query v5 next to React 17", "should_trigger": false},
+  {"query": "Prisma migrate dev fails with P3014 about the shadow database", "should_trigger": false},
+  {"query": "Docker build of my Next.js app fails because sharp is missing on alpine", "should_trigger": false},
+  {"query": "ESLint says 'React Hook useEffect has a missing dependency' in my Next.js component", "should_trigger": false},
+  {"query": "Material UI styles are overridden by the Tailwind preflight reset, how do I fix the CSS order?", "should_trigger": false},
+  {"query": "Customize the shadcn theme colors for our brand", "should_trigger": false},
+  {"query": "Vercel deployment fails with 'Module not found: Can't resolve' because of a case-sensitive file path", "should_trigger": false}
+]

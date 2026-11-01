@@ -1,0 +1,17 @@
+[
+  {"query": "Design a label taxonomy and workflow states for a new Plane project: what's the difference between a label, a property, a state and a work item type?", "should_trigger": true},
+  {"query": "Our Plane project has 80 noisy labels. Audit the taxonomy and propose a cleaned-up set with naming conventions", "should_trigger": true},
+  {"query": "Should 'customer-reported' be a label, a custom property or a work item type in Plane? Help me decide", "should_trigger": true},
+  {"query": "Configure custom properties like severity and affected version for work items in Plane", "should_trigger": true},
+  {"query": "Как организовать метки, состояния и типы задач в Plane? Нужен рекомендуемый набор и правила именования", "should_trigger": true},
+  {"query": "Помоги выбрать между label, свойством и типом задачи в Plane для поля «источник заявки»", "should_trigger": true},
+  {"query": "In Plane, when should I use a label, a custom property, a work item type or a state? Give me the decision rules and the recommended state set for a Kanban team", "should_trigger": true},
+  {"query": "Log 30 minutes of work on work item WEB-42", "should_trigger": false},
+  {"query": "Set up a new Agile-ready project including cycles and modules", "should_trigger": false},
+  {"query": "Change the state of PROJ-12 to In Review and assign it to Alice", "should_trigger": false},
+  {"query": "How do I design tags for a blog taxonomy in WordPress?", "should_trigger": false},
+  {"query": "Define a Git branching strategy for releases", "should_trigger": false},
+  {"query": "Design a Postgres enum for task status", "should_trigger": false},
+  {"query": "Configure Jira issue types and workflow schemes", "should_trigger": false},
+  {"query": "Show me all work items with the label 'frontend'", "should_trigger": false}
+]

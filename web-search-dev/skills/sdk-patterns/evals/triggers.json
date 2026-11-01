@@ -1,0 +1,17 @@
+[
+  {"query": "Show me how to call Firecrawl from TypeScript with the SDK to scrape a URL as markdown and to run a structured extract", "should_trigger": true},
+  {"query": "exa-py usage: search with contents in Python. And what replaced find-similar?", "should_trigger": true},
+  {"query": "How do I use the Perplexity SDK in TypeScript to ask a question with citations?", "should_trigger": true},
+  {"query": "Integrate the Jina reader and search into a Node service and a Python worker. No SDK exists, so show the fetch and requests patterns with auth and a rate-limit backoff", "should_trigger": true},
+  {"query": "Which Firecrawl SDK methods are deprecated, such as extract and startExtract, and what should I use instead?", "should_trigger": true},
+  {"query": "What are the best practices for integrating search services into app code: keys, backoff, types?", "should_trigger": true},
+  {"query": "Как подключить Firecrawl SDK в Python-проекте и скрейпить страницу в markdown?", "should_trigger": true},
+  {"query": "Какой npm-пакет ставить для Exa и как сделать поиск с текстом результатов в TypeScript?", "should_trigger": true},
+  {"query": "Run firecrawl scrape from the command line", "should_trigger": false},
+  {"query": "Which MCP tool is best for semantic search?", "should_trigger": false},
+  {"query": "Use the OpenAI Python SDK to call the Responses API", "should_trigger": false},
+  {"query": "Build a scraper script with Puppeteer", "should_trigger": false},
+  {"query": "The Firecrawl SDK throws 401 in my script", "should_trigger": false},
+  {"query": "Use the Stripe Node SDK to create a customer", "should_trigger": false},
+  {"query": "Install the Algolia client and index records", "should_trigger": false}
+]

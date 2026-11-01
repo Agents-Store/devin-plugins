@@ -1,0 +1,18 @@
+[
+  {"query": "Run an SEO audit on my Next.js App Router site: go through a checklist (metadata, headings, sitemap, structured data, Core Web Vitals) and give me a report of the issues", "should_trigger": true},
+  {"query": "How can I automate SEO testing for a Next.js site in CI with Lighthouse and a few Playwright checks so regressions fail the build?", "should_trigger": true},
+  {"query": "I have a Next.js e-commerce site and want a systematic SEO health check before launch. What do I verify and in what order?", "should_trigger": true},
+  {"query": "Run a full-site SEO scan of my Next.js app with Unlighthouse, wire Lighthouse CI thresholds into the pipeline and give me the audit report template with critical, high and medium priority issues", "should_trigger": true},
+  {"query": "Lighthouse SEO score on our Next.js blog is 82. How do I check what is missing and produce an SEO report?", "should_trigger": true},
+  {"query": "Проведи SEO-аудит моего сайта на Next.js: проверь метаданные, заголовки, sitemap и robots, составь отчёт со списком проблем", "should_trigger": true},
+  {"query": "Нужен чек-лист SEO для запуска сайта на Next.js и автоматические тесты, чтобы ошибки ловились в CI", "should_trigger": true},
+  {"query": "Evaluate our Next.js site's SEO health: crawl the main routes, check title/description lengths, h1 count and broken internal links", "should_trigger": true},
+  {"query": "Add Organization and Article JSON-LD to my Next.js blog pages", "should_trigger": false},
+  {"query": "My page is not being indexed by Google even though it is in the sitemap", "should_trigger": false},
+  {"query": "Set up generateMetadata for my product pages in Next.js", "should_trigger": false},
+  {"query": "Find keywords with high search volume for my niche using DataForSEO", "should_trigger": false},
+  {"query": "How do I audit the security of my Next.js app dependencies?", "should_trigger": false},
+  {"query": "Audit the accessibility of my React components with axe", "should_trigger": false},
+  {"query": "Write a content calendar for a SaaS blog", "should_trigger": false},
+  {"query": "Improve my LCP by optimizing the hero image in Next.js", "should_trigger": false}
+]

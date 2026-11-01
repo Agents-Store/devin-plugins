@@ -1,0 +1,18 @@
+[
+  {"query": "Before I run the session doctor on my real session, can you show me what a complete rendered audit looks like?", "should_trigger": true},
+  {"query": "What does the session-doctor report look like when a token is rejected with a 401? I want to see the Tokens and Problems tables.", "should_trigger": true},
+  {"query": "Show me a sample session audit for a clean session. I want to know what \"No problems found\" looks like.", "should_trigger": true},
+  {"query": "Покажи пример отчёта session doctor целиком, чтобы я понял, как читать таблицы Skills, HTTP и Tokens.", "should_trigger": true},
+  {"query": "Как выглядит результат аудита, когда MCP-сервер не подключился? Нужен полный пример отчёта.", "should_trigger": true},
+  {"query": "In the example session audit, what is the Fingerprint column in the Tokens table, and why is the status \"rejected\" if the audit never tested the token?", "should_trigger": true},
+  {"query": "What does the session doctor output on the very first turn of a session, when the transcript does not exist yet?", "should_trigger": true},
+  {"query": "I am writing docs for my team. Give me an example of the session doctor output with the HTTP table filled in, using made-up hosts.", "should_trigger": true},
+  {"query": "Audit my current Claude Code session.", "should_trigger": false},
+  {"query": "Why are my subagents running on Opus at max effort? Check which setting produced that.", "should_trigger": false},
+  {"query": "My MCP server shows as failed in /mcp. How do I debug the connection?", "should_trigger": false},
+  {"query": "Which skills were invoked in this session, and by whom?", "should_trigger": false},
+  {"query": "My CLAUDE.md loads about 10k tokens every session. How do I make it smaller?", "should_trigger": false},
+  {"query": "My staging API token returns 401 from curl. Is it still valid?", "should_trigger": false},
+  {"query": "Show me an example of a Claude Code SKILL.md with frontmatter and a references folder.", "should_trigger": false},
+  {"query": "Show me a sample Lighthouse audit report so I can see how it scores performance and accessibility.", "should_trigger": false}
+]

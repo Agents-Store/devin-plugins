@@ -1,0 +1,18 @@
+[
+  {"query": "I need a proper research report on the European market for residential heat pumps: market size, growth forecast through 2030, the main players and the segments. Use multiple sources, cross-check the numbers and cite them", "should_trigger": true},
+  {"query": "compare Notion, Coda and Slite as team wiki tools for a 40-person startup - pricing, features, integrations, what users complain about. Do real research across several sources and give me a comparison table", "should_trigger": true},
+  {"query": "Do a deep dive on how WebAssembly component model works today: current state, history, who is adopting it and where the standard is going. Comprehensive, with sources please", "should_trigger": true},
+  {"query": "who is Lena Hartmann, CTO of Quantiva GmbH? I need a background briefing on her and the company - funding, products, interviews - before a meeting on Thursday", "should_trigger": true},
+  {"query": "Сделай глубокое исследование рынка электросамокатов в России: объём, динамика, основные игроки и тренды на ближайшие три года, со ссылками на источники", "should_trigger": true},
+  {"query": "Проведи исследование: чем отличаются Supabase, Appwrite и PocketBase для небольшого SaaS, нужна сводка с источниками и оценка достоверности данных", "should_trigger": true},
+  {"query": "Do a news-and-trends research on EU AI Act implementation since January: classify the research, plan the queries, read the sources, cross-check the facts and give me a report with dates and a methodology section, including what changes for startups", "should_trigger": true},
+  {"query": "research the architecture of Vector (the log pipeline) and the best practices for running it at scale - read the docs, the GitHub issues and a few engineering blogs, then write it up", "should_trigger": true},
+  {"query": "What's the capital of Australia and what's its population?", "should_trigger": false},
+  {"query": "Write a 500-word essay about the causes of the French Revolution from your own knowledge, no research needed", "should_trigger": false},
+  {"query": "Here is a pasted 2-page article about remote work. Summarize it in five bullet points", "should_trigger": false},
+  {"query": "Read src/server.ts and tell me how the middleware chain is ordered", "should_trigger": false},
+  {"query": "Fetch https://example.com/pricing and tell me the price of the Pro plan", "should_trigger": false},
+  {"query": "Format these research notes into an executive summary template with a methodology section: [notes pasted below]", "should_trigger": false},
+  {"query": "Which search provider is best for finding a niche product by name: Exa, Perplexity or Jina?", "should_trigger": false},
+  {"query": "Write a Python script that scrapes product names and prices from a category page with BeautifulSoup", "should_trigger": false}
+]

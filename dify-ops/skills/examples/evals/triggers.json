@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a step-by-step walkthrough of updating self-hosted Dify to the latest stable tag, from the pre-flight check to the verification at the end", "should_trigger": true},
+  {"query": "I've never updated Dify before. Can you give me a complete example of the upgrade process so I know what to expect, including the backup and the env sync?", "should_trigger": true},
+  {"query": "Show me a worked example scenario of a tagged-release Dify update where the stack has the bundled Weaviate: the walkthrough with the pre-flight stop, the runbook and the re-run, as a teaching example", "should_trigger": true},
+  {"query": "is there a dify upgrade guide with a worked scenario that includes one merge conflict on docker-compose.yaml and a custom project name?", "should_trigger": true},
+  {"query": "Покажи полный пример обновления Dify на конкретную версию: от проверки до перезапуска контейнеров, чтобы я увидел, как это выглядит на практике", "should_trigger": true},
+  {"query": "Хочу сценарий планового обновления Dify с внешним векторным хранилищем - все команды по порядку, как в учебном примере", "should_trigger": true},
+  {"query": "i'm writing a runbook for my team: give me an end-to-end dify update example that I can adapt, with the commands in the right order", "should_trigger": true},
+  {"query": "show me what a routine dify update looks like when everything goes right, including the rollback info", "should_trigger": true},
+  {"query": "Update my Dify to the newest tag right now, here is the repo path", "should_trigger": false},
+  {"query": "Explain the containers of a Dify docker deployment", "should_trigger": false},
+  {"query": "Show me an example of a zero-downtime Postgres major version upgrade with pg_upgrade", "should_trigger": false},
+  {"query": "Walk me through updating Home Assistant in Docker step by step", "should_trigger": false},
+  {"query": "Compare my .env with .env.example and add the missing variables", "should_trigger": false},
+  {"query": "Why does my git merge fail with 'refusing to merge unrelated histories'?", "should_trigger": false},
+  {"query": "Give me a worked example of a Terraform state migration", "should_trigger": false},
+  {"query": "Build a Dify chatbot that uses a knowledge base of our FAQ documents", "should_trigger": false}
+]

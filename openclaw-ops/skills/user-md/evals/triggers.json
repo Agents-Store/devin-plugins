@@ -1,0 +1,18 @@
+[
+  {"query": "How does the agent know who I am? Set up USER.md with my name, role, timezone and communication preferences", "should_trigger": true},
+  {"query": "map Telegram user ids to names for my OpenClaw agent so it knows who's who in the team chat", "should_trigger": true},
+  {"query": "add a team member to the agent: Dana, Telegram id 123456, ops lead who should be able to approve deployments", "should_trigger": true},
+  {"query": "Set up multi-user access with different permissions for owners and guests of my OpenClaw agent", "should_trigger": true},
+  {"query": "Как настроить USER.md: роли, предпочтения и каналы общения пользователей агента OpenClaw?", "should_trigger": true},
+  {"query": "Добавь в профиль пользователей агента сотрудника с Discord id и укажи, как с ним общаться", "should_trigger": true},
+  {"query": "define communication preferences for each user: Anna wants short answers in English, Boris wants details in Russian", "should_trigger": true},
+  {"query": "set up user permissions in OpenClaw so only my own id can trigger admin actions", "should_trigger": true},
+  {"query": "Name the agent and set its avatar", "should_trigger": false},
+  {"query": "Change the agent's tone to be more formal", "should_trigger": false},
+  {"query": "Add a user to my Linux server with sudo rights and an SSH key", "should_trigger": false},
+  {"query": "Set up RBAC roles in Kubernetes for a new developer", "should_trigger": false},
+  {"query": "Create user profiles with preferences in my Django app's database", "should_trigger": false},
+  {"query": "Add a new member to a Slack workspace and assign them to channels", "should_trigger": false},
+  {"query": "Create a Directus role with limited permissions for editors", "should_trigger": false},
+  {"query": "Write a persona for a new bot user in Discord", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "Show me the AI enrichment pipeline example: an article is saved in Directus, a task adds an AI summary and tags, and the page shows them", "should_trigger": true},
+  {"query": "I need a scheduled data sync example: a daily cron pulls exchange rates and upserts them into Directus. How is it done in this stack?", "should_trigger": true},
+  {"query": "Is there a complete walkthrough of a blog on Directus and Next.js with SEO metadata and an RSS feed?", "should_trigger": true},
+  {"query": "Give me the product catalog scenario for this stack: decimal prices, search params and an uncached search page", "should_trigger": true},
+  {"query": "Which end-to-end scenarios exist for Directus, Next.js and Trigger.dev, so I can pick the closest one to a nightly import?", "should_trigger": true},
+  {"query": "Покажи пример конвейера обогащения статей ИИ на Directus, Next.js и Trigger.dev с защитой от цикла", "should_trigger": true},
+  {"query": "Есть сквозной пример ежедневной синхронизации курсов валют в Directus по расписанию Trigger.dev?", "should_trigger": true},
+  {"query": "show me a complete example with background tasks in the directus nextjs stack", "should_trigger": true},
+  {"query": "Write a Trigger.dev schedules.task with a cron expression and a timezone", "should_trigger": false},
+  {"query": "Give me an example of a Next.js blog with MDX and contentlayer", "should_trigger": false},
+  {"query": "Give me the full feature recipe for a new section: types, reads, actions, revalidation", "should_trigger": false},
+  {"query": "Explain how a Directus Flow forwards events to Next.js", "should_trigger": false},
+  {"query": "Show an example of the OpenAI Responses API with tool calling in Node", "should_trigger": false},
+  {"query": "Show an example of a Directus extension with a custom endpoint", "should_trigger": false},
+  {"query": "Show an example Trigger.dev task that sends emails with Resend", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "Rename the NocoDB column 'Cust Name' to 'Customer Name' and change its type from SingleLineText to LongText", "should_trigger": true},
+  {"query": "Add a formula field to Orders in NocoDB that computes Quantity * UnitPrice minus Discount", "should_trigger": true},
+  {"query": "Set up a Link, Lookup and Rollup chain in NocoDB: Orders link to Customers, lookup the customer email, and roll up total amount per customer", "should_trigger": true},
+  {"query": "Настрой в NocoDB цепочку Link, Lookup и Rollup: заказы привязаны к клиентам, нужно подтянуть email клиента и посчитать сумму заказов по каждому клиенту", "should_trigger": true},
+  {"query": "Как в NocoDB удалить колонку и не сломать формулы и lookup, которые на неё ссылаются?", "should_trigger": true},
+  {"query": "add a new select option 'On hold' to the Status field in NocoDB without touching the existing records", "should_trigger": true},
+  {"query": "Create a Barcode field and a Button field on the Inventory table in NocoDB", "should_trigger": true},
+  {"query": "Create a new table called Invoices with Title and Amount fields in NocoDB", "should_trigger": false},
+  {"query": "Create a Kanban view grouped by Status on the Tasks table in NocoDB", "should_trigger": false},
+  {"query": "Add a new record to the Customers table with name Acme and status Active", "should_trigger": false},
+  {"query": "Change a column type in PostgreSQL from varchar to integer with a USING cast and no downtime", "should_trigger": false},
+  {"query": "Add a field to an Airtable base, a formula that concatenates first and last name", "should_trigger": false},
+  {"query": "Add a new column to a Google Sheet that calculates a running total", "should_trigger": false},
+  {"query": "A NocoDB Lookup field shows nothing after I deleted the link, what's wrong?", "should_trigger": false},
+  {"query": "Add a custom field to a Jira project of type select list with default value", "should_trigger": false}
+]

@@ -3,17 +3,16 @@
   "evals": [
     {
       "id": 4,
-      "prompt": "Optimize my Next.js site for Core Web Vitals. LCP is 4.2s, CLS is 0.23",
+      "prompt": "Use the performance skill. Optimize my Next.js site for Core Web Vitals. LCP is 4.2s, CLS is 0.23. Go through images, fonts, layout shifts and content that loads late, and name the metrics you rely on. In this session you have no project files and no shell, and nobody to ask. Do not ask questions: assume a typical Next.js App Router project and answer in text with concrete findings, what you would check, the fixes and the code you would write.",
       "expected_output": "Identifies specific LCP and CLS issues and implements targeted fixes",
       "files": [],
       "expectations": [
-        "Checks that the LCP image has loading=\"eager\" and fetchPriority=\"high\" (or preload in Next.js 16 when one LCP image fits every viewport) and a sizes attribute; does not recommend the deprecated priority prop on Next.js 16",
-        "Verifies next/image is used instead of native img tags",
-        "Checks for AVIF/WebP format configuration in next.config",
-        "Verifies next/font usage (no external font requests causing CLS)",
-        "Checks all images have explicit width/height or fill prop",
-        "Looks for dynamic content injection above fold causing CLS",
-        "Does NOT reference FID (replaced by INP in 2024)"
+        "The answer sets loading=\"eager\" and fetchPriority=\"high\" on the LCP image",
+        "The answer adds a sizes attribute to the LCP image",
+        "The answer configures AVIF and WebP in images.formats of next.config",
+        "The answer uses next/font to self-host the fonts",
+        "The answer gives every image explicit width and height or the fill prop",
+        "The answer names INP as the interactivity metric next to LCP and CLS"
       ]
     }
   ]

@@ -1,0 +1,17 @@
+[
+  {"query": "I get sqlalchemy.orm.exc.DetachedInstanceError when I access user.posts after the request ends. What causes it and how do I fix it?", "should_trigger": true},
+  {"query": "IntegrityError: UNIQUE constraint failed when two requests create the same user. How do I handle it and roll back the session correctly?", "should_trigger": true},
+  {"query": "AmbiguousColumnError on a join between two tables that both have an id column. How do I resolve it?", "should_trigger": true},
+  {"query": "My Flask app fails with No module named psycopg and then with an AmbiguousColumnError on a join. Diagnose both errors and tell me the fixes", "should_trigger": true},
+  {"query": "LegacyAPIWarning: The Query.get() method is considered legacy. Where do I change it and what replaces it?", "should_trigger": true},
+  {"query": "Ошибка «This Session's transaction has been rolled back due to a previous exception during flush». Как её диагностировать и исправить?", "should_trigger": true},
+  {"query": "Приложение на SQLAlchemy падает с DetachedInstanceError при обращении к связи после закрытия сессии, а после этого сыпется ошибка транзакции на flush. Разбери оба сбоя и как их предотвратить", "should_trigger": true},
+  {"query": "Convert my Model.query code to select() 2.0 style", "should_trigger": false},
+  {"query": "Define a many-to-many relationship in SQLAlchemy", "should_trigger": false},
+  {"query": "Show me the commands to create and apply an Alembic migration", "should_trigger": false},
+  {"query": "Django IntegrityError: NOT NULL constraint failed on save", "should_trigger": false},
+  {"query": "Debug a Postgres deadlock between two transactions", "should_trigger": false},
+  {"query": "Fix a React 'Cannot read properties of undefined' error", "should_trigger": false},
+  {"query": "Configure SQLAlchemy engine pooling parameters for production", "should_trigger": false},
+  {"query": "Check that my SQLAlchemy setup and DATABASE_URL are configured properly", "should_trigger": false}
+]

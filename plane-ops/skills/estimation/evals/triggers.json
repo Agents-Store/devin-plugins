@@ -1,0 +1,17 @@
+[
+  {"query": "Our Plane backlog item \"Research: Pusher or Ably for realtime?\" keeps getting a point value from the team. What should go on it instead of points, and how do we timebox it?", "should_trigger": true},
+  {"query": "Facilitate a planning poker session for this ticket: 'Migrate user avatars to object storage' - ask the team's questions and propose a point value", "should_trigger": true},
+  {"query": "When should we use t-shirt sizes instead of story points, and how do I convert between them for Plane estimates?", "should_trigger": true},
+  {"query": "Which Fibonacci values and t-shirt mapping fit a Plane project, and how do I write an estimate into a project that already has an estimate system configured?", "should_trigger": true},
+  {"query": "In our planning poker the votes on one Plane ticket were 3, 5 and 13. What do we do with that spread, and when should the story be split instead?", "should_trigger": true},
+  {"query": "Как в Plane оценивать задачи в story points по шкале Фибоначчи относительно референсной истории и как записать оценку в задачу?", "should_trigger": true},
+  {"query": "У команды нет референсных историй. Когда в Plane использовать футболки (S, M, L), когда Фибоначчи и как перевести одно в другое?", "should_trigger": true},
+  {"query": "What are the formulas for sprint capacity, velocity and focus factor?", "should_trigger": false},
+  {"query": "Break this epic down into stories with INVEST", "should_trigger": false},
+  {"query": "Plan the sprint using our capacity", "should_trigger": false},
+  {"query": "Calculate the average time logged per story point over the last sprints", "should_trigger": false},
+  {"query": "Estimate the cost of AWS hosting for 10,000 users", "should_trigger": false},
+  {"query": "Give me a quote for building a website: hours and price", "should_trigger": false},
+  {"query": "Estimate how long my marathon training will take", "should_trigger": false},
+  {"query": "Create a Plane work item with an estimate of 5", "should_trigger": false}
+]

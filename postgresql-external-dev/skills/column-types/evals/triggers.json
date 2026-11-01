@@ -1,0 +1,18 @@
+[
+  {"query": "I'm designing a Postgres table that NocoDB and NocoBase will both read. Which column type should I use for currency, email, URL and phone so both tools show them correctly?", "should_trigger": true},
+  {"query": "Should I use numeric or double precision for prices in a PostgreSQL table connected to NocoDB? How does each get displayed?", "should_trigger": true},
+  {"query": "Is jsonb supported by NocoDB and NocoBase, and what about uuid, ARRAY and native PostgreSQL enum columns?", "should_trigger": true},
+  {"query": "What's the best PostgreSQL type for a rating or a status select that works in both NocoDB and NocoBase without custom types?", "should_trigger": true},
+  {"query": "Which date and time types should I use (timestamptz vs timestamp vs date) so NocoDB shows the right time zone?", "should_trigger": true},
+  {"query": "Какой тип колонки в PostgreSQL выбрать для телефона, e-mail и ссылки, чтобы он нормально отображался и в NocoDB, и в NocoBase?", "should_trigger": true},
+  {"query": "Какой тип колонки выбрать в PostgreSQL для JSON-данных, UUID и массивов, чтобы NocoDB и NocoBase корректно их показывали?", "should_trigger": true},
+  {"query": "Boolean columns in Postgres for NocoDB checkbox fields: bool vs smallint, and what default should I set?", "should_trigger": true},
+  {"query": "Create a table 'customers' with a UUID primary key for NocoDB and NocoBase", "should_trigger": false},
+  {"query": "Add a foreign key and an index on the FK between orders and customers", "should_trigger": false},
+  {"query": "Rename a column in a live PostgreSQL table and make NocoDB see it", "should_trigger": false},
+  {"query": "How do I change the column width and hide a column in a NocoDB grid view?", "should_trigger": false},
+  {"query": "Compare MySQL and PostgreSQL data types for storing money", "should_trigger": false},
+  {"query": "How do I choose between varchar(255) and text in plain PostgreSQL for performance?", "should_trigger": false},
+  {"query": "Define SQLAlchemy mapped_column types for a Postgres table", "should_trigger": false},
+  {"query": "Show me a full example CRM schema for NocoDB with all tables and constraints", "should_trigger": false}
+]

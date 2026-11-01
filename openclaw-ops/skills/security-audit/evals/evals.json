@@ -3,100 +3,99 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "The built-in security audit came back clean on every instance. We're secure, right?",
+      "prompt": "Use the security-audit skill. The built-in security audit came back clean on every instance. We're secure, right? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "No: the built-in audit is one process reporting on itself. Introduces the second layer — publication and reachability, the container-aware firewall chain, token uniqueness, filesystem permissions, metrics auth — and states the trust boundary explicitly.",
       "files": [],
       "expectations": [
-        "States that a clean built-in audit says nothing about network exposure, the host, or neighbours",
-        "Names at least three layer-two checks the runtime structurally cannot make",
-        "Writes out the one-trust-boundary-per-gateway sentence rather than assuming it",
-        "Does not claim any instance is secure on the strength of the exit code alone"
+        "The answer says a clean built-in audit says nothing about network exposure",
+        "The answer says to check that every port binds loopback",
+        "The answer says to test reachability from off-host",
+        "The answer says not to call an instance secure on the exit code alone"
       ]
     },
     {
       "id": 2,
-      "prompt": "The audit printed six findings. Run security audit --fix on all of them and clear it out.",
+      "prompt": "Use the security-audit skill. The audit printed six findings. Run security audit --fix on all of them and clear it out. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "Declines to chain the fix onto the detection. Explains that detection is R0 and the fix is R4 behind a red line and a typed confirmation, that the repair covers only the narrow subset that declares one, that it cannot approve capabilities, and that a mutation selector may not be 'all'.",
       "files": [],
       "expectations": [
-        "Refuses to run --fix in the same turn the audit was read",
-        "States that --fix repairs only the checks declaring an automatic repair and never touches the host",
-        "States that neither --fix nor the confirmation flag approves capabilities, and prints the consent line for a human",
-        "Rejects a fleet-wide mutation selector and requires named targets with the canary first"
+        "The answer refuses to run --fix in the same turn the audit was read",
+        "The answer says --fix needs a typed confirmation",
+        "The answer says --fix rewrites file modes",
+        "The answer says to run security audit --deep"
       ]
     },
     {
       "id": 3,
-      "prompt": "I found a plaintext env file with API keys sitting inside an instance's state directory. Delete it and we're done.",
+      "prompt": "Use the security-audit skill. I found a plaintext env file with API keys sitting inside an instance's state directory. Delete it and we're done. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "Establishes fingerprint parity against the delivered value first, because a redundant file and a load-bearing one look identical on disk; neutralises a redundant one by moving it to quarantine outside the container's volumes; then rotates, because deletion does not un-leak a value that has been readable for as long as the file existed.",
       "files": [],
       "expectations": [
-        "Compares by fingerprint and key class, never by printing the value",
-        "Says a file with no parity is load-bearing and deleting it stops the instance",
-        "Moves to quarantine outside the container volumes instead of deleting",
-        "States that rotation is the only remedy for a value that has already been at rest in plaintext"
+        "The answer refuses to treat deleting the file as the whole fix",
+        "The answer says to check the file mode and owner",
+        "The answer says to run security audit --deep",
+        "The answer hands the exposed credential to the secrets-infisical skill",
+        "The answer names fleet.security.state-perms"
       ]
     },
     {
       "id": 4,
-      "prompt": "The host firewall only allows 22 and 443, so the gateway ports published by these containers are not reachable from outside.",
+      "prompt": "Use the security-audit skill. The host firewall only allows 22 and 443, so the gateway ports published by these containers are not reachable from outside. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "Corrects the premise: published container ports bypass the ordinary input chain, so those rules are simply not in the path. Requires a reachability test from off-host rather than a rule listing, and checks the loopback binding of every publication including stopped instances.",
       "files": [],
       "expectations": [
-        "States that published ports do not traverse the chain those rules live in",
-        "Requires a reachability check from another machine rather than reading rules",
-        "Checks port.loopback for every instance from discovery output",
-        "Notes that a stopped instance still owns its publication in its compose file"
+        "The answer says to compare operator token fingerprints across instances",
+        "The answer says to check port.loopback from the discovery output",
+        "The answer requires a reachability check from another machine rather than reading rules",
+        "The answer names fleet.security.port-non-loopback"
       ]
     },
     {
       "id": 5,
-      "prompt": "Monitoring wants to scrape the gateway metrics. Give them the bearer token and expose the metrics endpoint publicly.",
+      "prompt": "Use the security-audit skill. Monitoring wants to scrape the gateway metrics. Give them the bearer token and expose the metrics endpoint publicly. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check.",
       "expected_output": "Refuses both halves: bearer auth is all-or-nothing operator access, so handing over the token makes the scraper an operator, and a public unauthenticated metrics endpoint is prohibited. Scrapes from inside the container and exports only the numbers.",
       "files": [],
       "expectations": [
-        "States that the bearer grants full operator access and there is no read-only token",
-        "Refuses to expose an unauthenticated metrics endpoint",
-        "Proposes scraping from inside the container so the token never crosses the boundary",
-        "Does not suggest retrieving the token by inspecting the container from the host"
+        "The answer states that the bearer grants full operator access and there is no read-only token",
+        "The answer refuses to expose an unauthenticated metrics endpoint",
+        "The answer proposes scraping from inside the container so the token never crosses the boundary",
+        "The answer does not suggest retrieving the token by inspecting the container from the host"
       ]
     },
     {
       "id": 6,
-      "prompt": "We think one instance was compromised. I restarted it and ran the fix to be safe. What next?",
+      "prompt": "Use the security-audit skill. We think one instance was compromised. I restarted it and ran the fix to be safe. What next? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "Points out that the restart destroyed log evidence and the fix rewrote files before scope was known; from here, contains by cutting reachability, scopes the leak by comparing fingerprints across the fleet, and rotates in dependency order — mint, deliver, verify by name, restart, revoke.",
       "files": [],
       "expectations": [
-        "Names that restarting rotates away the log lines holding the entry point",
-        "Scopes the exposure by fingerprint comparison rather than by printing values",
-        "Rotates in the order mint, deliver, verify, restart, revoke, and says revoking first turns a compromise into an outage",
-        "States that a secret write has zero retries and the fingerprint is verified before any second attempt",
-        "Ends with a clean re-run of both the audit and the health battery"
+        "The answer names that restarting rotates away the log lines holding the entry point",
+        "The answer says to preserve the logs before changing anything",
+        "The answer says to compare token fingerprints across instances",
+        "The answer says to run a reachability test from off-host"
       ]
     },
     {
       "id": 7,
-      "prompt": "security audit exited 2 on the canary, so that is warn-level findings only — fine to ship. Also doctor --lint returned 2 on another instance, same thing.",
+      "prompt": "Use the security-audit skill. security audit exited 2 on the canary, so that is warn-level findings only — fine to ship. Also doctor --lint returned 2 on another instance, same thing. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "Corrects both. Upstream documents no exit-code table for security audit, so its code is not read as a verdict: the payload is. For doctor --lint, exit 2 means the command failed before its checks completed — a failure, not warnings — so that instance has not been linted at all.",
       "files": [],
       "expectations": [
-        "States that security audit has no documented exit-code contract and reads the JSON payload instead",
-        "States that doctor --lint exit 2 is a failed run, not a warn-only result, and that the instance is unverified",
-        "Reads exit 1 from doctor --lint as at least one finding at the chosen --severity-min threshold",
-        "Pins the threshold (--severity-min) so exit codes are comparable between builds",
-        "Does not ship or call the instance clean on an exit code alone"
+        "The answer states that security audit has no documented exit-code contract and reads the JSON payload instead",
+        "The answer says doctor --lint exit 2 is a failed run, not a warning",
+        "The answer says a filtered audit is not a clean one",
+        "The answer mentions suppressedFindings"
       ]
     },
     {
       "id": 8,
-      "prompt": "We keep nightly tarballs of every instance's state directory on a shared backup share that the whole ops team can read. That is just routine backup hygiene, right?",
+      "prompt": "Use the security-audit skill. We keep nightly tarballs of every instance's state directory on a shared backup share that the whole ops team can read. That is just routine backup hygiene, right? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check.",
       "expected_output": "Classifies the tarballs as credential artefacts: current OAuth tokens sit in the state database in plaintext, so every copy of a state directory carries working credentials. Owner-only mode, a private location, a stated retention; a copy that leaves the host is answered by revoking the login at its source.",
       "files": [],
       "expectations": [
-        "States that state-directory copies and verified archives contain usable OAuth tokens in plaintext",
-        "Calls for owner-only permissions and a non-shared location, and a stated retention",
-        "Says the response to a leaked copy is to revoke and re-issue at the provider, not to delete the file",
-        "Does not claim the legacy key directory protects the current credentials"
+        "The answer states that state-directory copies and verified archives contain usable OAuth tokens in plaintext",
+        "The answer calls for owner-only permissions and a non-shared location, and a stated retention",
+        "The answer says the response to a leaked copy is to revoke and re-issue at the provider, not to delete the file",
+        "The answer does not claim the legacy key directory protects the current credentials"
       ]
     }
   ]

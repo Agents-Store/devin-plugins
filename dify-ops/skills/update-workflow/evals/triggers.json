@@ -1,0 +1,18 @@
+[
+  {"query": "I need to upgrade our self-hosted Dify from 1.15.0 to 1.17.1. We keep local changes on a dev branch. How do I back up, merge the tag, resolve conflicts and bring the containers back up?", "should_trigger": true},
+  {"query": "merge the upstream changes into my dify dev branch - main tracks origin/main, and I got conflicts in docker/docker-compose.yaml. How do I resolve them?", "should_trigger": true},
+  {"query": "before I update Dify, what backup do I need? Our stack uses the bundled Weaviate and I read there's a migration gate for newer versions", "should_trigger": true},
+  {"query": "I did git clone --branch 1.16.0 for Dify so I'm on a detached HEAD with no dev branch. How do I update to 1.17.1 properly and keep a way to roll back?", "should_trigger": true},
+  {"query": "Как обновить Dify, развёрнутый в Docker: хочу слить свежий релизный тег в мою ветку dev, сделать бэкап томов и потом перезапустить контейнеры", "should_trigger": true},
+  {"query": "Обновление Dify прошло с конфликтами при merge, контейнеры не поднимаются. Как откатиться на предыдущее состояние dev?", "should_trigger": true},
+  {"query": "Update our self-hosted Dify to the latest stable release. Our dev branch carries local changes and main tracks origin/main. Plan the git steps and the backup before anything changes", "should_trigger": true},
+  {"query": "how do I roll back a failed dify upgrade? I've merged the new tag and pulled the images but the web UI shows a 500", "should_trigger": true},
+  {"query": "Sync the .env of my Dify docker deployment with the new .env.example", "should_trigger": false},
+  {"query": "What does each container of the Dify docker-compose stack do?", "should_trigger": false},
+  {"query": "Upgrade my Django project from 4.2 to 5.1 and fix the deprecations", "should_trigger": false},
+  {"query": "Resolve this git merge conflict in package.json after merging main into my feature branch", "should_trigger": false},
+  {"query": "Back up a Postgres database with pg_dump nightly and restore it on another server", "should_trigger": false},
+  {"query": "Update the Docker images of Nextcloud on my NAS to the latest version", "should_trigger": false},
+  {"query": "Show me a worked example of a routine Dify update, start to finish", "should_trigger": false},
+  {"query": "Create a Dify agent that calls a weather API tool and deploy it as an API endpoint", "should_trigger": false}
+]

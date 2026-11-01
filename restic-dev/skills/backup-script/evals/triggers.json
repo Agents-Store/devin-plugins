@@ -1,0 +1,18 @@
+[
+  {"query": "Write the daily restic backup script for my Docker server: dump Postgres and MySQL containers first, back up the data paths, apply a forget policy and prune. It must not fail the run on exit code 3", "should_trigger": true},
+  {"query": "What retention policy should I use with restic forget - keep-daily, keep-weekly, keep-monthly - and how do I combine it with --prune safely in a script?", "should_trigger": true},
+  {"query": "How do I create an excludes file for restic so it skips caches, node_modules and docker overlay dirs? Show me the --exclude-file usage", "should_trigger": true},
+  {"query": "My nightly restic script runs restic forget --prune after the backup and ignores exit code 3 for both commands. Since restic 0.19 that is wrong for one of them. Show the exit-code handling the script should use for backup and for forget", "should_trigger": true},
+  {"query": "Add database dumps to my restic backup: pg_dump for each Postgres container into a staging dir that restic picks up, then clean the staging dir", "should_trigger": true},
+  {"query": "Напиши ежедневный скрипт бэкапа через restic: дампы баз данных, бэкап найденных путей и очистка старых снапшотов по политике хранения", "should_trigger": true},
+  {"query": "Как задать политику хранения restic forget и исключения для бэкапа сервера? Нужен готовый фрагмент скрипта", "should_trigger": true},
+  {"query": "My restic backup script dumps Postgres with docker exec -it and the dump file is empty when it runs from cron. Fix the dump step and list the order the script should follow: environment, dumps, backup, retention, log", "should_trigger": true},
+  {"query": "Schedule my restic backup script to run every night at 03:00 in the Europe/Kyiv time zone with a systemd timer", "should_trigger": false},
+  {"query": "restic says 'repository is already locked' - how do I unlock it?", "should_trigger": false},
+  {"query": "Restore the latest snapshot to a new server and replay the database dumps", "should_trigger": false},
+  {"query": "Write a bash script that rsyncs a directory to a remote server", "should_trigger": false},
+  {"query": "Set up borgbackup with a repository on a Hetzner storage box", "should_trigger": false},
+  {"query": "pg_dump flags for a compressed custom-format dump of one database", "should_trigger": false},
+  {"query": "Create a restic repository on Cloudflare R2 with an AccessKey and secret", "should_trigger": false},
+  {"query": "Which Docker volumes and bind mounts on this server should I back up?", "should_trigger": false}
+]

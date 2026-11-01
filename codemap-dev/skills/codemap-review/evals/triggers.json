@@ -1,0 +1,17 @@
+[
+  {"query": "Review this file for me, I'm a junior dev and I'd like to know what could be wrong, especially security and readability, and why it matters: @deals_bp.get('/deals/search') def search(): q = request.args['q']; rows = db.session.execute(f\"SELECT * FROM deal WHERE title LIKE '%{q}%'\"); return jsonify([dict(r) for r in rows])", "should_trigger": true},
+  {"query": "please review this PR diff and explain every issue like I'm a junior developer, what is wrong and why: +  if user.password == request.form['password']: login(user) +  SECRET_KEY = 'changeme' +  def f(x): return [i*2 for i in x if i]", "should_trigger": true},
+  {"query": "what's wrong with this code? check my work please, I'm not sure about the timezone handling: function today(){ const d = new Date(); return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); }", "should_trigger": true},
+  {"query": "Проверь мой код: найди ошибки, проблемы безопасности и то, что новичок обычно делает неправильно, и объясни почему. def get_order(id): o = db.execute('select * from orders where id=' + id).fetchone(); if o == None: return {}; return o", "should_trigger": true},
+  {"query": "Сделай ревью этого диффа моего pull request: хочу понять, что исправить в первую очередь и почему это важно. +  @app.route('/export') +  def export(): return send_file(request.args['path']) +  except: pass", "should_trigger": true},
+  {"query": "I'm a junior dev and my lead asked me to clean up components/UserList.jsx. Review it and explain every issue so I learn why it matters: function UserList(p){ var d=p.data; var r=[]; for(var i=0;i<d.length;i++){ if(d[i].active==true){ r.push(<li key={i}>{d[i].name} - {d[i].email}</li>) } } return <ul>{r}</ul> }", "should_trigger": true},
+  {"query": "can you look over my Dockerfile and tell me what a reviewer would complain about? I'm learning this stuff. FROM ubuntu:latest; RUN apt-get update; RUN apt-get install -y python3 pip; COPY . .; RUN pip install -r requirements.txt; CMD python3 main.py", "should_trigger": true},
+  {"query": "Explain what the file routes/deals.py does, I've never seen Flask before", "should_trigger": false},
+  {"query": "Draw an ERD of the models in this project", "should_trigger": false},
+  {"query": "Draft the commit message for my staged changes: I added partial refunds with a database migration and fixed a rounding bug in the invoice total", "should_trigger": false},
+  {"query": "Test the frontend of my app on localhost:8080 for broken pages and console errors", "should_trigger": false},
+  {"query": "Fix the failing test in tests/test_orders.py, the assertion on total fails with 99.9 vs 100", "should_trigger": false},
+  {"query": "Set up ESLint and Prettier for this TypeScript project with the Airbnb config and a pre-commit hook", "should_trigger": false},
+  {"query": "What are the pros and cons of a monorepo versus several repositories for a team of eight?", "should_trigger": false},
+  {"query": "Generate a CHANGELOG entry for release 2.3.0 from these commit messages", "should_trigger": false}
+]

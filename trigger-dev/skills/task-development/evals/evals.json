@@ -3,15 +3,15 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Write a Trigger.dev task that processes image uploads. It should validate the input with Zod, retry up to 5 times on failure, use a queue with max 3 concurrent executions, and track progress via metadata.",
-      "expected_output": "Should produce working TypeScript with schemaTask or task+zod, retry config, a concurrency limit of 3 (queue concurrencyLimit on every server, or the concurrency option flagged as server 4.7.0 or newer), metadata.set for progress, proper exports",
+      "prompt": "Use the task-development skill. Write a Trigger.dev task for a heavy video transcode that needs 4 vCPU and 8 GB of RAM and must stop retrying at once when the input file is corrupt. Also show how a caller starts one run of it on a bigger machine.",
+      "expected_output": "Should set machine large-1x, throw AbortTaskRunError for the corrupt file, pass machine as a string at trigger time",
       "files": [],
       "expectations": [
-        "Uses @trigger.dev/sdk import",
-        "Includes retry configuration with maxAttempts",
-        "Limits concurrency to 3: queue with concurrencyLimit (works on every server version), or concurrency: { total: 3 } clearly marked as requiring server 4.7.0 or newer",
-        "Uses metadata.set for progress tracking",
-        "Task is exported"
+        "The task sets the machine to large-1x",
+        "The code imports AbortTaskRunError from @trigger.dev/sdk",
+        "The task throws AbortTaskRunError for a corrupt file",
+        "The trigger call passes machine as a plain string such as large-2x",
+        "The code imports from @trigger.dev/sdk, not @trigger.dev/sdk/v3"
       ]
     },
     {
@@ -20,25 +20,25 @@
       "expected_output": "A task with a pre-declared queue(), onFailure writing a failed status, idempotency key built from the record id and version, and a parent task using batchTriggerAndWait (no Promise.all over triggerAndWait); all imports from @trigger.dev/sdk.",
       "files": [],
       "expectations": [
-        "Imports from @trigger.dev/sdk, not @trigger.dev/sdk/v3",
-        "Declares the queue with queue({ name, concurrencyLimit }) and passes the queue object to the task",
-        "Writes job_status processing at the start, completed at the end and failed in onFailure",
-        "Builds an idempotency key from the record id (and version)",
-        "Fans out with batchTriggerAndWait and does not use Promise.all with triggerAndWait"
+        "The code imports from @trigger.dev/sdk, not @trigger.dev/sdk/v3",
+        "The code declares the queue with queue({ name, concurrencyLimit })",
+        "The code writes job_status failed in onFailure",
+        "The code builds an idempotency key from the record id",
+        "The code fans out the list of order ids with batchTriggerAndWait",
+        "The code does not use Promise.all with triggerAndWait"
       ]
     },
     {
       "id": 3,
-      "prompt": "My Next.js route handler receives a webhook with a list of item ids and should start a Trigger.dev task for each id. The build fails with 'You need to set the TRIGGER_SECRET_KEY environment variable', and I also want the handler to wait for one task's output in an admin script. How do I write both?",
-      "expected_output": "batchTrigger with per-item idempotency keys inside the handler, a type-only task import, the build error explained as a trigger at module level or while prerendering, runs.poll for waiting outside a task",
+      "prompt": "Use the task-development skill. On our self-hosted Trigger.dev server a nightly task calls wait.for one hour and other runs queue up behind it. I also want at most 2 runs per tenant at once on server 4.4.4 and a 5 minute expiry for one particular trigger call. What do I change?",
+      "expected_output": "Should say self-hosted has no checkpoints so a waiting run keeps its slot, use a queue concurrencyLimit at trigger time for the per-tenant limit, and pass ttl 5m in the trigger options",
       "files": [],
       "expectations": [
-        "Imports the task with import type and calls tasks.trigger or tasks.batchTrigger inside the handler body, not at module level",
-        "Explains that importing the SDK reads no environment variable and the first API call throws when TRIGGER_SECRET_KEY is missing",
-        "Warns that TRIGGER_API_URL must be set where the trigger runs on self-hosted, or the SDK falls back to Trigger.dev Cloud",
-        "Builds the idempotency key from the item (and a version) or sets a short idempotencyKeyTTL, not the item id alone",
-        "Says triggerAndWait and triggerAndSubscribe work only inside a task, there is no triggerAndPoll, and uses runs.poll from backend code",
-        "Imports from @trigger.dev/sdk, not @trigger.dev/sdk/v3"
+        "The answer says self-hosted servers have no checkpoints, so a waiting run keeps holding its slot",
+        "The answer limits runs per tenant with a queue that has a concurrencyLimit passed in the trigger options",
+        "The answer says the concurrency option with perKey needs server 4.7.0 or newer",
+        "The answer says the concurrencyLimit form works on every server version",
+        "The answer passes ttl 5m in the options of the trigger call"
       ]
     }
   ]

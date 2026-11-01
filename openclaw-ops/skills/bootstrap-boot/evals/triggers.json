@@ -1,0 +1,18 @@
+[
+  {"query": "What should happen the first time my new OpenClaw agent starts? I want a first-run discovery conversation that asks who I am and what I need", "should_trigger": true},
+  {"query": "Write a BOOT.md checklist for gateway restarts: verify channels are connected, send a 'back online' message and check pending standing orders", "should_trigger": true},
+  {"query": "how do I initialize a fresh agent so it runs an onboarding ritual and then removes BOOTSTRAP.md when it's done?", "should_trigger": true},
+  {"query": "What runs on reboot for an OpenClaw agent? I want it to re-check its cron jobs after the gateway restarts", "should_trigger": true},
+  {"query": "Хочу, чтобы новый агент OpenClaw при первом запуске сам знакомился с пользователем: что положить в BOOTSTRAP.md?", "should_trigger": true},
+  {"query": "Что должно происходить при перезапуске gateway OpenClaw? Нужен чек-лист BOOT.md", "should_trigger": true},
+  {"query": "set up an onboarding flow for new agents in OpenClaw so the first message is a guided setup instead of a blank chat", "should_trigger": true},
+  {"query": "what's the difference between BOOTSTRAP.md and BOOT.md in OpenClaw - which one fires when?", "should_trigger": true},
+  {"query": "How do I make the agent check my inbox every 30 minutes and only notify me when something is urgent?", "should_trigger": false},
+  {"query": "The gateway won't start after I updated OpenClaw to the new release", "should_trigger": false},
+  {"query": "Write a systemd unit that restarts my service on boot and posts a Slack message", "should_trigger": false},
+  {"query": "Set up a Docker entrypoint script that runs database migrations on container start", "should_trigger": false},
+  {"query": "What files does OpenClaw load automatically and what are the character limits?", "should_trigger": false},
+  {"query": "Name my agent and choose an emoji and avatar for it", "should_trigger": false},
+  {"query": "How do I run a cloud-init script on the first boot of a Hetzner VM?", "should_trigger": false},
+  {"query": "Write an onboarding flow with a product tour for new users of my SaaS web app", "should_trigger": false}
+]

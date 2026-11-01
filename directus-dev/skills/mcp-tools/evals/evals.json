@@ -3,20 +3,20 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "What MCP tools does Directus expose? I just connected it and want to know what I can do with it",
+      "prompt": "Use the mcp-tools skill. What MCP tools does Directus expose? I just connected it and want to know what I can do with it. List every tool by name with one line each, and tell me which call to make first.",
       "expected_output": "Lists all 12 MCP tools with their action patterns and the query system",
       "files": [],
       "expectations": [
-        "Lists all 12 MCP tools by name",
+        "The answer names the tools system-prompt, schema, collections, fields, relations, items, files, assets, folders, flows, operations and trigger-flow",
         "Mentions system-prompt tool as first call",
         "Explains the unified action-based CRUD pattern",
         "Mentions schema tool for discovery",
-        "Includes trigger-flow as a tool"
+        "The answer includes trigger-flow as a tool"
       ]
     },
     {
       "id": 2,
-      "prompt": "I'm calling the Directus items tool but getting 'action is required' error. What am I doing wrong?",
+      "prompt": "Use the mcp-tools skill. I'm calling the Directus items tool but getting 'action is required' error. What am I doing wrong?",
       "expected_output": "Explains the unified action pattern and that every Directus MCP tool requires an action parameter",
       "files": [],
       "expectations": [
@@ -28,7 +28,7 @@
     },
     {
       "id": 25,
-      "prompt": "My MCP client sends every Directus tool definition to the model and runs out of context. Can Directus reduce that?",
+      "prompt": "Use the mcp-tools skill. My MCP client sends every Directus tool definition to the model and runs out of context. Can Directus reduce that?",
       "expected_output": "registry mode via ?tool_mode=registry with search, execute, schema",
       "files": [],
       "expectations": [

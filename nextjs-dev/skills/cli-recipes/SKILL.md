@@ -1,6 +1,6 @@
 ---
 name: cli-recipes
-description: Next.js CLI commands and common development scripts. This skill should be used when the user asks about "Next.js CLI", "next dev command", "next build", "create-next-app", "Turbopack", "Next.js command line", or needs to run Next.js commands from the terminal.
+description: Next.js 16 command-line recipes — create-next-app, next dev and next build with Turbopack as the default (--webpack to opt out), next start, the built-in bundle analyzer, next upgrade with codemods, and linting now that next lint is removed. Use when the question is which next command, flag or package script to run. Docker packaging is docker-patterns.
 ---
 
 # Next.js CLI Recipes

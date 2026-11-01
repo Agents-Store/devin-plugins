@@ -1,0 +1,17 @@
+[
+  {"query": "Run a Trigger.dev task every weekday at 08:00 in the Europe/Kyiv timezone. How do I declare the cron, and does it run in dev too?", "should_trigger": true},
+  {"query": "My cron task runs a few minutes late since I upgraded the server. Why, and how do I make it fire exactly on time?", "should_trigger": true},
+  {"query": "I need one schedule per customer, created at runtime. How do I use deduplicationKey and externalId?", "should_trigger": true},
+  {"query": "npx trigger.dev schedules:attach says unknown command. How do I attach a schedule to production?", "should_trigger": true},
+  {"query": "My nightly cleanup schedules.task fires from every dev session and from staging as well. Restrict it to production with the environments option and show the cron object", "should_trigger": true},
+  {"query": "A cron task that runs every minute takes three minutes, and queued runs pile up. Add a ttl shorter than the interval so stale runs expire. Where do I set it?", "should_trigger": true},
+  {"query": "Как сделать задачу по расписанию в Trigger.dev: ежедневно в полночь по UTC, и как проверить, что она сработала?", "should_trigger": true},
+  {"query": "Моё расписание Trigger.dev не сработало. Какие причины проверить в dev и в production?", "should_trigger": true},
+  {"query": "Write a basic task with retries and a queue", "should_trigger": false},
+  {"query": "Create a cron job in GitHub Actions that runs a script daily", "should_trigger": false},
+  {"query": "Set up node-cron inside my Express app", "should_trigger": false},
+  {"query": "Delay a single task run by 10 minutes with the delay option", "should_trigger": false},
+  {"query": "Deploy Trigger.dev tasks to production", "should_trigger": false},
+  {"query": "Write a Kubernetes CronJob manifest", "should_trigger": false},
+  {"query": "Schedule an n8n workflow with a Schedule Trigger node", "should_trigger": false}
+]

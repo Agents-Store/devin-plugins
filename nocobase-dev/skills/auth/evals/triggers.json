@@ -1,0 +1,18 @@
+[
+  {"query": "how do I get a token for NocoBase v2 so my script can call /api/collections:list? I have the admin email and password", "should_trigger": true},
+  {"query": "My request to NocoBase returns 401 although I send Authorization: Bearer with a token I created yesterday", "should_trigger": true},
+  {"query": "Connect an MCP client to our NocoBase v2 instance - I need OAuth through the IdP: OAuth plugin", "should_trigger": true},
+  {"query": "Create a long-lived API Key in NocoBase for a nightly sync service and show me a curl and a Node snippet that use it", "should_trigger": true},
+  {"query": "Как залогиниться в NocoBase v2 через CLI: nb env add и nb env auth? Хочу сохранить окружение staging", "should_trigger": true},
+  {"query": "NocoBase выдаёт 401 на запрос из скрипта. Как правильно получить токен через signIn?", "should_trigger": true},
+  {"query": "What's the difference between the IdP: OAuth plugin and the Auth: OIDC plugin in NocoBase? I want Keycloak SSO for our users", "should_trigger": true},
+  {"query": "Set up NB_USER and NB_PASSWORD env vars and fetch a bearer token through auth:signIn in a shell script for NocoBase", "should_trigger": true},
+  {"query": "Install the nb CLI and bootstrap a new NocoBase project on my laptop", "should_trigger": false},
+  {"query": "Give me a complete example of creating a collection and writing records in NocoBase through the API", "should_trigger": false},
+  {"query": "Create a role 'sales' in NocoBase that can only see its own orders", "should_trigger": false},
+  {"query": "Create a customers collection with a one-to-many relation to orders in NocoBase", "should_trigger": false},
+  {"query": "Configure a Keycloak realm and client for OIDC login of my Next.js app with NextAuth", "should_trigger": false},
+  {"query": "Get an access token for the GitHub API using a GitHub App installation", "should_trigger": false},
+  {"query": "My Directus API returns 401 when I send a static token as a bearer header", "should_trigger": false},
+  {"query": "I get 401 from the Strapi REST API even though the API token is full-access", "should_trigger": false}
+]

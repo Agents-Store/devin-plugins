@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 17,
-      "prompt": "I'm getting 403 Forbidden when trying to create items via MCP in Directus. How do I fix this?",
+      "prompt": "Use the troubleshoot skill. I'm getting 403 Forbidden when trying to create items via MCP in Directus. How do I fix this? Include the minimum permissions the MCP user's policy needs, on my own collections and on the system collections.",
       "expected_output": "Policy permissions, system collection permissions, MCP user permission table",
       "files": [],
       "expectations": [
@@ -11,21 +11,21 @@
         "Points to Settings > Access Policies > Permissions (policies, not roles)",
         "Mentions that effective permissions are the aggregate of policies attached to the user, the role and parent roles",
         "Lists system collections needing permissions (directus_collections, directus_fields, directus_relations)",
-        "Provides a permission table for MCP user minimum setup",
+        "The answer gives the minimum permissions per collection (for example create and read on the user's own collection, read on the system collections), as a table or a list",
         "Mentions checking both user collection and system collection permissions"
       ]
     },
     {
       "id": 18,
-      "prompt": "My Directus flow operations aren't executing even though the flow is active",
-      "expected_output": "Check flow.operation, resolve/reject chains, condition syntax, request format",
+      "prompt": "Use the troubleshoot skill. My Directus flow operations aren't executing even though the flow is active. It is an event hook on items.update of `orders`: a condition operation followed by a request operation to a webhook. What are the usual causes in the flow's wiring, the condition and the request settings?",
+      "expected_output": "The answer tells to check flow.operation, the resolve/reject chains, the condition syntax and the request format",
       "files": [],
       "expectations": [
-        "Checks flow.operation field points to first operation UUID",
-        "Checks resolve/reject chains between operations",
-        "Warns about condition filter syntax (nested objects, not dot notation)",
-        "Mentions request body must be stringified JSON",
-        "Mentions request headers must be array of {header, value} objects"
+        "The answer tells to check that the flow's entry point (its operation field) is set to the first operation",
+        "The answer tells to check the resolve and reject chains between the operations",
+        "The answer warns that the condition filter uses nested objects, not dot notation",
+        "The answer says the request body must be stringified JSON",
+        "The answer says the request headers must be an array of {header, value} objects"
       ]
     }
   ]

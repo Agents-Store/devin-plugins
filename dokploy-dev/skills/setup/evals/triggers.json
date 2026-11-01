@@ -1,0 +1,18 @@
+[
+  {"query": "I just enabled the dokploy-dev plugin. Verify that the MCP connection, the CLI and the API access are all working.", "should_trigger": true},
+  {"query": "set up dokploy: where do I get an API key, and how do I check that my DOKPLOY_URL is right?", "should_trigger": true},
+  {"query": "I enabled dokploy-dev yesterday. Where do I get an API key, where do DOKPLOY_URL and DOKPLOY_API_KEY go so the plugin picks them up, and how do I check that everything is connected?", "should_trigger": true},
+  {"query": "Test that @dokploy/cli is installed and authenticated, and that the REST API answers 200 with my key.", "should_trigger": true},
+  {"query": "I'm setting up the dokploy-dev plugin on a new laptop: where do I get an API key, how do I set DOKPLOY_URL, how do I limit the exposed MCP tools with DOKPLOY_TOOL_PRESET, and how do I confirm that the connection works?", "should_trigger": true},
+  {"query": "verify dokploy connection from this machine before I start deploying anything", "should_trigger": true},
+  {"query": "Проверь, что Dokploy настроен: MCP подключён, CLI установлен, API отвечает. Где взять API-ключ?", "should_trigger": true},
+  {"query": "Только что подключил плагин dokploy-dev, как проверить, что всё работает?", "should_trigger": true},
+  {"query": "Deploy my app to Dokploy from this GitHub repository", "should_trigger": false},
+  {"query": "Install Dokploy itself on a fresh Ubuntu server with the official install script", "should_trigger": false},
+  {"query": "Install the Vercel CLI and log in", "should_trigger": false},
+  {"query": "Verify that my GitHub SSH key works from this machine", "should_trigger": false},
+  {"query": "Check that my Postgres connection string works from psql", "should_trigger": false},
+  {"query": "How do I get an OpenAI API key and set it as an environment variable?", "should_trigger": false},
+  {"query": "Set up Docker on Ubuntu 24.04 with the official repository", "should_trigger": false},
+  {"query": "Add a domain to my Dokploy application", "should_trigger": false}
+]

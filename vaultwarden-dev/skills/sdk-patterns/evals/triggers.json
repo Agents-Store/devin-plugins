@@ -1,0 +1,18 @@
+[
+  {"query": "Write a Python script with python-vaultwarden that disables a list of leavers by email and reports which emails do not have an account.", "should_trigger": true},
+  {"query": "How do I manage folders and login items in a self-hosted Vaultwarden with Terraform without the bw binary installed? Which provider, and what goes in the provider block?", "should_trigger": true},
+  {"query": "Хочу автоматизировать приглашения в организацию Vaultwarden и выдачу доступа к коллекции из Python. Есть официальный SDK или какую библиотеку брать?", "should_trigger": true},
+  {"query": "Can I use bitwarden-sdk, the Secrets Manager SDK, against my Vaultwarden to fetch secrets inside an app?", "should_trigger": true},
+  {"query": "Как через Terraform-провайдер maxlaverse/bitwarden читать пароль из Vaultwarden и что будет с ним в state?", "should_trigger": true},
+  {"query": "My python-vaultwarden BitwardenAPIClient setup complains about a missing device_id, and when I leave it random each run the account owner gets a new-device email. What is the right way?", "should_trigger": true},
+  {"query": "Our Terraform pipeline for the bitwarden provider registers a new device on every CI run. How do I stop that?", "should_trigger": true},
+  {"query": "In python-vaultwarden I call admin.remove_2fa(email=...) and it ends up posting to users/None. Is that a bug and how do I get around it?", "should_trigger": true},
+  {"query": "Create a folder and move an item into it with the bw CLI.", "should_trigger": false},
+  {"query": "Which curl call disables a user in the Vaultwarden /admin panel?", "should_trigger": false},
+  {"query": "Which MCP server should I use to give an agent access to Vaultwarden?", "should_trigger": false},
+  {"query": "Check that my Vaultwarden is reachable with the /alive endpoint.", "should_trigger": false},
+  {"query": "Use the Terraform vault provider to read a KV v2 secret from HashiCorp Vault.", "should_trigger": false},
+  {"query": "Use the Infisical Python SDK to fetch secrets in a Flask app.", "should_trigger": false},
+  {"query": "Why do all users get \"Too many login requests\" from Vaultwarden?", "should_trigger": false},
+  {"query": "Show me the offboarding scenario for a Vaultwarden organization.", "should_trigger": false}
+]

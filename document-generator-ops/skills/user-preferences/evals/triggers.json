@@ -1,0 +1,17 @@
+[
+  {"query": "This is my first time using the document generator. Set up my style preferences: Consulting Professional, English, USD, date format DD/MM/YYYY.", "should_trigger": true},
+  {"query": "I want to add my company logo so it appears on all invoices. How do I give it to you and where is it stored?", "should_trigger": true},
+  {"query": "I run two companies, a design agency and a consulting LLC. Can I keep separate company profiles with different logos and bank details and pick one per document?", "should_trigger": true},
+  {"query": "Change my default style from Corporate Classic to Modern Minimal and switch the date format to ISO.", "should_trigger": true},
+  {"query": "Update my company address and VAT number in my saved profile - the old address is still on every invoice.", "should_trigger": true},
+  {"query": "Настрой мои предпочтения для документов: стиль, язык, валюта, формат даты. Это первый запуск", "should_trigger": true},
+  {"query": "Добавь логотип моей компании и сохрани профиль, чтобы он подставлялся в счета и договоры", "should_trigger": true},
+  {"query": "Which required fields does an invoice have?", "should_trigger": false},
+  {"query": "How do I set my default email signature in Gmail?", "should_trigger": false},
+  {"query": "Add my logo to the header of my Next.js website", "should_trigger": false},
+  {"query": "Configure my VS Code settings.json preferences for Python formatting", "should_trigger": false},
+  {"query": "Create a brand style guide with logo usage rules and a color palette", "should_trigger": false},
+  {"query": "Reset my Slack notification preferences", "should_trigger": false},
+  {"query": "Keep the signed-in user's profile data in the Flask session", "should_trigger": false},
+  {"query": "Show me JSON examples for every document type", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "I'm building a CMS for a recipe site in Directus: recipes, ingredients, tags, authors, comments. What collections should I create, in which order, and what primary keys?", "should_trigger": true},
+  {"query": "Plan the Directus data model for a small marketing site: pages, navigation items, and one place for site-wide settings (site title, footer text, a logo file, a maintenance_mode flag) that exactly one record holds. Which collections are singletons, which fields and primary keys does each get, and in what order do I create them?", "should_trigger": true},
+  {"query": "How do I add the standard system fields (status, sort, date_created, date_updated, user_created) to a new Directus collection, and what's the archive pattern for soft deletes?", "should_trigger": true},
+  {"query": "Design a Directus data model for a project management tool with projects, tasks, sprints and assignees. Think relations, display templates and folders.", "should_trigger": true},
+  {"query": "I'm planning the Directus data model for a shop: products, variants, orders, order_lines, customers. Orders appear in public URLs and sync with an external ERP. Which primary key type should each collection use, UUID or auto-increment integer, and what do I pass in the collections tool's schema and fields for each?", "should_trigger": true},
+  {"query": "In my Directus project-management model `tasks` point at users (assignee) and at `projects`. In the admin the relation dropdowns show raw ids. How do I set display templates so assignees read {{first_name}} {{last_name}} and projects show their name, and how do I group projects, tasks and sprints into a 'Delivery' collection folder in the sidebar? What do I send to the collections tool?", "should_trigger": true},
+  {"query": "Спроектируй схему данных в Directus для интернет-магазина: товары, категории, заказы, клиенты. В каком порядке создавать коллекции?", "should_trigger": true},
+  {"query": "Нужна коллекция настроек сайта в Directus - единственная запись. Как создать singleton и какие системные поля добавить?", "should_trigger": true},
+  {"query": "Create a many-to-many between posts and tags in Directus: show me the relation JSON for the junction", "should_trigger": false},
+  {"query": "Design a PostgreSQL schema with partitioning and indexes for a time-series table that receives 50 million rows a day", "should_trigger": false},
+  {"query": "How do I write SQLAlchemy models for users and orders in a Flask app?", "should_trigger": false},
+  {"query": "How do I model a collection in Payload CMS with field-level access control?", "should_trigger": false},
+  {"query": "How can I export my Directus schema snapshot and apply it to the staging instance?", "should_trigger": false},
+  {"query": "Create a Directus flow that runs when an item is created", "should_trigger": false},
+  {"query": "Normalize this spreadsheet of orders into third normal form: customer, address, product, price in one table", "should_trigger": false},
+  {"query": "What fields should an invoice document contain? Which are required and which optional?", "should_trigger": false}
+]

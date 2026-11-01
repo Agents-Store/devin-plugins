@@ -1,0 +1,18 @@
+[
+  {"query": "Using the Directus MCP, get all published posts written by authors from Germany, sorted by date_published descending, only title and the author's name. Show me the query.", "should_trigger": true},
+  {"query": "I have 120 rows of product data in a JSON array that I need inserted into the `products` collection in Directus. What's the best way to batch create them and avoid duplicates?", "should_trigger": true},
+  {"query": "Directus: count orders and sum totals per status for the last 30 days. Is there an aggregation with groupBy for that?", "should_trigger": true},
+  {"query": "Directus `tasks` has about 3,000 rows. Everything with due_date before today and status not 'done' must become 'overdue'. Should I update by keys or by query, what do I send to the items tool with action update, and how do I stay under the default query limit of 100?", "should_trigger": true},
+  {"query": "My Directus `blocks` field on `pages` is many-to-any (hero, gallery, text collections). How do I select fields from each related collection in the items query, and how do I read only the gallery blocks?", "should_trigger": true},
+  {"query": "Query a collection with a deep filter on a related one: all articles whose tags include 'ai', via the Directus items tool.", "should_trigger": true},
+  {"query": "В Directus 12.4 я обновляю записи через items с фильтром по query: нужно поставить status=archived всем 3000 старым задачам, но меняется только 100. Почему так и что нужно добавить в запрос?", "should_trigger": true},
+  {"query": "Нужно массово обновить статус у нескольких записей в Directus и удалить дубликаты. Как сделать пакетное обновление и удаление по ключам?", "should_trigger": true},
+  {"query": "How do I run the same kind of query with the @directus/sdk readItems and typed results?", "should_trigger": false},
+  {"query": "Write the SQL to group orders by status and sum the totals in Postgres, for the last 30 days", "should_trigger": false},
+  {"query": "How do I create the junction collection for a many-to-many in Directus?", "should_trigger": false},
+  {"query": "Design a Directus data model for a bookstore with authors, books and editions", "should_trigger": false},
+  {"query": "Give me the GraphQL query for Hasura with a where clause and order_by on a related table", "should_trigger": false},
+  {"query": "Filter rows in a pandas DataFrame where status is 'published' and sort them by date", "should_trigger": false},
+  {"query": "How do I build a Directus flow that sends an email when an item is created?", "should_trigger": false},
+  {"query": "How do I write a Prisma query with cursor pagination and a nested include?", "should_trigger": false}
+]

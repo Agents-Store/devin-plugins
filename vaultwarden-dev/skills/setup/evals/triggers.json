@@ -1,0 +1,18 @@
+[
+  {"query": "Point the Bitwarden CLI at our self-hosted Vaultwarden, log in with the personal API key, and unlock. Why can't I read any items right after bw login --apikey?", "should_trigger": true},
+  {"query": "How do I get a bearer token for Vaultwarden's REST API from the personal API key? I want to script organization member invites.", "should_trigger": true},
+  {"query": "Подключи bw к моему Vaultwarden и проверь, что сервер жив: какие запросы без авторизации показывают версию и состояние?", "should_trigger": true},
+  {"query": "We use LDAP. How can I sync our directory users and groups into a Vaultwarden organization?", "should_trigger": true},
+  {"query": "Какие операции с участниками организации Vaultwarden можно делать голым HTTP, а для каких обязательно нужен bw?", "should_trigger": true},
+  {"query": "How do I generate an Argon2 ADMIN_TOKEN hash for Vaultwarden in docker compose and turn the /admin panel on?", "should_trigger": true},
+  {"query": "Can I create vault items by POSTing straight to /api/ciphers with curl? I would rather not install Node for bw.", "should_trigger": true},
+  {"query": "Before I write automation for our Vaultwarden, how do I confirm the server version and which Bitwarden server version it emulates?", "should_trigger": true},
+  {"query": "Everyone gets \"Too many login requests\" from Vaultwarden behind nginx. Why?", "should_trigger": false},
+  {"query": "Generate a five-word passphrase with bw generate.", "should_trigger": false},
+  {"query": "Delete a Vaultwarden user through the admin API.", "should_trigger": false},
+  {"query": "Use the maxlaverse/bitwarden Terraform provider to read a login item.", "should_trigger": false},
+  {"query": "Is it OK to echo BW_SESSION in a CI job log?", "should_trigger": false},
+  {"query": "Which MCP server should I use to give an agent access to Vaultwarden?", "should_trigger": false},
+  {"query": "Log the Infisical CLI in with a machine identity in a GitLab pipeline.", "should_trigger": false},
+  {"query": "Install Vaultwarden with docker compose behind Traefik, including TLS and volumes.", "should_trigger": false}
+]

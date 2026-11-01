@@ -1,0 +1,18 @@
+[
+  {"query": "In Payload I want editors to see only posts where author equals the logged-in user, but admins see everything. How do I write that read access function so it filters rows instead of just allowing or denying?", "should_trigger": true},
+  {"query": "Payload access control and the Local API: what does overrideAccess default to in v3 versus the Payload 4 canary, and what should I set explicitly in trusted server code and in code that proxies a user request?", "should_trigger": true},
+  {"query": "How do I set up role-based access control in Payload v3 with an isAdmin helper and a roles select field on the users collection, and reuse it for collections, fields and globals?", "should_trigger": true},
+  {"query": "Field-level access in Payload: I want only admins to be able to update the 'salary' field and everyone logged in to read it. What can a field access function return?", "should_trigger": true},
+  {"query": "Payload multi-tenant: every collection has a tenant relationship and users belong to several tenants. How do I scope read/update access to the user's tenants with a Where query?", "should_trigger": true},
+  {"query": "Как в Payload ограничить удаление документов только автором и админом? Нужна функция access.delete с проверкой req.user и id документа", "should_trigger": true},
+  {"query": "Объясни, почему в Payload Local API по умолчанию игнорирует access control и когда нужно ставить overrideAccess: false", "should_trigger": true},
+  {"query": "Write the shared access helpers for my Payload project in src/access: anyone, authenticated, isAdmin, isAdminOrSelf, and a publishedOrOwn function that lets anonymous users read only published documents", "should_trigger": true},
+  {"query": "How do I add login and logout to my Payload app with a custom OAuth strategy for Google?", "should_trigger": false},
+  {"query": "Define a Payload collection 'products' with slug, price and a media upload field", "should_trigger": false},
+  {"query": "Write a beforeChange hook in Payload that sets the author from req.user", "should_trigger": false},
+  {"query": "How do I deploy Payload to Vercel without a database connection at build time?", "should_trigger": false},
+  {"query": "Explain role-based access control in Postgres using GRANT and row level security policies", "should_trigger": false},
+  {"query": "How to implement RBAC in Next.js middleware with NextAuth roles?", "should_trigger": false},
+  {"query": "Directus permissions: how do I give a role read access to items where owner equals $CURRENT_USER?", "should_trigger": false},
+  {"query": "My Payload admin panel shows 'You are not allowed to access this page' after I changed the users collection auth settings", "should_trigger": false}
+]

@@ -1,0 +1,16 @@
+[
+  {"query": "Where should an n8n workflow started by a NocoDB webhook log its failures for manual review, and which n8n node catches them?", "should_trigger": true},
+  {"query": "n8n receives a NocoDB webhook with several records in one event. How do I process each row separately, and what is the path in the payload?", "should_trigger": true},
+  {"query": "What should I call the n8n workflow that processes a payment when a new order row appears in NocoDB, following our stack's naming convention?", "should_trigger": true},
+  {"query": "Which fields does the NocoDB webhook body carry for the event type and the table id, and which node splits the rows in n8n?", "should_trigger": true},
+  {"query": "Нужно, чтобы при добавлении записи в таблицу NocoDB запускался workflow в n8n. Как правильно связать их и какой URL вебхука брать?", "should_trigger": true},
+  {"query": "Как в n8n после обработки записать результат обратно в NocoDB, чтобы не вызвать повторно тот же вебхук?", "should_trigger": true},
+  {"query": "In our stack n8n polls NocoDB on a schedule: Schedule Trigger every 5 minutes, read the changed records, process them and mark them done without firing the NocoDB webhook of the same table again. What does the flow look like?", "should_trigger": true},
+  {"query": "Create a NocoDB table with a SingleSelect field and a lookup to another table", "should_trigger": false},
+  {"query": "Run a Trigger.dev task for each NocoDB row when the status becomes pending", "should_trigger": false},
+  {"query": "Build an n8n workflow that sends a Telegram message when it receives a Stripe webhook", "should_trigger": false},
+  {"query": "From NocoBase, call an n8n webhook after a record is created", "should_trigger": false},
+  {"query": "Export a NocoDB view to CSV and email it every Monday", "should_trigger": false},
+  {"query": "How do I migrate an Airtable base to NocoDB?", "should_trigger": false},
+  {"query": "Which data access path should an n8n workflow use for complex joins, PostgREST or the PostgreSQL MCP?", "should_trigger": false}
+]

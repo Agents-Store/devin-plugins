@@ -1,0 +1,17 @@
+[
+  {"query": "My Payload afterChange hook updates the same document and now loops forever. How do I prevent the loop with context?", "should_trigger": true},
+  {"query": "How do I make a Payload hook that creates a related document atomic with the transaction - why do I need to pass req into nested operations?", "should_trigger": true},
+  {"query": "Revalidate the Next.js cache from a Payload afterChange hook, but skip it during imports using context flags", "should_trigger": true},
+  {"query": "What's the difference between beforeValidate, beforeChange, afterRead and afterError in Payload, and what arguments does each receive?", "should_trigger": true},
+  {"query": "Как в Payload сделать beforeDelete, который каскадно удаляет связанные документы? Нужен пример с req", "should_trigger": true},
+  {"query": "Как в Payload предотвратить бесконечный цикл в afterChange hook, который обновляет тот же документ? Покажи использование req.context", "should_trigger": true},
+  {"query": "Add an afterError hook to my Payload collection that reports failures to Sentry, and write the logger calls in the object form that Payload expects", "should_trigger": true},
+  {"query": "Run a background job in Payload every night at 3am with retries", "should_trigger": false},
+  {"query": "How do I restrict who can delete documents in a Payload collection?", "should_trigger": false},
+  {"query": "Git hooks with husky: run lint before every commit", "should_trigger": false},
+  {"query": "React hooks useEffect and useMemo - when should I use which?", "should_trigger": false},
+  {"query": "Directus flows: trigger an action after an item is created", "should_trigger": false},
+  {"query": "Strapi lifecycle hooks afterCreate to send an email", "should_trigger": false},
+  {"query": "Add a Payload plugin that injects hooks into every collection without overwriting existing ones", "should_trigger": false},
+  {"query": "Send an email with Resend from a Payload app", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "Connect to our Mattermost at https://chat.example.com - log in as admin@example.com and get me a working token so I can run API calls", "should_trigger": true},
+  {"query": "Our bot account stats-bot (user id 4jx7q8e3pf8wibkq1u5r9yxt3h) posts nightly numbers from a cron job on a server. As admin with my session token in $MATTERMOST_TOKEN, create a personal access token for it that expires in 90 days via the REST API and tell me where to store it", "should_trigger": true},
+  {"query": "Set up Mattermost access for this repo: which env vars do I need (MATTERMOST_API_URL, MATTERMOST_TOKEN) and how do I verify them against /users/me?", "should_trigger": true},
+  {"query": "Авторизуйся в Mattermost на https://chat.example.com под пользователем bot-ci и сохрани токен сессии в переменную окружения", "should_trigger": true},
+  {"query": "Как получить токен для Mattermost API, чтобы потом скриптом ходить в /api/v4? У меня есть логин и пароль админа", "should_trigger": true},
+  {"query": "as admin, mint a personal access token for the user 'reporting-bot' on Mattermost with an expiry 30 days from now", "should_trigger": true},
+  {"query": "How do I log into Mattermost from a shell script and capture the session token? I'm about to write a bunch of API calls", "should_trigger": true},
+  {"query": "Before I script against the Mattermost REST API, what are the global request conventions - base path, auth header, pagination, rate limits?", "should_trigger": true},
+  {"query": "My Mattermost token worked for an hour and now every call returns 401 mid-script - why?", "should_trigger": false},
+  {"query": "Which Mattermost edition do I need for guest accounts and compliance exports? Compare Team, Professional and Enterprise", "should_trigger": false},
+  {"query": "Set up Slack API access with a bot token and the chat:write scope for a notifier script", "should_trigger": false},
+  {"query": "Authenticate the gh CLI in CI with a GitHub personal access token and cache it between jobs", "should_trigger": false},
+  {"query": "Configure Okta SAML single sign-on for a Slack workspace as the workspace admin", "should_trigger": false},
+  {"query": "Set up two-factor authentication for my GitHub account with a hardware security key", "should_trigger": false},
+  {"query": "Get a Keycloak access token with the client-credentials grant using curl and decode the JWT", "should_trigger": false},
+  {"query": "Show me a complete worked example of onboarding a team in Mattermost with channels and invitations", "should_trigger": false}
+]

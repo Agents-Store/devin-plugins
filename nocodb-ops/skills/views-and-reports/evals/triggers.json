@@ -1,0 +1,18 @@
+[
+  {"query": "Build a sales-by-region report from the Orders table in NocoDB: total Amount per Region", "should_trigger": true},
+  {"query": "summarize this NocoDB table: count of records by Status and the average order value", "should_trigger": true},
+  {"query": "What views exist on the Tasks table in NocoDB? I'm looking for a kanban board", "should_trigger": true},
+  {"query": "Make me a monthly summary report from NocoDB: active records per month for the last 6 months", "should_trigger": true},
+  {"query": "Сделай отчёт из NocoDB: продажи по регионам, количество заказов и средний чек", "should_trigger": true},
+  {"query": "Какие представления есть у таблицы Заказы в NocoDB, и покажи топ-10 самых дорогих заказов", "should_trigger": true},
+  {"query": "count by category: how many products per Category in NocoDB, and the inventory counts per warehouse", "should_trigger": true},
+  {"query": "build a dashboard-style summary from NocoDB data: counts per status, top 10 customers by revenue and the most recent activity", "should_trigger": true},
+  {"query": "Build a Tableau dashboard with a bar chart of revenue by region from a CSV extract", "should_trigger": false},
+  {"query": "Export the Orders table from NocoDB to a CSV file", "should_trigger": false},
+  {"query": "Add a new record to the Orders table", "should_trigger": false},
+  {"query": "Build a Grafana dashboard that shows orders per day from Postgres", "should_trigger": false},
+  {"query": "Create a pivot table in Excel summarizing sales by region and month", "should_trigger": false},
+  {"query": "Make a Metabase question that shows the average order value per month", "should_trigger": false},
+  {"query": "Write a pandas script that aggregates sales by region and plots a bar chart", "should_trigger": false},
+  {"query": "Set up a Looker Studio report that reads from BigQuery", "should_trigger": false}
+]

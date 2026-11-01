@@ -1,0 +1,18 @@
+[
+  {"query": "My NocoDB field type change gets rejected: changing a Number field to a SingleSelect throws an error. Why?", "should_trigger": true},
+  {"query": "A Lookup field in NocoDB stopped working after I deleted the link between Orders and Customers", "should_trigger": true},
+  {"query": "My NocoDB formula returns ERR for rows where Discount is empty. How do I find the problem?", "should_trigger": true},
+  {"query": "The Kanban view in NocoDB isn't grouping by Status. The view config validation complains. What is wrong?", "should_trigger": true},
+  {"query": "NocoDB говорит, что нельзя удалить таблицу, и schema cache, кажется, устарел. Что проверить?", "should_trigger": true},
+  {"query": "После обновления NocoDB Meta API v3 возвращает ошибку версии: 'NocoDB version too old'. Как диагностировать?", "should_trigger": true},
+  {"query": "The Kanban view I created through the NocoDB Meta API shows every card in one 'Uncategorized' column although the Status field has values. The create call returned 200. Why is the grouping empty?", "should_trigger": true},
+  {"query": "cannot write to a NocoDB system field, it's read-only. What are the rules for system fields and how do I work around it?", "should_trigger": true},
+  {"query": "NocoDB MCP not responding and records queries timeout - debug it", "should_trigger": false},
+  {"query": "Verify that my NocoDB token and schema access work", "should_trigger": false},
+  {"query": "Create a new table in NocoDB with an initial field", "should_trigger": false},
+  {"query": "My Postgres query returns ERROR: column does not exist after a rename, fix", "should_trigger": false},
+  {"query": "Airtable formula returns #ERROR! when a linked record is blank", "should_trigger": false},
+  {"query": "Directus returns 403 when I patch a field via the API with a static token", "should_trigger": false},
+  {"query": "Excel VLOOKUP returns #N/A for existing values with trailing spaces", "should_trigger": false},
+  {"query": "My Metabase question fails with 'Timeout while running query'", "should_trigger": false}
+]

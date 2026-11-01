@@ -1,0 +1,18 @@
+[
+  {"query": "DataForSEO api_request keeps returning 40101 Authentication failed, although the same login and password work in the dashboard. What's going on?", "should_trigger": true},
+  {"query": "I get 'tool not found' when Claude tries to call a DataForSEO tool named dataforseo_labs_google_keyword_ideas. It worked last month", "should_trigger": true},
+  {"query": "my DataForSEO MCP server doesn't show up in /mcp at all and the plugin looks installed. How do I debug the connection?", "should_trigger": true},
+  {"query": "Our DataForSEO call to /v3/backlinks/summary/live returns 40300 Forbidden while keyword calls on the same account work. What does that mean?", "should_trigger": true},
+  {"query": "DataForSEO MCP не работает: сервер падает при старте и в логах про переменные окружения. Как это диагностировать?", "should_trigger": true},
+  {"query": "DataForSEO вернул код 40200, хотя баланс в панели положительный. Что означает этот код и что проверить?", "should_trigger": true},
+  {"query": "DataForSEO rejects location_name UK with status 40001 Invalid field", "should_trigger": true},
+  {"query": "Some DataForSEO calls time out after 60 seconds on the SERP live endpoint with depth 100. How do I fix it?", "should_trigger": true},
+  {"query": "Verify that DataForSEO is set up and the MCP is operational (first-time check)", "should_trigger": false},
+  {"query": "My Express API returns a 500 for POST /users and the log says 'Cannot read properties of undefined'", "should_trigger": false},
+  {"query": "Stripe webhook returns 400 'No signatures found matching the expected signature', how to fix?", "should_trigger": false},
+  {"query": "How much does a DataForSEO SERP call cost and how do I keep within budget?", "should_trigger": false},
+  {"query": "Which DataForSEO endpoint gives me search volumes?", "should_trigger": false},
+  {"query": "Playwright MCP server fails to start with 'browser not installed', what do I do?", "should_trigger": false},
+  {"query": "Find keyword ideas for 'organic dog food'", "should_trigger": false},
+  {"query": "Audit the backlink profile of example.com", "should_trigger": false}
+]

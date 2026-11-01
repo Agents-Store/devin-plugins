@@ -1,0 +1,16 @@
+[
+  {"query": "A user clicks Generate report in our Next.js app and the Trigger.dev task then needs to write to Directus as that user. Should I pass their access token in the task payload?", "should_trigger": true},
+  {"query": "NextAuth with Credentials against Directus, or Better Auth, for a new Next.js 16 site on Directus? Who ends up owning the session?", "should_trigger": true},
+  {"query": "My Server Action checks that the user is signed in and then writes with the service token. Isn't that dangerous? How do I let Directus apply the user's own policies?", "should_trigger": true},
+  {"query": "Why does a user's Directus access token die inside a long Trigger.dev task, and what should the task use instead?", "should_trigger": true},
+  {"query": "Как выбрать способ авторизации для Directus и Next.js, если задачи Trigger.dev должны работать от имени пользователя?", "should_trigger": true},
+  {"query": "Можно ли в payload задачи Trigger.dev передавать токен пользователя Directus? Что из этого видно в дашборде?", "should_trigger": true},
+  {"query": "should proxy.ts verify the session fully or only redirect when the cookie is missing, in a Directus and Next.js app?", "should_trigger": true},
+  {"query": "Implement Auth.js GitHub login with database sessions in Next.js without any CMS", "should_trigger": false},
+  {"query": "Write the Directus role and permissions for a read-only API user", "should_trigger": false},
+  {"query": "Start a Trigger.dev task from a Directus Flow when an item is created", "should_trigger": false},
+  {"query": "Show the progress of a Trigger.dev run in a React component with useRealtimeRun", "should_trigger": false},
+  {"query": "Add Clerk authentication to a Next.js 16 app with a protected dashboard", "should_trigger": false},
+  {"query": "Deploy Trigger.dev tasks from GitHub Actions to a self-hosted instance", "should_trigger": false},
+  {"query": "Write the SQL to hash passwords with bcrypt in Postgres", "should_trigger": false}
+]

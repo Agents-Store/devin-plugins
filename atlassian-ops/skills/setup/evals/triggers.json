@@ -1,0 +1,18 @@
+[
+  {"query": "Connect this repo to our new Jira Cloud site (acme-example.atlassian.net). I have my Atlassian email but no API token yet: walk me through creating one, set the ATLASSIAN_* variables and verify access with one call", "should_trigger": true},
+  {"query": "I created an Atlassian API token with scopes. Which base URL do I use now and how do I get my cloudId?", "should_trigger": true},
+  {"query": "Set up access to Confluence for this repo - I want to script page updates. What env variables do I need (site url, email, token?) and how do I check that it works?", "should_trigger": true},
+  {"query": "Should I use the official Atlassian Rovo MCP server or just curl against the REST API for Jira? We're a small team and I'd like quick interactive reads and edits", "should_trigger": true},
+  {"query": "Подключи меня к Jira и Confluence: у меня есть почта и API-токен от Atlassian Cloud, как правильно настроить переменные окружения и проверить доступ?", "should_trigger": true},
+  {"query": "Где взять cloudId для нашего сайта Atlassian и чем скоупленный токен отличается от обычного?", "should_trigger": true},
+  {"query": "Before we run any Jira API calls: what are the base paths, the pagination style (startAt/maxResults vs cursor) and the body formats for Jira and Confluence? I keep mixing them up", "should_trigger": true},
+  {"query": "I need to pick between a classic and a scoped API token for a CI job that only reads Jira issues and Confluence pages. Which scopes, and how do I wire up the auth?", "should_trigger": true},
+  {"query": "Create a Jira issue 'Fix login redirect' in project AUTH and assign it to me", "should_trigger": false},
+  {"query": "curl returns 403 Forbidden when I try to delete a Confluence page; the same token works for reading pages", "should_trigger": false},
+  {"query": "Set up OAuth 2.0 login with Google in our Next.js app using NextAuth, I already have the client id and secret", "should_trigger": false},
+  {"query": "How do I create a personal access token on GitHub and use it with git over HTTPS?", "should_trigger": false},
+  {"query": "Show me an example that chains Jira and Confluence calls for a release-notes scenario", "should_trigger": false},
+  {"query": "Write a Confluence page with our deployment checklist in the OPS space", "should_trigger": false},
+  {"query": "Configure the Jira Software board columns and swimlanes in the UI so that bugs show on top; I'm the project admin", "should_trigger": false},
+  {"query": "Explain JQL operators: what is the difference between ~ and = and how do functions like currentUser() and startOfWeek() work?", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete working Payload blog example with drafts, autosave, live preview, Lexical content and ISR revalidation", "should_trigger": true},
+  {"query": "Give me an end-to-end Payload multi-tenant SaaS example: tenants collection, tenant-scoped access on every collection and subdomain routing", "should_trigger": true},
+  {"query": "I want a full example of an e-commerce product catalog in Payload with variants as blocks, inventory, Stripe price IDs and an order confirmation email queued as a job", "should_trigger": true},
+  {"query": "Is there a worked Payload jobs worker example - background image resize on upload, a nightly cleanup workflow and a Vercel cron trigger?", "should_trigger": true},
+  {"query": "Show me a headless auth-only Payload API example with roles, custom endpoints, API keys and a rate-limited login", "should_trigger": true},
+  {"query": "Покажи готовый пример блога на Payload от коллекций до публичного фронтенда с ISR", "should_trigger": true},
+  {"query": "Нужен сквозной пример мультитенантного приложения на Payload, который можно скопировать целиком, а не отдельные сниппеты", "should_trigger": true},
+  {"query": "In what order should a newcomer read the Payload scenario walkthroughs?", "should_trigger": true},
+  {"query": "What are the exact options for a Payload relationship field?", "should_trigger": false},
+  {"query": "Why does my Payload hook run in an infinite loop?", "should_trigger": false},
+  {"query": "Give me a REST curl example to log in to Payload and fetch the current user", "should_trigger": false},
+  {"query": "Show me a complete Strapi blog example with a Next.js frontend", "should_trigger": false},
+  {"query": "Give me a complete e-commerce example in Medusa with a Next.js storefront", "should_trigger": false},
+  {"query": "Write a snippet that queries Payload with where, sort and pagination", "should_trigger": false},
+  {"query": "How do I build a third-party Payload plugin and publish it to npm?", "should_trigger": false},
+  {"query": "Show a complete multi-tenant Postgres schema with row level security", "should_trigger": false}
+]

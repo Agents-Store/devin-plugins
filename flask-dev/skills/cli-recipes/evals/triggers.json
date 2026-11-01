@@ -1,0 +1,18 @@
+[
+  {"query": "What's the command to list all registered routes in my Flask app? It uses an app factory, so flask run can't find `app`.", "should_trigger": true},
+  {"query": "how do I run the Flask dev server on port 8080 bound to 0.0.0.0 with debug and the reloader, using environment variables instead of flags?", "should_trigger": true},
+  {"query": "I want a custom CLI command `flask seed-db` that inserts demo users. Show me how with click in an app-factory project.", "should_trigger": true},
+  {"query": "Flask-Migrate commands: init, migrate, upgrade, downgrade, history. Give me a cheat sheet and say when to use each one.", "should_trigger": true},
+  {"query": "open a flask shell with the app context so I can query my models", "should_trigger": true},
+  {"query": "Which environment variables does flask read (FLASK_APP, FLASK_DEBUG, FLASK_RUN_PORT) and what goes into .flaskenv versus .env?", "should_trigger": true},
+  {"query": "Какие команды Flask CLI нужны: запуск сервера, shell, список маршрутов и миграции? Дай шпаргалку", "should_trigger": true},
+  {"query": "Как создать собственную CLI-команду во Flask, например flask create-admin, если используется app factory?", "should_trigger": true},
+  {"query": "Show me the initial layout of a new Flask project with config.py and extensions.py", "should_trigger": false},
+  {"query": "docker run flags to publish port 5000 and mount my source folder", "should_trigger": false},
+  {"query": "How do I run a Django management command on a schedule with cron?", "should_trigger": false},
+  {"query": "How do I build a standalone Python command line tool with subcommands using click?", "should_trigger": false},
+  {"query": "How do I deploy my Flask app with gunicorn behind nginx?", "should_trigger": false},
+  {"query": "Alembic autogenerate misses a column type change in my SQLAlchemy model", "should_trigger": false},
+  {"query": "How do I protect Flask routes with Flask-Login?", "should_trigger": false},
+  {"query": "Which npm scripts should a Next.js project have: dev, build, start, lint?", "should_trigger": false}
+]

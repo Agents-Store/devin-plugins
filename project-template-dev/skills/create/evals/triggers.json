@@ -1,0 +1,18 @@
+[
+  {"query": "I want a new Level 1 stack template for Directus plus Next.js, cloned from project-template. Walk me through naming it, cloning the parent and filling in stack.json", "should_trigger": true},
+  {"query": "Create a demo template (Level 1.5) from our project-directus-nextjs stack template, with sample data, and set up its own remote", "should_trigger": true},
+  {"query": "Set up a Level 2 client project for the client 'acme' from the demo-directus-nextjs template and customize its AGENTS.md and CLAUDE.md", "should_trigger": true},
+  {"query": "Scaffold a new stack template called project-nocodb-trigger: data layer NocoDB, logic layer Trigger.dev, interface Next.js. Which parent do I clone and what goes in stack.json?", "should_trigger": true},
+  {"query": "Fork project-template for a Supabase plus n8n stack and look for matching plugins in the plugin repos before finishing", "should_trigger": true},
+  {"query": "Создай новый шаблон проекта уровня 1 для стека supabase-n8n на основе project-template: спроси слои, придумай имя и склонируй родителя", "should_trigger": true},
+  {"query": "Создай клиентский проект уровня 2 для клиента globex на основе шаблона project-directus-nextjs: подбери имя, склонируй родителя и заполни stack.json", "should_trigger": true},
+  {"query": "Make a new project template from the universal base, validate it at the end and do the initial commit", "should_trigger": true},
+  {"query": "Compare my project with its parent template and pull the new files from the parent", "should_trigger": false},
+  {"query": "Validate my project template: check stack.json, required files and that .mcp.json holds only references", "should_trigger": false},
+  {"query": "Scan my repository's source code and recommend which technology layers and plugins it needs", "should_trigger": false},
+  {"query": "Push this session's learnings back to the parent template as an improvement", "should_trigger": false},
+  {"query": "Create a new React app with Vite and TypeScript", "should_trigger": false},
+  {"query": "Generate a project from a Cookiecutter template for a Python package", "should_trigger": false},
+  {"query": "Scaffold a GitHub repository template with issue templates and a CODEOWNERS file", "should_trigger": false},
+  {"query": "Create a Claude Code plugin with a skill and a command", "should_trigger": false}
+]

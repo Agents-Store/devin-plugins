@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete example of planning an epic with stories in Jira through the REST API - create the epic, three child stories, then a JQL report of the epic's children. I want to see the whole chain, not just one call", "should_trigger": true},
+  {"query": "Can you walk me through the full lifecycle of a Jira issue via curl: create it, add a comment in ADF, find the transitions, move it to In Progress and then to Done?", "should_trigger": true},
+  {"query": "I'd like to see how to build a whole Confluence space via the API - the space, a parent page with a couple of child pages, a page update with the version bump, and labels", "should_trigger": true},
+  {"query": "Generate release notes in Confluence from the Jira issues we shipped in fixVersion 1.2.0 of project CORE - walk me through the whole thing end to end", "should_trigger": true},
+  {"query": "Покажи сквозной пример: как через API Atlassian создать эпик со сторями в Jira, а потом собрать отчёт по нему", "should_trigger": true},
+  {"query": "Хочу увидеть полный сценарий по REST: сначала выбираем задачи релиза по JQL, потом на их основе создаём страницу release notes в Confluence", "should_trigger": true},
+  {"query": "I'm onboarding a new teammate who has never touched the Atlassian APIs. Give him a worked scenario that chains a few Jira and Confluence calls together for a realistic workflow", "should_trigger": true},
+  {"query": "give me an example of the issue lifecycle in Jira Cloud using the API - create, comment, transition, done", "should_trigger": true},
+  {"query": "Transition PAY-212 to Done in Jira", "should_trigger": false},
+  {"query": "Create a Confluence page 'Runbook: DB failover' in space OPS with three numbered steps", "should_trigger": false},
+  {"query": "What's the exact request body for POST /rest/api/3/issueLink and which fields are required?", "should_trigger": false},
+  {"query": "Our Jira API calls fail with 401 after the token rotation, help me debug it", "should_trigger": false},
+  {"query": "Show me a worked example of a GitHub Actions workflow that builds a Docker image and pushes it to GHCR", "should_trigger": false},
+  {"query": "Give me an end-to-end walkthrough of building a Slack bot with Bolt for JavaScript that responds to slash commands", "should_trigger": false},
+  {"query": "How do I set up Atlassian API access and find my cloudId?", "should_trigger": false},
+  {"query": "Explain in plain words what ADF is in Jira and why a plain-string description is rejected", "should_trigger": false}
+]

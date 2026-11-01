@@ -1,0 +1,17 @@
+[
+  {"query": "Our Jira curl script suddenly started returning 401 Unauthorized this morning. The token was made last March - could it have expired? Same email, same site", "should_trigger": true},
+  {"query": "I created an API token with scopes yesterday. curl -u me@example.com:$TOKEN https://acme-example.atlassian.net/rest/api/3/myself returns 401 while my normal login works in the browser. What is wrong?", "should_trigger": true},
+  {"query": "Confluence page update returns 409 Conflict. I fetched the page, changed the body and PUT it back with the same version number. It's a space with approvals turned on, if that matters", "should_trigger": true},
+  {"query": "Confluence Cloud: все вызовы /api/v2/pages возвращают 404, а в браузере страницы открываются", "should_trigger": true},
+  {"query": "Нам вернули 429 от Jira Cloud в скрипте с API-токеном, хотя мы читали про почасовые квоты в баллах с марта 2026. Они действуют на токены, и как тогда ретраить?", "should_trigger": true},
+  {"query": "Why does GET /rest/agile/1.0/board return 404 on my site, although boards open fine in the browser? I'm using a scoped token through api.atlassian.com", "should_trigger": true},
+  {"query": "Jira Cloud POST /rest/api/3/issue/bulkfetch returns 400 when we request 500 issues with fields summary and comment", "should_trigger": true},
+  {"query": "Create a Jira issue about the 500 error on checkout, steps to reproduce attached", "should_trigger": false},
+  {"query": "Debug why my Express server returns 404 for POST /api/orders; the route is defined in routes/orders.js", "should_trigger": false},
+  {"query": "I'm getting a 401 from the Stripe API in my Node script even though the key starts with sk_test_. What did I do wrong?", "should_trigger": false},
+  {"query": "How do I connect to Atlassian with an API token for the first time?", "should_trigger": false},
+  {"query": "Show me an end-to-end example of the lifecycle of an issue in Jira from create to Done", "should_trigger": false},
+  {"query": "Update the Confluence page 'Runbook: DB failover' - replace the third step with a new instruction and keep the history", "should_trigger": false},
+  {"query": "My Jira dashboard gadget shows 'No data' - in the UI the filter 'My open bugs' returns results but the gadget is empty", "should_trigger": false},
+  {"query": "We got a 429 from the OpenAI API in our batch job. Add exponential backoff with jitter to this Python function", "should_trigger": false}
+]

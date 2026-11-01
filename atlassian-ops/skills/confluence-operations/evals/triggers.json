@@ -1,0 +1,18 @@
+[
+  {"query": "Create a new page 'Onboarding Guide' in our Confluence space DOCS as a child of the 'Engineering Handbook' page. The body is a short intro and a checklist. Use the REST API with my token", "should_trigger": true},
+  {"query": "update the 'Release Calendar' wiki page - add a row for 2.4.0 on Nov 15. I think the page id is 98304 but double check by title in the PLAT space", "should_trigger": true},
+  {"query": "list every space on our Confluence site with its key and id, then list the 20 most recently modified pages in the one called Platform", "should_trigger": true},
+  {"query": "add the label 'release-2-4' to Confluence page 55120 and drop a footer comment 'approved by security' on it", "should_trigger": true},
+  {"query": "Создай в Confluence пространство с ключом HR2026 и названием 'HR 2026', а в нём страницу 'Политика отпусков' с заголовком и двумя абзацами", "should_trigger": true},
+  {"query": "У меня есть страница в Confluence с id 123456, нужно дописать в конец раздел 'Итоги спринта' и не получить 409 из-за версии. Сделай это через API", "should_trigger": true},
+  {"query": "attach ./diagrams/arch-v3.png to the Confluence page 'Architecture Overview' and then show me its child pages", "should_trigger": true},
+  {"query": "need to find all pages in the SEC space that mention 'password rotation' and tell me who last edited each one", "should_trigger": true},
+  {"query": "Move PAY-212 to Done in Jira and add a comment saying the hotfix is live", "should_trigger": false},
+  {"query": "Atlassian API token not working since this morning, I get 401 from both Jira and Confluence calls. What should I check?", "should_trigger": false},
+  {"query": "Write a README.md for our repo describing the project layout, install steps and how to run the tests", "should_trigger": false},
+  {"query": "Our team uses Notion for the wiki. How do I structure a team handbook there with nested pages and a database of runbooks?", "should_trigger": false},
+  {"query": "Explain how Confluence permissions work: space permissions vs page restrictions. Which one wins when they conflict? Just conceptual, I'm preparing for an admin interview", "should_trigger": false},
+  {"query": "Walk me through an end-to-end example: plan an epic with 3 stories in Jira, then generate release notes in Confluence from the done issues", "should_trigger": false},
+  {"query": "Connect me to Atlassian: I have an email and an API token, how do I set the env vars and verify access?", "should_trigger": false},
+  {"query": "Convert this Markdown meeting-notes file into clean HTML with headings and a table of action items", "should_trigger": false}
+]

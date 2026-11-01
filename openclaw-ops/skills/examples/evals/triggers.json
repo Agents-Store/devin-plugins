@@ -1,0 +1,18 @@
+[
+  {"query": "I have a new host with some OpenClaw containers and I don't know what's running. Walk me through the whole first-contact sequence: what runs, in which order, what each step produces", "should_trigger": true},
+  {"query": "Every instance in our fleet lost its provider login at the same time. Show the end-to-end sequence this plugin would run to recover, command by command", "should_trigger": true},
+  {"query": "Our upgrade rollback story is unclear. Show a complete upgrade run from inventory to soak to rollback, with the command that owns each step", "should_trigger": true},
+  {"query": "How do I stand up a new OpenClaw instance and prove it's isolated from the reference one? Show the complete sequence and where the output of one step feeds the next", "should_trigger": true},
+  {"query": "Покажи сквозной сценарий: впервые зашли на хост с неизвестными инстансами OpenClaw - что делаем и в каком порядке", "should_trigger": true},
+  {"query": "Что на выходе у полного прогона плагина при обновлении флота? Какая команда за какой шаг отвечает?", "should_trigger": true},
+  {"query": "walk me through a whole fleet job end to end with this plugin: audit, fix, verify, report", "should_trigger": true},
+  {"query": "what does a complete run look like when all instances lost their provider login? Which step's output becomes the next step's input?", "should_trigger": true},
+  {"query": "Show an end-to-end example of a Kubernetes rolling upgrade with rollback using kubectl", "should_trigger": false},
+  {"query": "Check whether the OpenClaw gateway ports are reachable from outside the host", "should_trigger": false},
+  {"query": "Why is the OpenClaw gateway container restarting every minute?", "should_trigger": false},
+  {"query": "Walk me through an Ansible playbook that upgrades Docker across a fleet of servers", "should_trigger": false},
+  {"query": "Show me a Terraform example that provisions a VM and installs Docker", "should_trigger": false},
+  {"query": "Give an example of writing SOUL.md for a friendly support agent", "should_trigger": false},
+  {"query": "Walk me through a canary deployment with Argo Rollouts, step by step", "should_trigger": false},
+  {"query": "Give me an end-to-end example of monitoring a Docker host with Prometheus and Grafana", "should_trigger": false}
+]

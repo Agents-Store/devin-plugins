@@ -1,0 +1,18 @@
+[
+  {"query": "I'm moving a Payload v3 project from MongoDB to Postgres. Which adapter package do I install, what goes into buildConfig, and what happens to existing data?", "should_trigger": true},
+  {"query": "Set up Payload uploads to Cloudflare R2 with the S3 storage adapter - what are the endpoint, region and forcePathStyle options?", "should_trigger": true},
+  {"query": "Payload with Resend for transactional emails: how do I configure the email adapter, and what do I use for plain SMTP instead?", "should_trigger": true},
+  {"query": "Payload storage adapters after 3.90: what are the new default multipart caps (upload.limits fileSize, files, fields, fieldSize and requestSizeLimit), and what do I raise for 100 MB videos with the S3 adapter and clientUploads?", "should_trigger": true},
+  {"query": "How do I make a Payload transaction span several operations with the Postgres adapter, and which databases support transactions at all?", "should_trigger": true},
+  {"query": "Мне нужно подключить Payload к SQLite через libSQL/Turso. Какой адаптер ставить и какие переменные окружения указывать?", "should_trigger": true},
+  {"query": "Как настроить Vercel Blob для загрузки файлов в Payload v3 и что такое client uploads?", "should_trigger": true},
+  {"query": "Which Payload storage adapter do I use for Google Cloud Storage, and how do I make the Azure Blob container private?", "should_trigger": true},
+  {"query": "How do I run payload migrate in CI before deploying to production?", "should_trigger": false},
+  {"query": "Build a custom React field component for the Payload admin panel", "should_trigger": false},
+  {"query": "My Payload build on Vercel fails because it needs a database connection - how do I build without one?", "should_trigger": false},
+  {"query": "How do I set up Redis caching for a high-traffic Node API?", "should_trigger": false},
+  {"query": "Configure an S3 bucket policy for public read access to a static website", "should_trigger": false},
+  {"query": "Send transactional emails from a Next.js app with Resend and React Email templates", "should_trigger": false},
+  {"query": "Strapi: how do I switch the database from SQLite to PostgreSQL?", "should_trigger": false},
+  {"query": "How do I add an upload collection with image sizes to Payload?", "should_trigger": false}
+]

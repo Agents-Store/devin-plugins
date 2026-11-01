@@ -1,0 +1,17 @@
+[
+  {"query": "I want to build an AI workflow on Trigger.dev that classifies an incoming support email and routes it to a different prompt depending on the category. What is the pattern?", "should_trigger": true},
+  {"query": "How do I run three LLM calls in parallel inside a Trigger.dev task and merge the results without Promise.all around triggerAndWait?", "should_trigger": true},
+  {"query": "Build an orchestrator task that splits a long document into chunks, fans out worker tasks and collects the results, with error handling for failed items", "should_trigger": true},
+  {"query": "I need an evaluator-optimizer loop on Trigger.dev: generate a draft, have a second model score it and regenerate until the score passes", "should_trigger": true},
+  {"query": "How do I add a human approval step to an LLM workflow on Trigger.dev before it sends the email?", "should_trigger": true},
+  {"query": "Prompt chaining with gates in Trigger.dev: step one extracts facts, and a validation gate stops the chain if they are empty", "should_trigger": true},
+  {"query": "Хочу собрать на Trigger.dev агента-оркестратора, который раздаёт подзадачи воркерам и собирает ответы. Какие есть паттерны?", "should_trigger": true},
+  {"query": "Как на Trigger.dev распараллелить несколько LLM-вызовов и обработать частичные ошибки батча?", "should_trigger": true},
+  {"query": "Build a chat agent with chat.agent and useTriggerChatTransport", "should_trigger": false},
+  {"query": "Write a Trigger.dev task with retries and a queue with a concurrency limit of 3", "should_trigger": false},
+  {"query": "Build an AI agent with LangGraph in Python", "should_trigger": false},
+  {"query": "Stream AI responses to a React component with useRealtimeRun", "should_trigger": false},
+  {"query": "Create a prompt chain with the Vercel AI SDK in a Next.js route handler with no background jobs", "should_trigger": false},
+  {"query": "How do I version and override a managed prompt in Trigger.dev?", "should_trigger": false},
+  {"query": "Set up the OpenAI Agents SDK handoffs between a triage agent and specialists", "should_trigger": false}
+]

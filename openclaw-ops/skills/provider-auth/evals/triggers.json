@@ -1,0 +1,18 @@
+[
+  {"query": "All our OpenClaw instances lost the same provider account at once and report 'logged out'. What do I do?", "should_trigger": true},
+  {"query": "Model calls return unauthorized, the token file exists but is empty - walk me through the fix", "should_trigger": true},
+  {"query": "Should I use an API key, provider OAuth or the local CLI backend for the OpenClaw instances? Billing moved to metered tokens without a config change", "should_trigger": true},
+  {"query": "The provider CLI says not logged in inside its container but works on the host. Credential directories are shared between instances", "should_trigger": true},
+  {"query": "У OpenClaw истекает срок действия токена провайдера моделей. Как перелогиниться и не потерять остальные инстансы?", "should_trigger": true},
+  {"query": "Инстанс OpenClaw отвечает 'logged out' и модели возвращают unauthorized. С чего начать?", "should_trigger": true},
+  {"query": "when does the OAuth login for the model provider expire, and how do I perform a login for one instance without affecting the others?", "should_trigger": true},
+  {"query": "we copied a credential directory between two instances and now both break. How should credential directories be shared, split or copied?", "should_trigger": true},
+  {"query": "Embedding calls fail with an invalid token on OpenClaw but chat works", "should_trigger": false},
+  {"query": "My OpenAI API returns 401 Incorrect API key provided in my Python script", "should_trigger": false},
+  {"query": "Set up Google OAuth login for my Next.js app with Auth.js", "should_trigger": false},
+  {"query": "gh auth login says the token expired on my CI server, refresh it", "should_trigger": false},
+  {"query": "Refresh the AWS SSO credentials that expired in my terminal session", "should_trigger": false},
+  {"query": "Rotate the Telegram bot token for an instance through the Infisical wrapper and prove it was delivered", "should_trigger": false},
+  {"query": "The Anthropic API returns 429 with retry-after, how do I back off?", "should_trigger": false},
+  {"query": "Rotate the database password in Vault and restart the app", "should_trigger": false}
+]

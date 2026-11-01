@@ -1,0 +1,16 @@
+[
+  {"query": "How do I deploy my Trigger.dev tasks to a self-hosted instance from GitHub Actions? Which secrets and which docker login step?", "should_trigger": true},
+  {"query": "My GitHub Actions deploy to our self-hosted Trigger.dev fails at the push step with no basic auth credentials. Give me the workflow steps (buildx, docker login with password-stdin, deploy) and the required secrets", "should_trigger": true},
+  {"query": "How do I avoid version skew between my web app and the Trigger.dev tasks so runs use the deployment built for the same commit? I heard about --external-id", "should_trigger": true},
+  {"query": "Preview what a Trigger.dev deploy to staging would do without deploying, deploy a build without promoting it, and make a preview branch deploy. Which flags, and which key prefix does staging use?", "should_trigger": true},
+  {"query": "After a deploy, tasks run but fail with undefined URLs. How do I set runtime env vars on self-hosted and verify the deployment?", "should_trigger": true},
+  {"query": "Как выкатить задачи Trigger.dev на прод и на staging, и что проверять после деплоя?", "should_trigger": true},
+  {"query": "Как настроить CI/CD для Trigger.dev на своём сервере: какие секреты GitHub Actions нужны и где закрепить версию CLI?", "should_trigger": true},
+  {"query": "Write the trigger.config.ts with Prisma and FFmpeg extensions", "should_trigger": false},
+  {"query": "Connect the CLI to my self-hosted instance and run init", "should_trigger": false},
+  {"query": "Deploy a Next.js app to Vercel from GitHub Actions", "should_trigger": false},
+  {"query": "Roll back a bad Kubernetes deployment with kubectl", "should_trigger": false},
+  {"query": "Tasks are stuck QUEUED on my self-hosted instance after a restart", "should_trigger": false},
+  {"query": "Run the Trigger.dev dev server with a custom env file", "should_trigger": false},
+  {"query": "Create a GitHub Actions workflow that runs vitest and uploads coverage", "should_trigger": false}
+]

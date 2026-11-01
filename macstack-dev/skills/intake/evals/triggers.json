@@ -1,0 +1,18 @@
+[
+  {"query": "The client sent edits to the user cases as a PDF. Merge them into the macstack folder properly: delta, rulings, apply, log.", "should_trigger": true},
+  {"query": "клиент прислал правки: надо убрать геолокацию из кейса C-04 и поменять приоритет на «важно». Разбери и внеси.", "should_trigger": true},
+  {"query": "merge client feedback: they returned the review package with comments on three statements, process the inbox", "should_trigger": true},
+  {"query": "The client emailed this: \"Cancel within 12 hours before pickup, not 24.\" Apply it through the proper loop and log the ruling.", "should_trigger": true},
+  {"query": "What changed in the client's document since last time? Compute the delta against USER-CASES.md and show me the contradictions before applying anything.", "should_trigger": true},
+  {"query": "Клиент положил новый файл в macstack/inbox/. Обработай: прочитай, сделай дельту, покажи противоречия, потом примени.", "should_trigger": true},
+  {"query": "Клиент написал: «В кейсе C-12 доставка должна быть бесплатной от 3000 рублей, а не от 5000. И добавьте экран «История заказов» для роли «Покупатель»». Разбери это через цикл правок: запиши в inbox, сделай дельту, покажи противоречия с текущими документами и примени после моего подтверждения.", "should_trigger": true},
+  {"query": "A stray spreadsheet showed up in macstack/client/. Treat it as incoming material and process it.", "should_trigger": true},
+  {"query": "Create the macstack folder from scratch for this project", "should_trigger": false},
+  {"query": "Send the documents to the client for approval as one HTML page", "should_trigger": false},
+  {"query": "Write the release notes for the client", "should_trigger": false},
+  {"query": "Turn the acceptance bullets into test cases", "should_trigger": false},
+  {"query": "Triage the new GitHub issues from users and label them", "should_trigger": false},
+  {"query": "Summarize the attached customer survey results into themes", "should_trigger": false},
+  {"query": "Reconcile the spec with the documents after someone edited AUTOMATION.md", "should_trigger": false},
+  {"query": "Apply the reviewer's comments to my pull request", "should_trigger": false}
+]

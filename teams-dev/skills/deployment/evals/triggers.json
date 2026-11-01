@@ -1,0 +1,17 @@
+[
+  {"query": "How do I deploy my Teams bot on SDK 2.1 to Azure Container Apps with a managed identity instead of a secret?", "should_trigger": true},
+  {"query": "In production Teams does not deliver activities to my bot any more. It still points at the old dev tunnel. How do I switch the endpoint?", "should_trigger": true},
+  {"query": "We need to roll the bot out to the whole organisation. What is the path: zip upload, admin center, app catalog?", "should_trigger": true},
+  {"query": "Our bot runs in a US Government GCC High tenant. How do I set the cloud, and what happens with the public preset?", "should_trigger": true},
+  {"query": "How should I rotate the bot's client secret with no downtime?", "should_trigger": true},
+  {"query": "Can I host a Teams bot on serverless functions? What about streaming?", "should_trigger": true},
+  {"query": "Как развернуть бота Teams в продакшене: какие переменные окружения задать и как проверить доступность /api/messages?", "should_trigger": true},
+  {"query": "Как установить своё приложение Teams коллегам, если политика тенанта блокирует пользовательские приложения?", "should_trigger": true},
+  {"query": "Register a bot and create a tunnel for local development with teams app create", "should_trigger": false},
+  {"query": "Deploy a Next.js app to Vercel", "should_trigger": false},
+  {"query": "Deploy a Discord bot to Fly.io with a Dockerfile", "should_trigger": false},
+  {"query": "Write a Dockerfile for a Node 22 app with a tsup build", "should_trigger": false},
+  {"query": "Add Microsoft Graph calendar reading to the bot", "should_trigger": false},
+  {"query": "Set up GitHub Actions for a Node 22 library with npm ci and tests", "should_trigger": false},
+  {"query": "Rotate secrets in AWS Secrets Manager for a Lambda function", "should_trigger": false}
+]

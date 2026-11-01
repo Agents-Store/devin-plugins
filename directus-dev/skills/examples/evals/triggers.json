@@ -1,0 +1,18 @@
+[
+  {"query": "I just connected the Directus MCP server to Claude and I'd like to see a complete worked example: explore the instance, create a 'projects' collection with a few fields, add some items and query them back. Show the actual tool calls.", "should_trigger": true},
+  {"query": "Can you walk me through a full scenario in Directus MCP: build a small CRM (companies and contacts) from scratch, step by step, with the JSON for every call?", "should_trigger": true},
+  {"query": "I'm new to the Directus MCP and I learn by following complete runs. Show me one full walkthrough for a 'books' library: discover the schema, create the collection and its fields, add three books, then read them back filtered by author - the real tool calls in order.", "should_trigger": true},
+  {"query": "what does a typical end-to-end Directus MCP workflow look like when I have to import 200 products from a spreadsheet and attach them to categories? give me a reference implementation I can copy", "should_trigger": true},
+  {"query": "I need a tutorial-style walkthrough for the Directus MCP: schema discovery first, then collection, fields, a relation and some sample data", "should_trigger": true},
+  {"query": "Покажи пошаговый пример работы с Directus через MCP: создать коллекцию «клиенты», добавить поля, наполнить данными и сделать выборку. Нужны реальные вызовы инструментов", "should_trigger": true},
+  {"query": "Дай готовые примеры вызовов MCP-инструментов Directus для типичных сценариев: блог, интернет-магазин, управление проектами", "should_trigger": true},
+  {"query": "Is there a reference scenario for building a blog (authors, posts, tags) in Directus via MCP tool calls? I want to follow it line by line", "should_trigger": true},
+  {"query": "Why does the Directus items tool answer 'action is required' when I call it from my MCP client?", "should_trigger": false},
+  {"query": "Show me a worked example of building a CRM base with the Airtable API: tables, linked records and a script that fills them", "should_trigger": false},
+  {"query": "What's the difference between a singleton and a regular collection in Directus, and when should I use each?", "should_trigger": false},
+  {"query": "What are the exact REST endpoints for Directus roles, policies and permissions?", "should_trigger": false},
+  {"query": "Create a Directus flow that posts to Slack when an item is published", "should_trigger": false},
+  {"query": "Show me a complete Next.js App Router page that reads articles with @directus/sdk and renders them", "should_trigger": false},
+  {"query": "Explain how Directus M2A relations differ from M2M ones, with the junction fields", "should_trigger": false},
+  {"query": "Walk me through an end-to-end example of using the Notion API to create a database and fill it with pages", "should_trigger": false}
+]

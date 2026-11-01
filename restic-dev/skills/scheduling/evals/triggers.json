@@ -1,0 +1,18 @@
+[
+  {"query": "Schedule my restic backup to run daily at 03:30 Europe/Kyiv time using a systemd timer. Show me the .service and .timer units and how to enable them", "should_trigger": true},
+  {"query": "My server has no systemd (Alpine). How do I schedule the restic backup with cron and still get the right time zone?", "should_trigger": true},
+  {"query": "My restic systemd timer fires at 03:00 UTC but I want 03:00 Kyiv time. Pin the timezone in the timer unit and show how to check the zoned expression", "should_trigger": true},
+  {"query": "Install the restic systemd service and timer for 03:00 Europe/Kyiv, verify with systemd-analyze that the calendar resolves before enabling, and keep the timer disabled until the backup is verified", "should_trigger": true},
+  {"query": "Create a cron job for the restic backup script with a lock so two runs never overlap, and log to a file", "should_trigger": true},
+  {"query": "Как настроить ежедневный запуск бэкапа restic в 03:00 по часовому поясу сервера через systemd timer?", "should_trigger": true},
+  {"query": "Хост на Alpine без systemd: напиши /etc/cron.d/restic-backup для ежедневного бэкапа в 03:30 по Киеву с flock против наложения запусков и логом в файл", "should_trigger": true},
+  {"query": "Run my backup at a specific local time even though the server clock is UTC - how do I do that with OnCalendar?", "should_trigger": true},
+  {"query": "My restic backup works in the shell but fails when started by cron. What could be different?", "should_trigger": false},
+  {"query": "Write the restic backup script itself", "should_trigger": false},
+  {"query": "Schedule a Docker container to restart nightly", "should_trigger": false},
+  {"query": "Create a systemd service for my Node.js app", "should_trigger": false},
+  {"query": "What does the cron expression 0 */6 * * 1-5 mean?", "should_trigger": false},
+  {"query": "Schedule a GitHub Actions workflow every Monday", "should_trigger": false},
+  {"query": "Set up a healthcheck ping after each backup", "should_trigger": false},
+  {"query": "Set up a Trigger.dev scheduled task", "should_trigger": false}
+]

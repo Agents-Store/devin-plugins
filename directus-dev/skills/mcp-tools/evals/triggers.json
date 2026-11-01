@@ -1,0 +1,17 @@
+[
+  {"query": "I just enabled MCP on my Directus instance. Which tools does it expose and how do they work - items, schema, collections, fields, relations?", "should_trigger": true},
+  {"query": "What's the 'action' parameter in the Directus MCP tools? I keep passing collection and data directly and get validation errors.", "should_trigger": true},
+  {"query": "Before I script a schema change through the Directus MCP, what does the `collections` tool take? Which actions does it have, what goes into schema and meta, and how does it differ from the `fields` and `relations` tools?", "should_trigger": true},
+  {"query": "Is there a way to make the Directus MCP expose only 3 tools (search, execute, schema) so it uses less context? What's registry mode?", "should_trigger": true},
+  {"query": "How does the schema tool work in Directus MCP - discovery mode vs detailed mode - and when should I call it?", "should_trigger": true},
+  {"query": "Какие инструменты предоставляет MCP-сервер Directus и какие у них параметры? Хочу понять, чем items отличается от collections", "should_trigger": true},
+  {"query": "Какие MCP-инструменты предоставляет Directus и как устроен параметр action? Нужен обзор всех инструментов с параметрами, прежде чем я начну автоматизировать создание схемы", "should_trigger": true},
+  {"query": "How do I install the Dokploy MCP server and enable only the deploy tools?", "should_trigger": false},
+  {"query": "Build my own MCP server in TypeScript that wraps a REST API and exposes three tools", "should_trigger": false},
+  {"query": "What is the exact REST endpoint to create a field in a Directus collection, with a curl example?", "should_trigger": false},
+  {"query": "Walk me through building a complete blog in Directus step by step with real calls", "should_trigger": false},
+  {"query": "My Directus flow doesn't run even though it's active. How do I debug it?", "should_trigger": false},
+  {"query": "How do I set up the NocoDB MCP server and list my tables?", "should_trigger": false},
+  {"query": "How do I structure collections for a multi-tenant SaaS in Directus?", "should_trigger": false},
+  {"query": "How do I use createDirectus with rest() and staticToken() in a Node script?", "should_trigger": false}
+]

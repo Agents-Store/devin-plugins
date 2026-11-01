@@ -1,6 +1,6 @@
 ---
 name: troubleshoot
-description: This skill should be used when the user hits "Chatwoot API errors", "Chatwoot 401/403/404", "Chatwoot CLI not working", "Chatwoot webhook signature mismatch", "Chatwoot token not authorized", or needs to diagnose and fix problems with the Chatwoot API, CLI, or webhooks.
+description: Use when a Chatwoot API call, CLI command or webhook fails or misbehaves - 401 or 403 with a valid token, 404 or an HTML page instead of JSON, 422 request errors, 429 rate limits, a webhook signature that never matches, or a CLI that works locally but not in CI. It maps the symptom to the cause and the fix. For building bots and webhooks use webhooks-automation, for CLI usage cli-recipes.
 ---
 
 # Chatwoot Troubleshooting

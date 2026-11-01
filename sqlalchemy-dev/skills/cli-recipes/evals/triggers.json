@@ -1,0 +1,16 @@
+[
+  {"query": "I changed a Flask-SQLAlchemy model and need the exact commands to generate a migration, review it and apply it with Flask-Migrate. How do I also roll back the last one?", "should_trigger": true},
+  {"query": "alembic check says there are pending model changes. What does it compare and how do I fix the drift in CI?", "should_trigger": true},
+  {"query": "Wire alembic check into CI for my standalone Alembic project: what does it verify, on which database state must it run, and what makes the job fail?", "should_trigger": true},
+  {"query": "Print the SQL of the pending Alembic migrations instead of running them so a DBA can review it, and show how SQLite batch mode is enabled in env.py with render_as_batch", "should_trigger": true},
+  {"query": "Мой проект на Flask-Migrate: напиши последовательность команд flask db для новой колонки phone в таблице clients - миграция, проверка файла до применения, применение и gate для CI", "should_trigger": true},
+  {"query": "Alembic: как откатить последнюю миграцию на одну ревизию, посмотреть историю и текущую ревизию и получить SQL без применения для ревью DBA?", "should_trigger": true},
+  {"query": "Define a SQLAlchemy model with a one-to-many relationship and cascade delete", "should_trigger": false},
+  {"query": "Explain what the SQLAlchemy session identity map does and when objects get expired", "should_trigger": false},
+  {"query": "Prisma migrate dev vs migrate deploy - when do I use which?", "should_trigger": false},
+  {"query": "Django makemigrations: how do I squash migrations?", "should_trigger": false},
+  {"query": "Write a SQLAlchemy select with a join and pagination", "should_trigger": false},
+  {"query": "How do I verify that SQLAlchemy is configured correctly in my project and which version I'm on?", "should_trigger": false},
+  {"query": "Run pg_dump and restore a Postgres database in a Docker container", "should_trigger": false},
+  {"query": "How do I seed the database with sample users in Flask?", "should_trigger": false}
+]

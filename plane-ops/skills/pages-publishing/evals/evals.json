@@ -3,134 +3,137 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Publish a sprint report for Sprint 14 of TaskFlow. 34/40 points completed, goal achieved, 2 items carried over.",
+      "prompt": "Use the pages-publishing skill. Publish a sprint report for Sprint 14 of TaskFlow. 34/40 points completed, goal achieved, 2 items carried over. Say how you find the tools, which template you use, and show the page body as HTML and the create call. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Gathers cycle data, renders the sprint-report HTML template, calls page(action=create, project_id, ...), returns the URL.",
       "files": [],
       "expectations": [
-        "Consults connector-bootstrap",
-        "Uses the sprint-report HTML template from references/templates/sprint-report.html",
-        "Populates Summary, Delivered, Not Delivered, Metrics, Next Sprint sections",
-        "Calls page(action=create) with project_id, name and valid description_html"
+        "The answer says to consult connector-bootstrap",
+        "The answer uses the sprint-report HTML template from references/templates/sprint-report.html",
+        "The answer says to populate Summary, Delivered, Not Delivered, Metrics, Next Sprint sections",
+        "The answer says to call page(action=create) with project_id, name and valid description_html"
       ]
     },
     {
       "id": 2,
-      "prompt": "Create a retrospective page for the sprint we just closed. Include previous action items status.",
+      "prompt": "Use the pages-publishing skill. Create a retrospective page for the sprint we just closed. Include previous action items status. Previous action items: 'Review PRs within 4 hours' (done), 'Set up staging deploy' (in progress), 'Write the runbook' (carried over). Say which template you use and how you look for the previous retro, and show the page body. Answer in text; everything you need is in this message.",
       "expected_output": "Uses the retro template, fetches previous retro page, renders both previous action item statuses and new action items.",
       "files": [],
       "expectations": [
-        "Uses the retro HTML template",
-        "Checks for and loads a previous retro page if one exists",
-        "Renders Previous Action Items with status (done, in progress, carried over)",
-        "Includes What Went Well / What Didn't / Action Items sections with owners and due dates"
+        "The answer uses the retro HTML template",
+        "The answer says to check for and loads a previous retro page if one exists",
+        "The answer renders Previous Action Items with status (done, in progress, carried over)",
+        "The answer includes What Went Well / What Didn't / Action Items sections with owners and due dates"
       ]
     },
     {
       "id": 3,
-      "prompt": "Publish customer-facing release notes for v2.0.",
+      "prompt": "Use the pages-publishing skill. Publish customer-facing release notes for v2.0. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Uses release-notes template, curates items (omits internal work), groups by category.",
       "files": [],
       "expectations": [
-        "Uses the release-notes HTML template",
-        "Curates items for a customer audience (omits internal/dev items)",
-        "Groups by Highlights, New Features, Improvements, Bug Fixes, Breaking Changes",
-        "Does not include PII or secrets"
+        "The answer uses the release-notes HTML template",
+        "The answer says to curate items for a customer audience (omits internal/dev items)",
+        "The answer says to group by Highlights, New Features, Improvements, Bug Fixes, Breaking Changes",
+        "The answer does not include PII or secrets"
       ]
     },
     {
       "id": 4,
-      "prompt": "Publish a Q2 roadmap page showing Now / Next / Later / Parked.",
-      "expected_output": "Uses the roadmap template, aggregates cycles/modules/epics/milestones into the four buckets, calls page(action=create).",
+      "prompt": "Use the pages-publishing skill. Publish a Q2 roadmap page showing Now / Next / Later / Parked. Use this data: Payments v2 is in the current sprint; SSO is planned for the next sprint; the Mobile app module has no dates yet; Legacy cleanup was put on hold on purpose. Show the page body and the create call. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "expected_output": "Roadmap page from the roadmap template: Now, Next, Later and Parked headings with one item each, published with page(action=create).",
       "files": [],
       "expectations": [
-        "Uses the roadmap HTML template from references/templates/roadmap.html",
-        "Classifies items into Now / Next / Later / Parked buckets correctly",
-        "Pulls data from cycle(action=list), module(action=list), an epic listing through workitem(action=list, pql='type = \"<epic-type-id>\"') (there is no epic tool), milestone(action=list)",
-        "Calls page(action=create) with the rendered HTML"
+        "The answer puts Payments v2 under the heading Now (this sprint)",
+        "The answer puts SSO under the heading Next (next sprint)",
+        "The answer puts the Mobile app module under the heading Later (this quarter)",
+        "The answer puts Legacy cleanup under the heading Parked",
+        "The answer opens the page body with an h1 that reads Roadmap — Q2",
+        "The answer publishes the page with page(action=create, project_id, name, description_html)"
       ]
     },
     {
       "id": 5,
-      "prompt": "Publish a milestone update for 'v2.0 Public Beta'. Target Apr 30, 34/52 points done, weekly velocity 8.",
+      "prompt": "Use the pages-publishing skill. Publish a milestone update for 'v2.0 Public Beta'. Target Apr 30, 34/52 points done, weekly velocity 8. Today is April 16. Open items: SSO login (on track), Billing export (at risk), Data migration (blocked by the vendor). Show the page body and the create call. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Uses the milestone-update template, computes ETA and risk, renders On Track / At Risk / Blocked sections.",
       "files": [],
       "expectations": [
-        "Uses the milestone-update HTML template",
-        "Computes remaining points, ETA, and risk level (Red/Yellow/Green)",
-        "Renders On Track, At Risk, Blocked sections",
-        "Calls page(action=create) with the rendered HTML"
+        "The answer uses the milestone-update HTML template",
+        "The answer computes remaining points, ETA, and risk level (Red/Yellow/Green)",
+        "The answer renders On Track, At Risk, Blocked sections",
+        "The answer says to call page(action=create) with the rendered HTML"
       ]
     },
     {
       "id": 6,
-      "prompt": "Publish a sprint report where the 'Not Delivered' section has zero items — everything shipped.",
+      "prompt": "Use the pages-publishing skill. Publish a sprint report where the 'Not Delivered' section has zero items — everything shipped. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Does NOT emit empty <li></li> or empty <ul></ul> for the Not Delivered section. Either omits the section entirely or substitutes <li><em>None — all planned work shipped</em></li>.",
       "files": [],
       "expectations": [
-        "No empty <li></li> in the rendered HTML",
-        "No empty <ul></ul> block in the rendered HTML",
-        "When a list has no data, either omits the whole list block or uses a single <li><em>None</em></li> placeholder",
-        "Cites the Empty List rule from the pages-publishing List Rendering Gotchas"
+        "The HTML in the answer has no empty <li></li>",
+        "The HTML in the answer has no empty <ul></ul> block",
+        "When a list has no data, the answer either omits the whole list block or uses a single <li><em>None</em></li> placeholder",
+        "The answer cites the Empty List rule from the pages-publishing List Rendering Gotchas"
       ]
     },
     {
       "id": 7,
-      "prompt": "Create a retro page with nested action items: under 'Process improvements' list 3 sub-items, under 'Tooling' list 2 sub-items.",
+      "prompt": "Use the pages-publishing skill. Create a retro page with nested action items: under 'Process improvements' list 3 sub-items, under 'Tooling' list 2 sub-items. Answer in text; everything you need is in this message.",
       "expected_output": "Every parent <li> starts with leading text BEFORE the nested <ul>, never with a nested list as the first child.",
       "files": [],
       "expectations": [
-        "Every <li> that contains a nested <ul> starts with leading text (e.g., 'Process improvements' before the inner <ul>)",
-        "No <li><ul>...</ul></li> pattern (would tear the list into disjointed fragments)",
-        "Result is a single structured list, not multiple disjointed top-level lists",
-        "Cites the first-child rule from List Rendering Gotchas"
+        "In the HTML of the answer every <li> that contains a nested <ul> starts with leading text (e.g., 'Process improvements' before the inner <ul>)",
+        "The HTML in the answer has no <li><ul>...</ul></li> pattern (it would tear the list into disjointed fragments)",
+        "The result in the answer is a single structured list, not multiple disjointed top-level lists",
+        "The answer cites the first-child rule from List Rendering Gotchas"
       ]
     },
     {
       "id": 8,
-      "prompt": "Render retro action items with three statuses: done, in progress, not started.",
+      "prompt": "Use the pages-publishing skill. Render retro action items with three statuses: done, in progress, not started. Answer in text; everything you need is in this message.",
       "expected_output": "Uses Unicode status markers (✅ ⏳ ⬜) as leading characters in <li>, NOT data-checked attribute.",
       "files": [],
       "expectations": [
-        "Uses Unicode markers (✅, ⏳, ⬜ or similar) for status",
-        "Does NOT use data-checked='true|false' on <li>",
-        "Does NOT use any custom data-* attribute",
-        "Cites Gotcha 2 (task lists stripped) from List Rendering Gotchas"
+        "The answer uses Unicode markers (✅, ⏳, ⬜ or similar) for status",
+        "The answer does NOT use data-checked='true|false' on <li>",
+        "The answer does NOT use any custom data-* attribute",
+        "The answer cites Gotcha 2 (task lists stripped) from List Rendering Gotchas"
       ]
     },
     {
       "id": 9,
-      "prompt": "The Sprint 14 report page we published yesterday has a wrong velocity number (it says 34, should be 31). Fix it.",
+      "prompt": "Use the pages-publishing skill. The Sprint 14 report page we published yesterday has a wrong velocity number (it says 34, should be 31). Fix it. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Agent updates the existing page in place instead of creating a duplicate or telling the user to edit it in the web UI: retrieves the page, corrects the number in the full HTML body, and calls page(action=update) with the whole description_html.",
       "files": [],
       "expectations": [
-        "Does not claim that pages are write-once or that the user must edit the page in the Plane web UI (the page tool supports update)",
-        "Retrieves the page first with page(action=retrieve)",
-        "Calls page(action=update) with the complete edited description_html, not a fragment, because update replaces the whole body",
-        "Does not create a second page for the same report"
+        "The answer does not claim that pages are write-once or that the user must edit the page in the Plane web UI (the page tool supports update)",
+        "The answer says to retrieve the page first with page(action=retrieve)",
+        "The answer says to call page(action=update) with the complete edited description_html, not a fragment, because update replaces the whole body",
+        "The answer does not create a second page for the same report"
       ]
     },
     {
       "id": 10,
-      "prompt": "Delete the test page 'Sandbox sprint report' from the Sandbox project.",
+      "prompt": "Use the pages-publishing skill. Delete the test page 'Sandbox sprint report' from the Sandbox project. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Agent knows delete needs an archived page and the user's confirmation: shows the page, asks for explicit confirmation, archives it, then deletes it.",
       "files": [],
       "expectations": [
-        "Identifies the page and shows it to the user before deleting",
-        "Asks for explicit confirmation before the delete (destructive action)",
-        "Calls page(action=archive) before page(action=delete), because delete is refused for a page that is not archived",
-        "Does not say that pages cannot be deleted through the API"
+        "The answer identifies the page and shows it to the user before deleting",
+        "The answer asks for explicit confirmation before the delete (destructive action)",
+        "The answer says to call page(action=archive) before page(action=delete), because delete is refused for a page that is not archived",
+        "The answer does not say that pages cannot be deleted through the API"
       ]
     },
     {
       "id": 11,
-      "prompt": "Publish the release notes for v2.0 using what we tracked in Plane releases. Customer-facing.",
+      "prompt": "Use the pages-publishing skill. Publish the release notes for v2.0 using what we tracked in Plane releases. Customer-facing. Show the calls in order, including how you find the release and its items and what you do with the existing changelog. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Finds the release with the release tool, reads its work items and existing changelog, groups items into the Release Notes template, publishes a page and stores the notes in the release changelog.",
       "expectations": [
-        "Finds the release with release(action=list) (and release_tag for the version string) instead of asking the user to list what shipped",
-        "Reads the shipped items with release(action=list_workitems, release_id) following next_cursor, and the current changelog with release(action=get_changelog) before overwriting it",
-        "Uses the release-notes HTML template, grouped by Highlights, New Features, Improvements, Bug Fixes, Breaking Changes, and omits internal work for a customer audience",
-        "Publishes with page(action=create) and stores the notes with release(action=update_changelog, release_id, description_html)",
-        "Does not use a create_release_notes or per-operation legacy tool name"
+        "The answer finds the release with release(action=list)",
+        "The answer reads the shipped items with release(action=list_workitems, release_id) and follows next_cursor",
+        "The answer reads the current changelog with release(action=get_changelog) before it overwrites it",
+        "The answer groups the notes under the headings Highlights, New Features, Improvements, Bug Fixes and Breaking Changes",
+        "The answer publishes the page with page(action=create, project_id, name, description_html)",
+        "The answer stores the notes with release(action=update_changelog, release_id, description_html)"
       ],
       "files": []
     }

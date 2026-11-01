@@ -1,0 +1,18 @@
+[
+  {"query": "I want to write a reusable Payload plugin that adds fields and hooks to selected collections without overwriting the user's existing hooks. What's the skeleton?", "should_trigger": true},
+  {"query": "How should I structure a publishable payload plugin package - package.json exports, SWC plus tsc build, and a dev/ folder for local testing?", "should_trigger": true},
+  {"query": "Payload plugin options: how do I let users override per collection and disable the plugin without uninstalling it?", "should_trigger": true},
+  {"query": "Add a root endpoint, an admin component and a jobs task from inside a Payload plugin", "should_trigger": true},
+  {"query": "How do I test a Payload plugin with Vitest integration tests and Playwright E2E, and publish it to npm?", "should_trigger": true},
+  {"query": "Как написать свой плагин для Payload, который добавляет поле slug во все коллекции? Нужна минимальная структура", "should_trigger": true},
+  {"query": "Хочу опубликовать payload-plugin в npm. Какой .swcrc и какие exports нужны в package.json?", "should_trigger": true},
+  {"query": "How do plugins compose in the Payload config - what is the plugin function signature and the order of execution?", "should_trigger": true},
+  {"query": "Install and configure the official Payload SEO plugin", "should_trigger": false},
+  {"query": "Which official Payload plugin gives me redirects and how do I set it up?", "should_trigger": false},
+  {"query": "Write a WordPress plugin that adds a custom post type", "should_trigger": false},
+  {"query": "How do I build a Vite plugin that transforms SVG imports?", "should_trigger": false},
+  {"query": "Create a Directus extension bundle with a custom endpoint", "should_trigger": false},
+  {"query": "Create a Strapi plugin with a custom admin panel page", "should_trigger": false},
+  {"query": "Add a custom hook to a single Payload collection", "should_trigger": false},
+  {"query": "How do I write a Claude Code plugin with skills and commands?", "should_trigger": false}
+]

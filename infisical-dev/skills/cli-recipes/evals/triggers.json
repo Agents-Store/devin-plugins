@@ -1,0 +1,18 @@
+[
+  {"query": "I want to stop keeping a .env file on disk. Run my Node dev server with the secrets of the staging environment injected, only those under the /api folder.", "should_trigger": true},
+  {"query": "How do I set a new secret STRIPE_KEY in the prod environment from the terminal, and bulk import my existing .env file into Infisical?", "should_trigger": true},
+  {"query": "Export all the dev secrets to a .env file and also as JSON using the infisical CLI", "should_trigger": true},
+  {"query": "Create folders /backend and /frontend in the dev environment and list the secrets per folder from the command line", "should_trigger": true},
+  {"query": "How do I restart my dev server automatically whenever a secret changes in Infisical? I think it is infisical run with --watch.", "should_trigger": true},
+  {"query": "Хочу одной командой импортировать существующий .env в окружение staging и пометить секреты тегами backend и production. Какие команды и флаги infisical для этого нужны?", "should_trigger": true},
+  {"query": "Какие флаги infisical run позволяют подмешать сразу две папки (/common и /web), включить подпапки и что победит, если ключ есть в обеих?", "should_trigger": true},
+  {"query": "Get a lease for a dynamic secret with the Infisical CLI: a short-lived Postgres user for a migration job", "should_trigger": true},
+  {"query": "Authenticate the Infisical CLI in a GitLab pipeline with a machine identity and universal auth", "should_trigger": false},
+  {"query": "Install Infisical with Homebrew and point it at my self-hosted instance", "should_trigger": false},
+  {"query": "Scan the last 50 commits with infisical scan and write a SARIF report", "should_trigger": false},
+  {"query": "Load variables from a .env file in a Python script with python-dotenv", "should_trigger": false},
+  {"query": "Use the Doppler CLI to run my app with injected secrets (doppler run)", "should_trigger": false},
+  {"query": "infisical run injects nothing and says project not found", "should_trigger": false},
+  {"query": "Use direnv to load a .envrc file when I cd into the project", "should_trigger": false},
+  {"query": "Write a Kubernetes Secret manifest and mount it as environment variables in a Deployment", "should_trigger": false}
+]

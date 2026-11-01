@@ -1,0 +1,18 @@
+[
+  {"query": "I need to remember each user's chosen language and a message counter between messages in grammY. Set up the session middleware with typed SessionData and Redis storage.", "should_trigger": true},
+  {"query": "how do I use session in grammy with PostgreSQL so it survives restarts? which adapter package do I install", "should_trigger": true},
+  {"query": "ctx.session resets to initial values on every deploy because I'm on the in-memory store. What should I switch to for production, ideally without running my own database?", "should_trigger": true},
+  {"query": "What is a lazy session in grammY and when should I use it to avoid reading storage on every update?", "should_trigger": true},
+  {"query": "How do I keep separate sessions per user and per chat in the same group bot (multi session)?", "should_trigger": true},
+  {"query": "Как сохранить состояние пользователя между сообщениями в grammY? Нужна сессия с типизацией и хранилищем в MongoDB.", "should_trigger": true},
+  {"query": "Как очистить сессию пользователя по команде /reset в grammY и задать начальные значения через initial?", "should_trigger": true},
+  {"query": "My grammY bot lives in a supergroup with forum topics. I want every topic (thread) to keep its own session data instead of one session for the whole group. Show how to set getSessionKey so the key is the chat id plus the message_thread_id, with typed SessionData and Redis storage.", "should_trigger": true},
+  {"query": "Set up express-session with connect-redis for the login of my Node website", "should_trigger": false},
+  {"query": "Throttle outgoing Bot API calls in grammY so a broadcast stays under Telegram's limits", "should_trigger": false},
+  {"query": "Write a Django view that stores a shopping cart in request.session", "should_trigger": false},
+  {"query": "Collect the user's name, then email, then a confirmation over several messages with the grammY conversations plugin", "should_trigger": false},
+  {"query": "How do I keep JWT sessions valid across refreshes in Next.js with NextAuth?", "should_trigger": false},
+  {"query": "Attach custom properties to ctx in a grammY middleware with proper types", "should_trigger": false},
+  {"query": "Show me the complete echo bot file for grammY", "should_trigger": false},
+  {"query": "Design a Postgres schema to store Telegram users and their subscription plans without an ORM", "should_trigger": false}
+]

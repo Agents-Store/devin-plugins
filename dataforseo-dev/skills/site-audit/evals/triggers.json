@@ -1,0 +1,18 @@
+[
+  {"query": "Run a technical SEO audit of https://example.com/landing-page: Lighthouse scores for mobile, title and meta description, heading structure, missing alt text and page weight - via DataForSEO", "should_trigger": true},
+  {"query": "what technologies does competitor.example.com run on? CMS, analytics, CDN, framework - use DataForSEO domain technologies", "should_trigger": true},
+  {"query": "I want to crawl my site and find broken links, duplicate titles and pages with thin content. Start a DataForSEO OnPage crawl for example.org, up to 200 pages", "should_trigger": true},
+  {"query": "check the page speed of https://example.com/pricing on mobile and tell me the top three things to fix according to the Lighthouse audits, using DataForSEO", "should_trigger": true},
+  {"query": "Сделай технический SEO-аудит страницы https://example.com/blog/post-1 через DataForSEO: заголовки, мета-теги, ссылки, скорость", "should_trigger": true},
+  {"query": "Какие технологии использует сайт example.ru и когда зарегистрирован домен? Нужны данные WHOIS и стек", "should_trigger": true},
+  {"query": "do a content analysis for the phrase 'electric bike': which pages cite it, with what sentiment, and how the phrase popularity trended over the last two years", "should_trigger": true},
+  {"query": "parse the main content of https://example.com/guide into structured headings and paragraphs with DataForSEO content parsing", "should_trigger": true},
+  {"query": "Add meta tags and Open Graph images to our Next.js blog using generateMetadata", "should_trigger": false},
+  {"query": "Optimize Core Web Vitals for our Next.js app: LCP is 4.2s because of a hero image", "should_trigger": false},
+  {"query": "Set up sitemap.xml and robots.txt for the Next.js app", "should_trigger": false},
+  {"query": "Find keyword ideas for 'electric bike' in the UK", "should_trigger": false},
+  {"query": "Review the backlinks of example.com and find toxic ones", "should_trigger": false},
+  {"query": "Run a load test on https://example.com/pricing with k6", "should_trigger": false},
+  {"query": "Why is my page not indexed by Google? Search Console says 'Discovered - currently not indexed'", "should_trigger": false},
+  {"query": "Explain what Lighthouse measures and what the scores mean, for a non-technical manager", "should_trigger": false}
+]

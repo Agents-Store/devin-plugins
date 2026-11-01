@@ -1,0 +1,16 @@
+[
+  {"query": "Which tool should I use to read one URL and which to crawl a whole site? I need a routing table for the search and scraping MCP tools", "should_trigger": true},
+  {"query": "What is the full registered name of the Jina read_url tool in this plugin, and in which order do I prefer read_url, firecrawl_scrape and WebFetch for reading a page?", "should_trigger": true},
+  {"query": "Should I use WebFetch or the MCP scraping tools for reading a page? What is the priority order?", "should_trigger": true},
+  {"query": "How many tools does each server expose: Firecrawl, Jina, Perplexity, Exa, Context7?", "should_trigger": true},
+  {"query": "Which MCP tool do I use for deep research, and which for quick AI answers with citations?", "should_trigger": true},
+  {"query": "Какие MCP-инструменты есть для веб-поиска и скрейпинга и как выбрать между Firecrawl, Jina и Exa?", "should_trigger": true},
+  {"query": "Какой инструмент брать для скриншота страницы и для поиска картинок в вебе?", "should_trigger": true},
+  {"query": "Write a Python script with the Exa SDK to run a search", "should_trigger": false},
+  {"query": "Check whether all my search services are connected", "should_trigger": false},
+  {"query": "Firecrawl returns 429. What now?", "should_trigger": false},
+  {"query": "Build a scraper script that imports products into my database", "should_trigger": false},
+  {"query": "Find stock photos of mountains for a landing page", "should_trigger": false},
+  {"query": "Which tool of the Trigger.dev MCP triggers a task?", "should_trigger": false},
+  {"query": "Explain the architecture of the Model Context Protocol", "should_trigger": false}
+]

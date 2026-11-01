@@ -1,0 +1,18 @@
+[
+  {"query": "Add Telegram Stars payments to my grammY bot: users buy a one-time \"pro\" upgrade for 100 Stars. Show me the invoice, the pre_checkout_query handler and the successful_payment handler.", "should_trigger": true},
+  {"query": "Where does my grammY bot see its Telegram Stars balance and the history of Star transactions, and how do I refund one payment by its charge id? Show the calls.", "should_trigger": true},
+  {"query": "How fast must I answer pre_checkout_query in grammY, and what do I send to reject the payment with a message?", "should_trigger": true},
+  {"query": "I want a \"Buy me a coffee\" link users can open from a Web App button. How do I use createInvoiceLink with XTR in grammy?", "should_trigger": true},
+  {"query": "How do I handle business_message updates when my bot is connected to a Telegram Business account, and reply on behalf of the account?", "should_trigger": true},
+  {"query": "Как принять оплату картой (не Stars) через grammY: нужен provider_token, sendInvoice и обработка successful_payment?", "should_trigger": true},
+  {"query": "Нужно подключить бота к Telegram Business и отвечать клиентам от имени аккаунта. Какие апдейты слушать в grammY?", "should_trigger": true},
+  {"query": "Send a Telegram HTML5 game from my grammy bot and handle the callback_game button", "should_trigger": true},
+  {"query": "Integrate Stripe Checkout into a Next.js app and handle the checkout.session.completed webhook", "should_trigger": false},
+  {"query": "Send a downloadable PDF to a user with grammY after I check their role in my database", "should_trigger": false},
+  {"query": "Implement the Telegram Login Widget so users can sign in to my website with Telegram", "should_trigger": false},
+  {"query": "Set up n8n so I get a Telegram notification when a Stripe payment succeeds", "should_trigger": false},
+  {"query": "Add i18n to my grammY bot with the @grammyjs/i18n plugin", "should_trigger": false},
+  {"query": "Write a grammY conversation that asks for a shipping address in three steps", "should_trigger": false},
+  {"query": "Explain how PayPal IPN works and how to validate it in PHP", "should_trigger": false},
+  {"query": "Persist a user's subscription status in the session in grammY", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "I'm building a grammY bot in TypeScript for a pizza place. I need /menu, /order and /help commands, plus a command list that shows up in Telegram's autocomplete menu. How do I register them properly?", "should_trigger": true},
+  {"query": "Our grammY bot should offer different command lists per language, and some commands (like /report) should show up only for the sender in a group chat, not for everyone. Which plugin and which calls do I use for localized, scoped and ephemeral commands, and how do I sync them with Telegram?", "should_trigger": true},
+  {"query": "In grammY, can a command be shown in the command menu only to the user who typed it (ephemeral commands, Bot API 10.2), and which setMyCommands scope types exist for the admins of one chat versus all chat administrators?", "should_trigger": true},
+  {"query": "My grammY bot needs a reply keyboard with a \"Share phone number\" button and a \"Cancel\" button, and the keyboard should disappear after one use. Show me the code.", "should_trigger": true},
+  {"query": "Хочу в grammY-боте сделать кнопки «Да» и «Нет» под сообщением с подтверждением заказа и обработать нажатие через callbackQuery. Как это правильно написать?", "should_trigger": true},
+  {"query": "Как зарегистрировать команды бота (/start, /help, /settings) через setMyCommands, чтобы они появились в меню Telegram, и сделать отдельные списки для английского и русского языка?", "should_trigger": true},
+  {"query": "I want a /echo command in grammy that repeats whatever text comes after it, and a helpful message when the argument is missing", "should_trigger": true},
+  {"query": "Build an inline keyboard in grammY with a 3x3 grid of numbers generated from an array in a loop, plus a Back button on its own row", "should_trigger": true},
+  {"query": "Using grammY, run a handler only for messages that are photos with a caption, and narrow the type of ctx so that ctx.msg.caption is a string", "should_trigger": false},
+  {"query": "Write a grammY conversation that asks the user for a name, then an age, then confirms with yes or no", "should_trigger": false},
+  {"query": "How do I send a PDF report as a document with a caption from my grammY bot, built from a Buffer in memory?", "should_trigger": false},
+  {"query": "Add a /ping slash command to my discord.js v14 bot with a row of buttons under the reply", "should_trigger": false},
+  {"query": "In python-telegram-bot, how do I create an InlineKeyboardMarkup with callback buttons and a CallbackQueryHandler?", "should_trigger": false},
+  {"query": "Why does my grammY bot reply twice to every message after I switched it to a webhook on my server?", "should_trigger": false},
+  {"query": "Rate limit my grammY bot so one user can send at most five messages per ten seconds, using the official plugin", "should_trigger": false},
+  {"query": "Write a grammY middleware that logs how long each update takes to process", "should_trigger": false}
+]

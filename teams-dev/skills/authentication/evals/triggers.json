@@ -1,0 +1,17 @@
+[
+  {"query": "How do I let a Teams bot call Graph on behalf of the signed-in user with the 2.1 SDK? I need app.addOAuthFlow and a callback after consent", "should_trigger": true},
+  {"query": "Which env vars switch the bot from a client secret to a user-assigned managed identity? I want no CLIENT_SECRET at all", "should_trigger": true},
+  {"query": "Teams SSO: my sign-in failure callback receives installedappnotfound for some users in a group chat and resourcematchfailed for others. What do the codes mean and what do I change in the bot and in the Entra app?", "should_trigger": true},
+  {"query": "The OAuth card never appears in my Teams bot. The flow name in addOAuthFlow is graph and the bot was created by the CLI with its default settings", "should_trigger": true},
+  {"query": "My Teams tab needs Graph calendar access as the user with no popup. Set up Nested App Authentication: Entra app platform and redirect URI, prewarmScopes, and when to fall back to a popup", "should_trigger": true},
+  {"query": "oauth.defaultConnectionName throws after I called addOAuthFlow. Can they be combined?", "should_trigger": true},
+  {"query": "Как сделать SSO в боте Teams на SDK 2.1: что регистрировать в Azure Bot и что писать в коде?", "should_trigger": true},
+  {"query": "Как настроить аутентификацию бота Teams через управляемую идентичность и федеративные учётные данные вместо секрета?", "should_trigger": true},
+  {"query": "Call Graph with app.graph.call and list team members as the app", "should_trigger": false},
+  {"query": "Register the bot with teams app create --azure and migrate it from Teams-managed", "should_trigger": false},
+  {"query": "Implement NextAuth credentials login in a Next.js app", "should_trigger": false},
+  {"query": "Add Microsoft Entra ID login to an Express web app with passport-azure-ad", "should_trigger": false},
+  {"query": "Rotate the client secret of my deployed Teams bot without downtime", "should_trigger": false},
+  {"query": "Explain the OAuth2 PKCE flow for a single-page app", "should_trigger": false},
+  {"query": "Protect a custom /mcp route on the same Express server as the bot", "should_trigger": false}
+]

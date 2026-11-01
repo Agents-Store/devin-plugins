@@ -1,0 +1,18 @@
+[
+  {"query": "Is my n8n instance ready for provisioning? Run a health check, inventory the workflows and credentials and give me a pass/warn/fail report", "should_trigger": true},
+  {"query": "Audit n8n before I import 15 workflows: look for webhook path conflicts and missing community nodes", "should_trigger": true},
+  {"query": "do a pre-provisioning check on our n8n at https://n8n.example.com - capacity, security posture, what is already installed", "should_trigger": true},
+  {"query": "verify the n8n instance is healthy before I import anything, a quick check is enough", "should_trigger": true},
+  {"query": "Проверь готовность инстанса n8n к развёртыванию: health check, инвентаризация workflow и credentials, конфликты вебхуков", "should_trigger": true},
+  {"query": "Сделай отчёт о готовности n8n перед импортом: community-ноды, ресурсы, безопасность", "should_trigger": true},
+  {"query": "Will importing these templates collide with existing workflows or webhook paths on the instance? Check readiness first", "should_trigger": true},
+  {"query": "n8n health check plus an inventory of existing workflows before we bootstrap it with our suite", "should_trigger": true},
+  {"query": "Check my Postgres server's health: replication lag, long transactions, bloat", "should_trigger": false},
+  {"query": "Batch deploy the workflow suite to n8n with a rollback plan", "should_trigger": false},
+  {"query": "Check whether my Kubernetes cluster is ready for an Istio rollout", "should_trigger": false},
+  {"query": "Run a Lighthouse audit on my website and list the top performance issues", "should_trigger": false},
+  {"query": "Analyze this n8n workflow JSON for security flags and complexity before importing", "should_trigger": false},
+  {"query": "Which credentials will I need to create for these workflows?", "should_trigger": false},
+  {"query": "Write an n8n Code node in JavaScript that merges the items of two inputs by the field 'id'", "should_trigger": false},
+  {"query": "Do a health check on my Dokploy server and list the running services", "should_trigger": false}
+]

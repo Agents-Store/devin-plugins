@@ -1,0 +1,18 @@
+[
+  {"query": "Analyze my OpenClaw agent's session transcripts: what do my users ask about most?", "should_trigger": true},
+  {"query": "export a trajectory bundle for yesterday's sessions and query it with jq for tool error patterns", "should_trigger": true},
+  {"query": "which tools does my agent use most and which fail most often? Use the session data", "should_trigger": true},
+  {"query": "Show me session stats for the agent: token costs per session and the most active hours", "should_trigger": true},
+  {"query": "Как проанализировать сессии агента OpenClaw: какие вопросы задают пользователи и где ошибки?", "should_trigger": true},
+  {"query": "Агент работает хорошо? Покажи статистику по сессиям и что улучшить в рабочем пространстве по реальным данным", "should_trigger": true},
+  {"query": "list the sessions through the OpenClaw CLI and find the ones with the highest token cost", "should_trigger": true},
+  {"query": "improve the workspace based on real usage: find repeated user questions that the agent answers badly", "should_trigger": true},
+  {"query": "Analyze Google Analytics sessions: bounce rate by source for last month", "should_trigger": false},
+  {"query": "Parse my nginx access logs with awk and find the top 10 client IPs", "should_trigger": false},
+  {"query": "Summarize the transcript of this Zoom meeting into action items", "should_trigger": false},
+  {"query": "Analyze a Claude Code session log to see which tools were used most", "should_trigger": false},
+  {"query": "Cluster my Intercom support tickets by topic and show what customers ask about", "should_trigger": false},
+  {"query": "Show the token usage and cost breakdown of my OpenAI API account by model", "should_trigger": false},
+  {"query": "Query my Postgres logs with jq to find slow queries", "should_trigger": false},
+  {"query": "Schedules are failing on one OpenClaw instance, diagnose it", "should_trigger": false}
+]

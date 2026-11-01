@@ -1,0 +1,16 @@
+[
+  {"query": "In the Plane standup, how many days without a change before an in-progress item counts as stalled, and how do I confirm that before naming it in front of the team?", "should_trigger": true},
+  {"query": "Generate an async standup report for the whole team from the current cycle in Plane, highlighting blockers and items that did not move", "should_trigger": true},
+  {"query": "Как в Plane оформить стендап-отчёт по каждому участнику: какие метки статусов использовать и как назвать страницу, чтобы история не терялась?", "should_trigger": true},
+  {"query": "Run the standup with me: summarize progress per team member from Plane and list the questions to ask", "should_trigger": true},
+  {"query": "We are a remote team in five timezones. How do we run standup asynchronously on Plane, how often, and where do we post the update?", "should_trigger": true},
+  {"query": "Собери стендап по текущему циклу в Plane: что сделано, что в работе и что заблокировано по каждому участнику", "should_trigger": true},
+  {"query": "Run the sprint review and retrospective for the cycle that just ended", "should_trigger": false},
+  {"query": "Calculate the team's velocity over the last six sprints", "should_trigger": false},
+  {"query": "Publish the sprint report as a Plane page", "should_trigger": false},
+  {"query": "Write a motivational message for the team before the deadline", "should_trigger": false},
+  {"query": "Summarize my Slack messages from yesterday", "should_trigger": false},
+  {"query": "Create a standup meeting series in Google Calendar", "should_trigger": false},
+  {"query": "Show my assigned work items in Plane", "should_trigger": false},
+  {"query": "Plan the next sprint for our team", "should_trigger": false}
+]

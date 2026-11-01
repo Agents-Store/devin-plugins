@@ -1,0 +1,18 @@
+[
+  {"query": "I'm generating a quarterly report for a consulting client and want it to look as credible as a McKinsey report: how should the executive summary be structured, how are charts and action titles used, and which colors fit?", "should_trigger": true},
+  {"query": "Our freelance invoices from the document generator get paid late. How should the invoice be laid out so totals, due date and payment details are impossible to miss, the way Stripe-style invoices do it?", "should_trigger": true},
+  {"query": "We are generating the investor deck for Thursday with the document generator and I'd like it to feel like an Apple keynote. How many bullets and how many words per bullet can one slide carry, and how should the title slide and the content slides look?", "should_trigger": true},
+  {"query": "We generate our service contracts with this plugin and clients say they're hard to read. Which design rules apply to a legal contract: numbering, clause spacing, margins, signature blocks? I want to settle them before the next one.", "should_trigger": true},
+  {"query": "My client wants a 'corporate look' for the proposal. What's the recommended structure, layout and color strategy? Don't generate anything yet, I want to decide on the design first.", "should_trigger": true},
+  {"query": "We generate board reports for consulting clients and pitch decks for startups with the same plugin. Both look identical right now. What should change in the fonts, colors and layout for each kind of document?", "should_trigger": true},
+  {"query": "Какие принципы дизайна используют крупные консалтинговые компании в отчётах и предложениях? Хочу сделать «как у McKinsey»", "should_trigger": true},
+  {"query": "Подскажи, как выбрать цвета и шрифты для корпоративного документа, чтобы он выглядел солидно", "should_trigger": true},
+  {"query": "Generate the proposal PDF for Brightpath Dental now", "should_trigger": false},
+  {"query": "Design a logo for my consulting firm", "should_trigger": false},
+  {"query": "How do I make my React dashboard look like Stripe's?", "should_trigger": false},
+  {"query": "What's the best slide template in Google Slides for a weekly team update?", "should_trigger": false},
+  {"query": "Collect my company details and logo for future documents", "should_trigger": false},
+  {"query": "What required fields does a proposal need?", "should_trigger": false},
+  {"query": "Write the executive summary text for a proposal about a cloud migration", "should_trigger": false},
+  {"query": "Review the UX of my checkout page and suggest improvements", "should_trigger": false}
+]

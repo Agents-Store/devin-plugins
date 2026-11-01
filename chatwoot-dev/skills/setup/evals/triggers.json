@@ -1,0 +1,18 @@
+[
+  {"query": "I just spun up a Chatwoot account on app.chatwoot.com. How do I get an API access token and what's my account id? I want to call the REST API from a script", "should_trigger": true},
+  {"query": "configure CHATWOOT_API_KEY, CHATWOOT_BASE_URL and CHATWOOT_ACCOUNT_ID for this project, and then verify that the API answers - self-hosted instance at https://chat.example.com", "should_trigger": true},
+  {"query": "I need to provision a new Chatwoot account and its first admin user from a script. Set up what that needs: get the right token, export the env vars and verify the API answers", "should_trigger": true},
+  {"query": "Wire up a custom chat widget on our marketing site against Chatwoot: work out which API family and which credentials I need for it, set the env vars in my shell config and verify that the API answers", "should_trigger": true},
+  {"query": "Подскажи, как получить токен доступа в Chatwoot и проверить, что REST API отвечает, прежде чем мы начнём писать интеграцию", "should_trigger": true},
+  {"query": "Установи официальный chatwoot CLI и помоги авторизоваться: у меня самохостинг Chatwoot, базовый URL и ключ API есть", "should_trigger": true},
+  {"query": "Set up CHATWOOT_BASE_URL, CHATWOOT_API_KEY and CHATWOOT_ACCOUNT_ID for this project and run a check call. We are behind nginx, so pick the token header spelling that survives the proxy", "should_trigger": true},
+  {"query": "Set up Chatwoot access for this project from scratch: tell me where to get the token and the account id, which three variables to export, and verify that the API answers with the profile call", "should_trigger": true},
+  {"query": "Chatwoot returns 401 only when the request goes through our Traefik proxy; the token works from the dashboard host directly", "should_trigger": false},
+  {"query": "Register a Chatwoot webhook for conversation_created and message_created that points to https://example.com/hook", "should_trigger": false},
+  {"query": "The live-chat widget of our Chatwoot website inbox looks off-brand - how do I change the widget color, welcome text and launcher position in the inbox settings of the dashboard?", "should_trigger": false},
+  {"query": "Get an API key for the OpenAI API and set OPENAI_API_KEY for my project", "should_trigger": false},
+  {"query": "Triage the open conversations in Chatwoot from the terminal and assign them round-robin", "should_trigger": false},
+  {"query": "Show me a full worked example of a Chatwoot agent bot", "should_trigger": false},
+  {"query": "How do I set up Intercom's REST API access token and test the connection with curl?", "should_trigger": false},
+  {"query": "What are the best practices for tagging conversations in a helpdesk so reports stay useful?", "should_trigger": false}
+]

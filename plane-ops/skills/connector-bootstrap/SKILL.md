@@ -1,6 +1,6 @@
 ---
 name: connector-bootstrap
-description: MUST be consulted at the start of ANY Plane-related request before answering the user or declaring tools unavailable. Discovers Plane tools across any MCP server, connector, or instance naming convention - the resource tools of Plane MCP 0.3.0 and later (one tool per resource with an `action` parameter, which every other plane-ops skill and command is written for) - and carries the fallback translation for servers older than 0.3.0 that expose one tool per operation. Use when the user mentions sprint, backlog, work item, cycle, epic, module, milestone, initiative, project, issue, ticket, task, standup, retro, estimate, roadmap, board, Plane, or any work-management operation, even if Plane tools are not visible yet. Also use before saying "I don't have access to Plane tools" or "tool not available".
+description: Finds the Plane MCP tools when their names are unclear. Probes ToolSearch across MCP servers, connectors and instance naming conventions, handles the resource tools of Plane MCP 0.3.0 and later (one tool per resource with an action parameter) and translates for older per-operation servers. Use when Plane tools seem missing, several Plane instances are connected, or before saying that Plane tools are unavailable. The task skills (work-items, sprint-planning, daily-standup) do the Plane work.
 ---
 
 # Plane Connector Bootstrap
@@ -30,7 +30,7 @@ Symptoms this skill prevents:
 
 ## Mandatory Bootstrap Protocol
 
-Execute these steps **before** answering any Plane-related user request.
+Execute these steps before the first Plane call of a session, while the tool names are not known yet, and always before you say that Plane tools are missing or unavailable.
 
 ### Step 1 - Probe with ToolSearch
 

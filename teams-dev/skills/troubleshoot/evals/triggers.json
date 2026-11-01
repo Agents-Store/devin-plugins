@@ -1,0 +1,16 @@
+[
+  {"query": "My Teams bot does not reply to messages. The server log shows nothing when I send a message in Teams. Where do I start?", "should_trigger": true},
+  {"query": "Installing my custom app says custom apps are blocked, and sometimes this app cannot be found. What is going on?", "should_trigger": true},
+  {"query": "Teams bot: a card button does nothing, installing says this app cannot be found, and the manifest fails validation. In what order do I troubleshoot these three?", "should_trigger": true},
+  {"query": "SSO sign-in loops and shows a six-digit code. Is something wrong?", "should_trigger": true},
+  {"query": "Manifest validation failed on upload, and a tab is blank after install. What do I check first?", "should_trigger": true},
+  {"query": "Бот в Teams не отвечает, в логе приходит 401 на входящие запросы. Как найти причину?", "should_trigger": true},
+  {"query": "Что делать, если teams app doctor ругается на регистрацию бота, а стриминг в канале ничего не показывает?", "should_trigger": true},
+  {"query": "Troubleshoot my Slack bot not receiving events", "should_trigger": false},
+  {"query": "Write the handler that sends a streamed answer", "should_trigger": false},
+  {"query": "Explain how addOAuthFlow callbacks work", "should_trigger": false},
+  {"query": "My Express server returns 502 behind nginx. How do I debug it?", "should_trigger": false},
+  {"query": "Why does my C# Bot Framework bot return 401 from Azure Bot Service?", "should_trigger": false},
+  {"query": "List the teams CLI commands", "should_trigger": false},
+  {"query": "Why does npm install fail with ERESOLVE for peer dependencies?", "should_trigger": false}
+]

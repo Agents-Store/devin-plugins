@@ -1,0 +1,17 @@
+[
+  {"query": "Show a progress bar in my Next.js UI for a Trigger.dev task using useRealtimeRun against a self-hosted server. Why does the hook call the cloud?", "should_trigger": true},
+  {"query": "Stream an AI response from a Trigger.dev task to the browser token by token with realtime streams", "should_trigger": true},
+  {"query": "How do I create a public access token for the frontend so it can only read one run?", "should_trigger": true},
+  {"query": "From a Node script without React, subscribe to a Trigger.dev run and print every status change until it finishes", "should_trigger": true},
+  {"query": "Show all of one user's runs live on a dashboard page. Which hook subscribes by tag, and how do I scope the token so it can only read that tag?", "should_trigger": true},
+  {"query": "My useRealtimeRun token from the trigger handle expires and the page stops updating. Write the server action that mints a replacement scoped to the user's tag after authorizing, and wire refreshAccessToken", "should_trigger": true},
+  {"query": "Как показать прогресс фоновой задачи Trigger.dev в React-компоненте через useRealtimeRun?", "should_trigger": true},
+  {"query": "Как стримить ответ LLM из задачи Trigger.dev в интерфейс и читать поток во фронтенде?", "should_trigger": true},
+  {"query": "Build a durable chat agent with chat.agent", "should_trigger": false},
+  {"query": "Add a WebSocket server to Express and broadcast progress", "should_trigger": false},
+  {"query": "Write a Trigger.dev task with batchTriggerAndWait and idempotency keys", "should_trigger": false},
+  {"query": "Server-sent events from a Hono endpoint", "should_trigger": false},
+  {"query": "Use the Vercel AI SDK useChat with streaming in React", "should_trigger": false},
+  {"query": "Deploy Trigger.dev tasks to production", "should_trigger": false},
+  {"query": "Subscribe to Supabase realtime changes in React", "should_trigger": false}
+]

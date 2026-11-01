@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete e-commerce PostgreSQL schema with tables, constraints, indexes and relations that works in NocoDB and NocoBase", "should_trigger": true},
+  {"query": "I want a full blog schema example for PostgreSQL: posts, authors, tags, junction table and indexes, compatible with NocoDB", "should_trigger": true},
+  {"query": "Give me an end-to-end CRM schema in PostgreSQL - companies, contacts, deals, activities - that NocoDB and NocoBase can both use", "should_trigger": true},
+  {"query": "Do you have a real sample database for a content management system I can paste into psql and then connect NocoDB to?", "should_trigger": true},
+  {"query": "Show me a worked example of a complete working schema with all constraints and foreign keys I can adapt for my app", "should_trigger": true},
+  {"query": "Покажи полный пример схемы PostgreSQL для интернет-магазина с таблицами, индексами и связями, совместимый с NocoDB", "should_trigger": true},
+  {"query": "Нужна готовая схема БД для CRM на PostgreSQL, которую можно подключить к NocoBase. Дай целиком", "should_trigger": true},
+  {"query": "Give me a sample schema for a CMS with pages, media and menus, and explain which parts matter for NocoDB compatibility", "should_trigger": true},
+  {"query": "Which PostgreSQL type should I use for email columns in NocoDB?", "should_trigger": false},
+  {"query": "Rename the column status to state in my orders table and refresh NocoDB", "should_trigger": false},
+  {"query": "NocoDB doesn't show my new column after an ALTER TABLE", "should_trigger": false},
+  {"query": "Show me an example Django models.py for an e-commerce site", "should_trigger": false},
+  {"query": "Give me a complete MongoDB schema design for a blog", "should_trigger": false},
+  {"query": "Write a seed script with sample data for a Postgres users table", "should_trigger": false},
+  {"query": "Use the PostgreSQL MCP tools to list all tables in the public schema", "should_trigger": false},
+  {"query": "Call a stored function over PostgREST with curl", "should_trigger": false}
+]

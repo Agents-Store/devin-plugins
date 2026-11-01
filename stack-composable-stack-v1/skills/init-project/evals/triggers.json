@@ -1,0 +1,17 @@
+[
+  {"query": "I just cloned our repo onto a new machine. How do I set up the Composable Stack: env vars, MCP connections and the project CLAUDE.md?", "should_trigger": true},
+  {"query": "Which env variables does the stack need for Trigger.dev, n8n, NocoDB and PostgREST? I have the example env file but I am not sure which token is which", "should_trigger": true},
+  {"query": "n8n native MCP returns 403 right after setup. Where do I generate the MCP token and which variable does it go into?", "should_trigger": true},
+  {"query": "How do I verify that all MCP services of the stack respond? Give me the checks in order, starting from NocoDB", "should_trigger": true},
+  {"query": "I am filling the .env of the Composable Stack. I have NOCODB_TOKEN from the REST API. What goes into NOCODB_MCP_URL and NOCODB_MCP_TOKEN, and how do I test that the MCP answers?", "should_trigger": true},
+  {"query": "Как настроить окружение Composable Stack с нуля: переменные, подключение MCP-серверов и проверка, что всё отвечает?", "should_trigger": true},
+  {"query": "Подключил стек, но Trigger.dev не отвечает по таймауту. Что проверить в переменных окружения?", "should_trigger": true},
+  {"query": "need to pull the secrets from Infisical into .env and settings.local.json for the stack project, what is the command and what gets written where?", "should_trigger": true},
+  {"query": "Install the Infisical CLI on Ubuntu and log in to my self-hosted instance", "should_trigger": false},
+  {"query": "Set up a new Next.js project with TypeScript and Tailwind", "should_trigger": false},
+  {"query": "Write a docker-compose.yml for PostgreSQL 16 with a persistent volume", "should_trigger": false},
+  {"query": "Add an MCP server to my Claude Code plugin in .mcp.json with a stdio transport", "should_trigger": false},
+  {"query": "Design the rollout of the orders module across the data, logic and interface layers", "should_trigger": false},
+  {"query": "Which of NocoDB MCP or PostgREST should n8n use to read orders?", "should_trigger": false},
+  {"query": "Initialize a git repository with a .gitignore for a Python project and make the first commit", "should_trigger": false}
+]

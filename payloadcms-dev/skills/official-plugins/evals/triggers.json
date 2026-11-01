@@ -1,0 +1,18 @@
+[
+  {"query": "Which official Payload plugins should I use for SEO meta fields, redirects, full-text search and a form builder - how do I install and compose them in the plugins array?", "should_trigger": true},
+  {"query": "Configure @payloadcms/plugin-seo for posts with a generateTitle and generateDescription function and a preview", "should_trigger": true},
+  {"query": "Set up the Payload multi-tenant plugin with tenant-scoped collections and a tenant selector in the admin", "should_trigger": true},
+  {"query": "Stripe plugin for Payload: which env vars do I need, and what is the webhook endpoint? What changed for rest in 3.90?", "should_trigger": true},
+  {"query": "Form builder plugin: why can my second auth collection not read form-submissions after 3.90?", "should_trigger": true},
+  {"query": "Как подключить плагин redirects в Payload и использовать его на Next.js фронтенде?", "should_trigger": true},
+  {"query": "Какие официальные плагины @payloadcms/plugin-* нужны для Sentry и для импорта/экспорта данных в Payload? Как их установить и подключить в массив plugins?", "should_trigger": true},
+  {"query": "Set up the official Payload MCP plugin: where is /api/mcp, and how do I create the Bearer API key in the MCP API Keys admin collection (shown once since 3.90)?", "should_trigger": true},
+  {"query": "Build my own reusable Payload plugin from scratch and publish it to npm", "should_trigger": false},
+  {"query": "Which Strapi plugins do I need for SEO and sitemap generation?", "should_trigger": false},
+  {"query": "Add a Payload hook that fires after a form submission", "should_trigger": false},
+  {"query": "Install the Next.js SEO metadata API and generate sitemap.xml for my app", "should_trigger": false},
+  {"query": "Verify GitHub webhook signatures in an Express app", "should_trigger": false},
+  {"query": "How do I deploy Payload on Vercel?", "should_trigger": false},
+  {"query": "Directus extensions: how do I install a marketplace extension?", "should_trigger": false},
+  {"query": "What are the Payload field types for rich text and relationships?", "should_trigger": false}
+]

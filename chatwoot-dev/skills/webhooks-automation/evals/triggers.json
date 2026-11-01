@@ -1,0 +1,18 @@
+[
+  {"query": "I want Chatwoot to POST to my service whenever a new message arrives or a conversation changes status. Register the webhook via API and show me the Express handler that verifies the signature with the raw body", "should_trigger": true},
+  {"query": "build a Chatwoot agent bot that answers the first customer message with a canned FAQ reply and hands the conversation over to a human agent if the text contains 'refund'", "should_trigger": true},
+  {"query": "Create a Chatwoot automation rule through the API: when a conversation is created in the 'billing' inbox and the message contains 'invoice', assign it to the billing team and add the label 'billing'", "should_trigger": true},
+  {"query": "How do I verify X-Chatwoot-Signature and X-Chatwoot-Timestamp in a Python Flask webhook receiver? Constant-time comparison please", "should_trigger": true},
+  {"query": "Какие события можно подписать в вебхуках Chatwoot и как создать вебхук на conversation_status_changed через API?", "should_trigger": true},
+  {"query": "Сделай бота-агента для Chatwoot, который получает сообщения по вебхуку и отвечает через Application API, с передачей диалога оператору", "should_trigger": true},
+  {"query": "We want an integration hook from Chatwoot into our CRM so that contact_updated pushes the changes. Which events do I subscribe to and how do I deal with retries?", "should_trigger": true},
+  {"query": "Register a Chatwoot webhook for inbox_created and inbox_updated on our account through the API. I get a validation error on my instance when I include them: sort it out and give me the working request", "should_trigger": true},
+  {"query": "Show me the Chatwoot CLI commands to resolve a batch of conversations", "should_trigger": false},
+  {"query": "Chatwoot API returns 401 when called through nginx, fix it", "should_trigger": false},
+  {"query": "Set up an incoming webhook in Slack that posts a message when our CI pipeline fails", "should_trigger": false},
+  {"query": "Implement HMAC-SHA256 verification for GitHub webhooks in a Rails controller", "should_trigger": false},
+  {"query": "Give me an end-to-end walkthrough that bulk imports contacts into Chatwoot", "should_trigger": false},
+  {"query": "How do I obtain a Chatwoot access token and which header do I send it in?", "should_trigger": false},
+  {"query": "Write Zapier-style automation in Make.com that creates a Trello card for each new Typeform response", "should_trigger": false},
+  {"query": "Draft three canned responses for our support team's refund policy, in plain friendly English - I'll paste them into the helpdesk myself", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "My grammY bot crashes the whole process when a user blocks it. Add proper error handling so \"bot was blocked by the user\" is logged and the user is marked inactive in my database.", "should_trigger": true},
+  {"query": "What's the difference between GrammyError, HttpError and BotError, and how do I tell them apart inside bot.catch in my TypeScript bot?", "should_trigger": true},
+  {"query": "How do I make an error in my /broadcast handler not take down the rest of my middleware? I read about errorBoundary in grammy.", "should_trigger": true},
+  {"query": "My grammY bot runs on webhooks and I never installed bot.catch. When a handler throws, what status does the HTTP wrapper return and what does Telegram do with that update afterwards? Is polling different?", "should_trigger": true},
+  {"query": "Right now an exception inside any handler of my grammY bot kills the process at 3am. I want a bot.catch that treats GrammyError, HttpError and every other error differently and DMs the admin (chat id in ADMIN_CHAT_ID) the update id and the first lines of the stack trace. What does the proper handler look like?", "should_trigger": true},
+  {"query": "Как в grammY правильно ловить ошибки в обработчиках? Хочу bot.catch, который отдельно логирует GrammyError, HttpError и всё остальное.", "should_trigger": true},
+  {"query": "Бот падает с unhandled promise rejection, когда пользователь заблокировал бота. Как обернуть обработчики, чтобы процесс не умирал?", "should_trigger": true},
+  {"query": "In my grammY bot.catch I want to apologise to the user when a handler fails, but sending the apology throws as well when the user has blocked the bot in the meantime. How do I structure the handler, and how do I also forward the error with the update context to Sentry?", "should_trigger": true},
+  {"query": "I get 401 Unauthorized when my grammY bot starts, but the token looks right. How do I diagnose that?", "should_trigger": false},
+  {"query": "Implement retry with exponential backoff around fetch calls to a third-party REST API in Node.js", "should_trigger": false},
+  {"query": "Set up Sentry in my Express app to capture unhandled exceptions and send source maps", "should_trigger": false},
+  {"query": "Write a global error boundary component in React that shows a fallback UI and reports to the server", "should_trigger": false},
+  {"query": "Add sessions to my grammY bot so it counts how many messages each user sent", "should_trigger": false},
+  {"query": "Add the auto-retry and throttler transformers to my grammY API client so broadcasts stay under the limits", "should_trigger": false},
+  {"query": "Make my grammY bot send a photo with a caption and an inline keyboard", "should_trigger": false},
+  {"query": "Handle errors in aiogram 3 with an errors router and ExceptionTypeFilter", "should_trigger": false}
+]

@@ -3,91 +3,83 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Explain this file to me: models/user.py",
-      "expected_output": "Asks clarification questions (depth, aspect, experience level), then delivers 4-layer explanation with output format template",
+      "prompt": "Use the codemap-explain skill. Explain this file to me: models/user.py. Moderate depth, I want to know how it works, and I'm comfortable with Python basics but have never used SQLAlchemy. Go ahead inline, no agent please.\n\n# models/user.py\nfrom werkzeug.security import generate_password_hash, check_password_hash\nfrom app import db\n\nclass User(db.Model):\n    id = db.Column(db.Integer, primary_key=True)\n    email = db.Column(db.String(255), unique=True, nullable=False)\n    password_hash = db.Column(db.String(255), nullable=False)\n    deals = db.relationship('Deal', backref='owner', lazy='dynamic')\n\n    def set_password(self, password):\n        self.password_hash = generate_password_hash(password)\n\n    def check_password(self, password):\n        return check_password_hash(self.password_hash, password)",
+      "expected_output": "4-layer explanation (Context, Data Flow, How It Works, Pitfalls) with beginner-friendly terms and next steps",
       "files": [],
       "expectations": [
-        "Asks user about desired depth (overview/moderate/deep dive) and aspect of interest",
-        "Reads the target file and its immediate dependencies (imports, callers)",
-        "Starts with Context layer — plain-language summary and architectural role",
-        "Includes Data Flow layer with concrete values, not abstract descriptions",
-        "Defines technical terms on first use (e.g., ORM, model, migration)",
-        "Uses output format: headers for Context, Data Flow, How It Works, Pitfalls",
-        "Ends with 2-3 specific next steps tailored to the user's interest",
-        "Uses real names from the code, not generic placeholders"
+        "The answer has the section headers Context, Data Flow, How It Works and Pitfalls",
+        "The Context section says in plain language that this is the User model for a database table and where it sits in the project",
+        "Technical terms such as model, ORM or relationship are defined in plain words when first used",
+        "The Data Flow section traces concrete values, for example a plain password going in and a password_hash being stored",
+        "The answer uses the real names set_password, check_password, password_hash and deals from the code",
+        "The Pitfalls section mentions that passwords are stored only as hashes or that lazy='dynamic' returns a query",
+        "The answer ends with two or three specific next steps"
       ]
     },
     {
       "id": 2,
-      "prompt": "How does the authentication system work in this project?",
-      "expected_output": "Module-level explanation covering auth components, data flow, and connections between files",
+      "prompt": "Use the codemap-explain skill. How does the authentication system work in this project? Overview depth is fine, I know basic Flask, explain how it works. Inline please. Here are the three auth files:\n\n# auth/routes.py\n@auth_bp.post('/login')\ndef login():\n    user = verify_credentials(request.form['email'], request.form['password'])\n    if not user:\n        flash('Wrong email or password')\n        return redirect(url_for('auth.login_page'))\n    login_user(user)\n    return redirect(url_for('deals.index'))\n\n# auth/service.py\ndef verify_credentials(email, password):\n    user = User.query.filter_by(email=email).first()\n    return user if user and user.check_password(password) else None\n\n# auth/middleware.py\n@app.before_request\ndef require_login():\n    if request.endpoint not in PUBLIC_ENDPOINTS and not current_user.is_authenticated:\n        return redirect(url_for('auth.login_page'))",
+      "expected_output": "Module-level explanation of the auth components, their data flow and how the files connect",
       "files": [],
       "expectations": [
-        "Asks about desired depth and experience with the auth stack before explaining",
-        "Identifies all auth-related files via reading strategy (list module, read key files, map dependencies)",
-        "Explains at module scope: purpose, file listing with roles, internal dependencies",
-        "Generates a mini-diagram if 3+ components interact",
-        "Uses concrete examples from actual code with real function/variable names",
-        "Includes a data flow trace with concrete values (e.g., email/password → hash check → session)",
-        "Suggests specific next steps (e.g., 'Want me to explain the middleware?' or 'Want an auth flow diagram?')"
+        "The answer explains the role of each of the three files: routes.py, service.py and middleware.py",
+        "The answer traces the data flow from the submitted email and password through verify_credentials to login_user",
+        "The answer explains that before_request blocks every endpoint outside PUBLIC_ENDPOINTS for users who are not logged in",
+        "The answer uses real names from the code, such as verify_credentials, login_user and require_login",
+        "The answer includes a mini data-flow trace or a small diagram of how the components interact",
+        "The answer ends with specific next steps, for example offering a diagram of the auth flow"
       ]
     },
     {
       "id": 3,
-      "prompt": "Walk me through the create_deal function",
-      "expected_output": "Function-level explanation with signature, parameters, return value, side effects, and edge cases",
+      "prompt": "Use the codemap-explain skill. Walk me through the create_deal function. Moderate depth, I want to understand how it works, and I know Python reasonably well. Inline, no agent.\n\n# services/deals.py\ndef create_deal(owner_id, title, amount):\n    if amount <= 0:\n        raise ValueError('amount must be positive')\n    owner = User.query.get(owner_id)\n    if owner is None:\n        raise LookupError('unknown owner')\n    deal = Deal(title=title.strip(), amount=amount, owner=owner)\n    db.session.add(deal)\n    db.session.commit()\n    notify_slack(f'New deal {deal.title}')\n    return deal",
+      "expected_output": "Function-level explanation with signature, parameters, return value, side effects and edge cases",
       "files": [],
       "expectations": [
-        "Greps to find the function definition and its callers",
-        "Reads surrounding file context to understand the function's role",
-        "Explains at function scope: signature, purpose, parameters, return value",
-        "Traces data flow through the function with concrete values",
-        "Notes pitfalls: edge cases, error paths, what inputs could break it",
-        "Verifies all claims against actual code — no hallucinated behavior",
-        "Suggests next steps: related functions, the module it belongs to, or how to extend it"
+        "The answer explains the signature: the parameters owner_id, title and amount and that the function returns the new Deal",
+        "The answer traces the flow with concrete example values",
+        "The answer lists the side effects: a database insert and commit and the Slack notification",
+        "The answer notes the two error paths: ValueError for a non-positive amount and LookupError for an unknown owner",
+        "The answer points out a pitfall, for example that notify_slack runs after the commit and may fail, or that title is not validated for emptiness",
+        "The answer suggests next steps such as explaining notify_slack or the Deal model"
       ]
     },
     {
       "id": 4,
       "prompt": "Explain the file src/nonexistent_module.py",
-      "expected_output": "Asks user to verify path instead of hallucinating",
+      "expected_output": "Asks user to verify the path instead of hallucinating",
       "files": [],
       "expectations": [
-        "Does not hallucinate file contents or code explanation",
-        "Asks user to check the path or provide the correct one",
-        "Suggests using Glob to find similar filenames",
-        "Does not skip to explaining something else without confirming"
+        "The answer does not invent the contents of the file or an explanation of it",
+        "The answer asks the user to check the path or provide the correct one",
+        "The answer does not jump to explaining a different file without confirming first"
       ]
     },
     {
       "id": 5,
-      "prompt": "I don't understand this codebase at all, give me a tour",
-      "expected_output": "Full project overview using reading strategy for projects, with clarification of depth preference",
+      "prompt": "Use the codemap-explain skill. I don't understand this codebase at all, give me a tour. Overview depth, I am a junior developer, I want to know how it works. Do it inline. Do not try to open files, this list is everything you get. Here is what I can see in the project:\n\nREADME.md: 'Dealflow - a small CRM for sales teams'\nrequirements.txt: Flask, Flask-SQLAlchemy, Flask-Login, psycopg2-binary, gunicorn\napp/__init__.py: create_app() registers blueprints auth_bp and deals_bp and calls db.init_app(app)\napp/routes/auth.py: login and logout views\napp/routes/deals.py: list, create and edit deals, uses services/deals.py\napp/services/deals.py: business logic, talks to the models\napp/models.py: User, Company, Deal\napp/templates/: Jinja2 HTML templates\nwsgi.py: gunicorn entry point calling create_app()",
+      "expected_output": "Project-level tour with context, one traced request and the stack",
       "files": [],
       "expectations": [
-        "Asks about desired depth and what aspect interests the user most",
-        "Follows project-level reading strategy: root files, directories, entry points, one request trace",
-        "Starts with Context: what the project does, who it's for, deployment model",
-        "Provides Data Flow: traces one complete request end-to-end",
-        "Identifies the stack: framework, database, key libraries",
-        "Ends with specific next steps: 'Want me to dive into [specific module]?' with 2-3 options",
-        "Offers to generate an architecture diagram if project has 3+ layers"
+        "The answer states what the project does and who it is for: a small CRM for sales teams",
+        "The answer identifies the stack: Flask, SQLAlchemy, Flask-Login, PostgreSQL via psycopg2 and gunicorn",
+        "The answer ends with specific next steps that offer to dive into named modules",
+        "The answer says what each layer of the app is for: routes, services, models and templates"
       ]
     },
     {
       "id": 6,
-      "prompt": "Explain this file in detail, I want a deep dive: routes/api.js",
-      "expected_output": "Deep dive explanation with all 4 layers expanded, line-by-line key logic annotation",
+      "prompt": "Use the codemap-explain skill. Explain this file in detail, I want a deep dive: routes/api.js. Inline please.\n\n// routes/api.js\nconst router = require('express').Router();\nconst { requireAuth } = require('../middleware/auth');\nconst Order = require('../models/order');\n\nrouter.get('/orders', requireAuth, async (req, res) => {\n  const { page = '1' } = req.query;\n  const orders = await Order.find({ userId: req.user }).skip((parseInt(page, 10) - 1) * 20).limit(20);\n  res.json(orders);\n});\n\nrouter.post('/orders', requireAuth, async (req, res) => {\n  const order = await Order.create({ ...req.body, userId: req.user });\n  res.status(201).json(order);\n});\n\nmodule.exports = router;",
+      "expected_output": "Deep dive explanation with all four layers expanded and annotations of the key logic",
       "files": [],
       "expectations": [
-        "Skips depth question since user explicitly requested deep dive",
-        "Reads the file and all its dependencies thoroughly",
-        "Provides expanded Context with full architectural positioning",
-        "Includes detailed Data Flow trace for each route/endpoint",
-        "Details layer covers line-by-line key logic with annotations",
-        "Pitfalls section is comprehensive: edge cases, security, performance",
-        "Uses framework-specific terminology appropriate to the detected stack",
-        "Output uses the full format template with all headers"
+        "The answer does not ask the user about the desired depth, because a deep dive was requested",
+        "The answer has the section headers Context, Data Flow, How It Works and Pitfalls",
+        "The answer walks through both endpoints, GET /orders with pagination and POST /orders",
+        "The answer explains the pagination arithmetic skip((parseInt(page, 10) - 1) * 20) and limit(20)",
+        "The pitfalls mention that spreading req.body into Order.create allows mass assignment, for example of userId or other protected fields",
+        "The pitfalls mention a missing try/catch or error handling around the async handlers",
+        "The answer defines Express terms such as router or middleware when first used"
       ]
     }
   ]

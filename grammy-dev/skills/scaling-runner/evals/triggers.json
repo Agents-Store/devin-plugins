@@ -1,0 +1,18 @@
+[
+  {"query": "My grammY bot handles about 300 messages per second at peak and updates queue up with bot.start(). How do I switch to the runner and keep per-chat ordering with sequentialize?", "should_trigger": true},
+  {"query": "I keep getting 429 Too Many Requests when broadcasting to 20k users with grammY. Set up auto-retry and the throttler properly.", "should_trigger": true},
+  {"query": "How do I gracefully stop @grammyjs/runner on SIGINT and SIGTERM and wait for the in-flight handlers?", "should_trigger": true},
+  {"query": "The /export command of my grammY bot takes 8 seconds and while it runs every other user waits, because bot.start() handles updates one by one. How do I process updates concurrently without breaking the order inside one chat, and how do I stop the runner cleanly on SIGTERM?", "should_trigger": true},
+  {"query": "grammy runner config: how do I set concurrency, fetch timeout and allowed_updates?", "should_trigger": true},
+  {"query": "Как ускорить обработку апдейтов в grammY, если бот тормозит под нагрузкой? Подскажи про runner и sequentialize.", "should_trigger": true},
+  {"query": "При рассылке на 10 000 пользователей grammY ловит 429. Как подключить auto-retry и transformer-throttler?", "should_trigger": true},
+  {"query": "How can I handle updates in parallel in grammY without breaking per-user message order?", "should_trigger": true},
+  {"query": "Horizontally scale my Node API on Kubernetes with an HPA based on CPU utilisation", "should_trigger": false},
+  {"query": "Set up Redis-based rate limiting for an Express API with express-rate-limit", "should_trigger": false},
+  {"query": "Deploy my grammY bot to Cloudflare Workers with webhooks", "should_trigger": false},
+  {"query": "Write a Celery worker pool configuration for high concurrency", "should_trigger": false},
+  {"query": "Explain how session storage adapters work in grammY and which to choose for production", "should_trigger": false},
+  {"query": "Catch GrammyError and HttpError separately in my grammY bot", "should_trigger": false},
+  {"query": "Telegraf: how do I handle many updates concurrently without blocking the event loop?", "should_trigger": false},
+  {"query": "Add a /stats command to my grammY bot that shows the number of registered users", "should_trigger": false}
+]

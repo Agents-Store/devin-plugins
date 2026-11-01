@@ -1,6 +1,6 @@
 ---
 name: performance-optimization
-description: Next.js performance optimization patterns for images, fonts, bundles, and Core Web Vitals. This skill should be used when the user asks about "Next.js performance", "optimize Next.js app", "Core Web Vitals", "bundle size", "next/image optimization", "next/font", "lazy loading", "dynamic imports", or needs to improve the speed and efficiency of their Next.js application.
+description: Next.js 16 performance — next/image and next/font setup, dynamic imports, bundle analysis, the React Compiler (stable in 16, experimental Rust compiler in 16.3), prefetching and Partial Prefetching, third-party scripts and Core Web Vitals (LCP, INP, CLS). Use when a page is slow or heavy. Caching strategy belongs to data-fetching.
 ---
 
 # Performance Optimization

@@ -1,12 +1,6 @@
 ---
 name: component-registry
-description: >
-  Browse, search, install, and use shadcn/ui and shadcn studio components, blocks, and templates. This skill
-  should be used when the user asks to "install a shadcn component", "add a button", "list shadcn blocks",
-  "find a form block", "date picker", "add a form", "browse shadcn studio components", "add a card component", "install a navigation
-  block", "what components are available", "write code with shadcn components", "use Button component",
-  "render shadcn component as link", "Button as a link", "shadcn component patterns", or needs to discover,
-  install, or use UI components from shadcn registries correctly.
+description: Install and use shadcn/ui and shadcn studio components with the shadcn CLI v4 — add, view, --dry-run and --diff, the @shadcn-studio and @ss-* registries, compositions that are not registry items such as form and date picker, and Base UI specifics like the render prop instead of asChild. Use when adding or composing components. Searching community registries is component-search.
 ---
 
 ## Registries Overview

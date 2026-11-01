@@ -1,6 +1,6 @@
 ---
 name: cost-awareness
-description: This skill should be used before any paid DataForSEO call, and when the user asks about "DataForSEO cost", "DataForSEO pricing", "how much will this cost", "DataForSEO budget", "credits", "billing", or wants to keep DataForSEO spending under control.
+description: Use as the budget gate before the first paid DataForSEO api_request of a task, after the task skill has chosen its endpoints, and for any question about DataForSEO pricing - what a call costs, which calls are free, how to estimate or cap spend, how to check the account balance, and how to keep a bill small with bulk endpoints and explicit limit or depth.
 ---
 
 # Cost awareness

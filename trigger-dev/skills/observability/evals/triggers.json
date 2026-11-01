@@ -1,0 +1,17 @@
+[
+  {"query": "Write me a TRQL query for the 10 most expensive runs last week and the daily LLM cost by model", "should_trigger": true},
+  {"query": "How many runs failed this week per task? Use Trigger.dev's query language and tell me which table", "should_trigger": true},
+  {"query": "Which columns does llm_metrics have? My query on cost_usd fails", "should_trigger": true},
+  {"query": "My metrics query fails with column value not found on the metrics table", "should_trigger": true},
+  {"query": "AST too complex error on a Trigger.dev dashboard widget. How do I simplify the query?", "should_trigger": true},
+  {"query": "Does TRQL work on self-hosted Trigger.dev? The dashboards are empty", "should_trigger": true},
+  {"query": "Как посчитать стоимость LLM по задачам в Trigger.dev и построить дашборд?", "should_trigger": true},
+  {"query": "Как построить график использования памяти задачами за 7 дней на дашборде Trigger.dev?", "should_trigger": true},
+  {"query": "Which MCP tools can I use to run a query? List all tools", "should_trigger": false},
+  {"query": "Set up Grafana dashboards for Postgres metrics", "should_trigger": false},
+  {"query": "Write ClickHouse SQL for a pageviews table with daily uniques", "should_trigger": false},
+  {"query": "Debug why runs are stuck in QUEUED", "should_trigger": false},
+  {"query": "Stream task progress to a React UI", "should_trigger": false},
+  {"query": "Add OpenTelemetry tracing to my Express app", "should_trigger": false},
+  {"query": "Calculate LLM token cost per request in my Python script", "should_trigger": false}
+]

@@ -1,0 +1,16 @@
+[
+  {"query": "How can I test my Teams bot locally without registering it or running a tunnel?", "should_trigger": true},
+  {"query": "My bot logs No credentials configured, all incoming requests will be rejected, when I run it locally. I only want to chat with it in a local tool", "should_trigger": true},
+  {"query": "The DevTools plugin for the Teams SDK is deprecated. What replaces it and how do I run it against port 3978?", "should_trigger": true},
+  {"query": "How do I mock a membership change or a reaction activity for my Teams bot while testing locally?", "should_trigger": true},
+  {"query": "Can the Agents Playground test my addOAuthFlow sign-in handler, or only message handlers? What can it not do?", "should_trigger": true},
+  {"query": "Как локально проверить бота для Teams без туннеля и регистрации? Хочу чат с ботом и посмотреть HTTP-обмен", "should_trigger": true},
+  {"query": "Как запустить agentsplayground и указать endpoint бота? На каком порту открывается интерфейс?", "should_trigger": true},
+  {"query": "Register my Teams bot with teams app create and set up a dev tunnel", "should_trigger": false},
+  {"query": "Deploy my Teams bot to Azure App Service with a managed identity", "should_trigger": false},
+  {"query": "Test a Slack bot locally using ngrok and the Slack Events API", "should_trigger": false},
+  {"query": "Debug a Teams bot that logs a 401 for every inbound request in production", "should_trigger": false},
+  {"query": "Test a C# Bot Framework bot with the Bot Framework Emulator", "should_trigger": false},
+  {"query": "Write the echo handler with app.on('message') for a new Teams bot", "should_trigger": false},
+  {"query": "Write unit tests for my message handlers with vitest and a mocked context", "should_trigger": false}
+]

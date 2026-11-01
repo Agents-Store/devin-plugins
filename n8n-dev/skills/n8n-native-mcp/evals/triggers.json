@@ -1,0 +1,18 @@
+[
+  {"query": "Create an n8n workflow from SDK code through the instance-level MCP: a webhook trigger, an HTTP Request and a Slack node. Use create_workflow_from_code.", "should_trigger": true},
+  {"query": "Before I write workflow SDK code for n8n's native MCP, what do get_workflow_sdk_reference and get_workflow_best_practices give me and in what order do I call them?", "should_trigger": true},
+  {"query": "Edit my n8n workflow 'Lead intake' with update_workflow: rename the node 'HTTP Request' and add an IF node after it", "should_trigger": true},
+  {"query": "Execute the workflow with id abc123 through the n8n native MCP, pass test pin data, and show me the execution result", "should_trigger": true},
+  {"query": "Publish and later unpublish a workflow through the official n8n MCP server - which tools do that and what do I need to enable on the instance first?", "should_trigger": true},
+  {"query": "Build me a first-class n8n Agent (not a workflow) with create_agent and mutate_agent that triages support emails, then test it with call_agent", "should_trigger": true},
+  {"query": "Как включить встроенный MCP-сервер n8n (instance-level) и открыть для него конкретные workflows, чтобы они были 'Available in MCP'?", "should_trigger": true},
+  {"query": "Нужно получить определения типов нод через get_node_types и провалидировать код workflow перед созданием через нативный MCP n8n", "should_trigger": true},
+  {"query": "Use the community n8n-mcp search_nodes tool to find the Gmail node and validate its configuration with validate_node", "should_trigger": false},
+  {"query": "Run n8n execute --id 7 from the CLI inside the docker container", "should_trigger": false},
+  {"query": "Write a JavaScript Code node for n8n that flattens nested arrays and removes duplicates", "should_trigger": false},
+  {"query": "List the executions of one workflow with the n8n public REST API and curl", "should_trigger": false},
+  {"query": "Build an agent in LangGraph with a tool node and conversation memory in Python", "should_trigger": false},
+  {"query": "Self-host n8n in queue mode with Redis, two workers and a Caddy reverse proxy", "should_trigger": false},
+  {"query": "Connect Zapier's MCP server to Claude Desktop and run a zap from the chat", "should_trigger": false},
+  {"query": "Write a custom MCP server in TypeScript that exposes a get_weather tool over stdio", "should_trigger": false}
+]

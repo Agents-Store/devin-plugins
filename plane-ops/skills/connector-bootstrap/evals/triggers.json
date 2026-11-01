@@ -1,0 +1,17 @@
+[
+  {"query": "I keep getting 'I don't have access to Plane tools' even though the Plane MCP is connected. How do I discover the tools?", "should_trigger": true},
+  {"query": "Translate the legacy per-operation Plane tool create_work_item into the resource tool call of Plane MCP 0.3 and later, using the fallback translation table", "should_trigger": true},
+  {"query": "Plane tools do not show up in my Claude Code session although the connector is added. How does the agent discover the deferred Plane tools with ToolSearch, and what changes for servers older than 0.3.0 that expose one tool per operation?", "should_trigger": true},
+  {"query": "The Plane MCP shows as connected but I cannot see any plane tools in this session, only deferred tool names. Find the Plane tools first and tell me which tool surface this server exposes before we do anything", "should_trigger": true},
+  {"query": "Our Plane instance is connected through a custom proxy so the tool names look different. How should the agent find them?", "should_trigger": true},
+  {"query": "Покажи мои задачи в Plane — сначала найди, какие инструменты Plane доступны в этой сессии", "should_trigger": true},
+  {"query": "Plane подключён как коннектор, но инструменты не видны. Как их обнаружить и что делать со старым MCP до версии 0.3.0?", "should_trigger": true},
+  {"query": "Create a new issue in Jira for the login bug", "should_trigger": false},
+  {"query": "List my Linear issues for this cycle", "should_trigger": false},
+  {"query": "How do I self-host Plane with docker compose and configure SMTP?", "should_trigger": false},
+  {"query": "Show my GitHub issues assigned to me", "should_trigger": false},
+  {"query": "Write a Python script that reads Trello cards through the API", "should_trigger": false},
+  {"query": "Which MCP servers are configured in my Claude Code project?", "should_trigger": false},
+  {"query": "Set up an Asana project for a marketing campaign", "should_trigger": false},
+  {"query": "Explain the difference between Scrum sprints and Kanban flow", "should_trigger": false}
+]

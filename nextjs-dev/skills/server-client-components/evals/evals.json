@@ -8,15 +8,11 @@
       "files": [],
       "expectations": [
         "The page component is converted to a Server Component (no 'use client' directive)",
-        "Data fetching is done directly in the async Server Component, not with useEffect",
-        "next/image is imported and used instead of raw img tag, with width/height or fill",
-        "params is awaited (typed as Promise<{ id: string }>) following Next.js 15+ convention",
-        "The LikeButton is moved to a separate Client Component file with 'use client'",
         "No function/callback is passed as a prop from the Server Component to the Client Component",
-        "The LikeButton uses optimistic UI (updates state before server confirms, with rollback on failure)",
-        "The date hydration issue is addressed with a dedicated FormattedDate client component (not just suppressHydrationWarning)",
-        "Tag-based revalidation (revalidateTag) is used for the like mutation instead of broad ISR",
-        "Each problem from the original code is explicitly identified and explained"
+        "The LikeButton is moved to a separate Client Component file with 'use client'",
+        "The Client Component receives specific primitive props such as postId rather than the whole post object",
+        "The module that fetches the post starts with import 'server-only'",
+        "The answer does not pass a raw Date object across the Server to Client boundary"
       ]
     }
   ]

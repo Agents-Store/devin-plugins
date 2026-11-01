@@ -1,0 +1,18 @@
+[
+  {"query": "I need to turn this task into the right DataForSEO API call: 'get Google organic top 20 for the query best crm software, US, English'. Which endpoint and what does the api_request body look like?", "should_trigger": true},
+  {"query": "how do I call DataForSEO through the MCP server? there seems to be just api_request and docs_search, and I can't find which endpoint gives me the SERP features", "should_trigger": true},
+  {"query": "what's the .ai mode in the DataForSEO MCP server and when do I need noAiMode set to true?", "should_trigger": true},
+  {"query": "I need the Google Play ranking of the app com.example.notes for 'note taking' in the US. None of your SEO workflows covers app stores, so find the right DataForSEO endpoint through the docs and build the api_request body", "should_trigger": true},
+  {"query": "Как через MCP-сервер DataForSEO узнать нужный эндпоинт для задачи 'позиции сайта по списку запросов' и собрать тело запроса для api_request?", "should_trigger": true},
+  {"query": "Объясни, как работает цикл docs_search -> api_request у DataForSEO и как найти location_code для города Казань", "should_trigger": true},
+  {"query": "list the sections of the DataForSEO docs and tell me where Merchant and App Data live, then show the request shape for a live endpoint", "should_trigger": true},
+  {"query": "Which of the DataForSEO MCP tools are free and which one is billed, and in what order do docs_list_sections, docs_index, docs_search and api_request go for an endpoint I have not used yet?", "should_trigger": true},
+  {"query": "Give me 100 keyword ideas for trail running shoes with search volumes", "should_trigger": false},
+  {"query": "Is my DataForSEO MCP server connected and working? Run a check", "should_trigger": false},
+  {"query": "DataForSEO returns 'tool not found' for dataforseo_labs_google_keyword_ideas", "should_trigger": false},
+  {"query": "Write an MCP server in Python that exposes a weather API as a tool", "should_trigger": false},
+  {"query": "How do I connect Claude Code to a remote MCP server with OAuth?", "should_trigger": false},
+  {"query": "How much will my planned DataForSEO calls cost?", "should_trigger": false},
+  {"query": "Give me an end-to-end DataForSEO workflow example for a content plan", "should_trigger": false},
+  {"query": "Call the Google Maps Places API with curl to find coffee shops near 52.52,13.40", "should_trigger": false}
+]

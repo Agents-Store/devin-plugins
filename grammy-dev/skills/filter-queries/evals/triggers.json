@@ -1,0 +1,18 @@
+[
+  {"query": "In grammY I want one handler for text messages that contain a URL entity and a different one for forwarded messages from channels. Which bot.on filter queries do I use, and how does ctx get narrowed?", "should_trigger": true},
+  {"query": "What's the difference between bot.on(\"message\"), bot.on(\"msg\") and bot.on(\":text\") in grammy? I want to catch text in channel posts too.", "should_trigger": true},
+  {"query": "How do I combine filter queries with AND in grammy, for example only photos that come from a private chat?", "should_trigger": true},
+  {"query": "My channel bot must react when an editor edits the caption of a photo post in our channel (not new posts, not text edits) and then re-send the new caption to our archive chat. Which bot.on filter query catches exactly that update, and how is ctx typed so ctx.editedChannelPost.caption is a string?", "should_trigger": true},
+  {"query": "Which grammY filter query matches only visual media (photos, live photos and videos) and which one the whole :file group? List the kinds behind each shortcut so I can pick the right one for a handler that must ignore documents and stickers.", "should_trigger": true},
+  {"query": "Что делают в grammY сокращения msg и edit в bot.on и чем \":text\" с ведущим двоеточием отличается от \"message:text\"? Какие типы апдейтов покрывает каждый вариант?", "should_trigger": true},
+  {"query": "Объясни синтаксис filter query в grammY: что значит message:entities:url и как поймать только пересланные сообщения", "should_trigger": true},
+  {"query": "I want one bot.on() call that matches text messages or captions containing a URL, only in group chats and not in edited messages, and ctx should be narrowed so ctx.msg.entities is typed. Is that expressible with grammY's filter query syntax, or do I need bot.filter and a type guard?", "should_trigger": true},
+  {"query": "Register /start and /help commands and set the command menu in my grammY bot", "should_trigger": false},
+  {"query": "Write a grammY middleware that logs the processing time of every update", "should_trigger": false},
+  {"query": "How do I filter an array of objects in TypeScript with a type guard so that the type narrows?", "should_trigger": false},
+  {"query": "In Telegraf, how do I listen for photo messages with bot.on(\"photo\")?", "should_trigger": false},
+  {"query": "Build a regular expression that matches valid Telegram usernames", "should_trigger": false},
+  {"query": "How do I send a media group with grammY from local files?", "should_trigger": false},
+  {"query": "Set up session storage in MongoDB for my grammY bot", "should_trigger": false},
+  {"query": "Write a GraphQL filter query for a Directus collection with nested relations", "should_trigger": false}
+]

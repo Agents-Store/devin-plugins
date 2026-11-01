@@ -1,0 +1,18 @@
+[
+  {"query": "What should I name my OpenClaw agent? I want something that fits a calm, owl-like assistant", "should_trigger": true},
+  {"query": "How do I set the bot's emoji and avatar for my OpenClaw agent?", "should_trigger": true},
+  {"query": "Write IDENTITY.md for my agent: name 'Sage', creature type fox, vibe 'dry-witted', emoji fox", "should_trigger": true},
+  {"query": "change the agent's avatar to a new image file - where does that go?", "should_trigger": true},
+  {"query": "Как задать имя и эмодзи агенту в OpenClaw? Нужен файл IDENTITY.md", "should_trigger": true},
+  {"query": "Придумай визуальную идентичность для моего агента OpenClaw: имя, тип существа, эмодзи и аватар", "should_trigger": true},
+  {"query": "how does agent identity work in OpenClaw? What fields does the identity file have?", "should_trigger": true},
+  {"query": "I'm naming my agent and choosing its vibe. Help me fill in its identity file", "should_trigger": true},
+  {"query": "Make the agent's tone friendlier and add a boundary against giving legal advice", "should_trigger": false},
+  {"query": "Add a team member to the user profile with their Telegram id", "should_trigger": false},
+  {"query": "Design a logo and a mascot for my startup", "should_trigger": false},
+  {"query": "Choose a name for my new open-source CLI tool and check npm for conflicts", "should_trigger": false},
+  {"query": "Set my Slack bot's profile picture and display name through the API", "should_trigger": false},
+  {"query": "Create a Telegram bot with BotFather and set its name and profile photo", "should_trigger": false},
+  {"query": "Write a persona description for a ChatGPT custom GPT", "should_trigger": false},
+  {"query": "Add a rule to the agent's AGENTS.md about group chat behavior", "should_trigger": false}
+]

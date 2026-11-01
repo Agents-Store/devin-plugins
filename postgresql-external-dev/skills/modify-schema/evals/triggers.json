@@ -1,0 +1,18 @@
+[
+  {"query": "NocoDB doesn't show the column I just added with ALTER TABLE. How do I force a meta sync or refresh the data source?", "should_trigger": true},
+  {"query": "I need to rename a column and change its type in a PostgreSQL table that NocoDB and NocoBase use. What's the safe order of steps and what breaks in the UIs?", "should_trigger": true},
+  {"query": "How do I drop a junction table or a constraint in a Postgres database connected to NocoDB without leaving broken links in the metadata?", "should_trigger": true},
+  {"query": "Add a NOT NULL column with a default to a big table that NocoBase reads. What do I run and what should I refresh afterwards?", "should_trigger": true},
+  {"query": "I dropped a column in Postgres and now NocoDB views error out. How do I clean this up?", "should_trigger": true},
+  {"query": "Как переименовать колонку в PostgreSQL, подключённой к NocoDB, и обновить метаданные, чтобы NocoDB её увидел?", "should_trigger": true},
+  {"query": "Нужно удалить таблицу из внешней базы PostgreSQL, которую использует NocoBase. Что сделать сначала, а что после?", "should_trigger": true},
+  {"query": "Change a column from varchar to integer on a live table that NocoDB shows - how do I use ALTER TABLE ... USING and then sync?", "should_trigger": true},
+  {"query": "Design a new schema for an e-commerce database from scratch for NocoDB", "should_trigger": false},
+  {"query": "Which Postgres type is best for storing a JSON payload for NocoDB?", "should_trigger": false},
+  {"query": "Create an Alembic migration that renames a column in SQLAlchemy", "should_trigger": false},
+  {"query": "Explain how to run ALTER TABLE without locking in MySQL 8", "should_trigger": false},
+  {"query": "How do I create a Postgres index on a foreign key column to speed up joins?", "should_trigger": false},
+  {"query": "Show me an index on a foreign key column", "should_trigger": false},
+  {"query": "Run pg_stat_statements to find the slowest queries via MCP", "should_trigger": false},
+  {"query": "Fix 'relation already exists' when running a Prisma migration", "should_trigger": false}
+]

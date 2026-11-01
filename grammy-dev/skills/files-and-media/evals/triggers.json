@@ -1,0 +1,17 @@
+[
+  {"query": "I want my grammY bot to send the same welcome video to every new user without uploading it each time. How do I get the file_id on the first send, where do I keep it, and what happens if the file_id stops working?", "should_trigger": true},
+  {"query": "How do I download a photo a user sent to my grammY bot and save it to disk? I want the largest size, using getFile.", "should_trigger": true},
+  {"query": "I want to send an album of 5 photos as one media group with a caption only on the first photo, from local files in ./assets", "should_trigger": true},
+  {"query": "What are the exact size limits in a grammY bot for sending a photo by URL, uploading other files, and downloading with getFile, and what are my options beyond 20 MB?", "should_trigger": true},
+  {"query": "How do I send a voice message (ogg/opus) from a stream, and also receive voice notes from users and download them for transcription?", "should_trigger": true},
+  {"query": "Бот на grammY должен отправлять по URL фото на 12 МБ и принимать от пользователей видео на 45 МБ. Какие лимиты по размеру у отправки по URL, у загрузки и у getFile, и что делать с файлами больше 20 МБ?", "should_trigger": true},
+  {"query": "Нужно отправить пользователю видео из файла на диске и круглое видеосообщение (video note) в grammY. Покажи через InputFile.", "should_trigger": true},
+  {"query": "Run a grammY handler only when a user edits a text message in a private chat and compare the new text with the one I stored", "should_trigger": false},
+  {"query": "Upload files from an Express app to S3 using multer and presigned URLs", "should_trigger": false},
+  {"query": "How do I send an image as an attachment in a discord.js embed?", "should_trigger": false},
+  {"query": "Add an inline keyboard to my grammY bot with a Like and a Dislike button that update a counter", "should_trigger": false},
+  {"query": "Write a grammY handler that rate limits users to 3 messages per 10 seconds", "should_trigger": false},
+  {"query": "Convert a user's HEIC photo to JPEG with sharp in Node.js and return the buffer", "should_trigger": false},
+  {"query": "Sell a digital file through my grammY bot with Telegram Stars: send the invoice and approve the pre-checkout query", "should_trigger": false},
+  {"query": "How do I attach files to an email with nodemailer and send it through SMTP?", "should_trigger": false}
+]

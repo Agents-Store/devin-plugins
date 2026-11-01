@@ -1,0 +1,17 @@
+[
+  {"query": "Create a webhook on my Teleshop store that sends order.created and order.updated events to https://example.com/hooks/shop", "should_trigger": true},
+  {"query": "My webhook deliveries are failing. How do I see the delivery logs and statistics and send a test event?", "should_trigger": true},
+  {"query": "How do I verify the signature of Teleshop webhook payloads? Where is the signing secret?", "should_trigger": true},
+  {"query": "Is there a payment event in the store's webhooks? I want to react when an order is paid", "should_trigger": true},
+  {"query": "Temporarily disable a webhook without deleting it", "should_trigger": true},
+  {"query": "Настрой в Teleshop вебхук на создание заказов и покажи пример тела запроса", "should_trigger": true},
+  {"query": "Какие события вебхуков доступны в магазине и как посмотреть пример payload для product.updated?", "should_trigger": true},
+  {"query": "list all webhooks in the store with their status and delivery stats", "should_trigger": true},
+  {"query": "Set up a Stripe webhook endpoint in Express and verify the signature", "should_trigger": false},
+  {"query": "Create a GitHub webhook that triggers a deploy on push", "should_trigger": false},
+  {"query": "Receive Telegram bot updates with a webhook using grammY", "should_trigger": false},
+  {"query": "Create an n8n webhook trigger node", "should_trigger": false},
+  {"query": "Mark order 1042 as shipped", "should_trigger": false},
+  {"query": "Change the URL of my Shopify webhook", "should_trigger": false},
+  {"query": "Enable the inventory sync addon", "should_trigger": false}
+]

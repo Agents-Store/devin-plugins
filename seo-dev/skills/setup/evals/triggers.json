@@ -1,0 +1,18 @@
+[
+  {"query": "Add SEO to my Next.js project from scratch: what do I set up first - metadataBase, default metadata, sitemap, robots - and how do I check that the foundations are in place?", "should_trigger": true},
+  {"query": "Initialize SEO for a new Next.js App Router project and run an initial audit of what is missing", "should_trigger": true},
+  {"query": "Initialize SEO for a Next.js App Router project: metadataBase from NEXT_PUBLIC_SITE_URL, title template, default description, robots.ts with production versus staging, sitemap.ts and schema-dts as a dev dependency", "should_trigger": true},
+  {"query": "I just created a Next.js site and want a baseline SEO configuration. Where do I begin?", "should_trigger": true},
+  {"query": "Configure metadata for the whole site and verify that the basics (title template, canonical base, social tags) work", "should_trigger": true},
+  {"query": "Помоги настроить SEO в моём проекте на Next.js с нуля и проверить, что базовые вещи на месте", "should_trigger": true},
+  {"query": "Нужно проверить, правильно ли настроены метаданные и базовое SEO в проекте Next.js. С чего начать?", "should_trigger": true},
+  {"query": "Set up SEO foundations for a Next.js site that uses Directus as the CMS", "should_trigger": true},
+  {"query": "Write a detailed JSON-LD example for a Product with offers and reviews", "should_trigger": false},
+  {"query": "Deep dive on hreflang for a site in five languages", "should_trigger": false},
+  {"query": "Create a Next.js project with TypeScript and Tailwind", "should_trigger": false},
+  {"query": "Fix my slow LCP on mobile", "should_trigger": false},
+  {"query": "Fix duplicate content issues reported in Search Console", "should_trigger": false},
+  {"query": "How do I add Google Analytics 4 to Next.js?", "should_trigger": false},
+  {"query": "Set up SEO for a WordPress blog", "should_trigger": false},
+  {"query": "Explain how robots.txt wildcards work", "should_trigger": false}
+]

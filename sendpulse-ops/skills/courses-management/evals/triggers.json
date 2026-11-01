@@ -1,0 +1,18 @@
+[
+  {"query": "List my SendPulse academies and courses, then enroll student olga@example.com into the 'Python Basics' course in the group 'Autumn 2026'", "should_trigger": true},
+  {"query": "Mark a SendPulse Courses student as paying for the course after they sent the payment confirmation", "should_trigger": true},
+  {"query": "Show a student's progress across all courses in my SendPulse academy", "should_trigger": true},
+  {"query": "What's the difference between removing a student from a course and deleting him from the academy in SendPulse Courses?", "should_trigger": true},
+  {"query": "Which pricing plans and student groups does the course 'Design 101' have in SendPulse, and what does it sell?", "should_trigger": true},
+  {"query": "Запиши студента в курс SendPulse и отметь его как платящего", "should_trigger": true},
+  {"query": "Покажи, на каких курсах академии SendPulse учится студент ivan@example.com и как он продвигается", "should_trigger": true},
+  {"query": "Delete a student from the academy in SendPulse Courses and then list the remaining students of the course", "should_trigger": true},
+  {"query": "Create a CRM deal for a course purchase in SendPulse", "should_trigger": false},
+  {"query": "Add the student's email to an email addressbook in SendPulse", "should_trigger": false},
+  {"query": "Set up a course on Teachable with a landing page", "should_trigger": false},
+  {"query": "Build a Moodle plugin for student progress", "should_trigger": false},
+  {"query": "Send a bulk email to all students about the new lesson", "should_trigger": false},
+  {"query": "Create a Kanban board for the course launch project in SendPulse CRM", "should_trigger": false},
+  {"query": "Calculate the revenue of the course from the CRM products", "should_trigger": false},
+  {"query": "How do I embed a video lesson in Thinkific?", "should_trigger": false}
+]

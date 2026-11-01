@@ -1,6 +1,6 @@
 ---
 name: examples
-description: Use when a whole OpenClaw fleet job is in view rather than a single answer — first contact with a host whose instances are unknown, a fleet where every instance lost its provider login, an upgrade whose rollback story is unclear, a new instance that has to be stood up and proven isolated — and whenever the question is what the entire sequence looks like, which command owns which step, what a run of this plugin produces end to end, or where one step's output becomes the next step's input.
+description: Use when a whole OpenClaw fleet job is in view rather than a single answer — first contact with an unknown host, a fleet that lost its provider login, an upgrade with an unclear rollback, a new instance to stand up and prove isolated — or when the question is what the end-to-end sequence of this plugin looks like and which command owns which step. Only for OpenClaw fleets, not for generic infrastructure walkthroughs.
 ---
 
 # Examples

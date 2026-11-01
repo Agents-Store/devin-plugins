@@ -1,0 +1,18 @@
+[
+  {"query": "How do I deploy a Payload v3 app to Vercel with a Postgres database, and what environment variables are required in production?", "should_trigger": true},
+  {"query": "Write a Dockerfile for a self-hosted Payload app on Node with a standalone Next build and a docker-compose with Postgres", "should_trigger": true},
+  {"query": "My Payload build fails in CI because there's no database available at build time. How do I build without a DB connection?", "should_trigger": true},
+  {"query": "How do I rate-limit the Payload REST and GraphQL APIs and set maxComplexity and maxDepth to prevent abuse?", "should_trigger": true},
+  {"query": "What do I change in Payload for serverless Postgres connections - pooling, push: false, and migrations on deploy?", "should_trigger": true},
+  {"query": "Как выложить Payload на VPS через Docker и что обязательно прописать в PAYLOAD_SECRET и serverURL?", "should_trigger": true},
+  {"query": "Готовлю продакшен-деплой Payload после апгрейда на 3.90: что меняется в дефолтах - ключи API, лимиты multipart-загрузок - и что проверить перед выкладкой на Vercel или в Docker?", "should_trigger": true},
+  {"query": "Payload queries got slow with depth 3 relationships and large collections - what performance settings and indexes should I use?", "should_trigger": true},
+  {"query": "Configure the Payload S3 storage adapter for uploads in production", "should_trigger": false},
+  {"query": "Deploy a Next.js app to Dokploy using a Dockerfile", "should_trigger": false},
+  {"query": "How do I write a payload.config.ts from scratch for a new project?", "should_trigger": false},
+  {"query": "Set up GitHub Actions to run migrations and deploy a Node API to a VPS", "should_trigger": false},
+  {"query": "Tune nginx rate limiting and gzip for a Node server", "should_trigger": false},
+  {"query": "Deploy Strapi to Heroku with a managed Postgres add-on", "should_trigger": false},
+  {"query": "Fix 'Could not resolve component' in the Payload admin after deploy", "should_trigger": false},
+  {"query": "How do I schedule Payload jobs with Vercel cron?", "should_trigger": false}
+]

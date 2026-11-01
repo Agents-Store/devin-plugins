@@ -1,0 +1,17 @@
+[
+  {"query": "Show me a complete Teams bot example end to end: scaffold, register, tunnel, test in the Playground and in Teams", "should_trigger": true},
+  {"query": "Is there a worked example of an AI quote agent on Teams SDK 2.1 with streaming and history?", "should_trigger": true},
+  {"query": "I want an end-to-end Adaptive Card form scenario for Teams with input routing and a card.action handler", "should_trigger": true},
+  {"query": "Walk through a full SSO and Microsoft Graph bot in Teams that lists calendar events", "should_trigger": true},
+  {"query": "Do you have a full example of a message extension search command with preview cards and the manifest command?", "should_trigger": true},
+  {"query": "Which end-to-end Teams scenarios can I follow so that I start from the closest one?", "should_trigger": true},
+  {"query": "Покажи сквозной пример бота для Teams: от создания проекта до проверки в клиенте", "should_trigger": true},
+  {"query": "Покажи готовый сквозной сценарий поиска по сообщениям в Teams: проект, команда в манифесте, обработчик message.ext.query с карточками предпросмотра и проверка в клиенте", "should_trigger": true},
+  {"query": "Add a typing indicator to my Teams bot handler", "should_trigger": false},
+  {"query": "Explain the Teams SDK App class and its options", "should_trigger": false},
+  {"query": "Show a complete example of a Slack bot with Bolt and slash commands", "should_trigger": false},
+  {"query": "Give me an end-to-end example of a Discord bot with discord.js and slash commands", "should_trigger": false},
+  {"query": "Give me a complete example of a Next.js app with Microsoft Entra login", "should_trigger": false},
+  {"query": "Fix bot did not reply for my Teams bot", "should_trigger": false},
+  {"query": "List the exports of @microsoft/teams.apps", "should_trigger": false}
+]

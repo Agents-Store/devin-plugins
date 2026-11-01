@@ -1,0 +1,17 @@
+[
+  {"query": "Where do user cases live in this project, and what is the id format for a case, a screen and a trigger?", "should_trigger": true},
+  {"query": "Repair the macstack folder: there is a stray file in client/ and OPEN-QUESTIONS.md is missing", "should_trigger": true},
+  {"query": "Our client documents live in docs/ as v2 files with yaml blocks and tables (requirements.md, screens.md, workflows.md). Migrate them into the macstack/ folder standard: the new layout, the headings-and-bullets shape, and every existing id kept stable.", "should_trigger": true},
+  {"query": "Add a screen to UX-UI.md. What shape does an entry need: headings and bullets, the forbidden label and the pointer comment to macstack.json?", "should_trigger": true},
+  {"query": "Восстанови папку macstack по стандарту: в ней нет OPEN-QUESTIONS.md и нет каталога history, а в client/ лежит посторонний файл notes.docx. Создай то, чего не хватает, существующие документы не трогай.", "should_trigger": true},
+  {"query": "Где в проекте лежат пользовательские кейсы и как оформить новый кейс в USER-CASES.md, чтобы линтер его принял?", "should_trigger": true},
+  {"query": "What are the language rules for the macstack documents: which prose follows docs.language and which ids and anchors stay English?", "should_trigger": true},
+  {"query": "Merge the client's new document into the folder through the delta and rulings loop", "should_trigger": false},
+  {"query": "Create a docs/ folder for my open-source project and set up a mkdocs site", "should_trigger": false},
+  {"query": "Write the overview section of the README for my CLI tool", "should_trigger": false},
+  {"query": "Add a task to TASKS.md under milestone M3", "should_trigger": false},
+  {"query": "Validate all the macstack documents and report their status", "should_trigger": false},
+  {"query": "Set up Notion project documentation templates for a client project", "should_trigger": false},
+  {"query": "Generate TEST-CASES.md for this project", "should_trigger": false},
+  {"query": "Turn this macstack folder into a printable page for the client", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "Generate an invoice PDF for Acme Corp: INV-2026-017, three line items (design 12h at $90, hosting $240, domain $15), due in 30 days. My company is Northwind Studio, 100 Main Street, San Francisco.", "should_trigger": true},
+  {"query": "I need a commercial proposal as a Word document for a website redesign for Brightpath Dental. Three phases, total $18,500, valid 30 days. Which engine will be used for the DOCX and where will the file be saved?", "should_trigger": true},
+  {"query": "Convert this markdown report to PDF and DOCX please, keep the headings and tables. The file is quarterly-report.md in the current folder.", "should_trigger": true},
+  {"query": "create an NDA between Orbit Labs and Zeta Consulting, mutual, 2 years, governed by California law, output as PDF", "should_trigger": true},
+  {"query": "Make a 7-slide PPTX pitch deck for our seed round: title, problem, solution, market, traction, team, ask.", "should_trigger": true},
+  {"query": "Prepare a certificate of completion (act of completed works) for web development services delivered to Digital Service LLC, dated April 3, in Ukrainian, as a PDF.", "should_trigger": true},
+  {"query": "Сформируй счёт на оплату для ООО «Ромашка» на три позиции и сохрани в PDF в текущую папку", "should_trigger": true},
+  {"query": "Сделай коммерческое предложение на разработку мобильного приложения: три этапа, итоговая сумма 24 000 евро, формат DOCX", "should_trigger": true},
+  {"query": "Write the text of a cover letter for a marketing manager job at a fintech startup", "should_trigger": false},
+  {"query": "What fonts and colors make a consulting proposal look professional?", "should_trigger": false},
+  {"query": "Which fields do I have to collect from a client to prepare an NDA? Give me a checklist of required and optional data.", "should_trigger": false},
+  {"query": "I want to change my default style preset and upload a new company logo for my documents", "should_trigger": false},
+  {"query": "Explain the difference between a proposal and an estimate for a freelance web developer", "should_trigger": false},
+  {"query": "Create a Google Doc from a template and share it with my team", "should_trigger": false},
+  {"query": "Fill in the W-9 PDF form I downloaded with my company details", "should_trigger": false},
+  {"query": "How do I generate PDF invoices from Python with ReportLab inside my Flask app?", "should_trigger": false}
+]

@@ -1,0 +1,16 @@
+[
+  {"query": "How do I upsert rows through PostgREST with on_conflict and Prefer: resolution=merge-duplicates, and get the stored row back with return=representation?", "should_trigger": true},
+  {"query": "Read data from a PostgreSQL table in an n8n HTTP Request node using PostgREST: filters, select, order and pagination syntax", "should_trigger": true},
+  {"query": "Call a stored function over REST with PostgREST and pass JSON parameters - what is the endpoint and header?", "should_trigger": true},
+  {"query": "How does a Trigger.dev task read a Postgres table with fetch against PostgREST, including auth headers and error handling?", "should_trigger": true},
+  {"query": "Как с помощью PostgREST сделать CRUD по таблице PostgreSQL через curl: фильтры eq, in, like и сортировка?", "should_trigger": true},
+  {"query": "Что изменилось в PostgREST 16 и как это влияет на заголовок Prefer при массовых запросах?", "should_trigger": true},
+  {"query": "Run an arbitrary SQL query through the PostgreSQL MCP execute_sql tool", "should_trigger": false},
+  {"query": "Use the NocoDB REST API to list records of a table with filters", "should_trigger": false},
+  {"query": "Write a Prisma findMany query with filters and ordering for a Postgres table", "should_trigger": false},
+  {"query": "Create a Postgres table with a UUID primary key for NocoDB", "should_trigger": false},
+  {"query": "How do I build a REST API on top of PostgreSQL using Express and node-postgres?", "should_trigger": false},
+  {"query": "Supabase client: select with eq filter and upsert", "should_trigger": false},
+  {"query": "Row level security policies for Postgres roles", "should_trigger": false},
+  {"query": "Directus REST API: filter items with a deep relational filter", "should_trigger": false}
+]

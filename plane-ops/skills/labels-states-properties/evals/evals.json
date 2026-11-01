@@ -3,50 +3,52 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "I want to track which environment a bug was found in. Should that be a label or a property?",
+      "prompt": "Use the labels-states-properties skill. I want to track which environment a bug was found in. Should that be a label or a property? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Recommends a select-type custom property scoped to the Bug work item type, with options prod/staging/dev.",
       "files": [],
       "expectations": [
-        "Identifies this as structured queryable data → property",
-        "Recommends a select-type property (property_type OPTION) with fixed options created with workitem_property(action=create)",
-        "Scopes the property to the Bug work item type",
-        "Mentions filtering and reporting use cases"
+        "The answer identifies this as structured queryable data → property",
+        "The answer recommends a select-type property (property_type OPTION) with fixed options created with workitem_property(action=create)",
+        "The answer says to scope the property to the Bug work item type",
+        "The answer mentions filtering and reporting use cases"
       ]
     },
     {
       "id": 2,
-      "prompt": "Our label list has 80 entries and nobody can find anything. Help.",
+      "prompt": "Use the labels-states-properties skill. Our label list has 80 entries and nobody can find anything. Help. Give the cleanup plan: how to measure which labels are used, how to consolidate them (with examples from names such as bug, Bug, bugs, bugfix, feature, feat, ui, frontend), and how often to repeat it. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Quarterly taxonomy audit: drop labels with <3 uses, introduce prefixed namespaces, merge near-duplicates.",
       "files": [],
       "expectations": [
-        "Recommends prefixed namespaces (type/, area/, priority/, status/)",
-        "Suggests dropping low-use labels and measures the use of every label in one call with workitem(action=count, group_by=labels__id) after label(action=list)",
-        "Mentions quarterly audit cadence",
-        "Provides concrete consolidation examples"
+        "The answer lists the catalogue with label(action=list)",
+        "The answer measures the use of every label with workitem(action=count, project_id, group_by=labels__id)",
+        "The answer drops the labels with fewer than 3 uses",
+        "The answer renames the labels into prefixed namespaces, for example type/bug",
+        "The answer merges bug, Bug, bugs and bugfix into one label",
+        "The answer repeats the audit every quarter"
       ]
     },
     {
       "id": 3,
-      "prompt": "Design a state machine for our support team in Plane.",
+      "prompt": "Use the labels-states-properties skill. Design a state machine for our support team in Plane. Give the state list with their groups and order, the exact state-creation calls, how many active states you recommend, and a way to tell tickets that were solved from tickets closed without a fix. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Recommends the support/triage state set: New → Triaged/Needs Info → In Progress/Waiting on Customer → Resolved | Closed.",
       "files": [],
       "expectations": [
-        "Maps states to the correct Plane state groups",
-        "Stays within 6 active states",
-        "Distinguishes Resolved (completed) from Closed (cancelled)",
-        "Mentions sequence ordering (state(action=update, sequence=...)) and state groups (group=...)"
+        "The answer says to map states to the correct Plane state groups",
+        "The answer says to stay within 6 active states",
+        "The answer distinguishes Resolved (completed) from Closed (cancelled)",
+        "The answer mentions sequence ordering (state(action=update, sequence=...)) and state groups (group=...)"
       ]
     },
     {
       "id": 4,
-      "prompt": "Should I create a custom work item type for Spikes or just use a label type/spike?",
+      "prompt": "Use the labels-states-properties skill. Should I create a custom work item type for Spikes or just use a label type/spike? Answer in text; everything you need is in this message.",
       "expected_output": "Use a work item type — Spikes have different fields (timebox), different velocity treatment (no points), and different default state.",
       "files": [],
       "expectations": [
-        "Identifies that workflow differs (timebox, no points)",
-        "Recommends a work item type, not a label",
-        "Suggests pairing with a timebox property",
-        "Warns about staying under 6 types total"
+        "The answer identifies that workflow differs (timebox, no points)",
+        "The answer recommends a work item type, not a label",
+        "The answer suggests pairing with a timebox property",
+        "The answer warns about staying under 6 types total"
       ]
     }
   ]

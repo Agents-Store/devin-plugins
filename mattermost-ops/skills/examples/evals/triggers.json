@@ -1,0 +1,18 @@
+[
+  {"query": "Walk me through standing up a new team in Mattermost with a few channels and adding my people - a full worked example with the API calls chained together.", "should_trigger": true},
+  {"query": "I need to post the same maintenance notice to five Mattermost channels via the API. Show me the whole flow end to end, not just one call.", "should_trigger": true},
+  {"query": "Give me an admin health-and-usage snapshot of our Mattermost server: ping, user/team/channel stats and analytics, as one worked example.", "should_trigger": true},
+  {"query": "Show me an end-to-end example of channel management in Mattermost: set header and purpose, convert public to private, move members, then archive and restore it", "should_trigger": true},
+  {"query": "Покажи полный пример на Mattermost: рассылка личных сообщений списку пользователей и вложение файла, все вызовы API цепочкой", "should_trigger": true},
+  {"query": "Хочу сквозной сценарий онбординга новой команды в Mattermost: создать команду, каналы, добавить людей, отправить приветствие", "should_trigger": true},
+  {"query": "Can you give me a worked example of starting a compliance export in Mattermost after a server health check?", "should_trigger": true},
+  {"query": "show me how to broadcast an announcement to a list of users by DM and attach a PDF, with real curl calls for Mattermost", "should_trigger": true},
+  {"query": "Why does my Mattermost login return 401 on /users/login even though the password is right?", "should_trigger": false},
+  {"query": "Connect to Mattermost at https://chat.example.com and get me a working token before we do anything else", "should_trigger": false},
+  {"query": "Post the single message 'standup in 5' to the town-square channel of team core on Mattermost", "should_trigger": false},
+  {"query": "Show me a full end-to-end example of onboarding a new team in Slack with channels and invites via the Web API", "should_trigger": false},
+  {"query": "Give me an end-to-end example of posting an announcement to many Rocket.Chat channels with their REST API", "should_trigger": false},
+  {"query": "Walk through creating a room and inviting users with the Matrix client-server API, with every call shown", "should_trigger": false},
+  {"query": "Show me a minimal Express handler for a Mattermost slash command that returns an ephemeral response", "should_trigger": false},
+  {"query": "Give me a worked example of paginating a REST API with page and per_page in Python against a made-up endpoint", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "My Dokploy deploy of the Next.js app failed with a wall of build output. Can Dokploy's AI analyze the log for me? I don't think I've set up a provider yet.", "should_trigger": true},
+  {"query": "How do I configure an AI provider in Dokploy? I want to use Anthropic, test the connection and list the available models.", "should_trigger": true},
+  {"query": "run ai-analyzeLogs on deployment dep_9f31 of my API app and tell me the likely root cause", "should_trigger": true},
+  {"query": "Dokploy has an ai-suggest tool, right? How do I use it to get a suggested docker-compose for a Ghost blog with MariaDB?", "should_trigger": true},
+  {"query": "I want Dokploy to summarise my failed build with a local Ollama model so logs don't leave the server. How do I wire Ollama in?", "should_trigger": true},
+  {"query": "why is dokploy not suggesting fixes? the AI analyze button in the UI does nothing for my failed deployment", "should_trigger": true},
+  {"query": "Как подключить в Dokploy AI-провайдера (OpenAI или Ollama), чтобы он разбирал логи упавших деплоев?", "should_trigger": true},
+  {"query": "Проанализируй с помощью AI в Dokploy лог неудачной сборки приложения и подскажи, что исправить", "should_trigger": true},
+  {"query": "Read the last 200 lines of the runtime logs of my app in Dokploy and grep them for errors", "should_trigger": false},
+  {"query": "How do I check that the Dokploy MCP connection and my API key work?", "should_trigger": false},
+  {"query": "What does the Anthropic API cost for Claude Sonnet per million tokens?", "should_trigger": false},
+  {"query": "Configure OpenAI as the LLM provider in LangChain for my Python service", "should_trigger": false},
+  {"query": "Create a Postgres database in Dokploy and give me the connection string", "should_trigger": false},
+  {"query": "Use GitHub Copilot to explain why my GitHub Actions build failed", "should_trigger": false},
+  {"query": "How do I authenticate the dokploy command line tool in CI?", "should_trigger": false},
+  {"query": "How do I make an Ollama server reachable from a Docker container running on the same host?", "should_trigger": false}
+]

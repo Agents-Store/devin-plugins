@@ -1,0 +1,18 @@
+[
+  {"query": "Post 'Deploy window moves to 22:00 tonight' into the town-square channel of our 'platform' team on our Mattermost server. My bearer token is already in $MATTERMOST_TOKEN.", "should_trigger": true},
+  {"query": "Create a private channel 'release-war-room' in the engineering team on Mattermost and add alice, bob and carol to it. Use the REST API with curl, I only know their usernames.", "should_trigger": true},
+  {"query": "send a DM to @dmitry on mattermost saying the quarterly report is ready - i only know his username, not his id", "should_trigger": true},
+  {"query": "Нужно в Mattermost деактивировать пользователя ivan.petrov, он уволился на прошлой неделе. Токен админа есть, сделай через API.", "should_trigger": true},
+  {"query": "Создай в Mattermost команду 'support-eu', пригласи по email anna@example.com и john@example.com, потом запости приветствие в town-square", "should_trigger": true},
+  {"query": "Set up an incoming webhook in Mattermost for the 'alerts' channel of team 'ops' so our monitoring can post there as 'Grafana', and give me the hook URL", "should_trigger": true},
+  {"query": "Add a :white_check_mark: reaction to the most recent post in the 'standup' channel of team 'core' on Mattermost", "should_trigger": true},
+  {"query": "List all members of the Mattermost channel 'sales-leads' (team 'revenue') and tell me which accounts are deactivated", "should_trigger": true},
+  {"query": "Post a message to the #deploys Slack channel with a Block Kit section and a button using chat.postMessage and my xoxb bot token", "should_trigger": false},
+  {"query": "Send a message to a Microsoft Teams channel from a Python script using the Graph API and an app registration", "should_trigger": false},
+  {"query": "Log into our Mattermost at https://chat.example.com with my admin password and get me a session token to use in later calls", "should_trigger": false},
+  {"query": "My Mattermost API call to POST /api/v4/channels returns 403 permission denied even though I'm a team admin, what is going on", "should_trigger": false},
+  {"query": "Install Mattermost Team Edition on Ubuntu 24.04 with Docker Compose, Postgres and nginx in front, including TLS", "should_trigger": false},
+  {"query": "Write a Mattermost server plugin in Go that registers a /remind slash command and stores reminders in the KV store", "should_trigger": false},
+  {"query": "How do I mute a Mattermost channel on my phone so I don't get notifications at night?", "should_trigger": false},
+  {"query": "Write a discord.js bot that posts a message to a channel whenever a GitHub release is published", "should_trigger": false}
+]

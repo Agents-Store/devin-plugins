@@ -1,0 +1,17 @@
+[
+  {"query": "Add a receipts section: users upload a file, OCR runs in the background and the page shows the result. Give me the recipe covering Directus, Next.js and Trigger.dev", "should_trigger": true},
+  {"query": "New receipts feature: upload, OCR, categorization and a list page. Using this stack's recipe, which parts become a Trigger.dev task and which stay inline in the Server Action? Give me the signal table and the steps", "should_trigger": true},
+  {"query": "Build an end-to-end feature with async processing across the three services. What are the steps in order?", "should_trigger": true},
+  {"query": "Add the reports collection that a Trigger.dev task writes to and a page lists. Give me the recipe from the stack's full-feature template including how the task's writes reach revalidation", "should_trigger": true},
+  {"query": "Create a page backed by Directus with a background job that sends a notification email, and verify it end to end", "should_trigger": true},
+  {"query": "Нужен рецепт новой функции: коллекция в Directus, страница в Next.js и задача Trigger.dev, которая считает отчёт. В каком порядке делать?", "should_trigger": true},
+  {"query": "Как проверить новую фичу целиком: типы компилируются, страница рендерится, задача завершается со статусом done?", "should_trigger": true},
+  {"query": "what template do I fill in for each new feature that has background work?", "should_trigger": true},
+  {"query": "Write the Trigger.dev task with retry and maxDuration for generating a PDF", "should_trigger": false},
+  {"query": "Initialize the stack: env vars, versions, dependencies and connection checks", "should_trigger": false},
+  {"query": "Model a Directus collection for invoices with line items", "should_trigger": false},
+  {"query": "Build a complete feature for NocoDB and n8n with a Kanban view", "should_trigger": false},
+  {"query": "Add pagination to a Next.js page that lists items from a REST API", "should_trigger": false},
+  {"query": "Walk me through the product catalog example with search params", "should_trigger": false},
+  {"query": "Add real-time notifications to a Next.js app with WebSockets", "should_trigger": false}
+]

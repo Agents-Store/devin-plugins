@@ -1,0 +1,18 @@
+[
+  {"query": "What NocoDB tools are available through MCP for working with records, and which ones sit behind listTools and callTool?", "should_trigger": true},
+  {"query": "how do I query records through the NocoDB MCP? Show me the parameter shapes: filter vs where, sort objects, 100-record batches", "should_trigger": true},
+  {"query": "which tool do I use to count records per value of a field in NocoDB, and which for aggregates?", "should_trigger": true},
+  {"query": "show me NocoDB MCP parameters for date filters: what sub-operators exist for exactDate and isWithin?", "should_trigger": true},
+  {"query": "Какие инструменты MCP NocoDB есть для чтения и записи записей и в чём разница редакций Community и Cloud?", "should_trigger": true},
+  {"query": "Как правильно вызвать queryRecords в NocoDB MCP с фильтром и сортировкой? Нужен справочник по параметрам", "should_trigger": true},
+  {"query": "NocoDB tool reference: what are the common patterns for list with filter and sort, create and verify, and aggregate report?", "should_trigger": true},
+  {"query": "What errors does the NocoDB MCP return and what are the best practices for batch sizes when creating records?", "should_trigger": true},
+  {"query": "Show me the filter syntax for date fields in NocoDB, like isWithin and exactDate", "should_trigger": false},
+  {"query": "Verify that my NocoDB MCP connection works", "should_trigger": false},
+  {"query": "Write a MongoDB aggregation pipeline that groups by status and counts", "should_trigger": false},
+  {"query": "Build my own MCP server in Python that wraps a REST API", "should_trigger": false},
+  {"query": "What tools does the Notion MCP server expose for querying databases?", "should_trigger": false},
+  {"query": "Which Airtable MCP tool lists records with a formula filter?", "should_trigger": false},
+  {"query": "How does GraphQL filtering and sorting work in Hasura?", "should_trigger": false},
+  {"query": "Show me the SQL to count rows per category with a HAVING clause", "should_trigger": false}
+]

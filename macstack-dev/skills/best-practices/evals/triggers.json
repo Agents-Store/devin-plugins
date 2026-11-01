@@ -1,0 +1,18 @@
+[
+  {"query": "Set up the standard project rules for this new MACSTACK project: install the .claude/rules set (safety, secrets-env-sync, commit-after-task, search-first) and the core slash-command skills.", "should_trigger": true},
+  {"query": "scaffold-project reached the rules step. Install the best practice rules and wire them into CLAUDE.md.", "should_trigger": true},
+  {"query": "I want every project we start to ship the same .claude/rules folder and the /secrets-push and /env-audit slash commands. Install them into this repo.", "should_trigger": true},
+  {"query": "This new MACSTACK client project has no .claude folder yet. Install the proven MACSTACK rule set (safety, secrets-env-sync, commit-after-task, search-first, external-api-docs) and the core slash commands, adapt the wording to the project and wire them into CLAUDE.md.", "should_trigger": true},
+  {"query": "Which rules and slash commands does every MACSTACK project ship by default? Install the ones this project is missing and do not drop any silently.", "should_trigger": true},
+  {"query": "Установи в проект стандартный набор правил MACSTACK в .claude/rules и базовые slash-команды", "should_trigger": true},
+  {"query": "Настрой правила проекта и соглашения: безопасность, коммиты после каждой задачи, секреты только через Infisical. Положи всё в .claude/rules.", "should_trigger": true},
+  {"query": "add the project rules and commands to this macstack project and make sure CLAUDE.md points at them", "should_trigger": true},
+  {"query": "Create .infisical.json and pull .env.prod and .env.dev for this project", "should_trigger": false},
+  {"query": "Generate the project working files from macstack.json: prototype first, then stack plugins, then dev plugins", "should_trigger": false},
+  {"query": "Write a CLAUDE.md for my Rails app that describes the test and lint commands", "should_trigger": false},
+  {"query": "Set up ESLint and Prettier rules for a TypeScript monorepo", "should_trigger": false},
+  {"query": "Validate macstack.json against the schema and list the problems", "should_trigger": false},
+  {"query": "Set up commitlint with husky so commit messages follow Conventional Commits", "should_trigger": false},
+  {"query": "Write a .cursorrules file for my Python project", "should_trigger": false},
+  {"query": "Merge the new feedback document from the client into the macstack folder", "should_trigger": false}
+]

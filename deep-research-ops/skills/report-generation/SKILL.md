@@ -1,6 +1,6 @@
 ---
 name: report-generation
-description: Report templates and generation guidelines — Executive Summary, Deep Research Report, and Comparison Table formats with methodology and citation rules. Use when formatting research results into structured reports.
+description: Use to turn research findings the user already has into a finished report in one of three formats - Executive Summary, Deep Research Report or Comparison Table - with cited sources, a Methodology section, confidence levels and gaps, or to choose the template that fits a research type or depth. Not for doing the research itself (deep-research, search-strategies) or reading pages (content-extraction).
 ---
 
 # Report Generation

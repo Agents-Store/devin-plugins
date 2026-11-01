@@ -1,0 +1,18 @@
+[
+  {"query": "Verify my Next.js project setup: is it configured correctly for development with the App Router and TypeScript?", "should_trigger": true},
+  {"query": "check my Next.js project - Node version, Next.js version, tsconfig and next.config - and tell me if anything is missing", "should_trigger": true},
+  {"query": "is my Next.js app configured correctly? I just cloned the repo and want to make sure the dev server and MCP integration will work", "should_trigger": true},
+  {"query": "test the Next.js environment before I start: does the dev server start, is the App Router structure right?", "should_trigger": true},
+  {"query": "Проверь настройку моего проекта Next.js: версия, структура App Router, TypeScript и next.config", "should_trigger": true},
+  {"query": "Убедись, что проект на Next.js готов к разработке: dev-сервер стартует, TypeScript конфиг корректный", "should_trigger": true},
+  {"query": "Confirm my Next.js 16 project is ready for development and CI type checking is in place", "should_trigger": true},
+  {"query": "Run a readiness check on my Next.js app environment and report what to fix", "should_trigger": true},
+  {"query": "Create a new Next.js project with create-next-app, TypeScript and Tailwind", "should_trigger": false},
+  {"query": "Install and initialize shadcn/ui in my Next.js project", "should_trigger": false},
+  {"query": "Set up next-devtools-mcp so the agent can read runtime errors", "should_trigger": false},
+  {"query": "Verify my Python virtualenv and dependencies are installed correctly for a Flask project", "should_trigger": false},
+  {"query": "Check that my Docker installation and compose plugin are working", "should_trigger": false},
+  {"query": "Verify my Directus connection details and the token from .env work", "should_trigger": false},
+  {"query": "Set up a Next.js project with Docker and compose files", "should_trigger": false},
+  {"query": "Troubleshoot why next dev crashes with EADDRINUSE on port 3000", "should_trigger": false}
+]

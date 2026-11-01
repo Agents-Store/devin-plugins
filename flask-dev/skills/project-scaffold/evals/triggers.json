@@ -1,0 +1,18 @@
+[
+  {"query": "Create a new Flask 3 project from scratch: application factory, config classes, blueprints, SQLAlchemy and migrations, .env handling, .gitignore and pytest config. Give me the files.", "should_trigger": true},
+  {"query": "scaffold a flask app with a dashboard blueprint, a User model and the first migration - I'm starting a new project, python 3.12", "should_trigger": true},
+  {"query": "What should the initial layout of a Flask project look like? requirements.txt, .flaskenv, config.py, extensions.py, models.py, templates, static", "should_trigger": true},
+  {"query": "init a Flask project with SQLAlchemy and Flask-Migrate from scratch and make `flask db upgrade` work the first time", "should_trigger": true},
+  {"query": "Starting a new internal tool in Flask. Set up the skeleton including a tests folder and how SECRET_KEY is loaded from .env", "should_trigger": true},
+  {"query": "Bootstrap a Flask project structure that I can extend later with auth and CRUD. Keep the factory pattern.", "should_trigger": true},
+  {"query": "Создай с нуля проект на Flask 3: фабрика приложения, конфиги, blueprints, SQLAlchemy, миграции, .env и .gitignore", "should_trigger": true},
+  {"query": "Нужна стартовая структура Flask-приложения с тестами и первой миграцией. Покажи файлы", "should_trigger": true},
+  {"query": "Create a new Next.js 15 project with TypeScript and Tailwind", "should_trigger": false},
+  {"query": "Add a blueprint with list and edit routes to my existing Flask app", "should_trigger": false},
+  {"query": "Scaffold a Django project with startproject and startapp", "should_trigger": false},
+  {"query": "Verify that my existing Flask project follows the recommended structure", "should_trigger": false},
+  {"query": "Generate a Python library skeleton with pyproject.toml and a src layout", "should_trigger": false},
+  {"query": "How do I containerize my Flask app with a Dockerfile and gunicorn?", "should_trigger": false},
+  {"query": "Create a FastAPI project skeleton with SQLModel and Alembic", "should_trigger": false},
+  {"query": "Initialize an Express and TypeScript project with ESLint and Jest", "should_trigger": false}
+]

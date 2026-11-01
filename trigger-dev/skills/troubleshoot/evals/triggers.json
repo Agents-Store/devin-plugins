@@ -1,0 +1,16 @@
+[
+  {"query": "My Trigger.dev runs are stuck in QUEUED on self-hosted after I restarted the host. What should I check?", "should_trigger": true},
+  {"query": "Runs end with the CRASHED status. What are the likely causes and the fix?", "should_trigger": true},
+  {"query": "trigger.dev deploy says No tasks found although my task files exist. What do I check?", "should_trigger": true},
+  {"query": "My runs show PENDING_VERSION. What is wrong?", "should_trigger": true},
+  {"query": "My Trigger.dev run ends with the TIMED_OUT status. What are the causes and what do I change?", "should_trigger": true},
+  {"query": "Деплой Trigger.dev падает с ошибкой denied requested access to the resource is denied. Что делать?", "should_trigger": true},
+  {"query": "Запуски Trigger.dev висят в статусе PENDING_VERSION. В чём причина и что делать?", "should_trigger": true},
+  {"query": "Why does my cron schedule not fire?", "should_trigger": false},
+  {"query": "Write a task with retries", "should_trigger": false},
+  {"query": "Debug a Kubernetes pod in CrashLoopBackOff", "should_trigger": false},
+  {"query": "Docker compose services keep restarting. How do I read the logs?", "should_trigger": false},
+  {"query": "Set up the CLI and init a project", "should_trigger": false},
+  {"query": "Query failed runs in the last 24 hours with TRQL", "should_trigger": false},
+  {"query": "Debug a Celery worker with stuck tasks", "should_trigger": false}
+]

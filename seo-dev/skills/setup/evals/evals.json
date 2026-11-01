@@ -3,17 +3,17 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Set up SEO for my Next.js App Router project from scratch",
+      "prompt": "Use the setup skill. Set up SEO for my Next.js App Router project from scratch In this session you have no project files and no shell, and nobody to ask. Do not ask questions: assume a typical Next.js App Router project and answer in text with concrete findings, what you would check, the fixes and the code you would write.",
       "expected_output": "Creates metadataBase in root layout, robots.ts, sitemap.ts, installs schema-dts, and configures title template",
       "files": [],
       "expectations": [
-        "Sets metadataBase with NEXT_PUBLIC_SITE_URL env var in root layout",
-        "Creates app/robots.ts with production/staging differentiation",
-        "Creates app/sitemap.ts with static and dynamic page patterns",
-        "Configures title template in root layout metadata",
-        "Adds default description to root layout",
-        "Installs schema-dts as dev dependency",
-        "Does NOT use next-seo NextSeo/DefaultSeo for meta tags (Metadata API instead); treats next-seo v7 JSON-LD components as an optional alternative, not a requirement"
+        "The answer says to set metadataBase with NEXT_PUBLIC_SITE_URL env var in root layout",
+        "The answer says to create app/robots.ts with production/staging differentiation",
+        "The answer says to create app/sitemap.ts with static and dynamic page patterns",
+        "The answer says to configure title template in root layout metadata",
+        "The answer says to add default description to root layout",
+        "The answer says to install schema-dts as dev dependency",
+        "The answer does NOT use next-seo NextSeo/DefaultSeo for meta tags (Metadata API instead); treats next-seo v7 JSON-LD components as an optional alternative, not a requirement"
       ]
     }
   ]

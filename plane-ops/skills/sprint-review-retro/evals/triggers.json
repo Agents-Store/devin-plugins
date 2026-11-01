@@ -1,0 +1,18 @@
+[
+  {"query": "Run the sprint review for the cycle that just ended: completion metrics, completed vs carried-over items, and a summary for stakeholders", "should_trigger": true},
+  {"query": "Facilitate a Start-Stop-Continue retrospective and review the action items from the previous retro before starting", "should_trigger": true},
+  {"query": "Run a retro in DAKI format (Drop, Add, Keep, Improve) and capture the action items in Plane", "should_trigger": true},
+  {"query": "Close the current sprint in Plane: move incomplete work items to the next cycle and record the sprint completion rate", "should_trigger": true},
+  {"query": "Set up a 4Ls retrospective (Liked, Learned, Lacked, Longed for) for the team and track action items", "should_trigger": true},
+  {"query": "Проведи ретроспективу спринта в формате Start-Stop-Continue и проверь выполнение прошлых договорённостей", "should_trigger": true},
+  {"query": "Закрой спринт в Plane и подготовь итоги ревью: что завершено, что перенесено", "should_trigger": true},
+  {"query": "Did we complete the action items from the last retro? Check them before the new retro", "should_trigger": true},
+  {"query": "Publish the retro notes as a Plane page", "should_trigger": false},
+  {"query": "Plan the next sprint with capacity calculation", "should_trigger": false},
+  {"query": "Show the team's velocity trend over time", "should_trigger": false},
+  {"query": "Write a performance review for a team member", "should_trigger": false},
+  {"query": "Run a postmortem for a production incident", "should_trigger": false},
+  {"query": "Daily standup status for today", "should_trigger": false},
+  {"query": "Conduct a design review for the new dashboard mockups", "should_trigger": false},
+  {"query": "Create a work item for each retro action item", "should_trigger": false}
+]

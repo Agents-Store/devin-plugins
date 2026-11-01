@@ -1,0 +1,18 @@
+[
+  {"query": "Compare acme-crm.example.com against hubspot.com and pipedrive.com: organic keywords, estimated traffic, traffic value and trend. Use DataForSEO and put it in a table", "should_trigger": true},
+  {"query": "who actually competes with our blog for organic keywords? find the top 10 organic competitors of blog.example.org in the US using DataForSEO labs", "should_trigger": true},
+  {"query": "which keywords does competitor.example.com rank in the top 3 for that we don't rank for at all? I need a content-gap list", "should_trigger": true},
+  {"query": "Compare the organic traffic trend of competitor.example.com with ours (acme-crm.example.com) over the last 12 months: who is growing faster?", "should_trigger": true},
+  {"query": "Сравни наш сайт example-store.ru с двумя конкурентами по органическому трафику и ключевым словам через DataForSEO, нужна сводная таблица", "should_trigger": true},
+  {"query": "Найди органических конкурентов сайта example-shop.ru в России и покажи, по каким ключевым словам мы с каждым пересекаемся и где каждый из нас ранжируется, через DataForSEO", "should_trigger": true},
+  {"query": "give me a domain intersection between acme-crm.example.com and its competitors hubspot.com and pipedrive.com for the German market (location 2276, language de): shared keywords and where each of us ranks", "should_trigger": true},
+  {"query": "pull the top pages of hubspot.com by estimated organic traffic in the US, I'd like to know which of their content drives the most visits", "should_trigger": true},
+  {"query": "Research keyword ideas for 'standing desk' with volume and difficulty in the US", "should_trigger": false},
+  {"query": "Audit the backlinks of example.com and list toxic domains", "should_trigger": false},
+  {"query": "Do a Lighthouse and on-page audit for https://example.com/landing", "should_trigger": false},
+  {"query": "How do I analyse competitors' pricing pages manually? I want a framework for a SWOT, not any SEO data", "should_trigger": false},
+  {"query": "Scrape the homepage of competitor.example.com and summarise their product positioning", "should_trigger": false},
+  {"query": "Why does DataForSEO say 'tool not found' when I call the labs endpoint?", "should_trigger": false},
+  {"query": "Create a Next.js sitemap.xml and robots.txt for our site", "should_trigger": false},
+  {"query": "Track our brand mentions in ChatGPT answers over the last months", "should_trigger": false}
+]

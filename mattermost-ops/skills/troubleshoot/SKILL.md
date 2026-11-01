@@ -1,6 +1,6 @@
 ---
 name: troubleshoot
-description: This skill should be used when a Mattermost REST API call fails or behaves unexpectedly — "Mattermost returns 401 / 403 / 404 / 429", "Mattermost login fails", "I got no token after login", "can't find the channel/user", "pagination missing results", "permission denied", or any Mattermost error response. Maps symptoms to causes and fixes.
+description: Use when a Mattermost REST API call fails or behaves unexpectedly — 401 or 403 mid-session, an expired personal access token, 404 from names used instead of ids, 429 rate limits, missing rows from pagination, 400 on a write, no token after login, or behaviour that changed silently after a server upgrade such as v12 dropping webhook and bot identity props from posts. Maps symptoms to causes and fixes.
 ---
 
 # Mattermost Troubleshooting

@@ -1,6 +1,6 @@
 {
   "name": "sqlalchemy-dev",
-  "version": "2.1.0",
+  "version": "2.1.5",
   "description": "SQLAlchemy dev plugin for Agents Store. Typed SQLAlchemy 2.0 style (Mapped, mapped_column, select) with a SQLAlchemy 2.1 section: model definition patterns, relationship mapping, query optimization, Alembic migrations, and troubleshooting.",
   "author": {
     "name": "Agents Store",

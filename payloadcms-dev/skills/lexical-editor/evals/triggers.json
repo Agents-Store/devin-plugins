@@ -1,0 +1,18 @@
+[
+  {"query": "How do I configure the Lexical editor in Payload v3 to remove the default features and only allow bold, links and a custom block?", "should_trigger": true},
+  {"query": "Render Payload Lexical rich text to JSX on the Next.js frontend, including my custom blocks and upload nodes", "should_trigger": true},
+  {"query": "Convert saved Lexical rich text to HTML on the server in Payload for an RSS feed", "should_trigger": true},
+  {"query": "Payload 3.90 richText: I installed lexical and @lexical/react in package.json for a custom feature. Where should I import Lexical types and helpers from instead, and which Lexical version does Payload pin?", "should_trigger": true},
+  {"query": "How do I write a custom Lexical feature (a node, a toolbar button and server-side conversion) for a Payload richText field?", "should_trigger": true},
+  {"query": "Как в Payload вставить блоки (Blocks) внутрь richText поля и отрисовать их на фронтенде?", "should_trigger": true},
+  {"query": "Нужно добавить в Lexical-редактор Payload ссылки на другие документы и загрузки. Какие features подключать?", "should_trigger": true},
+  {"query": "What happens to existing Lexical content saved in Payload when I change the editor features, and how do I read the saved JSON safely?", "should_trigger": true},
+  {"query": "Add a text field and a select field to a Payload collection", "should_trigger": false},
+  {"query": "Convert Markdown to HTML in a Node script with remark and rehype", "should_trigger": false},
+  {"query": "Build a rich text editor in React with TipTap and custom extensions", "should_trigger": false},
+  {"query": "Migrate a Slate.js editor to ProseMirror in a plain React app", "should_trigger": false},
+  {"query": "Configure a WYSIWYG field in Directus with a custom toolbar", "should_trigger": false},
+  {"query": "Use ProseMirror to build a collaborative editor", "should_trigger": false},
+  {"query": "Customize the Payload admin with a custom view and nav link", "should_trigger": false},
+  {"query": "Add the SEO plugin to my Payload config", "should_trigger": false}
+]

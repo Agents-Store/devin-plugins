@@ -1,0 +1,14 @@
+[
+  {"query": "Add Prisma 7 to my Trigger.dev project so tasks can query the database. What goes into trigger.config.ts? The types complain about mode", "should_trigger": true},
+  {"query": "How do I install FFmpeg and Playwright in the task image through build extensions? Which package do I need first?", "should_trigger": true},
+  {"query": "Our self-hosted Trigger.dev uses a self-signed TLS certificate and deployed tasks fail with unable to verify the certificate. What do I add to trigger.config.ts and where must the certificate file live?", "should_trigger": true},
+  {"query": "Как подключить Python и системные пакеты apt к задачам Trigger.dev в trigger.config.ts?", "should_trigger": true},
+  {"query": "Как синхронизировать переменные окружения при деплое через syncEnvVars и зачем нужен --env-file?", "should_trigger": true},
+  {"query": "Deploy tasks to production with the CLI and register the registry credentials", "should_trigger": false},
+  {"query": "Write a schedules.task with a timezone", "should_trigger": false},
+  {"query": "Configure webpack externals and a Dockerfile for a Next.js standalone build", "should_trigger": false},
+  {"query": "Configure Prisma 7 with a driver adapter in a Next.js app", "should_trigger": false},
+  {"query": "Set up OpenTelemetry exporters for my Node service", "should_trigger": false},
+  {"query": "Create the first Trigger.dev task in a new project", "should_trigger": false},
+  {"query": "Add Sharp image processing to my Lambda function layer", "should_trigger": false}
+]

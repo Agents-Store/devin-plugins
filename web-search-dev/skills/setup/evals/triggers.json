@@ -1,0 +1,15 @@
+[
+  {"query": "Check which of my web search services are working: Firecrawl, Exa, Jina, Perplexity and Context7. Run one light call each and give me a status table", "should_trigger": true},
+  {"query": "Is Jina working? I think read_url works without a key but search fails", "should_trigger": true},
+  {"query": "Run the availability check of the web search services and report in a table what works without a key and what I can do with only Firecrawl available", "should_trigger": true},
+  {"query": "Check the Perplexity MCP. The ask tools take messages, not query. How do I test it properly?", "should_trigger": true},
+  {"query": "Проверь, какие сервисы веб-поиска у меня подключены и работают: нужна таблица статусов", "should_trigger": true},
+  {"query": "Как проверить подключение Firecrawl и что делать, если npx не находит команду?", "should_trigger": true},
+  {"query": "Firecrawl returns SCRAPE_ALL_ENGINES_FAILED for one page", "should_trigger": false},
+  {"query": "Create an account at Exa and get an API key", "should_trigger": false},
+  {"query": "Scrape a page with Firecrawl into markdown", "should_trigger": false},
+  {"query": "Set up a health check endpoint for my Express service", "should_trigger": false},
+  {"query": "Verify that my Stripe webhook secret is set", "should_trigger": false},
+  {"query": "Which tools does each MCP server expose?", "should_trigger": false},
+  {"query": "Check whether my Postgres connection works with psql", "should_trigger": false}
+]

@@ -3,17 +3,16 @@
   "evals": [
     {
       "id": 7,
-      "prompt": "I just finished a long session in demo-directus-nextjs. I added a deploy.sh for Vercel, fixed the Docker hot-reload by adding a volume mount, and created a useDirectus composable. I think some of this should go into the parent template. Can you help me sort it out?",
+      "prompt": "I just finished a long session in demo-directus-nextjs. I added a deploy.sh for Vercel, fixed the Docker hot-reload by adding a volume mount, and created a useDirectus composable that hard-codes our demo collections blog_posts and team_members. I think some of this should go into the parent template. Don't change anything yet: sort it out, show me the categorized list and the options, and say how each option would be carried out. In this session nothing is installed: there is no shell, no template repository and nobody to ask. Do not ask questions and do not refuse; answer in text with the commands you would run, the files you would create or edit with their key contents, and what you would check at each step.",
       "expected_output": "The wrap-up skill reviews the session, categorizes each improvement (deploy.sh → Level 1, Docker fix → Level 1, useDirectus composable → project-only), presents the categorized findings, asks whether to apply/issue/record, and applies the chosen action.",
       "files": [],
       "expectations": [
-        "Identifies deploy.sh as a Level 1 improvement (stack-specific, generic to all Directus+Next.js)",
-        "Identifies Docker hot-reload fix as a Level 1 improvement (stack-specific config)",
-        "Identifies useDirectus composable as project-only (demo-specific, not generic enough)",
-        "Does NOT push the useDirectus composable to the parent template",
-        "Presents categorized findings to the user before taking action",
-        "Offers multiple options: apply to parent, create GitHub Issue, record in LEARNINGS.md, or skip",
-        "If applying, delegates to the feedback skill for each improvement"
+        "The answer groups the findings under the headings Push to Level 0, Push to Level 1 and Project-only (skip)",
+        "The answer puts the useDirectus composable under Project-only (skip)",
+        "The answer offers an option to create GitHub Issues",
+        "The answer offers an option to just record the findings in LEARNINGS.md",
+        "The answer delegates each template fix to the feedback skill",
+        "The answer changes no file before the user decides which option to apply"
       ]
     }
   ]

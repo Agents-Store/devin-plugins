@@ -1,0 +1,18 @@
+[
+  {"query": "NocoDB doesn't recognize my Postgres ARRAY and ENUM columns - what are the incompatible types and what should I use instead?", "should_trigger": true},
+  {"query": "I don't see PostgreSQL as an external data source option in NocoBase. Is that expected, and what are my alternatives?", "should_trigger": true},
+  {"query": "Give me a validation checklist for a PostgreSQL schema before I connect it to NocoDB and NocoBase: what to avoid and what naming conventions to follow", "should_trigger": true},
+  {"query": "NocoBase can't read one of my tables. Which anti-patterns in the schema usually cause that, and which diagnostic queries should I run?", "should_trigger": true},
+  {"query": "Give me the validation checklist and the diagnostic queries to run before connecting a Postgres database to NocoDB - which anti-patterns should I search the schema for?", "should_trigger": true},
+  {"query": "NocoBase не показывает PostgreSQL в списке внешних источников данных. Это нормально и какие есть варианты?", "should_trigger": true},
+  {"query": "Какие типы PostgreSQL лучше не использовать, если схема подключается к NocoDB и NocoBase? Дай чек-лист", "should_trigger": true},
+  {"query": "UUID primary key causes problems in NocoDB for me - what exactly is the issue and what's the workaround?", "should_trigger": true},
+  {"query": "Create the tables for a new app on external PostgreSQL for NocoDB", "should_trigger": false},
+  {"query": "Which column type should I use for currency?", "should_trigger": false},
+  {"query": "My PostgREST call returns 406 - why?", "should_trigger": false},
+  {"query": "psql: FATAL password authentication failed for user - how do I fix it?", "should_trigger": false},
+  {"query": "Postgres connection pooling with PgBouncer in transaction mode causes prepared statement errors", "should_trigger": false},
+  {"query": "Show me a complete e-commerce schema example", "should_trigger": false},
+  {"query": "SQLAlchemy raises IntegrityError on insert", "should_trigger": false},
+  {"query": "Run EXPLAIN on a slow query using the Postgres MCP tools", "should_trigger": false}
+]

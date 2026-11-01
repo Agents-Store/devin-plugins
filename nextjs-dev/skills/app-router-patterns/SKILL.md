@@ -1,6 +1,6 @@
 ---
 name: app-router-patterns
-description: Next.js App Router patterns and file conventions. This skill should be used when the user asks about "Next.js routing", "App Router", "layouts and pages", "route groups", "parallel routes", "intercepting routes", "proxy", "metadata", "route handlers", or needs guidance on Next.js file-based routing architecture.
+description: Next.js 16 App Router routing conventions — layouts and templates, route groups, dynamic routes with async params and generateStaticParams, parallel routes (every slot needs default.tsx), intercepting routes for modals, proxy.ts replacing middleware.ts, and the Metadata API. Use when creating, restructuring or migrating routes. Error and loading files belong to error-handling, Route Handlers to api-design.
 ---
 
 # Next.js App Router Patterns

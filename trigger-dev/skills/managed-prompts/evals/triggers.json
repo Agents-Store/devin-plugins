@@ -1,0 +1,17 @@
+[
+  {"query": "I defined a prompt with prompts.define in code. How do I hotfix the live prompt from the dashboard without redeploying, and later revert it?", "should_trigger": true},
+  {"query": "After promote_prompt_version my prod prompt did not change. Why does the old text still run?", "should_trigger": true},
+  {"query": "What is the resolution order at runtime between a dashboard override and the current code version of a managed prompt?", "should_trigger": true},
+  {"query": "How do I list the managed prompts and see which versions carry the labels current, override and latest?", "should_trigger": true},
+  {"query": "Which MCP tools manage prompt overrides, and which one brings back a previous dashboard version?", "should_trigger": true},
+  {"query": "Как переопределить управляемый промпт Trigger.dev из дашборда и откатить изменения?", "should_trigger": true},
+  {"query": "Как использовать resolve() для prompts.define в задаче и какие версии SDK и сервера для этого нужны?", "should_trigger": true},
+  {"query": "I want to roll back a bad prompt override without retyping the content", "should_trigger": true},
+  {"query": "Version control prompts for my LLM app in a Git repository with a prompts folder", "should_trigger": false},
+  {"query": "Set up LangSmith prompt hub versioning", "should_trigger": false},
+  {"query": "Install the Trigger.dev MCP server for Cursor", "should_trigger": false},
+  {"query": "Query the number of failed runs last week with TRQL", "should_trigger": false},
+  {"query": "Write a task that calls OpenAI with retries", "should_trigger": false},
+  {"query": "Use environment-specific system prompts in an Anthropic app", "should_trigger": false},
+  {"query": "Deploy Trigger.dev tasks to production", "should_trigger": false}
+]

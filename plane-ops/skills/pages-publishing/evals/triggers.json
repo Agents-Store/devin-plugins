@@ -1,0 +1,18 @@
+[
+  {"query": "Publish the sprint 14 report as a Plane page with completed work, velocity, carry-over and highlights, formatted as HTML", "should_trigger": true},
+  {"query": "How do I build release notes from Plane releases with the release notes template, and which HTML formatting rules apply to Plane pages?", "should_trigger": true},
+  {"query": "Create a decision log (ADR) page in Plane for the choice of PostgreSQL over MongoDB, with context, options, decision and consequences", "should_trigger": true},
+  {"query": "Which calls update, archive and delete a Plane page, and how do I publish a sprint report page end to end?", "should_trigger": true},
+  {"query": "Which Plane page templates are there for a sprint report, retro, release notes, roadmap, meeting notes, ADR, spec or runbook, and which one fits which document?", "should_trigger": true},
+  {"query": "Опубликуй отчёт по спринту как страницу в Plane с метриками и итогами", "should_trigger": true},
+  {"query": "Почему в страницах Plane пропадают чекбоксы data-checked и как правильно оформлять списки в HTML? Назови известные ловушки", "should_trigger": true},
+  {"query": "Why does my HTML page content look broken in the Plane editor and which HTML elements are safe to use in Plane pages?", "should_trigger": true},
+  {"query": "Run the sprint retrospective and track last retro's action items", "should_trigger": false},
+  {"query": "Write a blog post about our last release for our website", "should_trigger": false},
+  {"query": "Publish a page to Confluence with the sprint summary", "should_trigger": false},
+  {"query": "Create a Notion page for meeting notes", "should_trigger": false},
+  {"query": "Generate a PDF report of sprint metrics", "should_trigger": false},
+  {"query": "Close the sprint and move unfinished items to the next cycle", "should_trigger": false},
+  {"query": "Write release notes in Markdown for a GitHub release", "should_trigger": false},
+  {"query": "Add a comment to a work item", "should_trigger": false}
+]

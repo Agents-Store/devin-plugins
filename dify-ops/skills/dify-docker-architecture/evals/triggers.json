@@ -1,0 +1,18 @@
+[
+  {"query": "I inherited a self-hosted Dify install on a VPS and I don't know what's what. Which containers should be running, what do api, worker, plugin_daemon, sandbox and ssrf_proxy do, and where does the data live on disk?", "should_trigger": true},
+  {"query": "the dify worker container keeps restarting in a loop. before I dig into logs, can you explain the compose service layout and how the containers depend on each other?", "should_trigger": true},
+  {"query": "what is COMPOSE_PROJECT_NAME for a dify docker deployment and why do my container names start with docker- instead of dify-? I need the right project name for docker compose commands", "should_trigger": true},
+  {"query": "docker ps on my Dify host shows docker-api-1, docker-worker-1, docker-web-1, docker-plugin_daemon-1, docker-sandbox-1, docker-ssrf_proxy-1, docker-nginx-1, docker-db-1, docker-redis-1 and docker-weaviate-1. Which of them hold my uploaded files, the postgres data and the vectors on disk, and what will the container names be if I set COMPOSE_PROJECT_NAME=dify-prod?", "should_trigger": true},
+  {"query": "Объясни структуру Docker-развёртывания Dify: какие сервисы входят в docker-compose, что за каталог envs/ и почему docker-compose.yaml нельзя править руками", "should_trigger": true},
+  {"query": "Какие контейнеры есть в Dify и как они называются? Хочу понять, что за nginx, redis и sandbox в docker ps", "should_trigger": true},
+  {"query": "can i put my own overrides into dify's docker-compose.yaml? someone said it's generated from a template. how does that work with docker-compose.override.yaml?", "should_trigger": true},
+  {"query": "I want to develop Dify's api and web from source but keep postgres, redis and weaviate in Docker. Which compose file from the dify/docker directory do I start, and why do the container names differ from the full stack?", "should_trigger": true},
+  {"query": "Update my Dify install to the latest release tag and merge it into my dev branch", "should_trigger": false},
+  {"query": "Sync my .env with the new .env.example after pulling Dify updates, without printing secrets", "should_trigger": false},
+  {"query": "In the Dify studio my RAG chatbot returns irrelevant chunks from the knowledge base. How should I tune retrieval top_k, the score threshold and the reranker?", "should_trigger": false},
+  {"query": "Write a docker-compose.yml for a Django app with Postgres, Redis and a Celery worker", "should_trigger": false},
+  {"query": "Why is my nginx container returning 502 for my Flask app? Docker compose logs say upstream timed out", "should_trigger": false},
+  {"query": "Explain the architecture of Kubernetes: control plane, kubelet, kube-proxy", "should_trigger": false},
+  {"query": "Show me a walkthrough example of a routine Dify update from start to finish", "should_trigger": false},
+  {"query": "How do I connect Dify to a local Ollama model and set the model provider in the UI?", "should_trigger": false}
+]

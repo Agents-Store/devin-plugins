@@ -1,0 +1,18 @@
+[
+  {"query": "How do I turn on API keys for a service account in Payload and send them in the Authorization header? I upgraded to 3.90 and the key isn't shown any more", "should_trigger": true},
+  {"query": "I need Google SSO in Payload v3 with a custom auth strategy. What shape does a strategy have and how do I return the user?", "should_trigger": true},
+  {"query": "How do I configure Payload auth cookies for a frontend on a different subdomain - sameSite, secure, domain and CSRF?", "should_trigger": true},
+  {"query": "Customize the verification and forgot-password emails in Payload so the links point to my Next.js frontend", "should_trigger": true},
+  {"query": "How do I log users in by username instead of email in Payload, and can I turn off the local strategy entirely?", "should_trigger": true},
+  {"query": "Как в Payload обновить JWT через refresh и что такое saveToJWT? Нужно положить роль пользователя в токен", "should_trigger": true},
+  {"query": "Настрой в Payload отправку письма подтверждения email и письма восстановления пароля для коллекции users: свой HTML шаблона, ссылка на мой фронтенд и обязательная верификация перед входом", "should_trigger": true},
+  {"query": "Настрой в Payload аутентификацию по cookie для фронтенда на соседнем поддомене: sameSite, secure, domain и CSRF-whitelist, а также обновление JWT через refresh", "should_trigger": true},
+  {"query": "Write an access function so only the author can update their posts in Payload", "should_trigger": false},
+  {"query": "Create an upload collection in Payload with image sizes and focal point", "should_trigger": false},
+  {"query": "How do I implement JWT refresh tokens in an Express API?", "should_trigger": false},
+  {"query": "Set up NextAuth with GitHub OAuth in a Next.js 15 app", "should_trigger": false},
+  {"query": "How do I add a first admin user to Payload from a seed script with the Local API?", "should_trigger": false},
+  {"query": "Explain the difference between sessions and JWT for authentication in general", "should_trigger": false},
+  {"query": "Directus: configure SSO with Keycloak using OpenID Connect", "should_trigger": false},
+  {"query": "Payload hooks: run code after a user logs in", "should_trigger": false}
+]

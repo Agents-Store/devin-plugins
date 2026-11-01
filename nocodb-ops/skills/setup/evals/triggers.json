@@ -1,0 +1,18 @@
+[
+  {"query": "check my NocoDB connection - can you read the base info and the tables?", "should_trigger": true},
+  {"query": "verify MCP is working for NocoDB: run whoami and a read test", "should_trigger": true},
+  {"query": "test NocoDB setup before I start: connection, read access, count access, and which edition I'm on", "should_trigger": true},
+  {"query": "is NocoDB connected? I just added the MCP server to my project", "should_trigger": true},
+  {"query": "Проверь подключение к NocoDB через MCP: кто я, доступ на чтение и количество записей", "should_trigger": true},
+  {"query": "Убедись, что NocoDB настроен правильно и MCP отвечает, потом расскажи, что дальше", "should_trigger": true},
+  {"query": "troubleshoot NocoDB access: I can't see any of my tables from the agent, check the prerequisites and the verification steps", "should_trigger": true},
+  {"query": "Run the NocoDB verification steps: whoami, test connection, verify read access, count access, base info", "should_trigger": true},
+  {"query": "My NocoDB request returns 401 and the MCP tool is timing out, debug it", "should_trigger": false},
+  {"query": "Verify that I can change the schema in NocoDB: add fields and tables", "should_trigger": false},
+  {"query": "Add a new record to the Customers table", "should_trigger": false},
+  {"query": "Test my Postgres connection string from the command line with psql", "should_trigger": false},
+  {"query": "Verify my Notion integration token and share a database with it", "should_trigger": false},
+  {"query": "Check that the Airtable personal access token has read access to my base", "should_trigger": false},
+  {"query": "Check my Docker installation and make sure the daemon is running", "should_trigger": false},
+  {"query": "Is my Directus static token valid? Test with curl", "should_trigger": false}
+]

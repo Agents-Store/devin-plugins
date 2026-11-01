@@ -1,0 +1,18 @@
+[
+  {"query": "Set up next-devtools-mcp for my Next.js 16 project so Claude Code can read runtime errors and routes from the dev server", "should_trigger": true},
+  {"query": "What can the Next.js MCP tools nextjs_index and nextjs_call do, and what's a typical workflow for diagnosing a runtime error with them?", "should_trigger": true},
+  {"query": "How do I use nextjs_docs and browser_eval from the official Next.js MCP toolchain during AI-assisted development?", "should_trigger": true},
+  {"query": "configure the Next.js dev server MCP for Cursor and verify the agent can list the page routes", "should_trigger": true},
+  {"query": "Подключи next-devtools-mcp к моему проекту Next.js и покажи, как с его помощью получать runtime-диагностику", "should_trigger": true},
+  {"query": "Как работает MCP-сервер Next.js: архитектура, какие инструменты есть и как ими пользоваться при разработке?", "should_trigger": true},
+  {"query": "What are the first-party Next.js agent skills for 16.3 and how do they relate to the MCP server?", "should_trigger": true},
+  {"query": "Zero-setup docs lookup with the Next.js MCP: what is the tip for pulling the latest docs without installing anything?", "should_trigger": true},
+  {"query": "Set up the shadcn MCP server in Claude Code and search for a calendar component", "should_trigger": false},
+  {"query": "Build an MCP server in TypeScript that exposes my Next.js app's database as tools", "should_trigger": false},
+  {"query": "Set up the Playwright MCP server so the agent can click through my app", "should_trigger": false},
+  {"query": "Verify my Next.js project environment: Node version, TypeScript config and next.config", "should_trigger": false},
+  {"query": "Use the Chrome DevTools to profile my Next.js page and find the long task", "should_trigger": false},
+  {"query": "Configure the context7 MCP server so Claude can fetch up-to-date framework docs", "should_trigger": false},
+  {"query": "Debug a Next.js hydration warning with React DevTools", "should_trigger": false},
+  {"query": "Write a custom ESLint rule that bans imports from next/router in the App Router", "should_trigger": false}
+]

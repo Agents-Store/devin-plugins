@@ -1,0 +1,17 @@
+[
+  {"query": "My script gets 403 from Mattermost on GET /api/v4/config although the token is valid. Account is a team admin. What's wrong?", "should_trigger": true},
+  {"query": "I'm listing users with GET /api/v4/users?per_page=200 and keep getting fewer rows than the System Console shows. Where do the rows go?", "should_trigger": true},
+  {"query": "Our Mattermost PAT worked yesterday and today everything returns 401. It was created in July with an expiry I don't remember. How do I find out?", "should_trigger": true},
+  {"query": "Since the upgrade to Mattermost v12 my bot posts show my own name instead of 'Deploy Bot'. We set override_username in props. No error is returned.", "should_trigger": true},
+  {"query": "Getting 429 Too Many Requests from Mattermost in a loop that adds 400 users to a channel - how should I back off?", "should_trigger": true},
+  {"query": "В Mattermost API у участников канала поле last_viewed_at приходит как -1 (дата 1969-12-31). Это баг? Изменится ли это в v12?", "should_trigger": true},
+  {"query": "Mattermost API: логин возвращает 200, а токена в теле ответа нет. Куда он делся?", "should_trigger": true},
+  {"query": "Slack API returns 429 rate_limited with a Retry-After header inside my bot loop, how do I handle it", "should_trigger": false},
+  {"query": "Walk me through logging in to Mattermost with curl and saving the session token for later calls", "should_trigger": false},
+  {"query": "Deactivate the Mattermost user alice.smith and remove her from the 'ops' team", "should_trigger": false},
+  {"query": "My Mattermost server container restarts in a loop after the upgrade, Postgres connection refused in the docker logs", "should_trigger": false},
+  {"query": "How do I back up and restore a Mattermost server's Postgres database and file storage before a version upgrade?", "should_trigger": false},
+  {"query": "GitHub API returns 403 secondary rate limit exceeded when I create many issues quickly", "should_trigger": false},
+  {"query": "My Mattermost plugin written in Go panics in OnActivate, here is the stack trace from the server log", "should_trigger": false},
+  {"query": "Compare Mattermost and Slack for a 200-person company that must keep all data on its own servers", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "Dockerize my Next.js 16 app: multi-stage Dockerfile with standalone output, non-root user, and a .dockerignore", "should_trigger": true},
+  {"query": "Write a docker-compose.yml for Next.js development with hot reload and a Postgres service plus a production variant", "should_trigger": true},
+  {"query": "I want one docker-compose.yml with a dev service (hot reload, bind mount) and a production standalone service side by side for Next.js, both talking to a Directus and a Postgres container on the same network.", "should_trigger": true},
+  {"query": "Как собрать Docker-образ для Next.js с output standalone, чтобы он был маленьким? Нужен Dockerfile", "should_trigger": true},
+  {"query": "Нужен docker compose для Next.js, который ходит в Directus и PostgreSQL в той же сети. Покажи конфиг", "should_trigger": true},
+  {"query": "my next.js docker image is 1.8GB, how do I shrink it with the standalone output and a slim runtime stage?", "should_trigger": true},
+  {"query": "deploy Next.js in Docker for production with a reverse proxy in front: what should the container expose and which files must be copied to the final stage?", "should_trigger": true},
+  {"query": "Run next build and analyze the bundle sizes of my app from the command line", "should_trigger": false},
+  {"query": "Set up GitHub Actions to build and push a Docker image of my Go service to GHCR", "should_trigger": false},
+  {"query": "Write a Dockerfile for a Flask app with gunicorn and a docker compose with Redis", "should_trigger": false},
+  {"query": "Deploy my Next.js app to Vercel with preview deployments and environment variables", "should_trigger": false},
+  {"query": "Configure Kubernetes manifests with a Deployment, Service and Ingress for a Node.js API", "should_trigger": false},
+  {"query": "Optimize Next.js images with next/image and the AVIF format", "should_trigger": false},
+  {"query": "My Next.js app throws a hydration error only inside the container build", "should_trigger": false},
+  {"query": "Write a Dockerfile for a Rust service with cargo-chef layer caching", "should_trigger": false}
+]

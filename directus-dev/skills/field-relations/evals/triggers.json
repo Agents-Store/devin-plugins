@@ -1,0 +1,18 @@
+[
+  {"query": "In Directus I have `articles` and `authors`. Each article has exactly one author and an author has many articles. How do I create that relation properly - which side gets the field and what goes into the relation call?", "should_trigger": true},
+  {"query": "I want products to have many categories and categories many products in Directus. Walk me through the junction collection, its two M2O fields, the alias fields and the relations so the admin UI shows a tag-style picker.", "should_trigger": true},
+  {"query": "Directus: I want a page builder with blocks of different types (hero, gallery, text) in one ordered list. That's M2A, right? How do I set up the junction with `item` and `collection` fields?", "should_trigger": true},
+  {"query": "I'm adding fields to the `posts` collection in Directus through the MCP fields tool: status (draft, review or published, as a dropdown), metadata (arbitrary JSON the frontend reads) and body (rich text with inline images). Which type and interface should each get, and what does the create-fields payload look like?", "should_trigger": true},
+  {"query": "I'm wiring `employees` to `departments` in Directus through MCP. I created the alias field `employees` (o2m) on `departments` first and then the `department` uuid field on `employees`, and the relation call fails with an error about the related field. What order should I have used, what does the relation payload look like, and what do on_delete SET NULL and CASCADE do to the employees when a department is deleted?", "should_trigger": true},
+  {"query": "How do I add translations to a Directus collection - languages table, translations junction and the translations interface?", "should_trigger": true},
+  {"query": "В Directus у меня коллекции `orders` и `order_items`. Одному заказу принадлежит много позиций. Через MCP-инструменты нужно создать связь один-ко-многим: какое поле добавить первым, как выглядит вызов relations и как показать позиции внутри формы заказа?", "should_trigger": true},
+  {"query": "Хочу добавить в коллекцию posts поле обложки (файл) и связь многие-ко-многим с тегами. Подскажи типы полей и шаги по созданию", "should_trigger": true},
+  {"query": "Design the collections for an e-commerce catalog in Directus: products, variants, orders. Which primary keys and display templates make sense?", "should_trigger": false},
+  {"query": "Filter articles by their author's country using a deep query in Directus, sorted by publish date", "should_trigger": false},
+  {"query": "Query posts together with their tags using the Directus SDK: how do I request nested fields in readItems?", "should_trigger": false},
+  {"query": "How do I declare the join table for a many-to-many in a Prisma schema?", "should_trigger": false},
+  {"query": "In SQLAlchemy 2.0 how do I declare a many-to-many with an association table and back_populates?", "should_trigger": false},
+  {"query": "My Directus returns 403 when I read a related collection even though I can read the main one. What permission is missing?", "should_trigger": false},
+  {"query": "How do I import files from URLs into a Directus folder in bulk?", "should_trigger": false},
+  {"query": "How do I set up a Directus flow that runs when a new row appears in an M2M junction collection?", "should_trigger": false}
+]

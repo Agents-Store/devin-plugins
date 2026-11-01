@@ -3,47 +3,47 @@
   "evals": [
     {
       "id": 15,
-      "prompt": "Show me how to set up the Directus SDK with TypeScript types and do basic CRUD",
+      "prompt": "Use the sdk-patterns skill. Show me how to set up the Directus SDK with TypeScript types and do basic CRUD",
       "expected_output": "Composable client, TypeScript schema, readItems/createItem/updateItem/deleteItem",
       "files": [],
       "expectations": [
-        "Uses createDirectus with composable pattern (rest, staticToken)",
+        "The answer uses createDirectus with composable pattern (rest, staticToken)",
         "Shows TypeScript interface for schema",
         "Shows readItems with fields and filter",
         "Shows createItem example",
         "Shows updateItem example",
-        "Uses correct imports from @directus/sdk"
+        "The answer uses correct imports from @directus/sdk"
       ]
     },
     {
       "id": 16,
-      "prompt": "How do I subscribe to real-time changes on a collection with the Directus SDK?",
+      "prompt": "Use the sdk-patterns skill. How do I subscribe to real-time changes on a collection with the Directus SDK?",
       "expected_output": "realtime() composable, connect(), subscribe(), for-await loop",
       "files": [],
       "expectations": [
-        "Uses realtime() composable in client setup",
-        "Calls client.connect() before subscribing",
-        "Uses client.subscribe() with collection name and event type",
+        "The answer uses realtime() composable in client setup",
+        "The answer calls client.connect() before subscribing",
+        "The answer uses client.subscribe() with collection name and event type",
         "Shows for-await-of loop for consuming events",
-        "Includes correct imports (createDirectus, realtime, staticToken)"
+        "The answer includes correct imports (createDirectus, realtime, staticToken)"
       ]
     },
     {
       "id": 23,
-      "prompt": "How do I log in with email and password using the Directus SDK in a Node.js script?",
+      "prompt": "Use the sdk-patterns skill. How do I log in with email and password using the Directus SDK in a Node.js script?",
       "expected_output": "authentication('json') client, login with a payload object, stopRefreshing for one-shot scripts",
       "files": [],
       "expectations": [
-        "Calls client.login with a single payload object { email, password }, not two positional arguments",
-        "Uses authentication('json') for Node.js because the default cookie mode needs a cookie jar",
+        "The answer calls client.login with a single payload object { email, password }, not two positional arguments",
+        "The answer uses authentication('json') for Node.js because the default cookie mode needs a cookie jar",
         "Mentions optional login options (otp, mode, provider) and the LDAP identifier payload",
-        "Reads credentials from environment variables",
+        "The answer reads credentials from environment variables",
         "Mentions Node 22 or later for SDK 26 and stopRefreshing for one-shot scripts"
       ]
     },
     {
       "id": 27,
-      "prompt": "I use the Directus SDK in a Next.js Server Component and wrote createDirectus(url).with(rest({ cache: 'no-store' })) but TypeScript complains. How do I control caching?",
+      "prompt": "Use the sdk-patterns skill. I use the Directus SDK in a Next.js Server Component and wrote createDirectus(url).with(rest({ cache: 'no-store' })) but TypeScript complains. How do I control caching?",
       "expected_output": "rest() has no cache option; pass fetch options through onRequest or withOptions",
       "files": [],
       "expectations": [
@@ -55,7 +55,7 @@
     },
     {
       "id": 28,
-      "prompt": "My Next.js health check does directus.request(readItems('directus_collections')) and fails. What should I call instead?",
+      "prompt": "Use the sdk-patterns skill. My Next.js health check does directus.request(readItems('directus_collections')) and fails. Why does it fail, what should I call instead for the collections and for a plain connection check, and which typed commands exist for other system collections such as users, roles, policies and files?",
       "expected_output": "System collections use typed commands; readItems refuses directus_* collections",
       "files": [],
       "expectations": [

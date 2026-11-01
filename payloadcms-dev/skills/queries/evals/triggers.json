@@ -1,0 +1,17 @@
+[
+  {"query": "What are all the where operators in Payload (equals, in, like, contains, near...) and how do I combine AND and OR with nested relationship properties?", "should_trigger": true},
+  {"query": "payload.find with depth and populate: how do I limit which fields come back for a populated relationship, and what does select do?", "should_trigger": true},
+  {"query": "How do I paginate and sort results with the Payload Local API and what do totalDocs, hasNextPage and limit: 0 mean?", "should_trigger": true},
+  {"query": "Payload REST API query string: how do I filter by status and author id with where[status][equals] using qs-esm stringify from the browser, with depth, limit and sort?", "should_trigger": true},
+  {"query": "Write a GraphQL query for a Payload collection with where, limit and a relationship field", "should_trigger": true},
+  {"query": "Как через Local API Payload найти документы по связанному полю и отсортировать по дате? Нужен where с вложенным путём", "should_trigger": true},
+  {"query": "Как получить черновики и конкретную локаль через payload.find? Параметры draft и locale", "should_trigger": true},
+  {"query": "Create a Payload collection with versions and drafts enabled", "should_trigger": false},
+  {"query": "How do I read Payload data in a Next.js server component and revalidate the page on change?", "should_trigger": false},
+  {"query": "Write a SQL query that joins orders and customers and groups by month", "should_trigger": false},
+  {"query": "Prisma findMany with nested include and where", "should_trigger": false},
+  {"query": "Directus: filter items through the REST API with a deep relational filter", "should_trigger": false},
+  {"query": "Strapi REST query with populate and filters", "should_trigger": false},
+  {"query": "Set up Payload access control so users only see their own documents", "should_trigger": false},
+  {"query": "How do I enable the trash feature so deleted docs can be restored?", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "List the addons in my Teleshop store, enable the one that syncs from an XML feed, then do a test run", "should_trigger": true},
+  {"query": "Set the addon 1823 to run every 6 hours and configure its sync_interval and source_url variables first", "should_trigger": true},
+  {"query": "I want to pause an addon during inventory work without losing its schedule. How should I do that in Teleshop?", "should_trigger": true},
+  {"query": "An addon in my Telegram store stopped running overnight. How do I check its status, variables and schedule, and trigger it manually?", "should_trigger": true},
+  {"query": "Remove the schedule from an addon so it only runs when I start it by hand", "should_trigger": true},
+  {"query": "Как в Teleshop включить аддон, настроить его переменные и поставить запуск каждый день в полночь?", "should_trigger": true},
+  {"query": "Запусти вручную аддон выгрузки остатков в моём магазине Teleshop и покажи результат", "should_trigger": true},
+  {"query": "Which tools do I use to read and update an addon's configuration variables in the store?", "should_trigger": true},
+  {"query": "Create a webhook for order.created events in my Teleshop store", "should_trigger": false},
+  {"query": "Schedule a cron job on my server that runs every 6 hours with a systemd timer", "should_trigger": false},
+  {"query": "Install a WordPress plugin and activate it", "should_trigger": false},
+  {"query": "Set up a Shopify app that syncs inventory every hour", "should_trigger": false},
+  {"query": "Import 300 products from a JSON file into my Teleshop store", "should_trigger": false},
+  {"query": "Trigger a GitHub Actions workflow manually with workflow_dispatch", "should_trigger": false},
+  {"query": "Turn on the free shipping promo banner in my Shopify store", "should_trigger": false}
+]

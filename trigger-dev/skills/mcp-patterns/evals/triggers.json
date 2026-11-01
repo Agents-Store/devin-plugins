@@ -1,0 +1,17 @@
+[
+  {"query": "Which Trigger.dev MCP tools exist and what does trigger_task need? I want my agent to start a task and wait for it", "should_trigger": true},
+  {"query": "How do I run the Trigger.dev MCP server read-only so the agent cannot deploy or trigger anything? Does --readonly also stop the dev server tool?", "should_trigger": true},
+  {"query": "My agent calls trigger_task but the run goes to dev, not production. How do I choose the environment?", "should_trigger": true},
+  {"query": "What is the difference between get_current_worker and get_task_schema, and which one gives me the payload schema?", "should_trigger": true},
+  {"query": "How do I switch between CLI profiles mid-session through the MCP, and what does whoami show?", "should_trigger": true},
+  {"query": "Wire the Trigger.dev MCP for an agent that is read-only, locked to one project ref and to the dev environment. Give the args of the server entry and say which tools stay visible", "should_trigger": true},
+  {"query": "Какие инструменты MCP у Trigger.dev есть для запуска и мониторинга, и как посмотреть детали упавшего запуска?", "should_trigger": true},
+  {"query": "Как через MCP запустить dev-сервер Trigger.dev в фоне и проверить его статус?", "should_trigger": true},
+  {"query": "Query failed runs with TRQL and build a dashboard", "should_trigger": false},
+  {"query": "Write an MCP server in TypeScript for my own tool", "should_trigger": false},
+  {"query": "Deploy tasks from CI", "should_trigger": false},
+  {"query": "Promote a managed prompt version", "should_trigger": false},
+  {"query": "Configure the GitHub MCP server in Cursor", "should_trigger": false},
+  {"query": "Set up a Trigger.dev CLI profile for a cloud account", "should_trigger": false},
+  {"query": "Write a task with triggerAndWait", "should_trigger": false}
+]

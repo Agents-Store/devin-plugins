@@ -3,9 +3,16 @@
   "evals": [
     {
       "id": 5,
-      "prompt": "I need to scrape all product listings from a competitor's e-commerce site and extract the product names, prices, and descriptions into structured JSON. The site uses React so pages are rendered client-side. Walk me through how to do this.",
+      "prompt": "I need to scrape all product listings from a competitor's e-commerce site and extract the product names, prices, and descriptions into structured JSON. The site uses React so pages are rendered client-side. Walk me through how to do this. Describe the calls and their parameters; do not run them. Use the web-scraping skill.",
       "expected_output": "Should recommend firecrawl_map to discover URLs, then firecrawl_scrape with formats [\"json\"] and jsonOptions {prompt, schema} for structured extraction (one call per URL), or firecrawl_agent for unknown URLs. Should mention waitFor for JS-rendered pages. Should cover the full pipeline: discover URLs → filter → extract structured data → transform.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The answer discovers the product URLs with firecrawl_map",
+        "The answer extracts the fields with firecrawl_scrape using the json format and jsonOptions",
+        "The answer says to use waitFor for the client-rendered pages",
+        "The answer says to run one scrape call per URL",
+        "The answer mentions firecrawl_agent for the case that the URLs are not known"
+      ]
     }
   ]
 }

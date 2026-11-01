@@ -1,0 +1,18 @@
+[
+  {"query": "What NocoDB MCP tools can I use for schema work, and which ones are hidden behind listTools and callTool?", "should_trigger": true},
+  {"query": "Can the NocoDB MCP create tables, fields and views on the Community edition, or only on Cloud and licensed editions?", "should_trigger": true},
+  {"query": "How do I discover the structure of a NocoDB base through MCP: tables, fields, views, before I change anything?", "should_trigger": true},
+  {"query": "Show me the MCP pattern for adding a field and then verifying the formula after creation with the discovery, change, verify loop", "should_trigger": true},
+  {"query": "Как через MCP в NocoDB узнать, какая у меня редакция и какие инструменты схемы доступны через callTool?", "should_trigger": true},
+  {"query": "Какие инструменты MCP NocoDB нужны для работы со схемой и чем отличаются payload-ы MCP от REST?", "should_trigger": true},
+  {"query": "audit the scope of a destructive schema change over MCP: what do I need to read before I delete a NocoDB table?", "should_trigger": true},
+  {"query": "How do I call a hidden schema tool of the NocoDB MCP server, and what are the error-handling best practices?", "should_trigger": true},
+  {"query": "Create a webhook on the Orders table in NocoDB that notifies Slack on insert", "should_trigger": false},
+  {"query": "Verify that my NocoDB token and connection work", "should_trigger": false},
+  {"query": "Add a Single Select field to the Tasks table in NocoDB", "should_trigger": false},
+  {"query": "Build a custom MCP server in Python that exposes my Postgres schema as tools", "should_trigger": false},
+  {"query": "How do I use the Airtable MCP server to list bases and create a table?", "should_trigger": false},
+  {"query": "Which Directus MCP tools exist for managing collections and fields?", "should_trigger": false},
+  {"query": "Create an n8n workflow that calls the NocoDB REST API on a schedule", "should_trigger": false},
+  {"query": "What is the difference between the stdio and the streamable HTTP transport in MCP?", "should_trigger": false}
+]

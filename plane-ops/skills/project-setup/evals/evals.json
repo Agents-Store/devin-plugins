@@ -3,53 +3,55 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Describe the audit procedure for checking a Plane project's Agile readiness. What tool calls would you run, what would you compare against, and how would you structure the gap analysis report? I want a runbook, not the actual audit.",
-      "expected_output": "A step-by-step audit procedure listing the inspection tools, the reference template to compare against, the gap-table structure, and the remediation pattern for each gap type.",
+      "prompt": "Use the project-setup skill. I just configured a new Plane project with your setup workflow and want to be sure nothing is missing before the first sprint. What do you check, with which calls, and what result do you expect from each? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "expected_output": "The four verification calls of the setup checklist with the expected result of each.",
       "files": [],
       "expectations": [
-        "Lists the 4 inspection calls: state(action=list), label(action=list), project(action=get_features), workitem_type(action=list)",
-        "Names the Standard Template as the comparison baseline (6 states, all label groups, cycles+modules+epics+pages+views, Story/Task/Bug/Spike types)",
-        "Describes output as a gap table with columns like 'what exists / what's missing / fix', not prose",
-        "For each gap type, shows the exact create call pattern with parameters from the skill (state(action=create), label(action=create), project(action=update_features), workitem_type(action=resolve))",
-        "Explicitly mentions verifying state group membership (not just names) to catch burndown bugs"
+        "The answer checks the states with state(action=list, project_id=<id>)",
+        "The answer expects 4-6 states in the correct groups",
+        "The answer checks the labels with label(action=list, project_id=<id>)",
+        "The answer checks the types with workitem_type(action=list, project_id=<id>)",
+        "The answer expects at least the types Story, Task and Bug",
+        "The answer checks the features with project(action=get_features, project_id=<id>)"
       ]
     },
     {
       "id": 2,
-      "prompt": "Set up a brand new Plane project 'Mobile App' for a 3-person team. We want the minimal Agile setup, nothing fancy.",
+      "prompt": "Use the project-setup skill. Set up a brand new Plane project 'Mobile App' for a 3-person team. We want the minimal Agile setup, nothing fancy. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Applies the Lean Template: 4 states, minimal labels, Story + Bug types, cycles + pages features only.",
       "files": [],
       "expectations": [
-        "Uses the Lean Template (not Standard)",
-        "Creates exactly 4 states: Backlog → Todo → In Progress → Done",
-        "Creates minimal labels: bug, feature, tech-debt, ready, blocked",
-        "Enables only cycles and pages features with project(action=update_features, cycles=true, pages=true)",
-        "Does NOT create Task or Spike types"
+        "The answer uses the Lean Template (not Standard)",
+        "The answer says to create exactly 4 states: Backlog → Todo → In Progress → Done",
+        "The answer says to create minimal labels: bug, feature, tech-debt, ready, blocked",
+        "The answer says to enable only cycles and pages features with project(action=update_features, cycles=true, pages=true)",
+        "The answer does NOT create Task or Spike types"
       ]
     },
     {
       "id": 3,
-      "prompt": "We have 6 developers and want the full Agile setup with modules, epics, and custom properties for WSJF scoring.",
+      "prompt": "Use the project-setup skill. We have 6 developers and want the full Agile setup with modules, epics, and custom properties for WSJF scoring. List the states, work item types, features and custom properties you create, each with its call. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Applies the Standard Template: 6 states, all label groups, Story/Task/Bug/Spike types, cycles + modules + epics + pages + views, Business Value and Risk Level properties.",
       "files": [],
       "expectations": [
-        "Uses the Standard Template",
-        "Creates 6 states including In Review and Cancelled",
-        "Creates all 4 work item types (Story, Task, Bug, Spike) with workitem_type(action=resolve) and enables the workitem_types feature",
-        "Enables modules, epics, views features in addition to cycles/pages",
-        "Creates Business Value (DECIMAL) and Risk Level (OPTION) custom properties on Story type with workitem_property(action=create, workitem_type_id, ...)"
+        "The answer uses the Standard Template",
+        "The answer creates the six states Backlog, Todo, In Progress, In Review, Done and Cancelled",
+        "The answer creates the types Story, Task, Bug and Spike with workitem_type(action=resolve)",
+        "The answer enables modules, epics and views with project(action=update_features)",
+        "The answer creates Business Value as a DECIMAL property with workitem_property(action=create, workitem_type_id, ...)",
+        "The answer creates Risk Level as an OPTION property with workitem_property(action=create, workitem_type_id, ...)"
       ]
     },
     {
       "id": 4,
-      "prompt": "Our project has 'WIP', 'Review', 'Merged' states but burndown looks wrong. What's the issue?",
+      "prompt": "Use the project-setup skill. Our project has 'WIP', 'Review', 'Merged' states but burndown looks wrong. What's the issue? Explain the cause, name the call that inspects it, give the fix call for the state that is wrong, and say what similar mistakes to check. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Identifies that state groups are likely misconfigured — 'Merged' (done) may be in 'started' group, breaking velocity counting.",
       "files": [],
       "expectations": [
-        "Identifies the root cause: velocity counts only items moved to 'completed' group states",
-        "Suggests running state(action=list) to inspect group membership",
-        "Recommends reassigning 'Merged' to the 'completed' group via state(action=update, state_id, group='completed')",
-        "Warns about similar pitfalls (e.g., Done in 'started' group)"
+        "The answer identifies the root cause: velocity counts only items moved to 'completed' group states",
+        "The answer suggests running state(action=list) to inspect group membership",
+        "The answer recommends reassigning 'Merged' to the 'completed' group via state(action=update, state_id, group='completed')",
+        "The answer warns about similar pitfalls (e.g., Done in 'started' group)"
       ]
     }
   ]

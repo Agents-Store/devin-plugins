@@ -1,6 +1,6 @@
 ---
 name: sdk-patterns
-description: This skill should be used when the user asks about "grammY Bot class", "grammY Context object", "ctx.reply", "ctx.api", "send a message in grammY", "use grammY in code", or needs idiomatic grammY code patterns for everyday bot operations.
+description: grammY (Telegram bot framework) code patterns - creating a Bot, reading the Context (ctx.from, ctx.chat), handlers with bot.command, bot.hears and bot.on, ctx.reply versus ctx.api or bot.api for other chats and scheduled posts, editing and deleting messages, bot.init, and typing a custom Context with plugin flavors (session). Use for how-do-I-write-this questions in grammY code. For filter queries use filter-queries, for keyboards commands-and-keyboards, for session storage sessions.
 ---
 
 # grammY — SDK Patterns

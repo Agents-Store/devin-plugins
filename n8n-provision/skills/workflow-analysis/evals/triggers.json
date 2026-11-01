@@ -1,0 +1,18 @@
+[
+  {"query": "Analyze this n8n workflow JSON before I import it: node inventory, connection topology, credentials and security flags", "should_trigger": true},
+  {"query": "Check this community workflow for compatibility with my n8n 1.9x instance before importing", "should_trigger": true},
+  {"query": "review n8n template 4821 - how complex is it, does it have risky nodes like Execute Command?", "should_trigger": true},
+  {"query": "assess the workflow complexity of ./flows/order-sync.json and give me a recommendation: import or not", "should_trigger": true},
+  {"query": "Проанализируй JSON workflow n8n перед импортом: ноды, связи, какие credentials нужны, есть ли подозрительные ноды", "should_trigger": true},
+  {"query": "Оцени сложность и совместимость чужого workflow n8n, прежде чем ставить его на наш инстанс", "should_trigger": true},
+  {"query": "I downloaded invoice-sync.json: nodes are Schedule Trigger, HTTP Request, Google Sheets, Slack and a Code node. Quick analysis only please: which nodes and credential types does it need, and is anything risky?", "should_trigger": true},
+  {"query": "Scan this downloaded n8n workflow for hardcoded secrets or Code nodes that call external hosts before I run it", "should_trigger": true},
+  {"query": "Import the workflow into my n8n instance", "should_trigger": false},
+  {"query": "Plan the credentials I need to create for these workflows", "should_trigger": false},
+  {"query": "Review my Python Flask code for SQL injection and insecure defaults", "should_trigger": false},
+  {"query": "Analyze this GitHub Actions workflow YAML and find the slow steps", "should_trigger": false},
+  {"query": "My n8n workflow is slow with 10,000 items - optimise it", "should_trigger": false},
+  {"query": "Analyze this Terraform plan output for risky resource deletions", "should_trigger": false},
+  {"query": "Explain what this n8n Code node does, line by line", "should_trigger": false},
+  {"query": "Search the n8n template library for CRM sync workflows", "should_trigger": false}
+]

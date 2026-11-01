@@ -1,0 +1,18 @@
+[
+  {"query": "How do I define a task in the Payload jobs queue, queue it from an afterChange hook, and run it with autoRun? I want retries on failure", "should_trigger": true},
+  {"query": "After upgrading to Payload 3.89 my payload-jobs collection returns 403 and the Jobs view is empty. How do I open it read-only for admins?", "should_trigger": true},
+  {"query": "Build a multi-step workflow in Payload jobs where step two depends on the output of step one, and let it resume after a crash", "should_trigger": true},
+  {"query": "Schedule a nightly cleanup in Payload with the declarative schedule option - what do I need to run on Vercel where there is no long-lived process?", "should_trigger": true},
+  {"query": "How do I limit concurrency for a Payload task queue, for example only one image-resize job per user at a time?", "should_trigger": true},
+  {"query": "Как в Payload запускать очередь задач отдельным воркером через bin-скрипт и как задать cron-расписание?", "should_trigger": true},
+  {"query": "Нужно в Payload отправлять письма через очередь, чтобы не тормозить запрос. Как объявить задачу и поставить её в очередь?", "should_trigger": true},
+  {"query": "How do I query failed jobs in Payload and re-run them? Which fields hold the error log?", "should_trigger": true},
+  {"query": "Add an afterChange hook in Payload that revalidates the Next.js cache", "should_trigger": false},
+  {"query": "Run a cron job in Linux with systemd timers that calls an API", "should_trigger": false},
+  {"query": "Trigger.dev: define a scheduled task with retries and concurrency limits", "should_trigger": false},
+  {"query": "BullMQ vs Celery for background processing in Node and Python", "should_trigger": false},
+  {"query": "How do I generate the TypeScript types and the import map for Payload in CI?", "should_trigger": false},
+  {"query": "Set up n8n to run a workflow every night at 3am", "should_trigger": false},
+  {"query": "Why is my Payload hook running in an infinite loop?", "should_trigger": false},
+  {"query": "How do I process uploads asynchronously in Strapi with a custom service?", "should_trigger": false}
+]

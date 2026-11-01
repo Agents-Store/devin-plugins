@@ -1,6 +1,6 @@
 ---
 name: competitor-analysis
-description: This skill should be used when the user asks about "competitor analysis", "competitor research", "domain comparison", "who ranks for", "competitive landscape", "competitor keywords", "competitor traffic", or needs to analyze and compare domains using DataForSEO.
+description: Use for competitor SEO research with DataForSEO Labs data - who competes for the same organic keywords, who ranks in the top 10 for a query, how domains compare on organic traffic, keywords and trend, a competitor's top pages, and keyword or domain gaps. Not for keyword ideation (keyword-research), backlink audits (backlink-audit) or page audits (site-audit).
 ---
 
 # Competitor Analysis Workflows

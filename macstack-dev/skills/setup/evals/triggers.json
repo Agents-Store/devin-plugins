@@ -1,0 +1,18 @@
+[
+  {"query": "What is macstack.json and how does the MACSTACK standard work? Explain it before I use the other skills.", "should_trigger": true},
+  {"query": "Check my macstack setup: is the schema reachable, is the category registry found, are python3 and jq available?", "should_trigger": true},
+  {"query": "We just added the macstack-dev plugin to this repository and I know nothing about the MACSTACK standard. Before anything else, explain what macstack.json is for, where the schema and the category registry come from, and check that the tools it needs (python3, jq, access to the schema) are available.", "should_trigger": true},
+  {"query": "Does this machine have what macstack-dev needs? Check python3, jq and network access to the schema, and tell me where the bundled copies of the schema and the category registry are for offline use.", "should_trigger": true},
+  {"query": "verify the macstack tooling and locate the bundled schema and category registry for offline use", "should_trigger": true},
+  {"query": "Что такое macstack.json и стандарт MACSTACK? Объясни основные понятия и проверь, что окружение настроено.", "should_trigger": true},
+  {"query": "Я впервые открываю проект с macstack-dev: объясни, что такое macstack.json, откуда берутся схема и реестр категорий, и проверь, что нужные инструменты (python3, jq, доступ к схеме) на месте.", "should_trigger": true},
+  {"query": "I'm new to macstack-dev. Give me the map of the standard: what lives in macstack.json, what lives in the macstack/ folder, and which step comes first when a project is brought into it.", "should_trigger": true},
+  {"query": "Create a macstack.json for my online school with payments, an LMS and email campaigns", "should_trigger": false},
+  {"query": "Explain how Terraform state works and why remote state is needed", "should_trigger": false},
+  {"query": "Set up a Python dev environment with pyenv and poetry", "should_trigger": false},
+  {"query": "Validate macstack.json against the schema", "should_trigger": false},
+  {"query": "What is the JSON Schema standard and how do I write one for my config files?", "should_trigger": false},
+  {"query": "Explain the 12-factor app methodology", "should_trigger": false},
+  {"query": "Add a new trigger for the nightly export to AUTOMATION.md, with its pointer comment to macstack.json", "should_trigger": false},
+  {"query": "Explain how Docker Compose extends and overrides services across files", "should_trigger": false}
+]

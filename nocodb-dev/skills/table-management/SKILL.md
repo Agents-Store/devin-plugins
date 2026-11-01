@@ -1,13 +1,6 @@
 ---
 name: table-management
-description: |
-  Create, update, rename, duplicate, and delete NocoDB tables. Use when:
-  - "create a new NocoDB table"
-  - "rename a table"
-  - "delete a NocoDB table"
-  - "set the display field"
-  - "duplicate a table"
-  - "add a table with initial fields"
+description: Create, rename, duplicate and delete NocoDB tables, set the display field and description, including creating a table with its initial fields over MCP or REST (Meta API v3). Use when a NocoDB schema needs a new or changed table. Adding or changing columns is field-management.
 ---
 
 # Table Management

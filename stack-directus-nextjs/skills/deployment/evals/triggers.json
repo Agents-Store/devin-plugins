@@ -1,0 +1,16 @@
+[
+  {"query": "Directus content changes are not showing up on the Next.js site. I made a Flow with a Request operation to /api/revalidate. Where do I check first?", "should_trigger": true},
+  {"query": "We set REVALIDATION_SECRET in Directus and in the hosting platform and the Flow gets a 401. What could be different between the two?", "should_trigger": true},
+  {"query": "Give me the production checklist for going live with Directus 12 and Next.js 16: tokens, CORS, images, license tier, backups", "should_trigger": true},
+  {"query": "How do I run Directus locally for a Next.js dev server so CORS and Live Preview accept localhost:3000, and how do I know it is up?", "should_trigger": true},
+  {"query": "Which Directus variable lets my Next.js dev server on localhost:3000 pass CORS and Live Preview in the local Docker setup?", "should_trigger": true},
+  {"query": "Как сделать так, чтобы после публикации в Directus страница в Next.js обновлялась сама? Нужна цепочка от сохранения до новой страницы", "should_trigger": true},
+  {"query": "Перед выкаткой в прод: что проверить в Directus и в Next.js, чтобы токен был не админский, а CORS и images.remotePatterns были настроены верно?", "should_trigger": true},
+  {"query": "Deploy my Next.js app to Vercel and add the environment variables with the CLI", "should_trigger": false},
+  {"query": "Write a Dokploy compose deployment for Directus with Postgres and Redis", "should_trigger": false},
+  {"query": "Who owns the session in a Directus customer portal, NextAuth or Better Auth?", "should_trigger": false},
+  {"query": "Write a Dockerfile for a Next.js standalone build that runs as a non-root user", "should_trigger": false},
+  {"query": "Show me a complete example of a blog built with Directus and Next.js", "should_trigger": false},
+  {"query": "Configure ISR revalidation for a Contentful webhook in Next.js", "should_trigger": false},
+  {"query": "How do I define a Directus Flow that sends a Slack message when an item is created?", "should_trigger": false}
+]

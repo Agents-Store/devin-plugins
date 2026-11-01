@@ -1,0 +1,16 @@
+[
+  {"query": "When processing_status becomes pending in NocoDB I want a Trigger.dev task to run an AI summary on the row. How do I wire that without the task re-firing the webhook when it writes the result back?", "should_trigger": true},
+  {"query": "Configure the n8n HTTP Request node that starts our Trigger.dev task from a NocoDB webhook: method, URL pattern, auth credential, and the JSON body with payload and options.idempotencyKey. Why not a Code node?", "should_trigger": true},
+  {"query": "Start the process-nocodb-record task from this session through the stack's Trigger.dev MCP and make sure it runs in dev, not in prod. Which tool and which parameters?", "should_trigger": true},
+  {"query": "Chain a NocoDB webhook to n8n and then to Trigger.dev as a dispatcher. Should the call be a Code node or an HTTP Request node, and why?", "should_trigger": true},
+  {"query": "Хочу при изменении записи в NocoDB запускать фоновую задачу в Trigger.dev, а статус писать обратно. Как избежать бесконечного цикла вебхука?", "should_trigger": true},
+  {"query": "Как массово обработать записи NocoDB через Trigger.dev: одна родительская задача и дочерние на каждую запись? Что передавать в payload?", "should_trigger": true},
+  {"query": "What do I log when a Trigger.dev task started from a NocoDB row fails, a task_errors table? And which values does the status go through?", "should_trigger": true},
+  {"query": "Write the Trigger.dev v4 task code with schemaTask and zod validation", "should_trigger": false},
+  {"query": "Deploy my Trigger.dev project to production with the CLI", "should_trigger": false},
+  {"query": "Create a NocoDB webhook that posts to n8n when a record is deleted", "should_trigger": false},
+  {"query": "Which service should run my nightly ETL, n8n or Trigger.dev?", "should_trigger": false},
+  {"query": "Build a NocoDB Kanban view grouped by status", "should_trigger": false},
+  {"query": "Call the OpenAI API with streaming in a Node script and store the result in Postgres", "should_trigger": false},
+  {"query": "Set up a Supabase database webhook that calls an edge function when a row is inserted", "should_trigger": false}
+]

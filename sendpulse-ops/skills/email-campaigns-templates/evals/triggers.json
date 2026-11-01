@@ -1,0 +1,18 @@
+[
+  {"query": "Create and schedule a SendPulse email campaign 'October offers' with the template 'Promo 2026' to the addressbook 'Customers' for Monday 10:00", "should_trigger": true},
+  {"query": "Show the statistics of my last SendPulse email campaign - opens, clicks, countries and referrals", "should_trigger": true},
+  {"query": "Cancel a scheduled SendPulse email campaign and update the subject of another scheduled one", "should_trigger": true},
+  {"query": "Create a new email template in SendPulse and fetch an existing template by its slug", "should_trigger": true},
+  {"query": "How do I analyse campaign performance in SendPulse: which statistics can I get and for which emails in the campaign?", "should_trigger": true},
+  {"query": "Создай в SendPulse email-рассылку по адресной книге и запланируй отправку на завтра", "should_trigger": true},
+  {"query": "Покажи статистику рассылки SendPulse по странам и источникам переходов", "should_trigger": true},
+  {"query": "List my SendPulse email campaigns and templates, then launch a campaign using the best-performing template", "should_trigger": true},
+  {"query": "Add subscribers to an addressbook and calculate the sending cost", "should_trigger": false},
+  {"query": "Send a one-off transactional email through the SMTP service", "should_trigger": false},
+  {"query": "Design an HTML email template with MJML that works in Outlook", "should_trigger": false},
+  {"query": "Write subject lines for a Black Friday campaign", "should_trigger": false},
+  {"query": "Add and verify a new sender email in SendPulse", "should_trigger": false},
+  {"query": "Send a chatbot campaign to Telegram subscribers", "should_trigger": false},
+  {"query": "Set up SPF and DKIM for my sending domain", "should_trigger": false},
+  {"query": "Create a Mailchimp campaign and schedule it", "should_trigger": false}
+]

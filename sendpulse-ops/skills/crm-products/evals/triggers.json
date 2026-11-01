@@ -1,0 +1,18 @@
+[
+  {"query": "List the product catalog in my SendPulse CRM and add the product 'Premium plan' to deal 4821", "should_trigger": true},
+  {"query": "Show which products are attached to a deal in SendPulse CRM and compute the total deal value", "should_trigger": true},
+  {"query": "Create a new SendPulse CRM deal and attach two products from the catalog to it in one go", "should_trigger": true},
+  {"query": "Which CRM products are linked to which deals in SendPulse? I want to review the value of the won deals", "should_trigger": true},
+  {"query": "Check whether the product 'Starter' exists in the SendPulse CRM catalog before I add it to a deal", "should_trigger": true},
+  {"query": "Покажи каталог товаров в CRM SendPulse и добавь товар в сделку", "should_trigger": true},
+  {"query": "Какие товары привязаны к сделке в SendPulse CRM и на какую сумму?", "should_trigger": true},
+  {"query": "Review the deal value in SendPulse CRM by listing products on each deal of the 'Retail' pipeline", "should_trigger": true},
+  {"query": "Create a pipeline with stages in SendPulse CRM", "should_trigger": false},
+  {"query": "Create a contact in SendPulse CRM", "should_trigger": false},
+  {"query": "Design a product catalog schema for an e-commerce database", "should_trigger": false},
+  {"query": "Add a product to a Shopify store through the Admin API", "should_trigger": false},
+  {"query": "Generate product descriptions for 20 items", "should_trigger": false},
+  {"query": "Create an invoice in Stripe for a customer", "should_trigger": false},
+  {"query": "List the Teleshop products and their prices", "should_trigger": false},
+  {"query": "Move the deal to the Won step", "should_trigger": false}
+]

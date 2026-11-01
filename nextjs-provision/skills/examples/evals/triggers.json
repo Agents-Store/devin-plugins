@@ -1,0 +1,18 @@
+[
+  {"query": "Walk me through setting up a brand-new Next.js project with shadcn/ui from scratch, step by step", "should_trigger": true},
+  {"query": "Give me a full example of adding shadcn to my existing Next.js project and installing the first components", "should_trigger": true},
+  {"query": "shadcn studio tutorial: show the whole flow from init to a working page with a form and a date picker", "should_trigger": true},
+  {"query": "Show me the scenario for adding shadcn components to an existing Next.js project: audit the current UI, install shadcn, migrate existing components, then add shadcn studio blocks.", "should_trigger": true},
+  {"query": "Покажи пошаговый пример: настраиваю проект Next.js с shadcn с нуля, ставлю первые компоненты и использую их на странице", "should_trigger": true},
+  {"query": "Мне нужен полный гайд по добавлению shadcn в существующий проект: от init до формы с валидацией", "should_trigger": true},
+  {"query": "Покажи сценарий: новый проект на Next.js от create-next-app до темы, компонентов и MCP с использованием shadcn studio, пошагово.", "should_trigger": true},
+  {"query": "full shadcn setup guide with a form with validation, a date picker and a data table as worked examples", "should_trigger": true},
+  {"query": "Install shadcn/ui in my project and run init", "should_trigger": false},
+  {"query": "My shadcn component isn't rendering and the console shows no errors", "should_trigger": false},
+  {"query": "Walk me through setting up Prisma and Postgres in a new Next.js project step by step", "should_trigger": false},
+  {"query": "Give me a full tutorial on building a REST API in Express with JWT authentication", "should_trigger": false},
+  {"query": "Walk me through setting up Storybook for a React component library", "should_trigger": false},
+  {"query": "Step-by-step guide to deploy a Next.js app on Vercel with a custom domain", "should_trigger": false},
+  {"query": "Show me an example of React Hook Form with zod and no UI library", "should_trigger": false},
+  {"query": "Walk me through Material UI with the Next.js app router and the emotion cache for SSR", "should_trigger": false}
+]

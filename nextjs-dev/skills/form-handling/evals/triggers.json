@@ -1,0 +1,16 @@
+[
+  {"query": "Build a contact form in Next.js 16 with a Server Action, useActionState for the result and field-level Zod validation errors", "should_trigger": true},
+  {"query": "Add optimistic UI with useOptimistic when the user adds a todo through a Server Action form in Next.js", "should_trigger": true},
+  {"query": "Implement file upload in a Next.js form via Server Action: size limit, mime type check and where to store the file", "should_trigger": true},
+  {"query": "Как в Next.js сделать форму с Server Action и валидацией через Zod, чтобы она работала без JavaScript (progressive enhancement)?", "should_trigger": true},
+  {"query": "У меня в Next.js форма обратной связи на Server Action: если zod нашёл ошибку в поле email, после отправки все введённые поля очищаются. Поменяй app/contact/form.tsx и action так, чтобы значения сохранялись через useActionState, а ошибки показывались под полями", "should_trigger": true},
+  {"query": "progressive enhancement for forms in Next.js: what works before hydration, and what are the common pitfalls with Server Action forms?", "should_trigger": true},
+  {"query": "Write a Route Handler for a JSON API that validates the body and returns 422 with details", "should_trigger": false},
+  {"query": "Style a form with shadcn Field, Input and Button components and a date picker", "should_trigger": false},
+  {"query": "Build a multi-step wizard in React with React Hook Form and Yup in a Vite SPA", "should_trigger": false},
+  {"query": "Implement an HTML form in Django with ModelForm and CSRF handling", "should_trigger": false},
+  {"query": "Add authentication with login and signup actions to my Next.js app and set a session cookie", "should_trigger": false},
+  {"query": "Write Playwright tests for my Next.js checkout form that uploads a receipt", "should_trigger": false},
+  {"query": "Validate environment variables at startup in a Node.js app with zod", "should_trigger": false},
+  {"query": "Build an Angular reactive form with custom validators and async validation", "should_trigger": false}
+]

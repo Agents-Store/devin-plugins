@@ -1,11 +1,6 @@
 ---
 name: troubleshoot
-description: >
-  Diagnose and fix common shadcn/ui and shadcn studio setup issues, dependency conflicts, and configuration
-  problems. This skill should be used when the user encounters "shadcn install error", "components.json
-  error", "tailwind not working with shadcn", "shadcn component not rendering", "CSS variables not applied",
-  "shadcn studio registry error", "dependency conflict", "cn() not found", or needs to debug problems with
-  their shadcn/ui setup.
+description: Diagnose shadcn/ui and shadcn studio problems — components.json errors, Tailwind v3 or v4 mismatches, a missing cn helper after CLI 4.21, unstyled components or unset CSS variables, studio registry 401 or 403, dependency conflicts with React 19, hydration issues with next-themes. Use when an install, init or render fails.
 ---
 
 ## Quick Diagnostics

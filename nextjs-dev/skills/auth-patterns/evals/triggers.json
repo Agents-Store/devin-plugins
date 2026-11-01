@@ -1,0 +1,18 @@
+[
+  {"query": "Add email and password login to my Next.js 16 App Router app with stateless JWT sessions in cookies and a signup Server Action", "should_trigger": true},
+  {"query": "How do I protect /dashboard routes in Next.js with a proxy auth guard and still re-check the session inside Server Components and Server Actions?", "should_trigger": true},
+  {"query": "Directus backend, Next.js 16 frontend: I need NextAuth v4 with a credentials login against the Directus token API, refresh of the access token, types/next-auth.d.ts, SessionProvider and a proxy.ts guard using getToken instead of middleware.ts. What is the working setup?", "should_trigger": true},
+  {"query": "Implement role-based access control in Next.js: admin, editor, viewer. Where do I enforce it - proxy, layout or the data layer?", "should_trigger": true},
+  {"query": "Как в Next.js сделать авторизацию через NextAuth: страница логина, защищённые маршруты и сессия в Server Components?", "should_trigger": true},
+  {"query": "Нужно защитить Server Actions и Route Handlers в Next.js от неавторизованных вызовов. Покажи паттерн проверки сессии", "should_trigger": true},
+  {"query": "set up session refresh for JWT cookies in Next.js so users aren't logged out after 15 minutes", "should_trigger": true},
+  {"query": "Build a login page and signup form for Next.js with server-side validation, hashed passwords and redirect after login", "should_trigger": true},
+  {"query": "Set up OAuth login with Keycloak for a Flask backend using Authlib", "should_trigger": false},
+  {"query": "Design my Next.js API Route Handlers with zod validation and consistent error responses", "should_trigger": false},
+  {"query": "Add CSP headers, security headers and rate limiting to my Next.js app", "should_trigger": false},
+  {"query": "Write a Passport.js local strategy with express-session and Redis", "should_trigger": false},
+  {"query": "Set up Supabase auth with row level security policies for a React Native app", "should_trigger": false},
+  {"query": "Why do I get a hydration error when I render the logged-in user's name in my Next.js header?", "should_trigger": false},
+  {"query": "Configure Directus roles and permissions so that editors can only see their own items", "should_trigger": false},
+  {"query": "Write Vitest tests for my Next.js Server Action that creates a session", "should_trigger": false}
+]

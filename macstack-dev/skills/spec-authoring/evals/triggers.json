@@ -1,0 +1,18 @@
+[
+  {"query": "Design a stack for an online school: payments, an LMS and email campaigns. Write the macstack.json result-first.", "should_trigger": true},
+  {"query": "Describe this existing project as a macstack.json: audit package.json, docker-compose.yml and .mcp.json and ask me only the business gaps.", "should_trigger": true},
+  {"query": "I run a small physiotherapy clinic and want a booking platform: clients book sessions online, therapists see their day, invoices go out automatically, reminders go out by SMS. I have no code yet. Interview me with the business questions you need and produce the macstack.json draft, goals and results first.", "should_trigger": true},
+  {"query": "pick software and architecture for my need: a booking platform for coaches with invoices, a client portal and Telegram notifications. Find plugins and a prototype for it.", "should_trigger": true},
+  {"query": "show a full macstack.json example with goals, results, processes, triggers and workflows", "should_trigger": true},
+  {"query": "Составь macstack.json для моего проекта по описанию бизнес-задачи: интернет-магазин с оплатой и рассылками.", "should_trigger": true},
+  {"query": "Опиши существующий проект как macstack.json: найди софт в docker-compose, ключи в .env.example и сущности в схеме БД.", "should_trigger": true},
+  {"query": "Create the macstack.json for this existing repo: it has a docker-compose.yml with postgres and directus, a .mcp.json and an .env.example. Audit them, map what you find into software, connections and resource accesses, and ask me only about the business goals you cannot derive.", "should_trigger": true},
+  {"query": "Validate macstack.json against the schema", "should_trigger": false},
+  {"query": "Reconcile macstack.json with the documents the client corrected", "should_trigger": false},
+  {"query": "Draw a BPMN diagram for our order approval process", "should_trigger": false},
+  {"query": "Design a Postgres database schema for an online school", "should_trigger": false},
+  {"query": "Draw the architecture diagram of an e-commerce system", "should_trigger": false},
+  {"query": "Create the project working files from macstack.json", "should_trigger": false},
+  {"query": "Write a package.json for a Next.js app with these dependencies: react, zod, drizzle-orm", "should_trigger": false},
+  {"query": "Explain what the MACSTACK standard is and how it works", "should_trigger": false}
+]

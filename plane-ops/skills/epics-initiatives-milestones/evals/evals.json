@@ -3,72 +3,76 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "I need to track the 'Multi-tenant support' work. It's 2 months of work, one tech lead, no fixed release date. Epic, module, milestone, or initiative?",
-      "expected_output": "Recommends an epic, cites the decision table.",
+      "prompt": "Use the epics-initiatives-milestones skill. I need to track the 'Multi-tenant support' work in project TaskFlow. It's 2 months of work, one tech lead, no fixed release date. Epic, module, milestone, or initiative? Then show me the calls that create it. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "expected_output": "Recommends an epic from the decision table and creates it as a work item of type Epic.",
       "files": [],
       "expectations": [
-        "Chooses epic (1–3 months, single tech lead, no fixed date)",
-        "Explains why not a module, milestone, or initiative",
-        "References the canonical decision table"
+        "The answer recommends an epic",
+        "The answer says an epic covers 1-3 months of work",
+        "The answer says a milestone is a fixed date, which this work does not have",
+        "The answer says an initiative is a cross-project goal of 1-2 quarters",
+        "The answer resolves the Epic type with workitem_type(action=resolve, project_id, name=\"Epic\")",
+        "The answer creates it with workitem(action=create, ..., type_id=<epic-type-id>)"
       ]
     },
     {
       "id": 2,
-      "prompt": "Report the health of the 'v2.0 Public Beta' milestone. Remaining 18 points, weekly velocity 6, target date in 2 weeks.",
+      "prompt": "Use the epics-initiatives-milestones skill. Report the health of the 'v2.0 Public Beta' milestone. Remaining 18 points, weekly velocity 6, target date in 2 weeks. Answer in text; everything you need is in this message.",
       "expected_output": "Computes ETA=3 weeks, classifies as Red, recommends replanning.",
       "files": [],
       "expectations": [
-        "Computes ETA = remaining_points / weekly_velocity = 3 weeks",
-        "Classifies risk as Red (ETA > target_date)",
-        "Recommends replanning or descoping",
-        "Uses the canonical Red/Yellow/Green thresholds"
+        "The answer computes ETA = remaining_points / weekly_velocity = 3 weeks",
+        "The answer classifies risk as Red (ETA > target_date)",
+        "The answer recommends replanning or descoping",
+        "The answer uses the canonical Red/Yellow/Green thresholds"
       ]
     },
     {
       "id": 3,
-      "prompt": "Create an initiative 'International expansion Q3' spanning projects Billing, Onboarding, and Compliance.",
+      "prompt": "Use the epics-initiatives-milestones skill. Create an initiative 'International expansion Q3' spanning projects Billing, Onboarding, and Compliance. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Calls initiative(action=create) with name, lead, dates, state, then initiative(action=add_projects, project_ids=[...]) for the three projects, and reads them back with initiative(action=list_projects).",
       "files": [],
       "expectations": [
-        "Consults connector-bootstrap for initiative tools",
-        "Resolves all three project_ids",
-        "Calls initiative(action=create) without project_ids (create takes none), then initiative(action=add_projects) with the three project_ids",
-        "Drafts description_html with Why, Bets, and Out-of-scope sections"
+        "The answer says to consult connector-bootstrap for initiative tools",
+        "The answer says to resolve all three project_ids",
+        "The answer says to call initiative(action=create) without project_ids (create takes none), then initiative(action=add_projects) with the three project_ids",
+        "The answer says to draft description_html with Why, Bets, and Out-of-scope sections"
       ]
     },
     {
       "id": 4,
-      "prompt": "The 'Multi-tenant support' epic has 90 remaining points and the team velocity is 30 per sprint. When will it likely finish?",
+      "prompt": "Use the epics-initiatives-milestones skill. The 'Multi-tenant support' epic has 90 remaining points and the team velocity is 30 per sprint. When will it likely finish? Sprints are 2 weeks and today is Monday, October 5. State what the forecast assumes and when to re-check it. Answer in text; everything you need is in this message.",
       "expected_output": "Forecasts 3 sprints remaining based on velocity and flags any risk buffer.",
       "files": [],
       "expectations": [
-        "Computes remaining_sprints = 90 / 30 = 3",
-        "Reports an estimated completion date based on 3 sprint lengths from today",
-        "Notes that forecast assumes stable velocity and no new blockers",
-        "Suggests monitoring at each sprint review"
+        "The answer computes remaining_sprints = 90 / 30 = 3",
+        "The answer reports an estimated completion date based on 3 sprint lengths from today",
+        "The answer notes that forecast assumes stable velocity and no new blockers",
+        "The answer suggests monitoring at each sprint review"
       ]
     },
     {
       "id": 5,
-      "prompt": "Create the epic 'Multi-tenant support' in TaskFlow and attach it to the 'International expansion Q3' initiative, then list all epics in the project.",
+      "prompt": "Use the epics-initiatives-milestones skill. Create the epic 'Multi-tenant support' in TaskFlow and attach it to the 'International expansion Q3' initiative, then list all epics in the project. Also say how its child stories get attached to the epic. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Epic created as a work item of type Epic (no epic tool), listed with a type filter, linked to the initiative through manage_workitems.",
       "expectations": [
-        "Does not look for or call any dedicated epic tool (create, list or link an epic); says there are no epic tools",
-        "Resolves the type with workitem_type(action=resolve, project_id, name=\"Epic\") and creates the epic with workitem(action=create, type_id=<id>)",
-        "Lists epics with workitem(action=list, project_id, pql='type = \"<epic-type-id>\"')",
-        "Links the epic with initiative(action=manage_workitems, initiative_id, add_ids=[<epic work item id>]) and reads it back with initiative(action=list_workitems)",
-        "Sets children through the parent field of the child work item, not on the epic"
+        "The answer says an epic is a work item whose type is named Epic",
+        "The answer resolves the type with workitem_type(action=resolve, project_id, name=\"Epic\")",
+        "The answer creates the epic with workitem(action=create, ..., type_id=<epic-type-id>)",
+        "The answer lists epics with workitem(action=list, project_id, pql='type = \"<epic-type-id>\"')",
+        "The answer links the epic with initiative(action=manage_workitems, initiative_id, add_ids=[<epic work item id>])",
+        "The answer sets the children through the parent field of the child work item"
       ],
       "files": []
     },
     {
       "id": 6,
-      "prompt": "How far along is the Multi-tenant epic (PROJ-5)? Give me counts per state and the points done.",
+      "prompt": "Use the epics-initiatives-milestones skill. How far along is the Multi-tenant epic (PROJ-5)? Give me counts per state and the points done. Show the calls, then compute the completion rate from this listing: PROJ-6 (5 points, done), PROJ-7 (3 points, done), PROJ-8 (8 points, in progress), PROJ-9 (5 points, not started). In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "One count call grouped by state group for the children of PROJ-5, plus a listing for the point sums.",
       "expectations": [
-        "Counts children with workitem(action=count, pql='childOf(\"PROJ-5\")', group_by=state__group)",
-        "Lists the children with fields including point to sum the points, noting that count returns items, not points",
-        "Computes completion_rate = completed_points / total_points"
+        "The answer says to count children with workitem(action=count, pql='childOf(\"PROJ-5\")', group_by=state__group)",
+        "The answer lists the children with fields including point to sum the points, noting that count returns items, not points",
+        "The answer computes completion_rate = completed_points / total_points"
       ],
       "files": []
     }

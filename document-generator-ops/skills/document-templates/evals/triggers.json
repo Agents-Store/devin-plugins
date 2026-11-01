@@ -1,0 +1,18 @@
+[
+  {"query": "What data do I need to collect from the client to generate an invoice? Which fields are required and which are optional?", "should_trigger": true},
+  {"query": "What are the required fields for a certificate of completion (act) and how is the total calculated?", "should_trigger": true},
+  {"query": "I'm writing my own front end that fills the document generator's input. For the proposal type, which fields are required and which optional (client, sections, pricing items, terms), and what does one pricing table entry look like?", "should_trigger": true},
+  {"query": "Which standard clauses go into the contract template and how are clauses formatted in the input?", "should_trigger": true},
+  {"query": "For the presentation document type, what slide types exist and which fields does each one take?", "should_trigger": true},
+  {"query": "I'm building an intake form for our sales team. Which fields should an estimate or quotation contain according to the template?", "should_trigger": true},
+  {"query": "Какие поля обязательны для акта выполненных работ и как считается итоговая сумма?", "should_trigger": true},
+  {"query": "Какие данные нужно собрать у клиента для NDA и какие поля необязательные?", "should_trigger": true},
+  {"query": "Generate the invoice now with this data: client Acme Corp, 10 hours at $100, due in 14 days", "should_trigger": false},
+  {"query": "What colors should the invoice header use and what font size for the table text?", "should_trigger": false},
+  {"query": "Show me a complete worked example of creating a report, step by step", "should_trigger": false},
+  {"query": "How do I save my company details so they are reused on every invoice?", "should_trigger": false},
+  {"query": "What fields should a Directus collection for invoices have?", "should_trigger": false},
+  {"query": "What's a good invoice numbering scheme for a small business?", "should_trigger": false},
+  {"query": "Design the JSON schema of an OpenAPI request body for creating invoices", "should_trigger": false},
+  {"query": "Make my invoice table look better: zebra stripes and right-aligned amounts", "should_trigger": false}
+]

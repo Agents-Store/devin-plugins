@@ -1,0 +1,18 @@
+[
+  {"query": "Audit the security posture of our OpenClaw fleet: which gateway ports are reachable from outside the host?", "should_trigger": true},
+  {"query": "UFW rules look right but I suspect Docker published ports bypass them. Verify what is actually exposed for our OpenClaw gateway", "should_trigger": true},
+  {"query": "Is the operator bearer token shared between two OpenClaw instances, or sitting in a plaintext file?", "should_trigger": true},
+  {"query": "Before exposing an OpenClaw instance to a new team on the VPN, who can reach it and what does that access grant?", "should_trigger": true},
+  {"query": "Проведи аудит безопасности инстанса OpenClaw после подозрения на компрометацию", "should_trigger": true},
+  {"query": "Проверь права на каталоги состояния и учётных данных у инстансов OpenClaw - не слишком ли они широкие", "should_trigger": true},
+  {"query": "a metrics endpoint answers without authentication on one OpenClaw instance - is that a problem and what else should I check?", "should_trigger": true},
+  {"query": "I found a secret in a backup of an OpenClaw identity copy, assess the exposure", "should_trigger": true},
+  {"query": "Run a security audit of my Next.js app: headers, CSP and dependency vulnerabilities", "should_trigger": false},
+  {"query": "Harden SSH on my Ubuntu server: disable password login and add fail2ban", "should_trigger": false},
+  {"query": "Give me a pentest checklist for a REST API based on OWASP ASVS", "should_trigger": false},
+  {"query": "Review my Dockerfile for security issues and scan the image with trivy", "should_trigger": false},
+  {"query": "Add a missing key to the OpenClaw instance through Infisical and prove it was delivered", "should_trigger": false},
+  {"query": "The OpenClaw container restarts and models return unauthorized, diagnose it", "should_trigger": false},
+  {"query": "Check Kubernetes RBAC for overly broad cluster-admin bindings", "should_trigger": false},
+  {"query": "Scan my Terraform code for misconfigurations with tfsec", "should_trigger": false}
+]

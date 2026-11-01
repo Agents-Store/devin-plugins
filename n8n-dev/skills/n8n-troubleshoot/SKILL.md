@@ -1,6 +1,6 @@
 ---
 name: n8n-troubleshoot
-description: Troubleshoot n8n workflow development issues. Use when encountering MCP connection errors, API authentication failures, workflow execution problems, expression errors, node configuration issues, or any n8n-related error. Also use when asking about "n8n error", "n8n not working", "debug n8n", "fix n8n".
+description: Diagnose n8n problems in workflow development — MCP connection failures for n8n-mcp-external and n8n-native-mcp, API errors by status code, publish failures such as PUBLISH_FORBIDDEN, execution failures, SQLITE_BUSY, a missing encryption key. Use when something in n8n fails. Validation and expression syntax are covered by n8n-validation-expert and n8n-expression-syntax.
 ---
 
 # n8n Troubleshooting Guide

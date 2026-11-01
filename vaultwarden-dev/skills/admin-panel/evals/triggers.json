@@ -1,0 +1,18 @@
+[
+  {"query": "Our Vaultwarden has an ADMIN_TOKEN set. Write me a curl script that logs into the /admin panel and lists every user who has no two-factor enabled, most recently active first.", "should_trigger": true},
+  {"query": "A contractor left today. How do I block their Vaultwarden account through the admin API and make sure every logged-in device is kicked out, without deleting their vault? I only have the admin token.", "should_trigger": true},
+  {"query": "У сотрудника потерялся телефон с 2FA. Как через админский API Vaultwarden снять двухфакторную аутентификацию и разлогинить его на всех устройствах? Админский токен у меня есть.", "should_trigger": true},
+  {"query": "I POSTed {\"signups_allowed\": false} to /admin/config with curl and now the SMTP settings I configured in the admin page are gone. What happened, and what is the safe way to change a single setting?", "should_trigger": true},
+  {"query": "Is there a way to trigger a consistent SQLite backup of a running Vaultwarden over HTTP from a cron job? I have ADMIN_TOKEN configured.", "should_trigger": true},
+  {"query": "What JSON body does the admin API want to change a member's role in an organization to Admin? I'd like to do it from a script, not from the web vault.", "should_trigger": true},
+  {"query": "Хочу скриптом удалить аккаунт уволенного сотрудника и пустую организацию через админку Vaultwarden. Какие вызовы нужны и что проверить до удаления, чтобы ничего не потерять?", "should_trigger": true},
+  {"query": "My script against the Vaultwarden /admin routes gets 401 \"Session expired\" in the middle of a long run. How does admin login work there and how long does a session last?", "should_trigger": true},
+  {"query": "Create a login item in our Infra collection with bw, using a generated 32-character password.", "should_trigger": false},
+  {"query": "Get an access token from /identity/connect/token with my personal API key and then call /api/accounts/profile.", "should_trigger": false},
+  {"query": "bw login says \"Username or password is incorrect\" but the password is definitely right.", "should_trigger": false},
+  {"query": "Show me an end-to-end example of onboarding a new employee in Vaultwarden.", "should_trigger": false},
+  {"query": "Write Terraform that manages a bitwarden_folder and a login item with the maxlaverse provider.", "should_trigger": false},
+  {"query": "I'd like Claude Code to search my Vaultwarden vault through an MCP server.", "should_trigger": false},
+  {"query": "Reset a user's two-factor authentication in Keycloak using its admin REST API.", "should_trigger": false},
+  {"query": "Install Vaultwarden with docker compose behind Caddy with automatic TLS.", "should_trigger": false}
+]

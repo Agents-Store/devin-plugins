@@ -1,0 +1,16 @@
+[
+  {"query": "I need to add a Clients section to my Flask app: model, migration, blueprint, CRUD routes, template and a nav link. What order should I do it in and what do I verify at the end?", "should_trigger": true},
+  {"query": "Add a new projects entity with full CRUD to our Flask and SQLAlchemy app, owned by the logged-in user. Walk me through all the steps", "should_trigger": true},
+  {"query": "What tests should a new Flask feature have: CRUD round trip, two-user isolation, statement count, commit?", "should_trigger": true},
+  {"query": "I am building a new page with a list and add, edit and delete forms. Which checklist covers csrf_token, owner scoping and flash messages?", "should_trigger": true},
+  {"query": "Нужно добавить в Flask-приложение новую сущность «Заказы» с полным CRUD: модель, миграция, blueprint, шаблон. Дай пошаговый рецепт", "should_trigger": true},
+  {"query": "Как правильно сделать новый раздел во Flask с SQLAlchemy, чтобы чужие записи отдавали 404, а не показывались другому пользователю?", "should_trigger": true},
+  {"query": "implement a full feature end-to-end in Flask: where do I register the blueprint and how do I add the nav link in base.html?", "should_trigger": true},
+  {"query": "Explain why my Flask route loses data after returning without calling commit", "should_trigger": false},
+  {"query": "Write a Flask-Login user model with password hashing", "should_trigger": false},
+  {"query": "How do I write a SQLAlchemy 2.0 model with relationships and cascade delete?", "should_trigger": false},
+  {"query": "Set up a new Flask project with an application factory and extensions.py", "should_trigger": false},
+  {"query": "Add a new page to my Django project with a ListView and a template", "should_trigger": false},
+  {"query": "Use Alembic autogenerate to rename a column without losing data", "should_trigger": false},
+  {"query": "Create a Jinja2 macro for rendering form fields with error messages", "should_trigger": false}
+]

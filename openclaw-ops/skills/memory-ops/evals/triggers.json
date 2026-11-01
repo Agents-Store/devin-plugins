@@ -1,0 +1,18 @@
+[
+  {"query": "OpenClaw embedding calls fail with 'invalid token' but chat works fine. Why?", "should_trigger": true},
+  {"query": "Vector search in OpenClaw is paused and returns nothing useful. How do I get it working again?", "should_trigger": true},
+  {"query": "We got an index-identity warning after changing the embedding model. Do we need a reindex?", "should_trigger": true},
+  {"query": "The last-index timestamp is from three weeks ago and memory search is still poor after we fixed the provider key. What's left to do?", "should_trigger": true},
+  {"query": "Как сменить провайдера эмбеддингов в OpenClaw и переиндексировать память?", "should_trigger": true},
+  {"query": "База состояния памяти OpenClaw растёт и не сжимается - нужны retention и compaction. Как настроить?", "should_trigger": true},
+  {"query": "is the subscription session enough for embeddings, or do I need a separate embedding API key for OpenClaw?", "should_trigger": true},
+  {"query": "choose an embedding provider and model for memory search on OpenClaw and set the key without breaking anything", "should_trigger": true},
+  {"query": "Chat requests to the model return unauthorized and the OpenClaw instance says it's logged out", "should_trigger": false},
+  {"query": "How does the agent remember things between sessions: MEMORY.md versus daily logs?", "should_trigger": false},
+  {"query": "Set up pgvector in Postgres and create an HNSW index for embeddings", "should_trigger": false},
+  {"query": "Choose an embedding model for my RAG pipeline in LangChain: OpenAI vs Cohere vs bge", "should_trigger": false},
+  {"query": "Reindex an Elasticsearch index after changing the analyzer mapping", "should_trigger": false},
+  {"query": "Vacuum a SQLite database that has grown to 8 GB and set up retention for old rows", "should_trigger": false},
+  {"query": "Tune my Pinecone index settings for lower query latency", "should_trigger": false},
+  {"query": "Write the standing order for a weekly report that the agent produces on its own", "should_trigger": false}
+]

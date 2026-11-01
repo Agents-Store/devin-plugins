@@ -1,0 +1,18 @@
+[
+  {"query": "I want to triage our Chatwoot inbox from the terminal: list all open conversations assigned to nobody, show them as JSON and pipe the ids into something that labels them 'needs-triage'. Which chatwoot CLI commands do I use?", "should_trigger": true},
+  {"query": "We run a nightly CI job (GitHub Actions) that should resolve Chatwoot conversations older than 7 days with status pending. How do I use the chatwoot command line without the interactive login?", "should_trigger": true},
+  {"query": "what's the chatwoot CLI grammar again? noun then verb? I want to do 'conv reply' with a private note to conversation 4812 but not send anything customer-visible by accident", "should_trigger": true},
+  {"query": "I already have the chatwoot CLI authenticated on my laptop. Show me the commands to search contacts by email domain and write the result as csv for the sales team", "should_trigger": true},
+  {"query": "Покажи, как через консольную утилиту chatwoot найти разговоры с приоритетом urgent и назначить их агенту Ивану, чтобы вывод можно было разобрать через jq", "should_trigger": true},
+  {"query": "Нужно из терминала быстро закрыть (resolve) разговоры 120, 121 и 122 в Chatwoot и добавить к ним метку 'spam'. Как это сделать безопасно и без дублирования правок?", "should_trigger": true},
+  {"query": "I get an error saying another process holds the lock when I run 'chatwoot conv assign 77 --agent 3' from two terminals. Is that a bug in the chatwoot CLI or expected?", "should_trigger": true},
+  {"query": "write a bash loop with the chatwoot cli that exports the ids of all conversations in inbox 5 into a text file, quiet mode, so xargs can consume it", "should_trigger": true},
+  {"query": "Write a Python script with requests that POSTs a new message into Chatwoot conversation 4812 via the REST API with the api-access-token header", "should_trigger": false},
+  {"query": "Set up a Chatwoot webhook that fires on message_created and verify the X-Chatwoot-Signature in my Flask app", "should_trigger": false},
+  {"query": "I'm getting 401 from my Chatwoot instance behind nginx even though the token is right, why?", "should_trigger": false},
+  {"query": "How do I get a Chatwoot access token and set CHATWOOT_API_KEY for my project?", "should_trigger": false},
+  {"query": "Install the GitHub CLI and use gh to list open pull requests assigned to me, as JSON piped into jq", "should_trigger": false},
+  {"query": "Write a Zendesk CLI-style bash script that closes all solved tickets older than 30 days using curl and the Zendesk API", "should_trigger": false},
+  {"query": "Show me an end-to-end example that seeds a conversation through the public Chatwoot API like a custom widget", "should_trigger": false},
+  {"query": "Explain how Chatwoot inboxes, teams and labels differ and how routing works in the dashboard - I'm the new support lead, no API stuff", "should_trigger": false}
+]

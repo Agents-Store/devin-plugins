@@ -1,0 +1,18 @@
+[
+  {"query": "Add user registration and login to my Flask 3 app with Flask-Login. Passwords hashed, logout via POST with CSRF, and redirect back to ?next safely.", "should_trigger": true},
+  {"query": "protect my Flask routes so that only logged-in users can see /dashboard and anonymous visitors get sent to the login page", "should_trigger": true},
+  {"query": "How should I hash passwords in a Flask app (werkzeug generate_password_hash) and avoid timing differences that reveal whether an email exists on the login form?", "should_trigger": true},
+  {"query": "Flask-Login: how do I add a remember-me checkbox and rate limiting on /login? What's the right approach?", "should_trigger": true},
+  {"query": "Write tests for my Flask login and logout flow with the test client: register, log in, access a protected page, log out", "should_trigger": true},
+  {"query": "flask login next redirect - how do I prevent an open redirect through the next parameter?", "should_trigger": true},
+  {"query": "Реализуй во Flask регистрацию и вход пользователей через Flask-Login, пароли хэшировать, выход только через POST с CSRF", "should_trigger": true},
+  {"query": "Как защитить маршруты Flask декоратором login_required и куда перенаправлять неавторизованных пользователей?", "should_trigger": true},
+  {"query": "Implement JWT authentication with access and refresh tokens for a Flask REST API", "should_trigger": false},
+  {"query": "Add Google sign-in to a Next.js app with NextAuth", "should_trigger": false},
+  {"query": "Set up Django authentication with a custom user model that logs in by email", "should_trigger": false},
+  {"query": "Add CSRFProtect to every form in my Flask application", "should_trigger": false},
+  {"query": "My Flask form POST returns 400 'The CSRF token is missing'. What do I check?", "should_trigger": false},
+  {"query": "Create an SQLAlchemy User model with email and password_hash columns", "should_trigger": false},
+  {"query": "Sign in to Directus with the SDK in a Node script and store the refresh token", "should_trigger": false},
+  {"query": "Write a Jinja2 template for a login form with inline error messages", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "List the workflows in our NocoDB base and show me the definition of the one named 'Nightly sync'", "should_trigger": true},
+  {"query": "execute the NocoDB workflow with id wf_42 on demand and poll until the execution finishes", "should_trigger": true},
+  {"query": "Show me the last 10 executions of a NocoDB workflow and list the failures from the last hour", "should_trigger": true},
+  {"query": "inspect one NocoDB workflow execution: which node failed and what was the output?", "should_trigger": true},
+  {"query": "Запусти в NocoDB workflow вручную и покажи результат выполнения", "should_trigger": true},
+  {"query": "Нужно получить список последних запусков workflow в NocoDB и найти упавшие. Как через Meta API?", "should_trigger": true},
+  {"query": "author a draft NocoDB workflow over MCP on a licensed self-hosted edition, then trigger it on demand", "should_trigger": true},
+  {"query": "how do I trigger a NocoDB workflow on a record event, and what endpoints list and execute workflows?", "should_trigger": true},
+  {"query": "Create a webhook on the Orders table that notifies Slack on insert", "should_trigger": false},
+  {"query": "Create a Zapier zap that adds a row to NocoDB when a Typeform response arrives", "should_trigger": false},
+  {"query": "Build an n8n workflow that reads from the NocoDB REST API every hour", "should_trigger": false},
+  {"query": "Execute a GitHub Actions workflow manually via workflow_dispatch with the gh CLI", "should_trigger": false},
+  {"query": "List the Airflow DAG runs of the last hour and re-run the failed task", "should_trigger": false},
+  {"query": "Trigger a Make scenario on demand via its API and fetch the execution log", "should_trigger": false},
+  {"query": "Run an Azure DevOps pipeline from the command line and show the logs", "should_trigger": false},
+  {"query": "Create a dashboard with a metric widget in NocoDB", "should_trigger": false}
+]

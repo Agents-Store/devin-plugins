@@ -3,75 +3,74 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "I'm working in acme-website (a Level 2 client project based on project-directus-nextjs) and I just realized that the .env.example in the parent template is missing VERCEL_TOKEN and VERCEL_ORG_ID. Every Directus+Next.js project needs these for deployment. Can you push this fix up to the Level 1 template?",
+      "prompt": "I'm working in acme-website (a Level 2 client project based on project-directus-nextjs) and I just realized that the .env.example in the parent template is missing VERCEL_TOKEN and VERCEL_ORG_ID. Every Directus+Next.js project needs these for deployment. Can you push this fix up to the Level 1 template? In this session nothing is installed: there is no shell, no template repository and nobody to ask. Do not ask questions and do not refuse; answer in text with the commands you would run, the files you would create or edit with their key contents, and what you would check at each step.",
       "expected_output": "The feedback skill reads stack.json to find the parent (project-directus-nextjs), locates it at $PROJECT_TEMPLATES_DIR, adds VERCEL_TOKEN and VERCEL_ORG_ID to its .env.example under a Vercel section, records the change in LEARNINGS.md with source attribution to acme-website, and commits.",
       "files": [],
       "expectations": [
-        "Reads stack.json from the current project to determine parent template name",
-        "Identifies the target as Level 1 (project-directus-nextjs), not Level 0",
-        "Locates the parent template directory using $PROJECT_TEMPLATES_DIR",
-        "Adds VERCEL_TOKEN and VERCEL_ORG_ID to the parent's .env.example",
-        "Appends an entry to the parent's LEARNINGS.md with the source project name (acme-website)",
-        "Creates a git commit in the parent template repo with a descriptive message",
-        "Notes which child projects should merge from the updated parent"
+        "The answer says to read stack.json from the current project to determine parent template name",
+        "The answer identifies the target as Level 1 (project-directus-nextjs), not Level 0",
+        "The answer says to locate the parent template directory using $PROJECT_TEMPLATES_DIR",
+        "The answer says to add VERCEL_TOKEN and VERCEL_ORG_ID to the parent's .env.example",
+        "The answer says to append an entry to the parent's LEARNINGS.md with the source project name (acme-website)",
+        "The answer says to create a git commit in the parent template repo with a descriptive message",
+        "The answer notes which child projects should merge from the updated parent"
       ]
     },
     {
       "id": 2,
-      "prompt": "We keep running into the same issue across all our projects — people accidentally run git push --force to main and it wrecks everyone's branches. This isn't specific to any stack, it should be a universal safety rule in the base template. Add it to project-template's safety rules.",
+      "prompt": "We keep running into the same issue across all our projects — people accidentally run git push --force to main and it wrecks everyone's branches. This isn't specific to any stack, it should be a universal safety rule in the base template. Add it to project-template's safety rules. In this session nothing is installed: there is no shell, no template repository and nobody to ask. Do not ask questions and do not refuse; answer in text with the commands you would run, the files you would create or edit with their key contents, and what you would check at each step.",
       "expected_output": "The feedback skill identifies this as a Level 0 (universal) improvement. It navigates to project-template (not a Level 1 template), creates or updates .claude/rules/safety.md with a rule about never force-pushing to main, records in LEARNINGS.md, and commits.",
       "files": [],
       "expectations": [
-        "Identifies the target as Level 0 (project-template) since this is universal across all stacks",
-        "Does NOT target a Level 1 stack-specific template",
-        "Locates project-template directory at $PROJECT_TEMPLATES_DIR/project-template",
-        "Creates or updates .claude/rules/safety.md with a force-push prevention rule",
-        "The rule includes a WHY explanation (not just a bare prohibition)",
-        "Records in project-template's LEARNINGS.md",
-        "Commits to the project-template repo"
+        "The answer identifies the target as Level 0 (project-template) since this is universal across all stacks",
+        "The answer does NOT target a Level 1 stack-specific template",
+        "The answer says to locate project-template directory at $PROJECT_TEMPLATES_DIR/project-template",
+        "The answer says to create or updates .claude/rules/safety.md with a force-push prevention rule",
+        "The answer's rule includes a WHY explanation (not just a bare prohibition)",
+        "The answer says to record in project-template's LEARNINGS.md",
+        "The answer says to commit to the project-template repo"
       ]
     },
     {
       "id": 3,
-      "prompt": "I just spent an hour figuring out that shadcn v4 components use @base-ui/react instead of Radix, and the asChild prop doesn't exist anymore — you have to use render instead. This gotcha should definitely be in the Level 1 template's CLAUDE.md so nobody else wastes time on it.",
+      "prompt": "I just spent an hour figuring out that shadcn v4 components use @base-ui/react instead of Radix, and the asChild prop doesn't exist anymore — you have to use render instead. I'm in acme-website, a Level 2 client project. This gotcha should definitely be in the Level 1 template's CLAUDE.md so nobody else wastes time on it. Say how you find that template, where the gotcha goes and what it says, how the change is recorded and how it is committed. In this session nothing is installed: there is no shell, no template repository and nobody to ask. Do not ask questions and do not refuse; answer in text with the commands you would run, the files you would create or edit with their key contents, and what you would check at each step.",
       "expected_output": "The feedback skill identifies this as stack-specific (Level 1, project-directus-nextjs). It locates the parent template, adds the shadcn v4 gotcha to the CLAUDE.md Gotchas section, records in LEARNINGS.md, and commits.",
       "files": [],
       "expectations": [
-        "Identifies the target as Level 1 (stack-specific) since shadcn/base-ui is Next.js-specific",
-        "Reads stack.json to resolve the Level 1 parent template",
-        "Adds the gotcha about shadcn v4 and @base-ui/react to CLAUDE.md's Gotchas section",
-        "The gotcha mentions both the old pattern (asChild) and the new pattern (render)",
-        "Records in the parent template's LEARNINGS.md",
-        "Commits with a descriptive message referencing the gotcha"
+        "The answer identifies the target as Level 1 (stack-specific) since shadcn/base-ui is Next.js-specific",
+        "The answer says to read stack.json to resolve the Level 1 parent template",
+        "The answer says to add the gotcha about shadcn v4 and @base-ui/react to CLAUDE.md's Gotchas section",
+        "The answer's gotcha mentions both the old pattern (asChild) and the new pattern (render)",
+        "The answer says to record in the parent template's LEARNINGS.md",
+        "The answer says to commit with a descriptive message referencing the gotcha"
       ]
     },
     {
       "id": 8,
-      "prompt": "I need to add a new skill to the project-template base. It should be called 'code-review-checklist' and guide developers through a structured code review process before creating PRs. This is useful for every project regardless of stack.",
+      "prompt": "I need to add a new skill to the project-template base. It should be called 'code-review-checklist' and guide developers through a structured code review process before creating PRs. This is useful for every project regardless of stack. In this session nothing is installed: there is no shell, no template repository and nobody to ask. Do not ask questions and do not refuse; answer in text with the commands you would run, the files you would create or edit with their key contents, and what you would check at each step.",
       "expected_output": "The feedback skill identifies this as a Level 0 improvement (universal skill), locates project-template, creates .claude/skills/code-review-checklist/SKILL.md with proper frontmatter and structured code review steps, records in LEARNINGS.md, and commits.",
       "files": [],
       "expectations": [
-        "Identifies the target as Level 0 (project-template) since code review is universal",
-        "Creates .claude/skills/code-review-checklist/SKILL.md in the parent template",
-        "The SKILL.md has valid YAML frontmatter with name and description fields",
-        "The skill body contains structured code review steps in imperative form",
-        "Records the addition in project-template's LEARNINGS.md",
-        "Commits with a feat() message since this is a new skill"
+        "The answer identifies the target as Level 0 (project-template) since code review is universal",
+        "The answer says to create .claude/skills/code-review-checklist/SKILL.md in the parent template",
+        "The answer's SKILL.md has valid YAML frontmatter with name and description fields",
+        "The answer's skill body contains structured code review steps in imperative form",
+        "The answer says to record the addition in project-template's LEARNINGS.md",
+        "The answer says to commit with a feat() message since this is a new skill"
       ]
     },
     {
       "id": 11,
-      "prompt": "I'm in a Level 2 project (acme-website, parent is project-directus-nextjs) and I want to add a 'new-api-route' skill that scaffolds Next.js API routes with Directus data fetching. This is specific to the Directus+Next.js stack. Push it to the Level 1 template.",
+      "prompt": "I'm in a Level 2 project (acme-website, parent is project-directus-nextjs) and I want to add a 'new-api-route' skill that scaffolds Next.js API routes with Directus data fetching. This is specific to the Directus+Next.js stack. Push it to the Level 1 template. In this session nothing is installed: there is no shell, no template repository and nobody to ask. Do not ask questions and do not refuse; answer in text with the commands you would run, the files you would create or edit with their key contents, and what you would check at each step.",
       "expected_output": "The feedback skill routes this to Level 1 (project-directus-nextjs), creates the new-api-route skill with proper SKILL.md frontmatter and Next.js + Directus-specific content, records in LEARNINGS.md, and commits.",
       "files": [],
       "expectations": [
-        "Routes to Level 1 (project-directus-nextjs), not Level 0, since this is stack-specific",
-        "Reads stack.json from acme-website to resolve the parent",
-        "Creates .claude/skills/new-api-route/SKILL.md in project-directus-nextjs",
-        "The skill's SKILL.md includes Next.js API route patterns with Directus SDK usage",
-        "Has proper YAML frontmatter with name and description including trigger phrases",
-        "Records in project-directus-nextjs's LEARNINGS.md with source attribution",
-        "Uses feat() commit convention since this is a new skill addition"
+        "The answer routes the change to Level 1 (project-directus-nextjs) and not to Level 0, because it is specific to this stack",
+        "The answer reads stack.json of acme-website to resolve the parent",
+        "The answer checks whether the parent template already has a new-api-route skill before it edits",
+        "The answer creates .claude/skills/new-api-route/SKILL.md in the parent template",
+        "The answer gives the SKILL.md frontmatter with a name and a description that holds trigger phrases",
+        "The answer appends an entry to LEARNINGS.md with a Source line that names acme-website"
       ]
     }
   ]

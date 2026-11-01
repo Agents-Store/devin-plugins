@@ -3,62 +3,62 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "What is the capacity of a 4-person team for a 2-week sprint with no velocity history?",
+      "prompt": "Use the agile-fundamentals skill. What is the capacity of a 4-person team for a 2-week sprint with no velocity history? Everyone is available on all 10 working days, with no PTO or holidays.",
       "expected_output": "Applies the canonical formula: 4 * 10 * 0.7 * 0.85 = 23.8 points, and cites the focus factor 0.7 and 15% buffer.",
       "files": [],
       "expectations": [
-        "Uses the canonical capacity formula from agile-fundamentals",
-        "Applies focus factor 0.7 for a team without velocity history",
-        "Applies 15% sprint buffer",
-        "Produces the correct result (approximately 23.8 points)"
+        "The answer uses the canonical capacity formula from agile-fundamentals",
+        "The answer says to apply focus factor 0.7 for a team without velocity history",
+        "The answer says to apply 15% sprint buffer",
+        "The answer produces the correct result (approximately 23.8 points)"
       ]
     },
     {
       "id": 2,
-      "prompt": "Score this item with WSJF: business value 8, time criticality 5, risk reduction 3, job size 5.",
+      "prompt": "Use the agile-fundamentals skill. Score this item with WSJF: business value 8, time criticality 5, risk reduction 3, job size 5.",
       "expected_output": "Computes WSJF = (8 + 5 + 3) / 5 = 3.2 using the canonical formula.",
       "files": [],
       "expectations": [
-        "Uses the WSJF formula from agile-fundamentals",
-        "Computes (8 + 5 + 3) / 5 = 3.2",
-        "Does not invent alternate scoring"
+        "The answer uses the WSJF formula from agile-fundamentals",
+        "The answer computes (8 + 5 + 3) / 5 = 3.2",
+        "The answer does not invent alternate scoring"
       ]
     },
     {
       "id": 3,
-      "prompt": "Can a 13-point story enter a sprint?",
+      "prompt": "Use the agile-fundamentals skill. Can a 13-point story enter a sprint?",
       "expected_output": "Refuses per Fibonacci rule (max 8) and references task-decomposition.",
       "files": [],
       "expectations": [
-        "Cites the Fibonacci rule (1, 2, 3, 5, 8 only)",
-        "Blocks the item from the sprint",
-        "Recommends decomposition via the task-decomposition skill"
+        "The answer cites the Fibonacci rule (1, 2, 3, 5, 8 only)",
+        "The answer says to block the item from the sprint",
+        "The answer recommends decomposition via the task-decomposition skill"
       ]
     },
     {
       "id": 4,
-      "prompt": "Is this work item ready for sprint planning? Title: 'Improve checkout'. Description: empty. Points: not set. Assignee: none.",
+      "prompt": "Use the agile-fundamentals skill. Is this work item ready for sprint planning? Title: 'Improve checkout'. Description: empty. Points: not set. Assignee: none. Answer in text; everything you need is in this message.",
       "expected_output": "Fails Definition of Ready on multiple criteria (no description/AC, no estimate, no assignee). Lists which DoR criteria fail.",
       "files": [],
       "expectations": [
-        "Cites the DoR checklist from agile-fundamentals",
-        "Identifies missing description with acceptance criteria",
-        "Identifies missing estimate (point field)",
-        "Identifies missing assignee",
-        "Concludes the item is NOT ready for sprint planning"
+        "The answer cites the DoR checklist from agile-fundamentals",
+        "The answer identifies missing description with acceptance criteria",
+        "The answer identifies missing estimate (point field)",
+        "The answer identifies missing assignee",
+        "The answer concludes the item is NOT ready for sprint planning"
       ]
     },
     {
       "id": 5,
-      "prompt": "Map these MoSCoW priorities to Plane priority values: Must Have for hot-fix, Should Have for analytics, Could Have for dark mode, Won't Have for mobile app.",
+      "prompt": "Use the agile-fundamentals skill. Map these MoSCoW priorities to Plane priority values: Must Have for hot-fix, Should Have for analytics, Could Have for dark mode, Won't Have for mobile app.",
       "expected_output": "Returns the canonical mapping: Must=urgent/high, Should=medium, Could=low, Won't=none.",
       "files": [],
       "expectations": [
-        "Uses the MoSCoW → Plane priority table from agile-fundamentals",
-        "Hot-fix → urgent or high",
-        "Analytics → medium",
-        "Dark mode → low",
-        "Mobile app → none"
+        "The answer uses the MoSCoW → Plane priority table from agile-fundamentals",
+        "The answer maps Hot-fix to urgent or high",
+        "The answer analytics → medium",
+        "The answer maps Dark mode to low",
+        "The answer maps Mobile app to none"
       ]
     }
   ]

@@ -1,0 +1,18 @@
+[
+  {"query": "Give me a complete example of creating a posts collection with two fields in NocoBase v2 through the REST API, writing a record and verifying it with nb", "should_trigger": true},
+  {"query": "walk me through running a NocoBase workflow manually via the API and polling the execution until it finishes", "should_trigger": true},
+  {"query": "Show me how to enable the API keys plugin, create a token and make an authorised call with it - an end-to-end sample for NocoBase", "should_trigger": true},
+  {"query": "sample script for NocoBase that lists records with a filter after creating a collection", "should_trigger": true},
+  {"query": "Покажи на полном примере, как в NocoBase v2 создать коллекцию через API, добавить запись и проверить через nb", "should_trigger": true},
+  {"query": "Покажи пример от начала до конца для NocoBase: включить плагин API keys, создать токен и сделать авторизованный запрос от имени бота", "should_trigger": true},
+  {"query": "I want a worked scenario that mixes REST API and nb CLI calls for NocoBase, ideally with API keys and a bot identity", "should_trigger": true},
+  {"query": "show me how to execute a NocoBase workflow with POST /api/workflows:execute and check the result, complete example please", "should_trigger": true},
+  {"query": "Why does NocoBase return 401 for my bearer token?", "should_trigger": false},
+  {"query": "Which nb command stops the running NocoBase app?", "should_trigger": false},
+  {"query": "Give me a complete example of a Directus flow triggered by a webhook", "should_trigger": false},
+  {"query": "Walk me through creating a Strapi content type through its REST API with an example", "should_trigger": false},
+  {"query": "Show me a full example of an Airtable API script that creates a table and inserts records", "should_trigger": false},
+  {"query": "Walk me through designing the schema for an order system in NocoBase: collections, relations and view collections", "should_trigger": false},
+  {"query": "Build a dashboard page with a line chart of monthly orders and a filter block in NocoBase", "should_trigger": false},
+  {"query": "sample script that creates a table and inserts rows in Postgres with psycopg", "should_trigger": false}
+]

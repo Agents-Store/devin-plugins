@@ -20,10 +20,11 @@
       "expected_output": "Should put --readonly in the args of the trigger.dev mcp server command (it is not an install-mcp flag), and list the write tools it hides",
       "files": [],
       "expectations": [
-        "Uses trigger.dev mcp with --readonly in the server args",
-        "Does not recommend install-mcp --readonly (that option does not exist)",
-        "Names write tools it hides such as deploy, trigger_task and cancel_run",
-        "Mentions that start_dev_server and switch_profile are not hidden, or offers --dev-only for environment restriction"
+        "The answer puts --readonly in the args of the trigger.dev mcp server command",
+        "The answer says --readonly is not an option of install-mcp",
+        "The answer says --readonly hides the write tools server-side so the model never sees them",
+        "The answer says start_dev_server is not hidden by --readonly",
+        "The answer mentions --dev-only to restrict the server to the dev environment"
       ]
     }
   ]

@@ -1,0 +1,18 @@
+[
+  {"query": "Import this n8n workflow JSON into my instance - I saved it as ./lead-sync.json - and strip the credentials first", "should_trigger": true},
+  {"query": "Deploy the n8n template 'Gmail to Notion' from the official library onto my instance and verify it afterwards", "should_trigger": true},
+  {"query": "I found this workflow: https://gist.github.com/example/3f2a9c71 (raw JSON of 9 nodes). Install it on my n8n instance, let auto-fix repair whatever the validator complains about, and leave it unpublished", "should_trigger": true},
+  {"query": "add a workflow to n8n from the official template number 4821, but don't activate it", "should_trigger": true},
+  {"query": "Импортируй в n8n шаблон из официальной библиотеки с id 3500 и проверь результат после импорта", "should_trigger": true},
+  {"query": "Задеплой workflow из JSON-файла в мой n8n, credentials убери, потом покажи, что нужно донастроить", "should_trigger": true},
+  {"query": "Install this automation from a JSON file onto n8n and tell me what to reconfigure before I publish it", "should_trigger": true},
+  {"query": "Deploy the one template I found yesterday - it exists only on api.n8n.io, not in the local template database", "should_trigger": true},
+  {"query": "Import 12 workflows into n8n in one go and roll everything back if one fails", "should_trigger": false},
+  {"query": "Find an n8n template that sends Slack alerts for failed Stripe payments", "should_trigger": false},
+  {"query": "Analyze this workflow JSON - nodes, credentials and complexity - but don't import it", "should_trigger": false},
+  {"query": "Check that my n8n instance is ready before anything gets imported", "should_trigger": false},
+  {"query": "Import this Postman collection into Insomnia and keep the environments", "should_trigger": false},
+  {"query": "Import a CSV of customers into Mailchimp and map the tags", "should_trigger": false},
+  {"query": "Convert my Make.com scenario so I can recreate it in Zapier", "should_trigger": false},
+  {"query": "Export one of my n8n workflows as JSON so I can send it to a colleague", "should_trigger": false}
+]

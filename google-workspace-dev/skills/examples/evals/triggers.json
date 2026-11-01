@@ -1,0 +1,18 @@
+[
+  {"query": "show me an example of turning my unread emails into tasks with the gws CLI", "should_trigger": true},
+  {"query": "Walk me through building a report from a Google Sheet range, putting it into a Doc and emailing the link to my manager, using gws", "should_trigger": true},
+  {"query": "How do I create calendar events from the rows of a spreadsheet with gws? I'd like a worked scenario to follow.", "should_trigger": true},
+  {"query": "what are the typical multi-service workflows I can build with the gws skills? give me one worked scenario I can adapt, with the commands in order and the jq between the steps", "should_trigger": true},
+  {"query": "I want a Monday standup summary and a weekly digest built from Gmail and Calendar via gws. Give me a scenario I can follow.", "should_trigger": true},
+  {"query": "End-to-end example please: create a new Slides deck and share it with my team in Drive using the gws CLI.", "should_trigger": true},
+  {"query": "Покажи сквозной пример с gws: разобрать входящую почту, превратить письмо в задачу и отправить сводку", "should_trigger": true},
+  {"query": "Хочу пример сценария: взять данные из Google Таблицы, сделать отчёт в Google Docs и отправить ссылку по почте через gws", "should_trigger": true},
+  {"query": "Send an email to alice@example.com with the subject 'Hi' from the command line using gws gmail", "should_trigger": false},
+  {"query": "List the ten largest files in my Google Drive with gws", "should_trigger": false},
+  {"query": "gws: command not found - how do I install it?", "should_trigger": false},
+  {"query": "Show me an example of sending a message with the Gmail API from Python with google-api-python-client", "should_trigger": false},
+  {"query": "Show me an Apps Script example that creates calendar events from a sheet", "should_trigger": false},
+  {"query": "How do I read Outlook calendar events with Microsoft Graph? Give me a worked example", "should_trigger": false},
+  {"query": "Zapier example: save Gmail attachments to a Drive folder automatically", "should_trigger": false},
+  {"query": "How do I log in with gws auth and which scopes should I request?", "should_trigger": false}
+]

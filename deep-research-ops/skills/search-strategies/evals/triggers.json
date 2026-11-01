@@ -1,0 +1,18 @@
+[
+  {"query": "Find the website of a startup called Zorbly that supposedly makes AI inventory software. My first searches found nothing, so dig properly before you tell me it does not exist", "should_trigger": true},
+  {"query": "Which search provider should I use for what? I have Exa, Perplexity, Jina and Firecrawl connected. I want company lookups, fact checks, scientific preprints and JS-heavy pages", "should_trigger": true},
+  {"query": "my first search provider returned an error mid-research. What's the fallback chain and how do I carry on without losing the results so far?", "should_trigger": true},
+  {"query": "Find recent benchmarks of vector databases for me. Plain searches return mostly SEO spam, so choose the providers and rewrite the queries until you get primary sources", "should_trigger": true},
+  {"query": "Какой поисковый инструмент лучше выбрать для проверки фактов, а какой для поиска похожих компаний? Расскажи, как выстроить цепочку запасных вариантов", "should_trigger": true},
+  {"query": "Найди официальный сайт продукта 'Kodari': обычный поиск ничего не даёт. Проверь все варианты, прежде чем сказать, что его нет", "should_trigger": true},
+  {"query": "Run five parallel searches on vector database benchmarks 2026 from different angles (latency, cost, recall, ingestion speed, filtering), then dedupe the results and rank them by relevance", "should_trigger": true},
+  {"query": "I need to verify three facts for a report: the funding of Quantiva GmbH, the release date of PostgreSQL 18 and the current market share of Kubernetes. Choose the right search tool for each fact and run the checks", "should_trigger": true},
+  {"query": "Do a full research report on the global fintech market 2026", "should_trigger": false},
+  {"query": "Read the page https://example.com/changelog and extract the version list", "should_trigger": false},
+  {"query": "Format my research notes into an executive summary", "should_trigger": false},
+  {"query": "What is the best way to structure a Postgres full-text search query with ranking?", "should_trigger": false},
+  {"query": "Optimize my SEO keywords for the blog post on trail running", "should_trigger": false},
+  {"query": "How do I set up the Exa API key in my Node project and call the search endpoint?", "should_trigger": false},
+  {"query": "Give me examples of workflows for the six research types", "should_trigger": false},
+  {"query": "How do Google search operators like site: and intitle: work?", "should_trigger": false}
+]

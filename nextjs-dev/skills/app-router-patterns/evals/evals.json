@@ -8,16 +8,11 @@
       "files": [],
       "expectations": [
         "The page component is an async Server Component (no 'use client' directive in the page file)",
-        "params is typed as Promise<{ slug: string }> and awaited before use (Next.js 15+ pattern)",
-        "generateStaticParams is exported and returns an array of slug objects",
-        "generateMetadata is exported as an async function with openGraph.images in the return",
+        "params is awaited before use in both the page and generateMetadata",
+        "The page props are typed with the generated PageProps helper, for example PageProps<'/products/[slug]'>",
         "ISR is expressed in the caching model the answer states: `export const revalidate = 60` when cacheComponents is off (previous model), or 'use cache' + cacheLife('minutes') when cacheComponents is on — never `revalidate` together with cacheComponents: true",
-        "next/image is used with either fill or explicit width/height, and includes sizes prop",
-        "The add-to-cart button is in a separate file marked with 'use client'",
         "notFound() from next/navigation is called when the product doesn't exist",
-        "The product image uses the priority prop (it is the LCP element)",
-        "The data layer module uses import 'server-only' to prevent client bundle leakage",
-        "A loading.tsx file is provided for route-level Suspense fallback"
+        "The add-to-cart button is in a separate file marked with 'use client'"
       ]
     },
     {
@@ -27,18 +22,11 @@
       "files": [],
       "expectations": [
         "A route group directory named (dashboard) is used with parentheses in the path",
-        "proxy.ts is at the project root (not inside app/), exports a proxy function, and exports a config with matcher",
-        "The proxy checks for a session cookie and redirects to /login if missing",
-        "The dashboard layout performs a secondary server-side auth check (double-layer auth pattern)",
-        "The dashboard home page uses Suspense with fallback props for streaming content",
+        "proxy.ts sits next to the app/ directory (project root, or src/ when the project uses src/), not inside app/",
+        "proxy.ts exports a function named proxy, not middleware",
+        "proxy.ts exports a config object with a matcher",
         "searchParams is typed as Promise and awaited before destructuring (Next.js 15+ pattern)",
-        "The users page wraps the data table in Suspense with a key prop that includes the search query",
-        "The search input component uses debouncing to prevent navigation on every keystroke",
-        "Server Actions file has 'use server' directive at the top",
-        "The Server Action uses zod for validation with .trim() on string fields and returns field-level errors",
-        "revalidatePath is called after the mutation in the Server Action",
-        "The form component uses useActionState (not the deprecated useFormState)",
-        "redirect() is called outside of any try/catch block in the Server Action"
+        "The dashboard layout performs a secondary server-side auth check (double-layer auth pattern)"
       ]
     }
   ]

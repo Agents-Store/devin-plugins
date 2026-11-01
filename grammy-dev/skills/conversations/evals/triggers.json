@@ -1,0 +1,18 @@
+[
+  {"query": "I need a registration wizard in my grammY bot: ask for full name, then email (validate with a regex and ask again on failure), then confirm with yes/no buttons and save to my database. Which plugin and how do I structure it?", "should_trigger": true},
+  {"query": "In @grammyjs/conversations 2.x, how do I make the conversation expire if the user doesn't answer within 5 minutes, and tell them it timed out?", "should_trigger": true},
+  {"query": "my conversation loses its state every time I redeploy the bot. how do I persist conversations to redis and use the version option?", "should_trigger": true},
+  {"query": "How can the user type /cancel in the middle of a grammY conversation and leave it cleanly, without the bot treating /cancel as an answer?", "should_trigger": true},
+  {"query": "Нужен пошаговый диалог в grammY-боте: спросить город, потом дату поездки, потом бюджет числом. Как собрать это через conversation.form.number() и проверять ввод?", "should_trigger": true},
+  {"query": "Как в плагине conversations для grammY использовать conversation.checkpoint и rewind, чтобы по кнопке «Назад» возвращать пользователя на предыдущий вопрос?", "should_trigger": true},
+  {"query": "I want to show an inline keyboard inside a conversation and wait for the button press with conversation.waitForCallbackQuery. Give me a working example.", "should_trigger": true},
+  {"query": "My grammY conversation writes to the database and I get weird replays and double inserts after the user answers. Do I need conversation.external here?", "should_trigger": true},
+  {"query": "Store the user's language and a message counter between messages with the session middleware in grammY, backed by Redis", "should_trigger": false},
+  {"query": "Add a simple /help command to my grammY bot that replies with a list of commands and register the list with Telegram", "should_trigger": false},
+  {"query": "Build a multi-step form in a Telegraf bot using Scenes and a WizardScene", "should_trigger": false},
+  {"query": "How do I run my grammY bot with long polling and shut it down cleanly on SIGINT?", "should_trigger": false},
+  {"query": "Implement a Telegram Stars payment in my grammY bot where the user picks a plan and I send an invoice", "should_trigger": false},
+  {"query": "I get \"ctx.session is undefined\" in my grammY handler even though I called bot.use(session())", "should_trigger": false},
+  {"query": "Write a React multi-step wizard form with validation on each step and a progress bar", "should_trigger": false},
+  {"query": "Make my grammY bot answer any text message that contains a URL with a short warning", "should_trigger": false}
+]

@@ -3,17 +3,17 @@
   "evals": [
     {
       "id": 2,
-      "prompt": "Add structured data to my blog posts with Article schema and breadcrumbs",
+      "prompt": "Use the structured-data skill. Add structured data to my blog posts with Article schema and breadcrumbs In this session you have no project files and no shell, and nobody to ask. Do not ask questions: assume a typical Next.js App Router project and answer in text with concrete findings, what you would check, the fixes and the code you would write.",
       "expected_output": "Creates JSON-LD components with Article and BreadcrumbList schemas, type-safe with schema-dts",
       "files": [],
       "expectations": [
-        "Creates a reusable JsonLd component with XSS sanitization (.replace(/</g, '\\u003c'))",
-        "Creates schema factory functions using schema-dts types (WithContext<Article>)",
-        "Adds Article schema with headline, datePublished, dateModified, author, image",
-        "Adds BreadcrumbList schema with proper position numbering",
-        "Places Organization in the root layout and WebSite (name/alternateName, no SearchAction) on the home page",
-        "Places page-specific schemas (Article, BreadcrumbList) in page component",
-        "Does NOT add FAQPage, HowTo or SearchAction markup to chase a rich result (Google removed or stopped showing those features); does not tell the user to delete existing valid markup, only that it earns no SERP feature"
+        "The answer says to create a reusable JsonLd component with XSS sanitization (.replace(/</g, '\\u003c'))",
+        "The answer says to create schema factory functions using schema-dts types (WithContext<Article>)",
+        "The answer says to add Article schema with headline, datePublished, dateModified, author, image",
+        "The answer says to add BreadcrumbList schema with proper position numbering",
+        "The answer says to place Organization in the root layout and WebSite (name/alternateName, no SearchAction) on the home page",
+        "The answer says to place page-specific schemas (Article, BreadcrumbList) in page component",
+        "The answer does NOT add FAQPage, HowTo or SearchAction markup to chase a rich result (Google removed or stopped showing those features); does not tell the user to delete existing valid markup, only that it earns no SERP feature"
       ]
     }
   ]

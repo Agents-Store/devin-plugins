@@ -1,0 +1,17 @@
+[
+  {"query": "Show me a complete example of a blog built with Directus and Next.js: posts, authors, categories, an RSS feed", "should_trigger": true},
+  {"query": "I need a reference implementation of a product catalog on Directus and Next.js with filtering by search params and an image gallery", "should_trigger": true},
+  {"query": "How would the Directus schema, the TypeScript interfaces and the Next.js pages look for a blog with a many-to-one author and many-to-many categories? A walkthrough please", "should_trigger": true},
+  {"query": "Are there walkthroughs for the Directus Next.js stack that cover SEO metadata and an RSS feed?", "should_trigger": true},
+  {"query": "Есть ли готовый пошаговый пример интернет-каталога на Directus и Next.js: десятичные поля цены, фильтры из searchParams?", "should_trigger": true},
+  {"query": "Покажи сквозной сценарий блога на Directus и Next.js от модели данных до страниц списка и детали", "should_trigger": true},
+  {"query": "what example scenarios exist for this stack? I want to pick the closest one to a catalog with search and adapt it", "should_trigger": true},
+  {"query": "complete example: Directus collections for products and categories, typed filters and an uncached search page in Next.js", "should_trigger": true},
+  {"query": "Show me a complete example of a blog with Payload CMS and Next.js", "should_trigger": false},
+  {"query": "Write a Next.js page that lists Directus items filtered by a category slug", "should_trigger": false},
+  {"query": "Walk through building a new feature end to end: data model, types, tagged reads, server action, revalidation", "should_trigger": false},
+  {"query": "Give me examples of Directus Flows with conditions and data transformations", "should_trigger": false},
+  {"query": "Show an example of a Next.js e-commerce checkout with Stripe", "should_trigger": false},
+  {"query": "Explain how to cache Directus data in Next.js", "should_trigger": false},
+  {"query": "What variables go into .env.local for the Directus and Next.js project?", "should_trigger": false}
+]

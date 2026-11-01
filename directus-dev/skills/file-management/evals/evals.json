@@ -3,20 +3,20 @@
   "evals": [
     {
       "id": 11,
-      "prompt": "I need to import a bunch of product images from URLs into Directus and organize them in a folder",
-      "expected_output": "Folders create, then files import with URL and metadata including folder UUID",
+      "prompt": "Use the file-management skill. I need to import product images from URLs into Directus and organize them in a folder. The images are https://example.com/img/chair-01.jpg, https://example.com/img/chair-02.jpg and https://example.com/img/table-01.jpg; put them in a new folder called 'Products' and give each file a title. Show me the exact Directus MCP tool calls.",
+      "expected_output": "The answer creates the folder first, then imports the files with url and metadata including the folder UUID",
       "files": [],
       "expectations": [
-        "Uses folders tool with create action first",
-        "Uses files tool with import action",
-        "Shows data as array with url and file metadata",
-        "Includes folder UUID in file metadata",
-        "Mentions batch import (multiple items in data array)"
+        "The answer shows creating the folder with the folders tool and action create before any file is imported",
+        "The answer imports the files with the files tool and action import",
+        "The answer shows the data as an array whose items carry the url and the file metadata",
+        "The answer puts the id of the new folder (folder UUID) into the file metadata",
+        "The answer mentions batch import (several items in one data array)"
       ]
     },
     {
       "id": 12,
-      "prompt": "How do I get the actual content of an image file from Directus for AI analysis?",
+      "prompt": "Use the file-management skill. How do I get the actual content of an image file from Directus for AI analysis?",
       "expected_output": "Assets tool returns base64 content with mimeType",
       "files": [],
       "expectations": [

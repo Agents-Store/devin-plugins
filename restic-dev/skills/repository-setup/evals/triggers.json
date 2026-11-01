@@ -1,0 +1,18 @@
+[
+  {"query": "Set up a restic repository on Cloudflare R2: create the bucket, API token, env file with AWS_ACCESS_KEY_ID and secret, the repository URL and run restic init", "should_trigger": true},
+  {"query": "How should I generate and store the restic encryption password? What happens if I lose it?", "should_trigger": true},
+  {"query": "restic init on R2 returns AccessDenied. What permissions does the R2 token need and what is wrong with my repository URL?", "should_trigger": true},
+  {"query": "Configure restic with generic S3 credentials (MinIO or Backblaze): RESTIC_REPOSITORY format, env file location and permissions", "should_trigger": true},
+  {"query": "Initialize a restic repo on S3 and test the connection with restic snapshots before writing any scripts", "should_trigger": true},
+  {"query": "Как создать репозиторий restic на Cloudflare R2: пароль шифрования, env-файл с ключами, URL репозитория и restic init?", "should_trigger": true},
+  {"query": "Подготовь репозиторий restic на Cloudflare R2: сгенерируй пароль шифрования, запиши env-файл с ключами и RESTIC_REPOSITORY, проверь формат репозитория и ничего не пересоздавай, если он уже есть", "should_trigger": true},
+  {"query": "Where do I put RESTIC_PASSWORD_FILE and the R2 endpoint, and with what file mode, so cron can read them?", "should_trigger": true},
+  {"query": "restic backup is locked: 'unable to create lock in backend: repository is already locked'", "should_trigger": false},
+  {"query": "Install restic on an arm64 Debian server", "should_trigger": false},
+  {"query": "Create an S3 bucket policy for public read", "should_trigger": false},
+  {"query": "Generate a strong password and store it in a password manager", "should_trigger": false},
+  {"query": "Set up a Cloudflare R2 bucket for hosting static website assets", "should_trigger": false},
+  {"query": "Configure rclone with an R2 remote for syncing a folder", "should_trigger": false},
+  {"query": "Write the backup script with database dumps", "should_trigger": false},
+  {"query": "restic: Fatal: wrong password or no key found when I run snapshots", "should_trigger": false}
+]

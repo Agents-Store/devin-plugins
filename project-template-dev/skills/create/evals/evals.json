@@ -3,47 +3,44 @@
   "evals": [
     {
       "id": 4,
-      "prompt": "I want to create a new Level 1 template for projects using Supabase as the data layer and Nuxt as the frontend. We'll also use Trigger.dev for background jobs. Call it project-supabase-nuxt.",
+      "prompt": "Use the create skill. I want to create a new Level 1 template for projects using Supabase as the data layer and Nuxt as the frontend. We'll also use Trigger.dev for background jobs. Call it project-supabase-nuxt. In this session nothing is installed: there is no shell, no template repository and nobody to ask. Do not ask questions and do not refuse; answer in text with the commands you would run, the files you would create or edit with their key contents, and what you would check at each step.",
       "expected_output": "The create skill clones project-template into a new project-supabase-nuxt directory, fills stack.json with level=1 and the correct layers/plugins, customizes CLAUDE.md with the tech stack, updates .env.example with Supabase and Trigger.dev vars, searches for matching Agents Store plugins, validates the result, and makes an initial commit.",
       "files": [],
       "expectations": [
-        "Clones project-template (Level 0) as the parent, not another Level 1 template",
-        "Creates a new directory named project-supabase-nuxt",
-        "Fills stack.json with level=1, parent='project-template', stack='supabase-nuxt'",
-        "Populates stack.json layers: data=['supabase'], logic=['nuxt', 'trigger-dev'], interface=['nuxt']",
-        "Customizes CLAUDE.md with Supabase + Nuxt tech stack details",
-        "Updates .env.example with Supabase variables (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY)",
-        "Searches plugin directories for matching technology plugins",
-        "Initializes a new git repo and makes an initial commit"
+        "The answer clones project-template (Level 0) as the parent",
+        "The answer sets stack.json to level 1 with parent project-template",
+        "The answer lists nuxt in both the logic and the interface layer of stack.json",
+        "The answer lists trigger-dev in the logic layer of stack.json",
+        "The answer searches both $PLUGINS_PUBLIC_SOURCE_DIR and $PLUGINS_PRIVATE_SOURCE_DIR for plugins that match each technology",
+        "The answer makes the initial commit with the message feat: scaffold project-supabase-nuxt from project-template"
       ]
     },
     {
       "id": 5,
-      "prompt": "Create a Level 2 client project for Widgets Inc from the project-directus-nextjs template. It's a corporate website with a blog and team directory.",
+      "prompt": "Use the create skill. Create a Level 2 client project for Widgets Inc from the project-directus-nextjs template. It's a corporate website with a blog and team directory. In this session nothing is installed: there is no shell, no template repository and nobody to ask. Do not ask questions and do not refuse; answer in text with the commands you would run, the files you would create or edit with their key contents, and what you would check at each step.",
       "expected_output": "The create skill clones project-directus-nextjs into widgets-inc-website, sets stack.json to level=2 with parent=project-directus-nextjs, prompts for real credentials and resource IDs, and customizes CLAUDE.md with the client project name and description.",
       "files": [],
       "expectations": [
-        "Uses project-directus-nextjs (Level 1) as the parent template, not project-template",
-        "Creates a directory with a client-prefixed name (e.g., widgets-inc-website) without 'project-' prefix",
-        "Sets stack.json level to 2 with parent='project-directus-nextjs'",
-        "Inherits the stack, layers, and plugins from the Level 1 parent",
-        "Customizes CLAUDE.md with the client name and project description",
-        "Prompts user about credentials and environment configuration"
+        "The answer uses project-directus-nextjs (Level 1) as the parent template, not project-template",
+        "The answer says to create a directory with a client-prefixed name (e.g., widgets-inc-website) without 'project-' prefix",
+        "The answer says to set stack.json level to 2 with parent='project-directus-nextjs'",
+        "The answer inherits the stack, layers, and plugins from the Level 1 parent",
+        "The answer says to customize CLAUDE.md with the client name and project description",
+        "The answer says to prompt user about credentials and environment configuration"
       ]
     },
     {
       "id": 12,
-      "prompt": "Create a Level 1.5 demo template from project-directus-nextjs. It should be called demo-directus-nextjs and include sample blog posts, a team directory page, and seed data scripts.",
+      "prompt": "Use the create skill. Create a Level 1.5 demo template from project-directus-nextjs. It should be called demo-directus-nextjs and include sample blog posts, a team directory page, and seed data scripts. In this session nothing is installed: there is no shell, no template repository and nobody to ask. Do not ask questions and do not refuse; answer in text with the commands you would run, the files you would create or edit with their key contents, and what you would check at each step.",
       "expected_output": "The create skill clones project-directus-nextjs into demo-directus-nextjs, sets stack.json to level=1.5, inherits all Level 1 content, and sets up the demo-specific structure with sample data scaffolding.",
       "files": [],
       "expectations": [
-        "Clones from project-directus-nextjs (Level 1), not project-template (Level 0)",
-        "Creates demo-directus-nextjs directory with demo- prefix",
-        "Sets stack.json level to 1.5 with parent='project-directus-nextjs'",
-        "Inherits all stack, layers, and plugins from the Level 1 parent",
-        "Mentions or scaffolds seed data scripts",
-        "Mentions sample content structure (blog posts, team directory)",
-        "Makes an initial commit"
+        "The answer clones project-directus-nextjs as the parent and not project-template",
+        "The answer names the new template demo-directus-nextjs",
+        "The answer sets stack.json to level 1.5 with parent project-directus-nextjs",
+        "The answer adds sample data and seed scripts",
+        "The answer adds demo commands for seeding and resetting the demo data",
+        "The answer makes an initial commit"
       ]
     }
   ]

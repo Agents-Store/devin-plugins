@@ -1,0 +1,18 @@
+[
+  {"query": "bw login on CLI 2026.9.1 fails with a 404 on key-management/user-key-id against our Vaultwarden 1.37.2. What is going on?", "should_trigger": true},
+  {"query": "Everybody on our team suddenly gets \"Too many login requests\" from Vaultwarden behind nginx, though login volume is tiny. Why?", "should_trigger": true},
+  {"query": "bw пишет «Username or password is incorrect», хотя пароль точно верный. Сервер Vaultwarden 1.37.4. В чём может быть дело?", "should_trigger": true},
+  {"query": "Приглашения в организацию Vaultwarden не приходят на почту, SMTP вроде настроен. Как это диагностировать?", "should_trigger": true},
+  {"query": "I restored db.sqlite3 from last night's backup, but Vaultwarden still looks like some changes are missing. What did I forget?", "should_trigger": true},
+  {"query": "The Vaultwarden admin panel says \"Invalid admin token\" even though I type the right one. ADMIN_TOKEN is an argon2 hash in docker-compose.", "should_trigger": true},
+  {"query": "Changes I make on my laptop do not show up live on my phone with our self-hosted Vaultwarden behind a reverse proxy.", "should_trigger": true},
+  {"query": "After an upgrade our Vaultwarden shows zero users. I have not created anything yet. What should I check first?", "should_trigger": true},
+  {"query": "Walk me through connecting bw to our Vaultwarden with the personal API key.", "should_trigger": false},
+  {"query": "List org members with bw and show their status.", "should_trigger": false},
+  {"query": "Which admin route disables a Vaultwarden user?", "should_trigger": false},
+  {"query": "Show me a worked example of onboarding someone in Vaultwarden.", "should_trigger": false},
+  {"query": "Write Python with python-vaultwarden that invites users to an organization.", "should_trigger": false},
+  {"query": "Nextcloud says \"Access through untrusted domain\" behind my nginx. How do I fix it?", "should_trigger": false},
+  {"query": "My Postgres container exits right after a major-version upgrade with \"database files are incompatible with server\".", "should_trigger": false},
+  {"query": "Should I keep the master password in a shell variable all session or unset it after unlocking?", "should_trigger": false}
+]

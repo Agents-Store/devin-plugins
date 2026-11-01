@@ -1,6 +1,6 @@
 ---
 name: server-client-components
-description: Server and Client Component patterns in Next.js App Router. This skill should be used when the user asks about "Server Components", "Client Components", "'use client' directive", "when to use Server vs Client components", "component boundaries", "interleaving components", "context providers in Next.js", or needs guidance on the server/client rendering split.
+description: Server and Client Components in the Next.js App Router — where to put 'use client', which props can cross the boundary, passing server components as children, context providers, wrapping third-party components, and keeping server-only code out of the client bundle with the server-only and client-only packages. Use when deciding or fixing component boundaries.
 ---
 
 # Server and Client Components

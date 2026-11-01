@@ -1,0 +1,16 @@
+[
+  {"query": "Next.js build error 'Next.js encountered runtime data during prerendering or a navigation' (blocking-prerender-runtime) on a page that reads cookies() with cacheComponents on - what is the fix?", "should_trigger": true},
+  {"query": "next build passes locally but deployment fails with 'Module not found' - how do I diagnose Next.js deployment issues?", "should_trigger": true},
+  {"query": "Ошибка next-request-in-use-cache: внутри 'use cache' я читаю cookies(). Как правильно передать значение и что такое 'use cache: private'?", "should_trigger": true},
+  {"query": "Страница Next.js не работает после обновления: ошибки сборки и 'Dynamic server usage'. Как диагностировать?", "should_trigger": true},
+  {"query": "Почему в Next.js ошибка гидратации появляется только в production? Помоги отладить", "should_trigger": true},
+  {"query": "Как в Next.js 16.2+ читать диф гидратации в dev-оверлее (+Client/-Server) и с чего начать диагностику, если next build проходит локально, а на деплое падает?", "should_trigger": true},
+  {"query": "Set up error.tsx and global-error.tsx for graceful error handling in my Next.js app", "should_trigger": false},
+  {"query": "Verify my Next.js project is set up correctly before I start developing", "should_trigger": false},
+  {"query": "Python ImportError: cannot import name from partially initialized module in my Flask app", "should_trigger": false},
+  {"query": "Docker build fails with 'no space left on device' on my CI runner", "should_trigger": false},
+  {"query": "PostgreSQL connection refused when my Next.js container starts before the database is ready - fix the compose ordering", "should_trigger": false},
+  {"query": "Vite dev server fails with 'Failed to resolve import' for an alias in tsconfig", "should_trigger": false},
+  {"query": "Debug my React Native app crashing on startup with a red screen on Android", "should_trigger": false},
+  {"query": "npm install fails with ERESOLVE for peer dependencies of eslint plugins", "should_trigger": false}
+]

@@ -1,6 +1,6 @@
 ---
 name: data-fetching
-description: Next.js data fetching, caching, and mutation patterns. This skill should be used when the user asks about "data fetching in Next.js", "Server Actions", "server-side data fetching", "caching strategies", "'use cache' directive", "revalidation", "ISR", "streaming with Suspense", "fetch in Server Components", or needs guidance on how to load and mutate data in Next.js App Router.
+description: Next.js 16 data fetching and caching in the App Router — Server Component fetching, parallel requests and Suspense streaming, Server Action mutations, revalidation with revalidatePath, revalidateTag, updateTag and refresh, ISR, and the use cache directive with cacheLife and cacheTag under cacheComponents. Use when loading, caching or invalidating data. Forms and validation are form-handling.
 ---
 
 # Data Fetching, Caching & Mutations

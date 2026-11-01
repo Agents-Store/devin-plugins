@@ -1,0 +1,17 @@
+[
+  {"query": "Show me all new orders in the store that are not paid yet and were placed with cash on delivery", "should_trigger": true},
+  {"query": "Mark order 1042 as shipped and add the Nova Poshta tracking number 20450123456789", "should_trigger": true},
+  {"query": "What are the order statuses in Teleshop and what do they mean? I need to move an order from processing to ready", "should_trigger": true},
+  {"query": "Mark order 77 as paid. It was a card prepay transfer", "should_trigger": true},
+  {"query": "Order 530: the customer changed their phone and wants Nova Poshta courier delivery. Update the contact, add a merchant comment and the tracking number, then move the order to shipped", "should_trigger": true},
+  {"query": "Покажи в Teleshop заказы со статусом «в обработке» за сегодня и отметь оплаченные", "should_trigger": true},
+  {"query": "Как завершить заказ после оплаты и добавить ТТН перед отправкой?", "should_trigger": true},
+  {"query": "give me a daily summary of today's orders by status and delivery type", "should_trigger": true},
+  {"query": "Find the customer by Telegram username and show their email and phone number", "should_trigger": false},
+  {"query": "Create a webhook that notifies my server when an order is completed", "should_trigger": false},
+  {"query": "Track a Nova Poshta parcel by its number on their website", "should_trigger": false},
+  {"query": "Create a Stripe checkout session for a subscription in my Node app", "should_trigger": false},
+  {"query": "Write a Python script that parses an orders CSV and sums by status", "should_trigger": false},
+  {"query": "Update the price of a product in the store", "should_trigger": false},
+  {"query": "Cancel my Amazon order", "should_trigger": false}
+]

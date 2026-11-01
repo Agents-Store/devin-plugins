@@ -1,0 +1,18 @@
+[
+  {"query": "Send a transactional email through the SendPulse SMTP service to customer@example.com with the subject 'Your order #1234' and an HTML body", "should_trigger": true},
+  {"query": "List recent bounces in SendPulse SMTP and show the bounce count, then tell me which addresses I should stop emailing", "should_trigger": true},
+  {"query": "Check whether an email address is on the SendPulse SMTP unsubscribe list and re-subscribe it", "should_trigger": true},
+  {"query": "Show the sent email details and total sent count for my SendPulse SMTP account, and my dedicated IPs and sender domains", "should_trigger": true},
+  {"query": "Which SendPulse SMTP tools check whether an address is unsubscribed, add it to the unsubscribe list, remove it and re-subscribe it?", "should_trigger": true},
+  {"query": "Отправь транзакционное письмо через SMTP SendPulse и проверь статус доставки", "should_trigger": true},
+  {"query": "Покажи недавние отскоки (bounces) в SendPulse SMTP и список отписавшихся адресов", "should_trigger": true},
+  {"query": "How do I configure SendPulse SMTP infrastructure - sender domains and dedicated IPs - before sending password reset emails?", "should_trigger": true},
+  {"query": "Create a marketing email campaign for the addressbook", "should_trigger": false},
+  {"query": "Add a verified sender to my SendPulse email account", "should_trigger": false},
+  {"query": "Set up nodemailer with Gmail SMTP in Node.js", "should_trigger": false},
+  {"query": "Configure Postfix as a local mail relay on Ubuntu", "should_trigger": false},
+  {"query": "Send a transactional email with Resend and React Email", "should_trigger": false},
+  {"query": "Create an email template and use it in a campaign", "should_trigger": false},
+  {"query": "Why do my emails land in spam? Check SPF and DKIM", "should_trigger": false},
+  {"query": "Send a Telegram message to a subscriber", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "What's the standard Definition of Ready and Definition of Done we should use for our Plane workflow? I want the canonical checklist", "should_trigger": true},
+  {"query": "How is sprint capacity computed from available days, focus factor and the buffer? Give me the exact formulas and defaults", "should_trigger": true},
+  {"query": "Explain how WSJF is scored and how MoSCoW priorities map onto Plane priorities (urgent, high, medium, low)", "should_trigger": true},
+  {"query": "Which Fibonacci story point values should we allow, and what do the WIP limit rules say for our team?", "should_trigger": true},
+  {"query": "What does the sprint buffer policy say - how much capacity should we hold back for unplanned work?", "should_trigger": true},
+  {"query": "Какие формулы использовать для расчёта ёмкости спринта и скорости команды? Нужны канонические определения", "should_trigger": true},
+  {"query": "Напомни, что входит в Definition of Done и как мы переводим MoSCoW в приоритеты Plane", "should_trigger": true},
+  {"query": "I need the agreed rule for velocity: how many sprints do we average and how do we treat the first sprints without history?", "should_trigger": true},
+  {"query": "Estimate this work item with story points: add CSV export to the reports page", "should_trigger": false},
+  {"query": "Plan the next sprint for our project and pick items that fit our capacity", "should_trigger": false},
+  {"query": "Show me the velocity of the last five cycles in Plane", "should_trigger": false},
+  {"query": "What is the difference between Scrum and Kanban in general?", "should_trigger": false},
+  {"query": "Explain SAFe's PI planning ceremony", "should_trigger": false},
+  {"query": "Create a Jira workflow with Definition of Done checks", "should_trigger": false},
+  {"query": "Calculate the burndown of the current cycle", "should_trigger": false},
+  {"query": "Find stale items in my backlog and propose which to close", "should_trigger": false}
+]

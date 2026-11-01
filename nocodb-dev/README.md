@@ -40,17 +40,7 @@ Copy this directory's contents into your Devin plugin directory. The manifest (`
 - "schema design walkthrough"
 - "NocoDB dev scenarios"
 
-- `field-management` — Create, update, and delete NocoDB fields across all 35 supported types — text, numeric, date, select, attachment, JSON, geometry, links, lookup, rollup, formula, button, barcode/QR, system fields. Use when:
-- "add a field"
-- "create a column"
-- "rename a field"
-- "change field type"
-- "delete a column"
-- "add a formula"
-- "set up lookup or rollup"
-- "link two tables"
-- "add a select option"
-
+- `field-management` — Create, update and delete NocoDB fields across all 35 types, including select options, formulas, links with lookups and rollups, attachments, barcode and button fields, plus safe type changes and deletes. Use when a NocoDB table needs a new or changed column. Creating the table itself is table-management, hiding or ordering columns in a view is view-management.
 - `mcp-patterns` — NocoDB MCP for schema-development work — what the server lists directly, which schema tools hide behind listTools/callTool, and the Community vs Cloud/licensed contract. Use when:
 - "what MCP tools can I use for schema?"
 - "can MCP create tables / fields / views?"
@@ -65,14 +55,7 @@ Copy this directory's contents into your Devin plugin directory. The manifest (`
 - "can I modify schema?"
 - "test NocoDB MCP connection"
 
-- `table-management` — Create, update, rename, duplicate, and delete NocoDB tables. Use when:
-- "create a new NocoDB table"
-- "rename a table"
-- "delete a NocoDB table"
-- "set the display field"
-- "duplicate a table"
-- "add a table with initial fields"
-
+- `table-management` — Create, rename, duplicate and delete NocoDB tables, set the display field and description, including creating a table with its initial fields over MCP or REST (Meta API v3). Use when a NocoDB schema needs a new or changed table. Adding or changing columns is field-management.
 - `troubleshoot` — Diagnose schema-side NocoDB errors — read-only fields, type-change rejections, broken Lookups, formula errors, view config validation, version mismatches. Use when:
 - "field type change rejected"
 - "Lookup not working"
@@ -91,14 +74,7 @@ Copy this directory's contents into your Devin plugin directory. The manifest (`
 - "delete a view"
 - "show / hide columns on a view"
 
-- `webhooks` — Configure NocoDB webhooks (HookV3) — triggers, field scoping, and notification targets (URL, Email, Slack/Discord/Telegram/Whatsapp/Twilio messaging, Script). Use when:
-- "add a webhook"
-- "fire a Slack message on insert"
-- "send email when a record changes"
-- "trigger n8n on update"
-- "list webhooks on a table"
-- "delete a hook"
-
+- `webhooks` — Configure NocoDB webhooks (HookV3) on a table — insert, update and delete triggers, field scoping, and notification targets URL, Email, Slack, Discord, Telegram, Whatsapp, Twilio or Script, plus listing, updating, testing and deleting hooks. Use when a NocoDB table should notify another system. The business-user view of webhooks is nocodb-ops.
 - `workflows` — List, execute, and inspect NocoDB Workflows (the platform's built-in automation engine) via Meta API v3; author drafts over MCP on Cloud/licensed. Use when:
 - "list NocoDB workflows"
 - "execute a workflow"

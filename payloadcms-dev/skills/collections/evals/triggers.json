@@ -1,0 +1,17 @@
+[
+  {"query": "Create a Payload v3 collection 'articles' with title, slug, hero image, publishedAt and drafts with autosave. Which CollectionConfig options do I need?", "should_trigger": true},
+  {"query": "How do I set up an auth collection in Payload and make it the admin user collection?", "should_trigger": true},
+  {"query": "I need a media upload collection in Payload with three image sizes and a mimeTypes restriction. How do I configure it?", "should_trigger": true},
+  {"query": "Configure the admin block of my Payload CollectionConfig: useAsTitle, defaultColumns, listSearchableFields, group, pagination limits and a preview URL function", "should_trigger": true},
+  {"query": "Добавь в проект Payload коллекцию «case-studies» с черновиками, кастомным endpoint /api/case-studies/feed и составным индексом по полям tenant и slug - покажи весь CollectionConfig", "should_trigger": true},
+  {"query": "Нужна коллекция «Заказы» в Payload с полем статуса и настройкой defaultColumns в админке. Как это описать в CollectionConfig?", "should_trigger": true},
+  {"query": "How do I turn on live preview for a collection in Payload and open it by default (3.86+)?", "should_trigger": true},
+  {"query": "Which field types can I use inside a Payload collection - show me blocks and array examples", "should_trigger": false},
+  {"query": "Add a hook that revalidates the Next.js cache when a Payload document changes", "should_trigger": false},
+  {"query": "How do I create a Payload global for the site header and footer?", "should_trigger": false},
+  {"query": "Design a Postgres schema for an online store with products and orders", "should_trigger": false},
+  {"query": "Create a Strapi content type for blog posts with a media field", "should_trigger": false},
+  {"query": "How do I query a Payload collection with where and sort from the Local API?", "should_trigger": false},
+  {"query": "Set up field-level access control for the salary field in Payload", "should_trigger": false},
+  {"query": "Create a Directus collection with a many-to-one relation through the API", "should_trigger": false}
+]

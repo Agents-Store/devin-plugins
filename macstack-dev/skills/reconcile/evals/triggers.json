@@ -1,0 +1,18 @@
+[
+  {"query": "Code and documents have drifted apart wholesale. Reconcile the whole macstack folder with the code: the code is master, so correct the documents.", "should_trigger": true},
+  {"query": "Everything has drifted, fix it: run the full sync of code and documents with the documents as the contract, so gaps become tasks", "should_trigger": true},
+  {"query": "Before the release review, make sure the contract holds: documents are master, code that disagrees becomes tasks, no document gets edited", "should_trigger": true},
+  {"query": "полная сверка: код ушёл вперёд, актуализировать документы по коду, ничего не пропуская", "should_trigger": true},
+  {"query": "Make the code match the documents. List every disagreement as a task, in dry-run mode first.", "should_trigger": true},
+  {"query": "Синхронизировать код и документы целиком: мастером берём код, клиентские документы исправить через гейт.", "should_trigger": true},
+  {"query": "Обнови документы, код ушёл вперёд: по всем документам, не только по сгенерированным.", "should_trigger": true},
+  {"query": "Run the whole sequence (conformance, code audit, spec sync, resolve, settle) with the documents as master and only for USER-CASES", "should_trigger": true},
+  {"query": "Does the code implement case C-04? Give me just the verdict.", "should_trigger": false},
+  {"query": "Update macstack.json to match the documents the client corrected", "should_trigger": false},
+  {"query": "Resolve the git merge conflicts between main and my feature branch", "should_trigger": false},
+  {"query": "Reconcile my bank statement with the ledger in Excel", "should_trigger": false},
+  {"query": "Find what the code contains that no document mentions", "should_trigger": false},
+  {"query": "Sync my local branch with upstream using rebase", "should_trigger": false},
+  {"query": "Add a task to the backlog for the invoice export", "should_trigger": false},
+  {"query": "Merge the client's new feedback into the documents", "should_trigger": false}
+]

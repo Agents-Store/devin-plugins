@@ -1,0 +1,17 @@
+[
+  {"query": "I want an outside AI agent to be able to message people in Teams through my bot. How do I expose the Teams bot as an MCP server with notify, ask and request_approval tools?", "should_trigger": true},
+  {"query": "How do I use tools from a remote MCP server inside my Teams agent? Do I connect once at startup and wrap each tool as a RunnableToolFunction?", "should_trigger": true},
+  {"query": "Two Teams bots need to hand a user over to each other. How does A2A work with @a2a-js/sdk, and which paths does it mount?", "should_trigger": true},
+  {"query": "The old MCP plugin packages of the Teams SDK are deprecated. What do I use instead?", "should_trigger": true},
+  {"query": "My wait_for_approval tool always returns pending. The card is sent, the user clicks, and nothing resolves", "should_trigger": true},
+  {"query": "Is the /mcp endpoint on my bot server protected by the Teams SDK automatically?", "should_trigger": true},
+  {"query": "Как сделать human-in-the-loop для агента: инструмент отправляет в Teams карточку согласования и ждёт нажатия кнопки?", "should_trigger": true},
+  {"query": "Как подключить MCP-сервер к боту Teams и почему инструмент вызывается дважды, если он есть и локально, и через MCP?", "should_trigger": true},
+  {"query": "Wire the openai package with runTools and streaming into a Teams bot", "should_trigger": false},
+  {"query": "Build an MCP server in Python with FastMCP that exposes a database query tool", "should_trigger": false},
+  {"query": "Configure MCP servers in the .mcp.json of a Claude Code project", "should_trigger": false},
+  {"query": "Send a proactive message to a Teams user by conversation id", "should_trigger": false},
+  {"query": "Set up Agent2Agent communication between two LangGraph agents", "should_trigger": false},
+  {"query": "Add JWT authentication middleware to an Express API", "should_trigger": false},
+  {"query": "Register the app and bot with teams app create", "should_trigger": false}
+]

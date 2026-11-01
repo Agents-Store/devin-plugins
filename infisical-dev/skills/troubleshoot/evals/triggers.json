@@ -1,0 +1,18 @@
+[
+  {"query": "infisical login on my headless Ubuntu server fails with \"failed to store credentials\", some keyring error. What do I do?", "should_trigger": true},
+  {"query": "infisical run injects nothing, no env vars show up in my app. I'm on a feature branch. What should I check?", "should_trigger": true},
+  {"query": "Getting \"project not found\" with a machine identity token in CI, but it works on my laptop. The pipeline has no .infisical.json.", "should_trigger": true},
+  {"query": "My CLI keeps hitting the default US cloud instead of our self-hosted instance, and sometimes says the domain differs from my login. Why?", "should_trigger": true},
+  {"query": "unknown flag --confidence on infisical scan and unknown command profile. What's wrong with my install?", "should_trigger": true},
+  {"query": "infisical run ничего не подставляет в окружение, а в таблице секретов всё есть. В чём может быть проблема?", "should_trigger": true},
+  {"query": "Токен machine identity перестал работать через час, в CI ошибка 403. Как диагностировать?", "should_trigger": true},
+  {"query": "Infisical CLI gives TLS certificate errors against our instance that uses an internal CA. How do I fix it?", "should_trigger": true},
+  {"query": "How do I set up Universal Auth in CI from scratch for a new pipeline?", "should_trigger": false},
+  {"query": "Debug ECONNREFUSED 127.0.0.1:5432 in my Node app", "should_trigger": false},
+  {"query": "Vault says permission denied when reading kv/data/app. How do I fix the policy?", "should_trigger": false},
+  {"query": "Show me how to export secrets to a dotenv file from the Infisical CLI", "should_trigger": false},
+  {"query": "My git pre-commit hook does not run after I installed husky", "should_trigger": false},
+  {"query": "Install the Infisical CLI on Windows", "should_trigger": false},
+  {"query": "Fix the Postgres error \"password authentication failed for user\" in my Docker setup", "should_trigger": false},
+  {"query": "My Kubernetes pod can't mount a secret and reports secret not found", "should_trigger": false}
+]

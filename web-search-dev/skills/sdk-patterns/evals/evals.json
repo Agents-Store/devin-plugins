@@ -3,9 +3,16 @@
   "evals": [
     {
       "id": 3,
-      "prompt": "I'm building a Next.js app and want to integrate Exa search and Jina reader into my TypeScript code. Show me how to install the SDKs and write the basic integration code.",
-      "expected_output": "Should provide npm install commands (exa-js), TypeScript code for Exa client initialization and search, and fetch-based patterns for Jina reader API. Should use process.env for API keys.",
-      "files": []
+      "prompt": "Use the sdk-patterns skill. In my Node app I want to pull the pricing plans from one URL as structured data with the Firecrawl SDK, and also let a research agent find the top vendors across several sites. Show the code.",
+      "expected_output": "Should install firecrawl, scrape with a json format (prompt and schema) and read doc.json, and use firecrawl.agent with maxCredits for the research",
+      "files": [],
+      "expectations": [
+        "The answer installs the Node SDK with npm install firecrawl",
+        "The answer calls scrape with a json format that holds a prompt and a schema",
+        "The answer reads the extracted data from the json property of the result",
+        "The answer uses the agent method for the research over several sites",
+        "The answer sets maxCredits on the agent call"
+      ]
     }
   ]
 }

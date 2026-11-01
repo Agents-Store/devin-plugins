@@ -1,0 +1,18 @@
+[
+  {"query": "I have /srv/projects full of Docker compose projects. Scan every container's mounts and databases and tell me exactly what I need to back up", "should_trigger": true},
+  {"query": "What should I be backing up on this server? Find all Docker volumes, bind mounts and database containers and build a concrete backup plan", "should_trigger": true},
+  {"query": "Discover which of my compose projects use named volumes versus bind mounts, and flag the ones that hold database data needing dumps rather than file copies", "should_trigger": true},
+  {"query": "Inspect my running containers and list the paths and databases to include in restic, plus the ones that are safe to exclude", "should_trigger": true},
+  {"query": "Figure out the backup sources for a server with Postgres, MySQL and a few apps with uploads directories", "should_trigger": true},
+  {"query": "Просканируй мои Docker-проекты и составь список томов, баз данных и путей, которые нужно бэкапить", "should_trigger": true},
+  {"query": "Что нужно сохранять на этом сервере? Найди все volume'ы и контейнеры с базами и составь план бэкапа", "should_trigger": true},
+  {"query": "Look at the projects folder I give you and map every service's data to a backup method: dump, file copy or skip", "should_trigger": true},
+  {"query": "Write the restic backup script with the paths I already know", "should_trigger": false},
+  {"query": "Install restic on Ubuntu 24.04 arm64", "should_trigger": false},
+  {"query": "List all running Docker containers and their resource usage", "should_trigger": false},
+  {"query": "How do I prune unused Docker images and volumes to free up disk space?", "should_trigger": false},
+  {"query": "Back up a single MySQL database with mysqldump to S3", "should_trigger": false},
+  {"query": "Check how much disk space each directory takes with du", "should_trigger": false},
+  {"query": "Restore a deleted Docker volume from a restic snapshot", "should_trigger": false},
+  {"query": "Choose a backup tool: restic, borg or duplicati", "should_trigger": false}
+]

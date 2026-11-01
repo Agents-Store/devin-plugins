@@ -1,0 +1,18 @@
+[
+  {"query": "How do I set up hreflang for English, German and Ukrainian in the Next.js App Router, and what mistakes make Google ignore it?", "should_trigger": true},
+  {"query": "Add the security headers from the technical SEO checklist and the permanent redirects and rewrites to my next.config.ts, and say how they differ for crawlers", "should_trigger": true},
+  {"query": "Set up permanent 301 redirects for moved pages in Next.js (next.config.js and middleware) without creating redirect chains", "should_trigger": true},
+  {"query": "Add pagination handling and URL-structure rules for filtered category pages in my Next.js app, with the indexability checklist and canonical rules", "should_trigger": true},
+  {"query": "Check crawlability and indexability issues of a Next.js site: JavaScript rendering, soft 404s, trailing slashes, mobile-first indexing", "should_trigger": true},
+  {"query": "Как настроить hreflang и canonical для сайта на нескольких языках в Next.js?", "should_trigger": true},
+  {"query": "Как сделать 301-редиректы в Next.js и избежать цепочек редиректов? И что с noindex для страниц фильтров?", "should_trigger": true},
+  {"query": "Choose between subdirectories and subdomains for my multi-language Next.js site and set up hreflang with the Metadata API alternates, including x-default", "should_trigger": true},
+  {"query": "Write alt text and headings for my product page", "should_trigger": false},
+  {"query": "Generate robots.ts and sitemap.ts", "should_trigger": false},
+  {"query": "My LCP is bad - how do I fix it?", "should_trigger": false},
+  {"query": "How do I configure nginx redirects from http to https?", "should_trigger": false},
+  {"query": "Set up Cloudflare page rules for redirecting old URLs", "should_trigger": false},
+  {"query": "Next.js middleware to protect routes with authentication", "should_trigger": false},
+  {"query": "Add Article JSON-LD to blog posts", "should_trigger": false},
+  {"query": "Why is my page not indexed in Google?", "should_trigger": false}
+]

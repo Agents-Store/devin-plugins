@@ -1,0 +1,18 @@
+[
+  {"query": "Make test cases from the acceptance bullets in USER-CASES.md, the triggers in AUTOMATION.md and the forbidden items of each screen in UX-UI.md. Tag each one auto or manual.", "should_trigger": true},
+  {"query": "составить тест-кейсы по пользовательским кейсам: как это проверять?", "should_trigger": true},
+  {"query": "What do we test for C-04? Generate the acceptance checklist with one test per claim.", "should_trigger": true},
+  {"query": "The user cases moved to a new version. Update TEST-CASES.md incrementally without destroying the manual notes.", "should_trigger": true},
+  {"query": "Generate a QA plan from the client documents: each test needs an id like C-06.T3, a title and a verification mode.", "should_trigger": true},
+  {"query": "Составь тест-кейсы из acceptance-пунктов USER-CASES.md, триггеров AUTOMATION.md и запретов в UX-UI.md.", "should_trigger": true},
+  {"query": "Обнови тест-кейсы под новую версию кейсов, не затирая то, что я уже дописал вручную.", "should_trigger": true},
+  {"query": "How do we verify each acceptance bullet? Write the scenarios to check the whole thing as an acceptance checklist.", "should_trigger": true},
+  {"query": "Write Jest unit tests for this function", "should_trigger": false},
+  {"query": "Run the test suite and show me the failures", "should_trigger": false},
+  {"query": "Audit whether the code satisfies the cases and give a verdict for each", "should_trigger": false},
+  {"query": "Create a QA test plan for our mobile app release in a spreadsheet", "should_trigger": false},
+  {"query": "Derive Gherkin scenarios from the user story: as a user I want to reset my password", "should_trigger": false},
+  {"query": "Write Playwright end-to-end tests for the login page", "should_trigger": false},
+  {"query": "Merge the client's changes to the acceptance bullets into the documents", "should_trigger": false},
+  {"query": "Add a task for writing tests to the backlog", "should_trigger": false}
+]

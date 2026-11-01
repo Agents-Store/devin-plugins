@@ -1,0 +1,18 @@
+[
+  {"query": "Add a task to the backlog: verify email before first login. Put it under milestone M2 with a definition of done.", "should_trigger": true},
+  {"query": "что осталось сделать по проекту? какая веха дальше?", "should_trigger": true},
+  {"query": "Sync TASKS.md with our Plane tracker, reconciling both directions without pushing blindly", "should_trigger": true},
+  {"query": "Which user cases have no plan? Turn the requirements into tasks, but skip anything that waits on an open client question.", "should_trigger": true},
+  {"query": "What should I work on next? List the todo tasks with no live blocked_by, ordered by milestone.", "should_trigger": true},
+  {"query": "завести задачу: проверка email перед первым входом, веха M2", "should_trigger": true},
+  {"query": "синхронизировать задачи с трекером и отметить задачу M3-T4 выполненной", "should_trigger": true},
+  {"query": "Mark M5-T1 as blocked on M5-T0 and show me the done_when status of milestone M5", "should_trigger": true},
+  {"query": "Create a Jira ticket for a bug in checkout", "should_trigger": false},
+  {"query": "Write a project plan with a Gantt chart for a website redesign", "should_trigger": false},
+  {"query": "Log what shipped this week into the ledger", "should_trigger": false},
+  {"query": "Sync macstack.json with the client documents", "should_trigger": false},
+  {"query": "Make a todo list app in React", "should_trigger": false},
+  {"query": "Prioritize my product backlog using RICE scoring", "should_trigger": false},
+  {"query": "Process the client's new email with edits to the user cases", "should_trigger": false},
+  {"query": "Generate test cases from the acceptance bullets", "should_trigger": false}
+]

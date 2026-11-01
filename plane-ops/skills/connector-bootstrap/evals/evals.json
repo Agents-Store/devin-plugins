@@ -3,110 +3,116 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Create a new sprint for my Plane project. The Plane tools are not visible in my tool list yet.",
+      "prompt": "Use the connector-bootstrap skill. Create a new sprint for my Plane project. The Plane tools are not visible in my tool list yet. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Agent probes ToolSearch with multiple queries (plane, workitem cycle module, then legacy names) and discovers deferred Plane tools - resource tools such as cycle with an action parameter, or legacy create_cycle - before asking for more info or refusing.",
       "files": [],
       "expectations": [
-        "Calls ToolSearch with at least 4 distinct queries before claiming tools are missing",
-        "Probes for the resource tools of Plane MCP 0.3+ (queries such as 'plane' and 'workitem cycle module') before or alongside the legacy per-operation names",
-        "Uses the select: form once a server segment is known (e.g., mcp__<server>__cycle) or for a legacy name",
-        "Does not assume a specific MCP prefix like mcp__<provider>__plane-i-",
-        "Matches tools by resource name (resource surface) or action suffix (legacy surface), not by prefix"
+        "The answer calls ToolSearch(query=\"plane\") first",
+        "The answer calls ToolSearch(query=\"workitem cycle module\")",
+        "The answer loads the schema with the select: form, for example ToolSearch(query=\"select:mcp__<server>__cycle\")",
+        "The answer writes the tool name with a placeholder server segment, mcp__<server>__cycle, and does not hardcode a prefix",
+        "The answer probes a per-operation name such as ToolSearch(query=\"list_projects create_work_item\")",
+        "The answer creates the sprint with cycle(action=create, project_id=...)"
       ]
     },
     {
       "id": 2,
-      "prompt": "I have two Plane workspaces connected: one self-hosted and one cloud. Show me the backlog.",
+      "prompt": "Use the connector-bootstrap skill. I have two Plane workspaces connected: one self-hosted and one cloud. Show me the backlog. Describe how you find the tools, what you notice about having two connections, and what you do before touching either instance. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Agent detects multiple Plane instances from ToolSearch results and asks which one to use before listing anything.",
       "files": [],
       "expectations": [
-        "Probes ToolSearch and finds workitem or cycle resource tool(s), or list_work_items on a legacy connector",
-        "Detects multiple tools with the same resource or action name but different server segments",
-        "Asks the user which instance to operate on instead of guessing",
-        "Remembers the choice for subsequent calls in the session"
+        "The answer says to probe ToolSearch and finds workitem or cycle resource tool(s), or list_work_items on a legacy connector",
+        "The answer detects multiple tools with the same resource or action name but different server segments",
+        "The answer asks the user which instance to operate on instead of guessing",
+        "The answer says to remember the choice for subsequent calls in the session"
       ]
     },
     {
       "id": 3,
-      "prompt": "I don't have Plane set up. Tell me I don't have Plane tools.",
+      "prompt": "Use the connector-bootstrap skill. I don't have Plane set up. Tell me I don't have Plane tools. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Agent probes ToolSearch at least 4 times across relevant domains before concluding Plane is not connected, and reports which probes were run.",
       "files": [],
       "expectations": [
-        "Runs at least 4 distinct ToolSearch queries before refusing",
-        "Reports the exact probes that were run in the refusal message",
-        "Suggests how to connect Plane (MCP, connector, or cowork mode)",
-        "Does not silently refuse without probing"
+        "The answer says to run at least 4 distinct ToolSearch queries before refusing",
+        "The answer lists the exact probes it ran (or would run) in the refusal message",
+        "The answer suggests how to connect Plane (MCP, connector, or cowork mode)",
+        "The answer does not silently refuse without probing"
       ]
     },
     {
       "id": 4,
-      "prompt": "Create a ticket for the login bug — users on Safari 17 get a 500 on submit.",
-      "expected_output": "Even though the user did not say 'Plane', the agent recognizes 'ticket' as a work-management trigger and bootstraps the connector before assuming tools are missing.",
+      "prompt": "Use the connector-bootstrap skill. We run Plane on our own server and want Claude Code to work with it from a CI job, with nobody there to log in through a browser. Plane tools are not connected yet. How do I connect it? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "expected_output": "Self-hosted headless setup: stdio server with the three environment variables, a connection name containing plane, and the limits of the hosted server.",
       "files": [],
       "expectations": [
-        "Recognizes 'ticket' as a work-management trigger",
-        "Consults connector-bootstrap and probes ToolSearch for the workitem resource tool (and, as fallback, create_work_item)",
-        "Does not refuse on the basis that the user didn't mention Plane explicitly",
-        "Proceeds to create the work item once tools are resolved, using workitem(action=create) on the resource surface"
+        "The answer connects the self-hosted instance with uvx plane-mcp-server stdio",
+        "The answer sets PLANE_BASE_URL to the self-hosted URL",
+        "The answer sets PLANE_API_KEY and PLANE_WORKSPACE_SLUG",
+        "The answer says the hosted server at mcp.plane.so cannot reach a private self-hosted instance",
+        "The answer says to name the connection with plane in its name, because the safety hook only watches servers whose name contains plane",
+        "The answer does not use the deprecated SSE endpoint or the npm package @makeplane/plane-mcp-server"
       ]
     },
     {
       "id": 5,
-      "prompt": "What's the weather in Berlin tomorrow?",
+      "prompt": "Use the connector-bootstrap skill. What's the weather in Berlin tomorrow? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Agent does NOT trigger connector-bootstrap — this is unrelated to work management.",
       "files": [],
       "expectations": [
-        "Does not invoke ToolSearch with Plane-related queries",
-        "Does not load the connector-bootstrap skill content",
-        "Answers the weather question normally or explains it lacks weather data"
+        "The answer does not invoke ToolSearch with Plane-related queries",
+        "The answer does not load the connector-bootstrap skill content",
+        "The answer answers the weather question normally or explains it lacks weather data"
       ]
     },
     {
       "id": 6,
-      "prompt": "Show me the sprints of project TaskFlow. My Plane MCP server is version 0.3.3 - the tool list only shows workitem, cycle, module, page, project and similar tools with an action parameter.",
-      "expected_output": "Agent recognizes the resource surface, does NOT report Plane as not connected because create_cycle / list_cycles are missing, and calls cycle(action=list, project_id=...) after resolving the project.",
+      "prompt": "Use the connector-bootstrap skill. Plane MCP 0.3.3 is connected. My call workitem(action=retrieve, project_id=<id>, work_item_id=<id>) was rejected as invalid. Fix the call. Afterwards I want PROJ-9 deleted: tell me what happens when you call delete and what you do if I decline the dialog. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "expected_output": "Corrected call with workitem_id, the declared-parameters rule, and the delete behavior of the safety hook.",
       "files": [],
       "expectations": [
-        "Recognizes a tool named cycle with an action enum as the resource surface of Plane MCP 0.3+",
-        "Does not conclude that Plane is not connected because legacy names like list_cycles or create_cycle are absent",
-        "Calls cycle(action=list, project_id=...) directly, because the skills and commands are written in resource form and need no translation on this surface",
-        "Resolves the project via project(action=list) (paginated: follows next_cursor if needed) before calling cycle"
+        "The answer says the id of a work item is workitem_id, not work_item_id",
+        "The answer says the parameters are validated against the declared set of the action, so an extra or misspelled parameter is an error",
+        "The answer says to re-read the tool description of the action before retrying instead of guessing",
+        "The answer says a delete action shows the Claude Code permission dialog because of the plugin's PreToolUse hook",
+        "The answer names the work item in its message before calling delete",
+        "The answer does not retry a delete that the user declined"
       ]
     },
     {
       "id": 7,
-      "prompt": "Create an epic 'Checkout redesign' in project TaskFlow and attach it to the initiative 'Q4 Growth'.",
+      "prompt": "Use the connector-bootstrap skill. Create an epic 'Checkout redesign' in project TaskFlow and attach it to the initiative 'Q4 Growth'. Say which tool names you look for and give the full call sequence with parameters. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Agent knows that no epic tools exist: resolves the Epic work item type, creates a workitem with that type_id, then attaches it with initiative(action=manage_workitems, add_ids=[...]).",
       "files": [],
       "expectations": [
-        "Does not search for or call create_epic / add_epic_to_initiative",
-        "Calls workitem_type(action=resolve, name='Epic') to get the type_id",
-        "Creates the epic with workitem(action=create, type_id=...)",
-        "Attaches it with initiative(action=manage_workitems, add_ids=[<epic work item id>])"
+        "The answer does not search for or call create_epic / add_epic_to_initiative",
+        "The answer says to call workitem_type(action=resolve, name='Epic') to get the type_id",
+        "The answer says to create the epic with workitem(action=create, type_id=...)",
+        "The answer says to attach it with initiative(action=manage_workitems, add_ids=[<epic work item id>])"
       ]
     },
     {
       "id": 8,
-      "prompt": "Add PROJ-148 and PROJ-150 to the Sprint 15 cycle of TaskFlow. This Plane connector is an old one: ToolSearch only shows list_cycles, create_cycle, list_work_items, add_work_items_to_cycle and similar per-operation tools; there is no workitem or cycle tool.",
+      "prompt": "Use the connector-bootstrap skill. Add PROJ-148 and PROJ-150 to the Sprint 15 cycle of TaskFlow. This Plane connector is an old one: ToolSearch only shows list_cycles, create_cycle, list_work_items, add_work_items_to_cycle and similar per-operation tools; there is no workitem or cycle tool. Show each call with its parameters, how you resolve the two identifiers, and what you tell me about this connector. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Agent recognizes the per-operation surface, uses the fallback table to translate cycle(action=manage_workitems, add_ids=[...]) into the connector's add_work_items_to_cycle with issue_ids, and checks the schema for parameter names first.",
       "expectations": [
-        "Recognizes that no tool named workitem or cycle exists and that this is the per-operation fallback surface, not 'Plane not connected'",
-        "Translates cycle(action=manage_workitems, add_ids=[...]) into add_work_items_to_cycle (or manage_cycle_work_items on an official pre-0.3.0 server) using the fallback table",
-        "Passes the work item ids as issue_ids (plural array) after inspecting the tool schema, and uses work_item_id style names where the schema does",
-        "Resolves PROJ-148 and PROJ-150 with retrieve_work_item_by_identifier using the split project_identifier and integer issue_identifier",
-        "Tells the user that upgrading the server to Plane MCP 0.3.0 or later is the better fix, and that pql, count and release tools are unavailable on this connector"
+        "The answer says this is the per-operation fallback surface and not that Plane is not connected",
+        "The answer translates cycle(action=manage_workitems, add_ids=[...]) into add_work_items_to_cycle",
+        "The answer passes the work item ids as issue_ids",
+        "The answer resolves PROJ-148 with retrieve_work_item_by_identifier, project_identifier=\"PROJ\" and the integer issue_identifier=148",
+        "The answer recommends upgrading the server to Plane MCP 0.3.0 or later",
+        "The answer says that pql and count are unavailable on this connector"
       ],
       "files": []
     },
     {
       "id": 9,
-      "prompt": "Which work items are overdue and still open across all our Plane projects? We run Plane MCP 0.3.3.",
+      "prompt": "Use the connector-bootstrap skill. Which work items are overdue and still open across all our Plane projects? We run Plane MCP 0.3.3. Show the exact call including its filter, how you find the tool, and how you handle a long result. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Agent finds the resource surface and uses a server-side PQL filter on workitem list without a project_id, instead of looping over projects and filtering client-side.",
       "expectations": [
-        "Probes ToolSearch (plane, workitem cycle module) and finds the workitem tool",
-        "Calls workitem(action=list, pql='isOverdue()') or equivalent without project_id to search the whole workspace",
-        "Consults get_pql_reference for syntax beyond the documented examples and stays within 5 conditions",
-        "Follows next_cursor if the result is paginated"
+        "The answer says to probe ToolSearch (plane, workitem cycle module) and finds the workitem tool",
+        "The answer says to call workitem(action=list, pql='isOverdue()') or equivalent without project_id to search the whole workspace",
+        "The answer says to consult get_pql_reference for syntax beyond the documented examples and stays within 5 conditions",
+        "The answer says to follow next_cursor if the result is paginated"
       ],
       "files": []
     }

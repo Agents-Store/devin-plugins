@@ -1,0 +1,17 @@
+[
+  {"query": "Script the Teams Developer CLI in CI: log in non-interactively, create the app and print the app id as JSON so I can pipe it to jq", "should_trigger": true},
+  {"query": "How do I change the messaging endpoint of my Teams bot after my tunnel restarts, from a package.json script?", "should_trigger": true},
+  {"query": "Edit the manifest of a Teams app with the CLI: add a validDomains entry without downloading the file", "should_trigger": true},
+  {"query": "teams app update changes the wrong app. I passed the bot's client id. Which id does it need?", "should_trigger": true},
+  {"query": "What is the command to create an Azure-hosted bot instead of a Teams-managed one, and which flag makes the secret optional?", "should_trigger": true},
+  {"query": "teams: command not found after npm install -g @microsoft/teams.cli. What is wrong?", "should_trigger": true},
+  {"query": "Как из скрипта получить список приложений Teams в JSON и отключить интерактивные вопросы CLI?", "should_trigger": true},
+  {"query": "Какие команды teams нужны, чтобы добавить RSC-разрешение в манифест приложения без ручного редактирования файла?", "should_trigger": true},
+  {"query": "Test the bot locally with the Agents Playground", "should_trigger": false},
+  {"query": "Deploy my Teams bot to production and set the environment variables", "should_trigger": false},
+  {"query": "Install the Azure CLI and create a resource group", "should_trigger": false},
+  {"query": "Use the GitHub CLI to create a release from a script with JSON output", "should_trigger": false},
+  {"query": "Why does the Teams manifest fail validation on upload with an invalid validDomains?", "should_trigger": false},
+  {"query": "Scaffold a new Teams Toolkit project in VS Code with the Teams Toolkit extension", "should_trigger": false},
+  {"query": "Write an npm script that builds with tsup and starts with node", "should_trigger": false}
+]

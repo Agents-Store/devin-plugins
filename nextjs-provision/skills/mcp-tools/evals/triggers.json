@@ -1,0 +1,18 @@
+[
+  {"query": "Set up the official shadcn MCP server for Claude Code in this project so the agent can search and install components", "should_trigger": true},
+  {"query": "Which seven tools does the official shadcn MCP server expose, and how do I address an item in view_items_in_registries - what is the @registry/item format?", "should_trigger": true},
+  {"query": "run shadcn mcp init for VS Code and Codex - which files does it write?", "should_trigger": true},
+  {"query": "What tools does the shadcn MCP server expose and in which order should the agent call them to add a component?", "should_trigger": true},
+  {"query": "Подключи shadcn MCP к Claude Code и покажи, как с его помощью искать и ставить компоненты", "should_trigger": true},
+  {"query": "How do I generate the MCP config for Cursor, VS Code, Codex and opencode from the shadcn CLI with one command each? I think it is `mcp init --client`.", "should_trigger": true},
+  {"query": "Is the community shadcn-ui-mcp-server (Jpisnice) still the right choice, or should I use the official one?", "should_trigger": true},
+  {"query": "Раньше я использовал shadcn-ui-mcp-server (Jpisnice). Что с ним сейчас и как перейти на официальный MCP shadcn, который запускается через npx shadcn@latest mcp?", "should_trigger": true},
+  {"query": "Search the community registries for a calendar component with the shadcn CLI, no MCP involved", "should_trigger": false},
+  {"query": "Install the shadcn button component with the CLI", "should_trigger": false},
+  {"query": "Set up the Playwright MCP server for Claude Code", "should_trigger": false},
+  {"query": "Set up the Figma MCP server so Claude can read my design file", "should_trigger": false},
+  {"query": "Set up the context7 MCP server to pull library docs into my agent", "should_trigger": false},
+  {"query": "Build an MCP server in TypeScript that exposes my component library", "should_trigger": false},
+  {"query": "Configure the GitHub MCP server in Cursor with a personal access token", "should_trigger": false},
+  {"query": "Set up ESLint flat config and Prettier for my Next.js project", "should_trigger": false}
+]

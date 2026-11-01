@@ -20,11 +20,13 @@ Before doing ANY work, ask the user:
 - If user chooses inline → proceed with the methodology below.
 - If user doesn't respond clearly → default to agent.
 
+If the project has no source code at all, say so in the same message: do not promise a diagram of nothing.
+
 ---
 
 **CRITICAL RULES:**
 - **ALL diagrams MUST be native mxGraph XML saved as `.drawio` files.** Never generate Mermaid (`.mmd`), PlantUML, or text-based diagrams — this is a hard requirement, not a preference.
-- If drawio-mcp is unavailable, report the error. Do NOT fall back to any other format.
+- If drawio-mcp is unavailable, report the error. Do NOT fall back to any other format: no Mermaid, no PlantUML and no ASCII or text sketch either.
 
 Generate all diagrams as native mxGraph XML. Save as `.drawio` files and render via drawio-mcp `create_diagram` tool.
 
@@ -115,4 +117,5 @@ Apply consistent colors across all diagrams:
 - **drawio-mcp unavailable** → inform the user, suggest retry. Do NOT fall back to Mermaid.
 - **File path doesn't exist** → ask the user to verify the path
 - **Too many entities (>15 nodes)** → split into multiple diagrams, explain the split
+- **No source code in the target (empty project)** → tell the user there is nothing to diagram yet. Do NOT create an empty or placeholder diagram; ask for a source directory or a short description of the system
 - **ORM not detected** → ask the user to specify the ORM type or point to model files

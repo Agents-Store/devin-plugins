@@ -1,0 +1,18 @@
+[
+  {"query": "Harden my Next.js 16 app for production: security headers, a nonce-based Content Security Policy and a production security checklist", "should_trigger": true},
+  {"query": "How do I make sure server secrets never leak to the client in Next.js - NEXT_PUBLIC_ rules, the server-only package and environment poisoning?", "should_trigger": true},
+  {"query": "Implement CSRF protection and input validation in my Next.js Server Actions that change account settings", "should_trigger": true},
+  {"query": "We run Next.js 16.3.5 in production. Which 16.3.x security fixes are we missing, and what else should I narrow in next.config.ts, such as images.remotePatterns?", "should_trigger": true},
+  {"query": "Как защитить приложение Next.js от XSS и настроить Content Security Policy? Покажи заголовки в next.config", "should_trigger": true},
+  {"query": "Do I have to add the CSP nonce to every script myself in Next.js 16 when I generate it in proxy.ts? Which scripts get the nonce automatically, including loading and template files, and where is it still manual?", "should_trigger": true},
+  {"query": "Как в Next.js 16 настроить Content-Security-Policy с nonce через proxy.ts, какие заголовки безопасности добавить в next.config и что проверить в чек-листе перед продакшеном?", "should_trigger": true},
+  {"query": "Which of my Next.js 16 mutations need a manual Origin-versus-host CSRF check, and which already get built-in protection: Server Actions or state-changing Route Handlers?", "should_trigger": true},
+  {"query": "Add login with sessions and role-based access control to my Next.js app", "should_trigger": false},
+  {"query": "Review my Python Flask app for SQL injection and insecure cookie settings", "should_trigger": false},
+  {"query": "Configure WAF rules in Cloudflare to block bots and SQL injection attempts", "should_trigger": false},
+  {"query": "Set up TLS certificates with Let's Encrypt and automatic renewal on nginx", "should_trigger": false},
+  {"query": "Run a penetration test checklist for a React Native mobile app", "should_trigger": false},
+  {"query": "Write a Content-Security-Policy for a static WordPress site using a plugin", "should_trigger": false},
+  {"query": "Handle Stripe webhook signature verification in a Next.js route handler", "should_trigger": false},
+  {"query": "Scan my Node.js dependencies for known vulnerabilities in CI with npm audit and Snyk", "should_trigger": false}
+]

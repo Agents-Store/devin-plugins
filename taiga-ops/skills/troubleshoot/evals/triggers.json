@@ -1,0 +1,17 @@
+[
+  {"query": "My PATCH to a Taiga user story returns 400 and says something about version. I only sent the new subject", "should_trigger": true},
+  {"query": "Taiga says Archived element when I try to edit a story. What does that mean and what should I do?", "should_trigger": true},
+  {"query": "GET /userstories/by_ref?ref=42 returns 404 although I can see #42 in the Taiga UI", "should_trigger": true},
+  {"query": "My Taiga issue list shows only 30 rows but the project has hundreds. Is it pagination?", "should_trigger": true},
+  {"query": "Creating an issue in Taiga rejects the status id I used. I copied it from another project", "should_trigger": true},
+  {"query": "Tags I send to Taiga do not apply when I pass them as plain strings", "should_trigger": true},
+  {"query": "Taiga пишет 403 Forbidden при удалении комментария, хотя я вошёл под своим пользователем. Что проверить?", "should_trigger": true},
+  {"query": "Логин в Taiga через /api/v1/auth возвращает ошибку, хотя пароль верный. В чём дело?", "should_trigger": true},
+  {"query": "Debug why my Django view returns 403 CSRF verification failed", "should_trigger": false},
+  {"query": "Move a Taiga story to In Progress", "should_trigger": false},
+  {"query": "How do I log in to Taiga and keep the token for the whole session?", "should_trigger": false},
+  {"query": "Show me a worked example of bug triage in Taiga", "should_trigger": false},
+  {"query": "The GitHub API returns 403 rate limit exceeded. How do I handle it?", "should_trigger": false},
+  {"query": "My Jira JQL search returns no results for assignee = currentUser()", "should_trigger": false},
+  {"query": "Why does my curl command fail with SSL certificate problem unable to get local issuer certificate?", "should_trigger": false}
+]

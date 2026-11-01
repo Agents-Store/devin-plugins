@@ -1,0 +1,18 @@
+[
+  {"query": "Show me example SendPulse MCP tool call patterns for the main operations: discover bots, send a chatbot campaign and launch an email campaign", "should_trigger": true},
+  {"query": "Give me a multi-channel marketing workflow example in SendPulse - chatbot message, email campaign and CRM deal for one lead", "should_trigger": true},
+  {"query": "I need a reference implementation of a SendPulse subscriber lifecycle: add to addressbook, update variables, unsubscribe and re-subscribe", "should_trigger": true},
+  {"query": "Quick reference patterns for SendPulse: what are the channel suffixes and the conventions for tool calls?", "should_trigger": true},
+  {"query": "Show me a scenario where a student enrolls in a SendPulse course, gets a chatbot message and a CRM contact is created", "should_trigger": true},
+  {"query": "Покажи примеры вызовов инструментов SendPulse MCP: рассылка чат-бота, email-кампания и сделка в CRM", "should_trigger": true},
+  {"query": "Нужен готовый сценарий маркетинга в SendPulse по нескольким каналам, чтобы адаптировать под мои данные", "should_trigger": true},
+  {"query": "Give me worked examples of using the SendPulse MCP tools end to end for transactional email and CRM contact to deal", "should_trigger": true},
+  {"query": "Create a deal in a SendPulse CRM pipeline", "should_trigger": false},
+  {"query": "Check my SendPulse account balance", "should_trigger": false},
+  {"query": "Show me an end-to-end example of a Mailchimp automation", "should_trigger": false},
+  {"query": "Give me a worked example of a Zapier workflow that syncs HubSpot with Slack", "should_trigger": false},
+  {"query": "Example MCP server in TypeScript with one tool", "should_trigger": false},
+  {"query": "Write a marketing plan for a new online course", "should_trigger": false},
+  {"query": "Show an n8n workflow example that sends email through SMTP", "should_trigger": false},
+  {"query": "List the bounces for transactional emails", "should_trigger": false}
+]

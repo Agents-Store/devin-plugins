@@ -1,0 +1,18 @@
+[
+  {"query": "The client corrected the roles in AUTOMATION.md. Update macstack.json to match: roles, task gates and trigger schedules.", "should_trigger": true},
+  {"query": "The spec and the documents disagree. Reconcile macstack.json against the client documents (dry run first) and against the code.", "should_trigger": true},
+  {"query": "lint reports rule 12.22 and the spec is stale after someone edited UX-UI.md. sync the spec.", "should_trigger": true},
+  {"query": "update macstack.json after the code changed: a new software service in compose, a new entity and a new interface path", "should_trigger": true},
+  {"query": "someone changed a screen's path in UX-UI.md. Propagate it to interfaces[] in macstack.json without creating anything new.", "should_trigger": true},
+  {"query": "клиент поправил роли в документах, синхронизируй macstack.json с AUTOMATION.md и UX-UI.md", "should_trigger": true},
+  {"query": "Клиент поменял в AUTOMATION.md расписание триггера «еженедельный дайджест» и путь экрана «Заказы» в UX-UI.md, и macstack.json теперь отстаёт. Покажи расхождения между спекой и документами сухим прогоном и примени только безопасные правки, ничего нового не создавая.", "should_trigger": true},
+  {"query": "The client changed the cron schedule of the weekly digest trigger and renamed the role Manager to Team lead in AUTOMATION.md. Show me as a dry run which parts of macstack.json (triggers, roles, process tasks) now disagree, then apply only what is safe to write.", "should_trigger": true},
+  {"query": "Sync my fork with the upstream repository", "should_trigger": false},
+  {"query": "Reconcile the whole macstack folder with the code, declaring the code as master", "should_trigger": false},
+  {"query": "Find what is in the code that the documents do not mention", "should_trigger": false},
+  {"query": "Synchronize two folders over ssh with rsync", "should_trigger": false},
+  {"query": "Create a macstack.json from scratch for my project", "should_trigger": false},
+  {"query": "Merge new client material into the macstack folder", "should_trigger": false},
+  {"query": "Update openapi.yaml after I changed my API routes", "should_trigger": false},
+  {"query": "Validate the spec and the folder and tell me where the project stands", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "We turned on cacheComponents in next.config.ts and now `export const revalidate = 60` in app/api/stats/route.ts breaks the build. How do I cache that GET Route Handler now, and when is it prerendered at build time?", "should_trigger": true},
+  {"query": "Implement Server-Sent Events in a Next.js route handler that streams build progress to the browser", "should_trigger": true},
+  {"query": "Are GET Route Handlers cached by default in Next.js 16? My app/api/rates/route.ts keeps returning the same data after deploys and I can't tell whether Next.js or our CDN is caching it.", "should_trigger": true},
+  {"query": "Как в Next.js сделать версионирование API (/api/v1, /api/v2) с Route Handlers и общим кодом валидации?", "should_trigger": true},
+  {"query": "В Next.js 16 с включённым cacheComponents мой GET в app/api/catalog/route.ts должен отдавать закэшированный список на час. Как это оформить, если export const revalidate больше не работает?", "should_trigger": true},
+  {"query": "I put 'use cache' at the top of the GET function body in app/api/products/route.ts and the build rejects it. Where does the directive go for a cached Route Handler, and how do I set cacheLife('hours')?", "should_trigger": true},
+  {"query": "Нужен SSE-эндпоинт в Route Handler Next.js для прогресса сборки отчёта: какие заголовки поставить, чтобы прокси не буферизовал поток, и как остановить его, когда клиент закрыл вкладку?", "should_trigger": true},
+  {"query": "Write the Zod schema and Server Action for a signup form with useActionState and field errors", "should_trigger": false},
+  {"query": "Add authentication to my Next.js app with Auth.js and protect the dashboard routes", "should_trigger": false},
+  {"query": "Design a REST API in Express with versioning, pagination and OpenAPI docs", "should_trigger": false},
+  {"query": "Write a NestJS controller with DTO validation using class-validator and a global exception filter", "should_trigger": false},
+  {"query": "Explain how fetch caching and revalidateTag work for a Server Component that loads products", "should_trigger": false},
+  {"query": "Set up CSP headers and CSRF protection for my Next.js production deploy", "should_trigger": false},
+  {"query": "Set up a GraphQL API with Apollo Server and subscriptions in a standalone Node.js service that the Next.js frontend calls", "should_trigger": false},
+  {"query": "Write a FastAPI endpoint that streams a response with Server-Sent Events", "should_trigger": false}
+]

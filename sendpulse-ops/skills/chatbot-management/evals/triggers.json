@@ -1,0 +1,18 @@
+[
+  {"query": "List all my SendPulse chatbots with their channels and show statistics for the Telegram bot for the last 30 days", "should_trigger": true},
+  {"query": "Send a SendPulse chatbot campaign about our autumn sale to all subscribers of the Instagram bot", "should_trigger": true},
+  {"query": "Run an automation flow in SendPulse for a specific contact and show me which flows exist in the bot", "should_trigger": true},
+  {"query": "Which tags and dialogs does my SendPulse WhatsApp bot have? List open dialogs", "should_trigger": true},
+  {"query": "Check my SendPulse chatbot plan and how many subscribers each bot has", "should_trigger": true},
+  {"query": "Покажи все мои чат-боты в SendPulse и статистику по Telegram-боту за месяц", "should_trigger": true},
+  {"query": "Запусти в SendPulse рассылку чат-бота по всем подписчикам Viber-бота и проверь, какие потоки автоматизации есть", "should_trigger": true},
+  {"query": "Discover my SendPulse bot environment and then send a multi-channel campaign to the bots of Telegram and Viber", "should_trigger": true},
+  {"query": "Find a specific SendPulse chatbot contact by email and set a variable on it", "should_trigger": false},
+  {"query": "Create an email campaign in SendPulse for the newsletter list", "should_trigger": false},
+  {"query": "Build a Telegram bot with grammY that handles /start", "should_trigger": false},
+  {"query": "Design a Dialogflow chatbot flow for customer support", "should_trigger": false},
+  {"query": "Create a CRM pipeline with stages in SendPulse", "should_trigger": false},
+  {"query": "Connect ManyChat to a Google Sheet", "should_trigger": false},
+  {"query": "How do I add a chatbot widget to my website?", "should_trigger": false},
+  {"query": "List the students of a SendPulse course", "should_trigger": false}
+]

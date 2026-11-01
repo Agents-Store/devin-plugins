@@ -1,0 +1,17 @@
+[
+  {"query": "I need a modal in Teams that opens when the user clicks a button on a card and collects a few fields. How do I wire OpenDialogData and the handlers?", "should_trigger": true},
+  {"query": "My dialog never opens. I put OpenDialogData on an Action.Execute button", "should_trigger": true},
+  {"query": "How do I close a Teams dialog silently after submit, and how do I turn it into a multi-step flow?", "should_trigger": true},
+  {"query": "How can a dialog show a web page served by my bot, and what do I need in validDomains?", "should_trigger": true},
+  {"query": "dialog.submit does not reach my handler. Where does the route name come from, the dialog id or SubmitData?", "should_trigger": true},
+  {"query": "The dialog stays open after submit. What should the handler return?", "should_trigger": true},
+  {"query": "Как открыть диалог (task module) в боте Teams из карточки и получить введённые данные?", "should_trigger": true},
+  {"query": "Нужен многошаговый диалог в Teams: как передавать ответы первого шага во второй?", "should_trigger": true},
+  {"query": "Build a message extension search command with message.ext.query", "should_trigger": false},
+  {"query": "Add Action.Execute with input validation to a Teams card", "should_trigger": false},
+  {"query": "Open a modal dialog from a Teams tab page with TeamsJS dialog.url.open", "should_trigger": false},
+  {"query": "Create a modal dialog in React with a focus trap and aria attributes", "should_trigger": false},
+  {"query": "Show a Slack modal with views.open and handle view_submission", "should_trigger": false},
+  {"query": "Send a typing indicator and a reply in a Teams channel", "should_trigger": false},
+  {"query": "Register the bot and fix this app cannot be found on install", "should_trigger": false}
+]

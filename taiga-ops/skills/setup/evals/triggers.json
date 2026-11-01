@@ -1,0 +1,16 @@
+[
+  {"query": "Connect to our Taiga instance from the shell. Which env vars do I set and how do I get the auth token?", "should_trigger": true},
+  {"query": "How does Taiga optimistic locking work? Do I need to send the version on every PATCH?", "should_trigger": true},
+  {"query": "Which headers does Taiga return for pagination, and how do I fetch every row at once?", "should_trigger": true},
+  {"query": "My TAIGA_API_URL ends with a slash and some calls break. And what is the resolver for?", "should_trigger": true},
+  {"query": "Как залогиниться в Taiga через API и получить auth_token и refresh?", "should_trigger": true},
+  {"query": "Do I need an application token for an unattended Taiga integration, and which header does it use instead of Bearer?", "should_trigger": true},
+  {"query": "Какие заголовки пагинации возвращает Taiga и как выгрузить все строки за один запрос?", "should_trigger": true},
+  {"query": "Install Taiga on my server with docker compose", "should_trigger": false},
+  {"query": "Compare Taiga and Jira for a five-person agile team that wants a self-hosted tracker", "should_trigger": false},
+  {"query": "Show me a full workflow example for bootstrapping a Taiga project", "should_trigger": false},
+  {"query": "Authenticate to the GitHub API with a personal access token in curl", "should_trigger": false},
+  {"query": "Set up OAuth2 login in my Flask app with an external provider", "should_trigger": false},
+  {"query": "Authenticate to Jira Cloud with an API token and curl", "should_trigger": false},
+  {"query": "How do I configure the Taiga email settings for a self-hosted instance?", "should_trigger": false}
+]

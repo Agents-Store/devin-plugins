@@ -3,68 +3,68 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Give me a Sprint Health dashboard for TaskFlow's active sprint right now. I want burndown status, velocity context, WIP, blockers, and a completion forecast.",
+      "prompt": "Use the velocity-metrics skill. Give me a Sprint Health dashboard for TaskFlow's active sprint right now. I want burndown status, velocity context, WIP, blockers, and a completion forecast. The calls return: Sprint 12, day 3 of 5, 40 points planned and 22 completed; the last three completed sprints delivered 28, 31 and 30 points; the team has 5 people and 4 items in progress; MP-47 is blocked by MP-45. Render the dashboard. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Combined dashboard: burndown (day X of Y, actual vs ideal), velocity trend across last 5 sprints with confidence tier, WIP current vs limit, blocker count, projected completion points. Concrete recommendations at the bottom.",
       "files": [],
       "expectations": [
-        "Reads the active sprint with cycle(action=list, status=current) and the trend with cycle(action=list, status=completed) (plus archived=true for archived sprints)",
-        "Computes ideal_remaining = total × (remaining_days / sprint_days) correctly",
-        "Categorizes velocity confidence based on sample size (LOW/MODERATE/HIGH)",
-        "Counts current WIP with workitem(action=count, pql='stateGroup = \"started\"') instead of listing every item, calculates the WIP limit from team size and compares",
-        "Produces a completion forecast (pts projected by end_date at current pace)",
-        "Outputs the SPRINT HEALTH dashboard layout from the skill, not prose",
-        "Gives 2-3 concrete recommendations, not vague advice"
+        "The answer reads the active sprint with cycle(action=list, status=current)",
+        "The answer has the dashboard heading SPRINT HEALTH: Sprint 12",
+        "The answer shows 55% done and 60% elapsed",
+        "The answer shows the WIP as 4/7",
+        "The answer labels the velocity MODERATE CONFIDENCE because only three sprints are known",
+        "The answer has a Recommendations section with numbered items"
       ]
     },
     {
       "id": 2,
-      "prompt": "Analyze burndown for active Sprint 14. Sprint is day 3 of 5, 40 points total, 22 completed. Should we be worried?",
+      "prompt": "Use the velocity-metrics skill. Analyze burndown for active Sprint 14. Sprint is day 3 of 5, 40 points total, 22 completed. Should we be worried? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Ideal remaining = 40 × (2/5) = 16 pts. Actual remaining = 18. That's 1.125× ideal → AT RISK (needs >1.2× to be fully AT RISK, but close). Recommend focus on in-progress, not starting new.",
       "files": [],
       "expectations": [
-        "Calculates ideal remaining correctly (16 pts)",
-        "Computes actual vs ideal ratio (18/16 = 1.125)",
-        "Categorizes as ON TRACK / AT RISK / BEHIND per the skill's thresholds",
-        "Gives concrete advice: focus on completing in-progress, don't start new items",
-        "Calculates required pace for the remaining days"
+        "The answer calculates ideal remaining correctly (16 pts)",
+        "The answer computes actual vs ideal ratio (18/16 = 1.125)",
+        "The answer categorizes as ON TRACK / AT RISK / BEHIND per the skill's thresholds",
+        "The answer gives concrete advice: focus on completing in-progress, don't start new items",
+        "The answer calculates required pace for the remaining days"
       ]
     },
     {
       "id": 3,
-      "prompt": "Our 5-person team has 9 items in progress right now. Is that a problem?",
+      "prompt": "Use the velocity-metrics skill. Our 5-person team has 9 items in progress right now. Is that a problem? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Yes — WIP limit for 5-person team is floor(5 × 1.5) = 7. Currently 9/7, OVER LIMIT. Suggest finishing items before starting new work.",
       "files": [],
       "expectations": [
-        "Calculates WIP limit correctly (7 for a 5-person team)",
-        "Flags 9/7 as OVER LIMIT",
-        "Explains the consequences (context switching, bottlenecks)",
-        "Recommends finishing in-progress items before pulling new ones",
-        "Does NOT just report the number — explains why it matters"
+        "The answer calculates WIP limit correctly (7 for a 5-person team)",
+        "The answer flags 9/7 as OVER LIMIT",
+        "The answer explains the consequences (context switching, bottlenecks)",
+        "The answer recommends finishing in-progress items before pulling new ones",
+        "The answer does NOT just report the number — explains why it matters"
       ]
     },
     {
       "id": 4,
-      "prompt": "Last sprint: 'Upload avatar' was estimated 2 points, team logged 6 hours. 'Change email' was estimated 5 points, team logged 5 hours. Team baseline is 1.8 hrs/pt. Any issues?",
+      "prompt": "Use the velocity-metrics skill. Last sprint: 'Upload avatar' was estimated 2 points, team logged 6 hours. 'Change email' was estimated 5 points, team logged 5 hours. Team baseline is 1.8 hrs/pt. Any issues? Say what pattern you see and what to do with it at the next estimation session. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Avatar is ratio 3.0 (> 1.8 × 1.5) → UNDERESTIMATED. Email is ratio 1.0 (< 1.8 × 0.5 = 0.9? No, 1.0 > 0.9) → borderline, not overestimated. Pattern: file-handling tasks underestimated.",
       "files": [],
       "expectations": [
-        "Calculates ratio for each item (3.0 and 1.0)",
-        "Applies the underestimated threshold (ratio > baseline × 1.5 = 2.7) — avatar qualifies",
-        "Correctly reports email is NOT overestimated (1.0 > 0.9 threshold)",
-        "Identifies the file-handling pattern and suggests raising estimates for file tasks",
-        "References this is input for the next estimation session"
+        "The answer calculates ratio for each item (3.0 and 1.0)",
+        "The answer says to apply the underestimated threshold (ratio > baseline × 1.5 = 2.7) — avatar qualifies",
+        "The answer correctly reports email is NOT overestimated (1.0 > 0.9 threshold)",
+        "The answer identifies the file-handling pattern and suggests raising estimates for file tasks",
+        "The answer references this is input for the next estimation session"
       ]
     },
     {
       "id": 5,
-      "prompt": "How many work items did TaskFlow finish in each of the last 4 sprints, and how many are in progress right now?",
+      "prompt": "Use the velocity-metrics skill. How many work items did TaskFlow finish in each of the last 4 sprints, and how many are in progress right now? Show the calls and how you turn the counts into sprint names, and say whether this gives velocity in points. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Throughput per completed sprint from one workitem(action=count) call grouped by cycle_id, and current WIP from a second count on the started state group; cycle ids mapped to sprint names.",
       "expectations": [
-        "Counts finished items per sprint with workitem(action=count, pql='cycle IN completedCycles() AND stateGroup = \"completed\"', group_by=cycle_id) rather than listing every item of every sprint",
-        "Maps the cycle ids in grouped_counts to sprint names with cycle(action=list, status=completed)",
-        "Counts current WIP with workitem(action=count, pql='stateGroup = \"started\"') and reads total_count",
-        "Does not call a count action 'story points': says count returns items and that velocity in points needs the point field of listed items",
-        "Uses stateGroup (not state__group) in the PQL filter; state__group appears only as a group_by key if at all"
+        "The answer counts the finished items per sprint with workitem(action=count, ..., group_by=cycle_id)",
+        "The answer uses pql='cycle IN completedCycles() AND stateGroup = \"completed\"' in that count",
+        "The answer maps the cycle ids to sprint names with cycle(action=list, status=completed)",
+        "The answer counts the current WIP with workitem(action=count, pql='stateGroup = \"started\"')",
+        "The answer says count returns items and not story points",
+        "The answer filters with stateGroup and not with state__group"
       ],
       "files": []
     }

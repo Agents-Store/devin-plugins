@@ -1,0 +1,18 @@
+[
+  {"query": "I have 40 product photos hosted at https://example.com/img/ and I want to pull them into Directus, put them in a 'Products/2026' folder and tag them. What's the best way through the MCP tools?", "should_trigger": true},
+  {"query": "Using the Directus MCP, how can I get the actual image content (base64) of a file so a model can describe the picture?", "should_trigger": true},
+  {"query": "Rename and re-tag files in bulk in Directus: everything uploaded last week with 'IMG_' in the filename should get a proper title and move into the 'Raw uploads' folder.", "should_trigger": true},
+  {"query": "Directus: create a nested folder structure Marketing > Campaigns > 2026 and move existing files into it. Which calls do I use?", "should_trigger": true},
+  {"query": "How do I query file metadata in Directus - filter by type image/png, size over 2MB, uploaded this month - and list the results?", "should_trigger": true},
+  {"query": "Our Directus has a folder 'Temp' with about 60 uploaded test images. Using the MCP tools, I need to delete those files and then remove the folder itself. Which tools and actions do I call in what order, and what happens to files that are still in the folder?", "should_trigger": true},
+  {"query": "Нужно загрузить в Directus картинки по ссылкам и разложить их по папкам. Как сделать это через MCP-инструменты, чтобы не заливать по одной?", "should_trigger": true},
+  {"query": "У меня в Directus 40 файлов с именами вида IMG_0001.jpg. Нужно через MCP-инструменты прочитать их метаданные (размер, тип, ширину и высоту), одним пакетом задать title и description и переложить их в папку «Каталог 2026». Как это сделать?", "should_trigger": true},
+  {"query": "My Next.js next/image shows broken images from Directus assets with a 403 - the same files open in the admin panel. Why?", "should_trigger": false},
+  {"query": "Upload a folder of PNGs to an S3 bucket with the AWS CLI and make them public-read", "should_trigger": false},
+  {"query": "How do I model an image gallery attached to an article in Directus - which relation type?", "should_trigger": false},
+  {"query": "Set up an automation in Directus that resizes an image whenever a file is uploaded", "should_trigger": false},
+  {"query": "How do I add Cloudinary image transformations to my Next.js images?", "should_trigger": false},
+  {"query": "Create a Directus collection called documents with a title and a file field", "should_trigger": false},
+  {"query": "Compress and rename a folder of photos on my laptop with ImageMagick, then zip them", "should_trigger": false},
+  {"query": "Which Directus MCP tools exist and what are their parameters?", "should_trigger": false}
+]

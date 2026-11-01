@@ -1,0 +1,18 @@
+[
+  {"query": "After we put Chatwoot behind nginx every API call returns 401, while the dashboard works fine for the same user", "should_trigger": true},
+  {"query": "Chatwoot self-hosted: curl to /api/v1/profile returns an HTML 404 page, our base URL is https://chat.example.com/chatwoot/ with a path prefix", "should_trigger": true},
+  {"query": "After upgrading to Chatwoot v4.18.0 our script that sends Authorization: Bearer started returning 401 on every call", "should_trigger": true},
+  {"query": "Our chatwoot CLI v0.6 in a Docker image gets 401 on every command, while curl with the api-access-token header works from the same container behind caddy", "should_trigger": true},
+  {"query": "Chatwoot отвечает HTML-страницей вместо JSON, а иногда 502, на вызовы API нашего self-hosted инстанса. Что проверить?", "should_trigger": true},
+  {"query": "Вебхуки Chatwoot перестали приходить после смены URL, хотя в панели вебхук активен", "should_trigger": true},
+  {"query": "Chatwoot returns 401 on /api/v1/accounts/2/conversations with a token that was working yesterday, nothing changed on our side", "should_trigger": true},
+  {"query": "Chatwoot Cloud: our POST to /api/v1/accounts/5/conversations/9/messages with an attachment returns 200 but the file is missing", "should_trigger": true},
+  {"query": "How do I register a new Chatwoot webhook for message_created events?", "should_trigger": false},
+  {"query": "Get me a Chatwoot access token and show how to verify that the API answers", "should_trigger": false},
+  {"query": "My Django app returns 404 for /api/v1/orders/ but the URLconf includes the path. Help me debug it", "should_trigger": false},
+  {"query": "Our Stripe webhook signature verification keeps failing in Express because of body parsing. How should I fix it?", "should_trigger": false},
+  {"query": "Walk me through a complete example of bulk importing contacts into Chatwoot", "should_trigger": false},
+  {"query": "Design the escalation policy for our support team: which conversations go to tier 2 and when?", "should_trigger": false},
+  {"query": "Reply to conversation 4812 in Chatwoot with a private note from the terminal", "should_trigger": false},
+  {"query": "Why is my Next.js middleware returning 401 for requests with a valid session cookie behind Cloudflare?", "should_trigger": false}
+]

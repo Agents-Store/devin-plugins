@@ -1,0 +1,17 @@
+[
+  {"query": "Create a user story Export to CSV in the Apollo project on our Taiga and put it in the current sprint", "should_trigger": true},
+  {"query": "In Taiga, move story 42 of the project apollo to In Progress and assign it to maria", "should_trigger": true},
+  {"query": "We need to start a new two-week sprint in Taiga and pull in the five stories tagged release-2. How do I do that?", "should_trigger": true},
+  {"query": "Add a comment to Taiga issue 318 saying the fix is deployed, and close the issue", "should_trigger": true},
+  {"query": "Invite three people to our Taiga project with the Developer role", "should_trigger": true},
+  {"query": "Build a sprint report for our current Taiga milestone: points completed versus remaining, and the open issues", "should_trigger": true},
+  {"query": "Создай в Taiga задачу «Починить форму входа» внутри пользовательской истории и назначь её на Ивана", "should_trigger": true},
+  {"query": "Нужно в Taiga перенести пачку историй из бэклога в новый спринт и посмотреть статистику по очкам", "should_trigger": true},
+  {"query": "Taiga returns 400 with a version conflict when I PATCH a story. What is wrong?", "should_trigger": false},
+  {"query": "How do I log in to the Taiga API and get an auth token?", "should_trigger": false},
+  {"query": "Show me a full end-to-end example of setting up a new Taiga project and adding my team", "should_trigger": false},
+  {"query": "Create a Jira issue and assign it to the on-call engineer", "should_trigger": false},
+  {"query": "Plan a sprint in Plane: create a cycle and add work items to it", "should_trigger": false},
+  {"query": "How do I back up and restore a self-hosted Taiga Docker deployment?", "should_trigger": false},
+  {"query": "Create a Trello card and move it to Doing", "should_trigger": false}
+]

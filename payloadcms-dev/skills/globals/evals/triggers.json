@@ -1,0 +1,17 @@
+[
+  {"query": "I need a site-wide Header and Footer in Payload that editors can change but can't create twice. Should that be a global or a collection, and how do I define a GlobalConfig?", "should_trigger": true},
+  {"query": "Set up a 'homepage' global for my Payload site (hero text and a featured posts relationship) and write the Next.js page code that fetches it with the Local API at build time", "should_trigger": true},
+  {"query": "Create a 'navigation' global for my Payload site with an array of links, drafts and versions enabled, and the link labels localized in English and German", "should_trigger": true},
+  {"query": "Can Payload globals have versions, drafts and localized fields? Show me the GlobalConfig options", "should_trigger": true},
+  {"query": "Set access control on a Payload global so everyone can read but only admins can update", "should_trigger": true},
+  {"query": "Как в Payload создать global «Настройки сайта» с навигацией и подключить его во фронтенде через REST?", "should_trigger": true},
+  {"query": "Для настроек сайта и меню в Payload: использовать GlobalConfig или коллекцию с одним документом? Сравни и покажи минимальный global", "should_trigger": true},
+  {"query": "Create a Payload collection for blog posts with drafts and versions", "should_trigger": false},
+  {"query": "Write a beforeChange hook on a collection that sets a slug from the title", "should_trigger": false},
+  {"query": "Global variables in a Node.js app - what is the best way to share config between modules?", "should_trigger": false},
+  {"query": "How do I store site settings in Directus as a singleton collection?", "should_trigger": false},
+  {"query": "Customize the Payload admin navigation with a custom link", "should_trigger": false},
+  {"query": "Define a Strapi single type for the homepage", "should_trigger": false},
+  {"query": "How do I add field-level access to a Payload field?", "should_trigger": false},
+  {"query": "Show me the folder structure for a Payload project with collections, globals and blocks", "should_trigger": false}
+]

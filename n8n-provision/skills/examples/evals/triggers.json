@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete walkthrough of finding an n8n template, analyzing it, deploying it to my instance and verifying it", "should_trigger": true},
+  {"query": "Give me an n8n provisioning example end to end: a batch import of a workflow suite with credential planning", "should_trigger": true},
+  {"query": "how to import workflows into n8n - a tutorial with a real scenario please, from search to publish", "should_trigger": true},
+  {"query": "I want a worked example of the find-and-import n8n workflow flow, with the simplest provisioning steps spelled out", "should_trigger": true},
+  {"query": "Покажи сквозной пример: нахожу шаблон n8n, анализирую, разворачиваю на инстансе и проверяю", "should_trigger": true},
+  {"query": "Покажи пошагово на реальном сценарии, как найти в n8n шаблон 'Gmail to Notion', проанализировать его, развернуть на моём инстансе, проверить и опубликовать", "should_trigger": true},
+  {"query": "Walk me through a sample deploy of an automation suite on n8n including pre-flight checks and post-deployment verification", "should_trigger": true},
+  {"query": "Show me an example provisioning flow where the official template search returns nothing and we escalate to community sources", "should_trigger": true},
+  {"query": "Search the n8n template library for Gmail to Notion automations", "should_trigger": false},
+  {"query": "Import this single workflow JSON into n8n right now", "should_trigger": false},
+  {"query": "My n8n template deploy failed with a 400 error, what does it mean", "should_trigger": false},
+  {"query": "Show me a full example of building a scheduled report workflow from scratch in n8n", "should_trigger": false},
+  {"query": "Show me an end-to-end example of provisioning an EC2 instance with Terraform", "should_trigger": false},
+  {"query": "Give me an example Ansible playbook that provisions a server and deploys Docker Compose", "should_trigger": false},
+  {"query": "Give me an example of importing a Postman collection and running it in CI with newman", "should_trigger": false},
+  {"query": "Walk me through a Home Assistant automation example from trigger to action", "should_trigger": false}
+]

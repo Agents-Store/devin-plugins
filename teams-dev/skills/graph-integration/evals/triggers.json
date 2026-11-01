@@ -1,0 +1,17 @@
+[
+  {"query": "From my Teams bot I want to list the signed-in user's calendar events through Graph. How do I build the client from the OAuth flow token with the endpoints package?", "should_trigger": true},
+  {"query": "How do I call Graph as the bot itself with app.graph.call, and which consent does User.Read.All need?", "should_trigger": true},
+  {"query": "Graph returns 403 inside my Teams handler. Which identity is it using, and how do I compare scp and roles in the token?", "should_trigger": true},
+  {"query": "Calling a Graph list endpoint through app.graph in my Teams bot returns the first page only. How do I follow @odata.nextLink with the client's own HTTP client, and what do I do on 429 with Retry-After?", "should_trigger": true},
+  {"query": "sendMail through the graph-endpoints package gives a type error about the body. What do I put under Message and the odata.type discriminators?", "should_trigger": true},
+  {"query": "How do I call a beta Graph endpoint from the Teams SDK next to v1.0 calls, and what about a custom EndpointRequest?", "should_trigger": true},
+  {"query": "Как вызвать Microsoft Graph из бота Teams от имени пользователя на SDK 2.1, если нет fluent-клиента вроде graph.users.list()?", "should_trigger": true},
+  {"query": "Graph отвечает 429 в обработчике бота. Как повторять запросы и не блокировать ответ Teams?", "should_trigger": true},
+  {"query": "Configure SSO for the bot so users can sign in", "should_trigger": false},
+  {"query": "Use Microsoft Graph PowerShell to list all users in my tenant", "should_trigger": false},
+  {"query": "Call the Google Calendar API from a Node script with OAuth2", "should_trigger": false},
+  {"query": "Create an Azure AD app registration with the CLI and grant admin consent", "should_trigger": false},
+  {"query": "Build a Teams tab that calls a bot function to post into the chat", "should_trigger": false},
+  {"query": "Handle a message.ext.query search and return preview cards", "should_trigger": false},
+  {"query": "How do I paginate results from the GitHub REST API with Link headers?", "should_trigger": false}
+]

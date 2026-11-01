@@ -1,0 +1,15 @@
+[
+  {"query": "Explain the order in which grammY middleware runs when I have two bot.use calls and a command handler, and why my logger prints after the reply", "should_trigger": true},
+  {"query": "I registered my grammY auth middleware with bot.use after bot.command(\"start\", …) and it never runs for /start. What is the rule for registration order between bot.use and the handlers, and what changes if I move it above them?", "should_trigger": true},
+  {"query": "Explain how middleware ordering works in grammY with this chain: a logger, session, an auth check and my command handlers. What happens to the handlers if the auth middleware returns without calling next()?", "should_trigger": true},
+  {"query": "Почему в моём grammY-боте лог из второго bot.use печатается уже после ответа пользователю? В каком порядке выполняются два bot.use и обработчик команды и где в этой цепочке выполняется код после await next()?", "should_trigger": true},
+  {"query": "Как в grammY разнести обработчики по отдельным файлам через Composer и подключить их в нужном порядке?", "should_trigger": true},
+  {"query": "Write an Express middleware that checks a JWT and rejects the request with 401", "should_trigger": false},
+  {"query": "Write a Next.js middleware.ts that redirects unauthenticated users to /login", "should_trigger": false},
+  {"query": "How do I persist ctx.session in Redis in grammY?", "should_trigger": false},
+  {"query": "Add the auto-retry transformer to the grammY API client", "should_trigger": false},
+  {"query": "Catch and log every unhandled error in my grammY bot, distinguishing GrammyError from HttpError", "should_trigger": false},
+  {"query": "Write a filter query so my grammY handler runs only for photo captions", "should_trigger": false},
+  {"query": "How does koa-compose work internally to build the onion model for Koa?", "should_trigger": false},
+  {"query": "How do I define a multi-step form in grammY with the conversations plugin?", "should_trigger": false}
+]

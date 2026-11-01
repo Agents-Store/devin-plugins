@@ -1,0 +1,18 @@
+[
+  {"query": "The code has moved on since the documents were written. Find what is in the code that the documents never mention (entities, endpoints, screens) and propose additions.", "should_trigger": true},
+  {"query": "сверь код с документами: что есть в коде, о чём в документах ничего нет?", "should_trigger": true},
+  {"query": "the docs are out of date, read the code and list the mismatches between the code and client/USER-CASES, ARCHITECTURE and macstack.json", "should_trigger": true},
+  {"query": "Inventory the collections and API routes in this Payload project and match each against the client documents. I want three lists: not in the documents, not in the code, contradicts.", "should_trigger": true},
+  {"query": "обнови документы по коду: изучи исходники и найди несоответствия, но клиентские документы сам не правь, только предложи правки", "should_trigger": true},
+  {"query": "I took over this project. The macstack folder exists but I doubt it is accurate. What does the code contain that nobody documented?", "should_trigger": true},
+  {"query": "Which screens and triggers in the code have no entry in UX-UI.md or AUTOMATION.md? Run the inventory over the source tree for the declared stack.", "should_trigger": true},
+  {"query": "Run the code inventory for my declared stack and tell me where a probe found no files at all", "should_trigger": true},
+  {"query": "Does the implementation actually do what case C-04 promises? Give me a verdict per case.", "should_trigger": false},
+  {"query": "Bring the whole macstack folder in line with the code in one declared direction: the code is master", "should_trigger": false},
+  {"query": "Update macstack.json after the code changed: a new software service, its entities and a new interface path", "should_trigger": false},
+  {"query": "Find dead code and unused exports in my TypeScript project", "should_trigger": false},
+  {"query": "Audit my npm dependencies for security vulnerabilities", "should_trigger": false},
+  {"query": "Review this pull request for code style problems", "should_trigger": false},
+  {"query": "Generate API documentation from my code with TypeDoc", "should_trigger": false},
+  {"query": "Lint macstack.json against the schema", "should_trigger": false}
+]

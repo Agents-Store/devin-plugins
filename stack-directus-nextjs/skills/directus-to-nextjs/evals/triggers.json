@@ -1,0 +1,16 @@
+[
+  {"query": "next/image shows 403 for my Directus images. Someone suggested appending the access token to the URL. Is that safe, and what should I do instead?", "should_trigger": true},
+  {"query": "How do I cache Directus reads in Next.js 16 and let a Flow expire them? rest() will not take a cache option", "should_trigger": true},
+  {"query": "My Directus price field comes back as a string in the Next.js page. How should I type decimal fields in types/directus.ts?", "should_trigger": true},
+  {"query": "After I started caching Directus reads in Next.js, a logged-in user's private rows showed up for another visitor. The reads use the user's own access token. What went wrong?", "should_trigger": true},
+  {"query": "A post query expands the author relation. Which cache tags does it need so that editing an author refreshes the page?", "should_trigger": true},
+  {"query": "Как отдавать файлы Directus в Next.js, если не все файлы публичные? Нужен прокси-маршрут, который отдаёт только одну папку", "should_trigger": true},
+  {"query": "Хочу показать записи коллекции Directus в Server Component и подтянуть типы из схемы. Как организовать теги кеша и типы, чтобы tsc ловил переименование поля?", "should_trigger": true},
+  {"query": "Show me the Directus SDK filter syntax for _in and _between on a date field", "should_trigger": false},
+  {"query": "How do I use generateStaticParams with a slug in the Next.js App Router?", "should_trigger": false},
+  {"query": "Set up a Directus Flow with a webhook operation that notifies an external service", "should_trigger": false},
+  {"query": "Which auth approach fits a Directus customer portal?", "should_trigger": false},
+  {"query": "Create a new collection called events in Directus with a datetime field and a many-to-one to venues", "should_trigger": false},
+  {"query": "Cache Strapi responses in Next.js with revalidateTag", "should_trigger": false},
+  {"query": "How do I serve user-uploaded images from S3 with a signed URL in Next.js?", "should_trigger": false}
+]

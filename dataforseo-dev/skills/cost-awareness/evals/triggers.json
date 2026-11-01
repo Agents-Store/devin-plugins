@@ -1,0 +1,18 @@
+[
+  {"query": "Before running anything on DataForSEO: how much will it cost to pull SERP results for 300 keywords, 100 results each, and what is my balance right now?", "should_trigger": true},
+  {"query": "I have a $5 monthly budget on my DataForSEO account. What does a keyword_ideas call with limit 200 cost, which lookups are free, and how do I make sure the account never goes over $5? Just the cost rules, nothing is to be run", "should_trigger": true},
+  {"query": "the last DataForSEO run burned through $20 and I don't know why. How do I keep spending under control and which calls are the expensive ones?", "should_trigger": true},
+  {"query": "What does DataForSEO bill per call: how are SERP, keyword and backlink requests priced, and which calls are free? I want to set a spending limit for my team before anyone uses the MCP server", "should_trigger": true},
+  {"query": "Сколько будет стоить аудит 500 страниц через DataForSEO OnPage и как заранее ограничить расходы?", "should_trigger": true},
+  {"query": "Хочу прогнать 2000 ключевых слов через DataForSEO. Как не выйти за бюджет — какие эндпоинты брать в bulk-режиме, чтобы не платить за каждый запрос отдельно?", "should_trigger": true},
+  {"query": "Before I let you loose on DataForSEO: I want a SERP analysis of 'best vpn' at depth 100 for five countries. Estimate the spend first and propose a cap, then wait for my go-ahead", "should_trigger": true},
+  {"query": "give me an estimate of DataForSEO credits for a monthly rank-tracking job with 150 keywords, desktop and mobile", "should_trigger": true},
+  {"query": "Which dog food brands sell the best organic kibble in 2026? I only want a buyer's-guide summary from your own knowledge, no SEO tooling", "should_trigger": false},
+  {"query": "What are the best SEO tools for a small business? Compare Ahrefs, Semrush and Moz on pricing", "should_trigger": false},
+  {"query": "How much does it cost to run a Lighthouse CI job on GitHub Actions?", "should_trigger": false},
+  {"query": "Estimate the monthly AWS bill for a small Django app with RDS and ElastiCache", "should_trigger": false},
+  {"query": "Verify my DataForSEO connection works", "should_trigger": false},
+  {"query": "Debug why the api_request tool returns a 40501 error", "should_trigger": false},
+  {"query": "Compare the API pricing of Ahrefs, Semrush and Moz for pulling backlink data. I only want a pricing table from their public pages, nothing is going to be called", "should_trigger": false},
+  {"query": "Set a monthly budget alert in Google Cloud Billing for $100", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "Walk me through building a dashboard in Next.js: authenticated layout with sidebar, a data table that streams, and a search that keeps its state in the URL", "should_trigger": true},
+  {"query": "Show me a Next.js e-commerce example with product pages, a cart and checkout using Server Actions", "should_trigger": true},
+  {"query": "Show me the Next.js example scenario for an authenticated SaaS dashboard: layouts, auth proxy, streaming and Server Actions put together.", "should_trigger": true},
+  {"query": "Покажи пример интернет-магазина на Next.js: публичный каталог с ISR, поиск через searchParams, клиентское состояние корзины и оптимизация изображений.", "should_trigger": true},
+  {"query": "Покажи пошаговый пример Next.js проекта: админка с боковой панелью, таблица данных и CRUD на Server Actions", "should_trigger": true},
+  {"query": "Хочу пример интернет-магазина на Next.js: каталог, карточка товара, корзина. Дай end-to-end реализацию", "should_trigger": true},
+  {"query": "Next.js project walkthrough for a SaaS: authenticated layout, API route with validation, and a streaming table", "should_trigger": true},
+  {"query": "What's the right folder structure for a Next.js app with route groups and feature modules?", "should_trigger": false},
+  {"query": "Why does 'use client' fail in my layout when I import a server-only module?", "should_trigger": false},
+  {"query": "Show me a complete example of an e-commerce backend in Django with Stripe checkout", "should_trigger": false},
+  {"query": "Build a dashboard in Streamlit with filters and a plotly chart", "should_trigger": false},
+  {"query": "Give me a Rails example app with Devise and Turbo for a CRUD admin", "should_trigger": false},
+  {"query": "Walk through a Vue 3 + Pinia example of a shopping cart", "should_trigger": false},
+  {"query": "Explain how to configure next.config.ts for images and redirects", "should_trigger": false},
+  {"query": "Walk me through a Flask + SQLAlchemy CRUD example with Alembic migrations", "should_trigger": false}
+]

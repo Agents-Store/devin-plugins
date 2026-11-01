@@ -1,0 +1,18 @@
+[
+  {"query": "My GitHub Actions workflow needs the prod secrets from Infisical but there is no browser on the runner. How do I authenticate with a machine identity and run npm run build with the secrets injected?", "should_trigger": true},
+  {"query": "Set up Universal Auth for a GitLab CI job: the client id and client secret live in masked CI variables. Capture the access token into INFISICAL_TOKEN safely.", "should_trigger": true},
+  {"query": "How can my Kubernetes pods fetch secrets from Infisical without a stored client secret? We run on EKS.", "should_trigger": true},
+  {"query": "Write a Dockerfile whose entrypoint is infisical run so the container pulls its secrets at startup using a machine identity", "should_trigger": true},
+  {"query": "How do I authenticate the Infisical CLI in GitHub Actions with OIDC instead of long-lived credentials?", "should_trigger": true},
+  {"query": "Как в CI/CD на GitLab получить секреты из Infisical без интерактивного логина? Нужна machine identity и universal-auth.", "should_trigger": true},
+  {"query": "Нужно в Docker-образе брать секреты из Infisical при старте контейнера. Как залогиниться через machine identity и запустить приложение?", "should_trigger": true},
+  {"query": "We just stood up a self-hosted Infisical for our team and I want to automate everything from scripts. How do I create the first machine identity and log in with it non-interactively?", "should_trigger": true},
+  {"query": "Install the Infisical CLI on Ubuntu and log in with my own user account through the browser", "should_trigger": false},
+  {"query": "Use infisical run to start my dev server locally with the staging secrets", "should_trigger": false},
+  {"query": "Set up a pre-commit hook that scans for leaked API keys", "should_trigger": false},
+  {"query": "Store the secrets for my GitHub Actions deploy in HashiCorp Vault and read them with the vault-action", "should_trigger": false},
+  {"query": "Use GitHub Actions OIDC to assume an AWS role and deploy to ECS", "should_trigger": false},
+  {"query": "infisical login says \"failed to store credentials\" on my headless Linux box", "should_trigger": false},
+  {"query": "Encrypt the secrets files in my repo with sops and age so they can be committed safely", "should_trigger": false},
+  {"query": "Configure GitLab CI variables as masked and protected for my deploy job", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "Write the changelog for what shipped this week: a client-facing CHANGELOG.md curated from the ledger, in the client's language.", "should_trigger": true},
+  {"query": "Record today's work in the ledger: I finished M3-T2 and changed the cancellation rule in C-07.", "should_trigger": true},
+  {"query": "cut a release: close milestone M4 and curate the changelog entries for the client", "should_trigger": true},
+  {"query": "что сделали за неделю? запиши в журнал и подготовь записи для клиента", "should_trigger": true},
+  {"query": "Every edit under macstack/ needs a row in history/ledger.jsonl keyed by id. Log my edit to the UX-UI screen S-03.", "should_trigger": true},
+  {"query": "Закрыть веху M2: запиши в журнал, что сделано, и обнови клиентский CHANGELOG.", "should_trigger": true},
+  {"query": "Нужны release notes для клиента по этой версии: что изменилось по кейсам и экранам.", "should_trigger": true},
+  {"query": "what changed for the client between the last two handoffs? summarize it from the ledger", "should_trigger": true},
+  {"query": "Write a git commit message for these changes", "should_trigger": false},
+  {"query": "Generate a CHANGELOG.md from conventional commits with release-please", "should_trigger": false},
+  {"query": "Merge the client's edits into the documents", "should_trigger": false},
+  {"query": "Add a task to the backlog for the password reset feature", "should_trigger": false},
+  {"query": "Give me a template for keeping a daily engineering journal in Obsidian", "should_trigger": false},
+  {"query": "Package the documents for the client to read and answer", "should_trigger": false},
+  {"query": "Audit the code against the requirements and write a verdict for every case", "should_trigger": false},
+  {"query": "Show the git log between v1.2 and v1.3 grouped by type", "should_trigger": false}
+]

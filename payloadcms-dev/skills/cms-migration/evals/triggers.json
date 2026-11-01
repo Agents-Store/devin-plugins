@@ -1,0 +1,18 @@
+[
+  {"query": "We have 4,000 posts in WordPress with categories, tags and ACF fields. How should I plan the migration to Payload - what collections, how to handle rich text and IDs?", "should_trigger": true},
+  {"query": "I'm moving from Contentful to PayloadCMS. Walk me through analysing the export, proposing collection configs and writing a re-runnable import script", "should_trigger": true},
+  {"query": "Strapi to Payload: how do I map relations and dynamic zones, and how do I resolve legacy relationships after import?", "should_trigger": true},
+  {"query": "Sanity portable text to Payload Lexical - what's the approach for converting rich text during a CMS migration?", "should_trigger": true},
+  {"query": "How do I design Payload collections from a Webflow CMS CSV export? Which fields should be select versus relationship?", "should_trigger": true},
+  {"query": "Хочу перенести контент из WordPress в Payload. Как построить план миграции по фазам и сделать импорт безопасным для повторного запуска?", "should_trigger": true},
+  {"query": "Как при миграции из Contentful в Payload сохранить старые ID и связи между документами?", "should_trigger": true},
+  {"query": "Our import script keeps creating duplicates when we re-run it. How do I make a Payload content migration idempotent?", "should_trigger": true},
+  {"query": "How do I run Payload database migrations with payload migrate?", "should_trigger": false},
+  {"query": "Migrate my WordPress site to Next.js static pages without any CMS", "should_trigger": false},
+  {"query": "Move a Postgres database from one server to another with pg_dump and restore", "should_trigger": false},
+  {"query": "How do I upgrade from Payload 2 to Payload 3?", "should_trigger": false},
+  {"query": "Export all documents from a Payload collection to CSV", "should_trigger": false},
+  {"query": "Import users from a CSV into Directus using the import flow", "should_trigger": false},
+  {"query": "Convert a Markdown blog to MDX files for Astro", "should_trigger": false},
+  {"query": "Create a Payload collection with relationship fields to categories", "should_trigger": false}
+]

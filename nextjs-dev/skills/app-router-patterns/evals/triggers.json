@@ -1,0 +1,15 @@
+[
+  {"query": "After upgrading to Next.js 16 the build fails because the @modal slot in app/(shop)/layout.tsx has no default.tsx. Why is it required now and what should it return to keep the old fallback behaviour?", "should_trigger": true},
+  {"query": "Set up a dashboard with @analytics and @team parallel route slots in Next.js and handle the default.tsx for unmatched slots", "should_trigger": true},
+  {"query": "Мы включили cacheComponents в Next.js 16, и сборка падает на export const dynamicParams = false в app/products/[id]/page.tsx. Как теперь вернуть 404 для неизвестных id?", "should_trigger": true},
+  {"query": "Перестрой маршруты в Next.js 16: маркетинговые страницы и кабинет должны иметь разные layout без изменения URL, а карточка товара должна открываться модальным окном поверх списка", "should_trigger": true},
+  {"query": "Add a photo modal to our Next.js 16 gallery: clicking a photo opens it in an overlay at /photos/123 and a hard refresh shows the full page. Set up the route folders for it.", "should_trigger": true},
+  {"query": "How should I organize folders like features, lib and components in a big Next.js codebase? Naming and barrel exports", "should_trigger": false},
+  {"query": "Should this component be a Server Component or a Client Component? It uses useState and fetches data", "should_trigger": false},
+  {"query": "Set up routing in React Router v7 with nested layouts and loaders", "should_trigger": false},
+  {"query": "Write a file-based routing setup in Nuxt 3 with a dynamic [id].vue page and a layout", "should_trigger": false},
+  {"query": "Implement SvelteKit routes with +layout.svelte and +page.server.ts load functions", "should_trigger": false},
+  {"query": "My Next.js app shows a hydration error on a page with a date, what causes it?", "should_trigger": false},
+  {"query": "Add role-based route protection in Next.js with a login page and session cookies", "should_trigger": false},
+  {"query": "Next.js build fails with 'Dynamic server usage' on a route that reads headers()", "should_trigger": false}
+]

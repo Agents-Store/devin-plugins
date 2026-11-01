@@ -3,15 +3,15 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "I defined a schedules.task with a cron and deployed it to production on our self-hosted Trigger.dev server. How do I attach the schedule to the production environment? Is there a schedules:attach command?",
+      "prompt": "I defined a schedules.task with a cron and deployed it to production on our self-hosted Trigger.dev server. How do I attach the schedule to the production environment? Is there a schedules:attach command? Show the corrected schedule definition.",
       "expected_output": "No attach step: the declarative cron syncs on dev and deploy; the CLI has no such command; limit environments with the environments option",
       "files": [],
       "expectations": [
-        "States that a declarative schedule (cron on schedules.task) is synced by dev and deploy and needs no attach step",
-        "States that the CLI has no schedules:attach command",
-        "Mentions the environments option of the cron object to limit where it fires, and that without it every environment fires it",
-        "Explains that in staging and production only the task in the current deployment fires, and in dev only while the dev CLI runs",
-        "Imports from @trigger.dev/sdk, not @trigger.dev/sdk/v3"
+        "The answer says a declarative schedule (cron on schedules.task) needs no attach step",
+        "The answer says dev and deploy sync the declarative schedule",
+        "The answer mentions the environments option of the cron object to limit where the schedule fires",
+        "The answer says that without the environments option every environment fires the schedule",
+        "The code imports from @trigger.dev/sdk, not @trigger.dev/sdk/v3"
       ]
     },
     {

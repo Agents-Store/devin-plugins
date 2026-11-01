@@ -1,0 +1,18 @@
+[
+  {"query": "How do I model a many-to-many relation between users and groups in PostgreSQL so NocoDB and NocoBase show it as a link field? Do I need a composite primary key on the junction table?", "should_trigger": true},
+  {"query": "Set up a one-to-many foreign key from orders to customers with ON DELETE rules and an index on the FK, in a way NocoDB understands", "should_trigger": true},
+  {"query": "How do I make a self-referential parent/child hierarchy in Postgres that NocoDB will recognise?", "should_trigger": true},
+  {"query": "One-to-one relation in PostgreSQL for a profile table: unique FK or shared primary key - which works with NocoDB?", "should_trigger": true},
+  {"query": "What FK constraint naming and column conventions help NocoDB detect relations automatically?", "should_trigger": true},
+  {"query": "Как в PostgreSQL создать связь многие-ко-многим через промежуточную таблицу, чтобы NocoBase её увидел?", "should_trigger": true},
+  {"query": "Нужно добавить внешний ключ и индекс на него для таблицы заказов. Как это сделать правильно для NocoDB?", "should_trigger": true},
+  {"query": "Why does NocoDB not show the link between two tables even though I defined a foreign key? What should the junction table look like?", "should_trigger": true},
+  {"query": "Create the NocoDB link field through the NocoDB API between two tables", "should_trigger": false},
+  {"query": "Define a SQLAlchemy relationship with back_populates and cascade", "should_trigger": false},
+  {"query": "Which column type should I use for a UUID foreign key in NocoDB?", "should_trigger": false},
+  {"query": "Rename a foreign key column and refresh the NocoDB metadata", "should_trigger": false},
+  {"query": "Design a graph database model in Neo4j for friends and followers", "should_trigger": false},
+  {"query": "Show me a full CRM schema for NocoDB with all relations", "should_trigger": false},
+  {"query": "Write a Prisma schema with a many-to-many relation", "should_trigger": false},
+  {"query": "How do I join three tables in SQL and aggregate by month?", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "I'm creating PostgreSQL tables that NocoDB will manage as an external database. Which primary key type should I use - serial, bigint identity or UUID - and does a table without a PK work?", "should_trigger": true},
+  {"query": "How do NocoDB and NocoBase interact with the same PostgreSQL database, and does NocoBase need a paid license for external data sources?", "should_trigger": true},
+  {"query": "Design a schema for a small inventory app in Postgres so it can be browsed in NocoDB right away. What naming conventions and columns should every table have?", "should_trigger": true},
+  {"query": "Write the CREATE TABLE statements for 'projects' and 'tasks' tables that are compatible with both NocoDB and NocoBase", "should_trigger": true},
+  {"query": "Как создать таблицы в PostgreSQL так, чтобы NocoDB сразу увидел их как внешнюю базу? Нужны PK и правила именования", "should_trigger": true},
+  {"query": "Нужно ли платить за лицензию NocoBase, чтобы подключить внешнюю PostgreSQL? И что такое таблица без первичного ключа для этих систем?", "should_trigger": true},
+  {"query": "Write the CREATE TABLE for a 'suppliers' table in my Postgres database so NocoDB lists it as a normal table, with an auto-increment id and created_at and updated_at timestamps", "should_trigger": true},
+  {"query": "Add a many-to-many relation between students and courses using a junction table", "should_trigger": false},
+  {"query": "Change the type of an existing column and drop a default", "should_trigger": false},
+  {"query": "Which type should I use for currency columns in a table that NocoDB reads?", "should_trigger": false},
+  {"query": "Create a table in NocoDB through its REST API v2", "should_trigger": false},
+  {"query": "Show me a complete blog database schema with indexes and constraints", "should_trigger": false},
+  {"query": "Design the collections and indexes for a multi-tenant SaaS in MongoDB", "should_trigger": false},
+  {"query": "Create a MySQL table with an auto-increment primary key", "should_trigger": false},
+  {"query": "Run an INSERT through the PostgreSQL MCP execute_sql tool", "should_trigger": false}
+]

@@ -1,0 +1,16 @@
+[
+  {"query": "Create a Directus flow: when an order's status changes to 'paid', send a POST to our fulfillment webhook with the order id and total, and mark the order as 'processing'.", "should_trigger": true},
+  {"query": "I need a scheduled flow in Directus that runs every night at 2am and archives posts older than a year (sets status to archived). Cron trigger plus an update operation, right?", "should_trigger": true},
+  {"query": "Build me a Directus flow that notifies Slack when a post is published. It should be an event hook on items.update of `posts`, type action (non-blocking), with a condition on $trigger.payload.status equals published and then a request operation to our Slack webhook. List the trigger options and how the operations are connected.", "should_trigger": true},
+  {"query": "Directus flow on items.create of `tickets`: if priority is 'urgent' send the Slack request, otherwise email support@example.com, and add a third path for when the Slack request returns an error. Which resolve and reject links do I set between the operations, and how do I set the flow's entry point?", "should_trigger": true},
+  {"query": "Настрой в Directus flow, который при создании нового заказа отправляет уведомление в Telegram через операцию Request URL и пишет ответ в лог", "should_trigger": true},
+  {"query": "Как в Directus запустить flow по расписанию раз в час и обновить поле last_checked у всех активных элементов? Нужен cron-триггер и операция обновления", "should_trigger": true},
+  {"query": "Build a Next.js route handler that receives a webhook from a CMS and verifies its HMAC signature", "should_trigger": false},
+  {"query": "Create a Zapier-style automation that sends a Slack message when a row is added to a Google Sheet", "should_trigger": false},
+  {"query": "Build an n8n workflow that listens for a webhook and writes the payload to Postgres", "should_trigger": false},
+  {"query": "How do I add a many-to-one relation from orders to customers in the Directus data model?", "should_trigger": false},
+  {"query": "Write a custom Directus extension in TypeScript that registers a hook on items.create", "should_trigger": false},
+  {"query": "My non-admin users get 403 on /flows in Directus. Which permissions do they need?", "should_trigger": false},
+  {"query": "Schedule a cron job on my Linux server that backs up the Directus Postgres database every night", "should_trigger": false},
+  {"query": "Set permissions so the Editor role can read and update posts but not delete them", "should_trigger": false}
+]

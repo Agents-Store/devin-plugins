@@ -3,18 +3,15 @@
   "evals": [
     {
       "id": 6,
-      "prompt": "Can you validate the project-directus-nextjs template? I want to make sure it follows all our Level 1 conventions before I fork it for a new client.",
-      "expected_output": "The validate skill reads stack.json, confirms level=1, checks all required files (core skills, workflow skills, agents, rules, docs), validates CLAUDE.md quality (under 100 lines, no placeholders, Tech Stack filled), checks consistency between stack.json and CLAUDE.md, runs security checks, and produces a detailed validation report.",
+      "prompt": "Can you validate the project-directus-nextjs template? I want to make sure it follows all our Level 1 conventions before I fork it for a new client. In this session nothing is installed: there is no shell and the template directory is empty, so there is no stack.json and no other file. Do not ask questions; answer in text with what you do at each step.",
+      "expected_output": "Guard behavior of the validate skill: stack.json is missing, so it is a critical error and the validation stops.",
       "files": [],
       "expectations": [
-        "Reads stack.json and correctly identifies the template as Level 1",
-        "Checks for all core required files (brainstorming, planning, tdd, debugging, verification skills)",
-        "Checks for core workflow skills (init-stack, commit, pr, plan-feature, code-review-project, sync)",
-        "Verifies CLAUDE.md has filled Tech Stack section (not placeholder text)",
-        "Checks that CLAUDE.md Installed Plugins matches stack.json plugins",
-        "Verifies .env.example has stack-specific variables",
-        "Checks security (.env is gitignored; the committed .mcp.json holds only ${VAR} references)",
-        "Produces a structured validation report with pass/fail per category"
+        "The answer reads stack.json first to determine the template level",
+        "The answer reports that stack.json is missing",
+        "The answer flags the missing stack.json as a critical error",
+        "The answer stops after that error and runs no further checks",
+        "The answer says the template level cannot be determined without stack.json"
       ]
     }
   ]

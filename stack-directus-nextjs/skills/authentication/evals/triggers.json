@@ -1,0 +1,17 @@
+[
+  {"query": "We have a Next.js 16 site on Directus. Customers should log in and see only what the Directus policies allow for them. NextAuth or Better Auth, and who ends up owning the session?", "should_trigger": true},
+  {"query": "After login NextAuth throws a fetch error to undefined/auth/login in our Directus and Next.js 16 project. .env.local has NEXT_PUBLIC_DIRECTUS_URL and DIRECTUS_ADMIN_TOKEN. Fix it", "should_trigger": true},
+  {"query": "My Server Action updates a post with the admin token after checking that the user is signed in. A colleague says any user can edit any item. Is that right, and how do I fix it with Directus?", "should_trigger": true},
+  {"query": "Is it OK to check the session only in proxy.ts and skip the check in the page and the Server Action? Directus is our user store", "should_trigger": true},
+  {"query": "For a new content site with a few app-level accounts (favourites, comments) should I use Better Auth with Directus behind a service token, or log users into Directus itself?", "should_trigger": true},
+  {"query": "Как в связке Directus и Next.js выбрать, кто хранит пользователя и сессию: NextAuth, Better Auth или cookie сессии Directus?", "should_trigger": true},
+  {"query": "Нужна авторизация в Next.js через Directus: пользователь входит по email и паролю, а данные должен читать с его собственными правами. Как это сделать правильно?", "should_trigger": true},
+  {"query": "Customers want Google sign-in on our Next.js site that reads content from Directus 12. Is a Directus license tier needed for that, or only for SSO configured inside Directus? Which of NextAuth or Better Auth fits?", "should_trigger": true},
+  {"query": "Implement Auth.js v5 with the GitHub provider and database sessions in a Next.js 16 app that has no CMS", "should_trigger": false},
+  {"query": "Create a Directus role and policy that lets editors update posts but not delete them", "should_trigger": false},
+  {"query": "Set up a Flow in Directus that calls our Next.js revalidate endpoint when a post is published", "should_trigger": false},
+  {"query": "How do I render Directus images with next/image without getting a 403?", "should_trigger": false},
+  {"query": "Write the Directus SDK query for the 10 latest posts with their author, filtered by status", "should_trigger": false},
+  {"query": "Add Supabase auth with Google OAuth to a Next.js app", "should_trigger": false},
+  {"query": "How do I store JWT refresh tokens securely in an Express API backed by Postgres?", "should_trigger": false}
+]

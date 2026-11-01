@@ -1,0 +1,18 @@
+[
+  {"query": "My server died and I have restic snapshots in R2. Walk me through rebuilding: install restic, restore the data, replay the database dumps and bring the Docker services back up", "should_trigger": true},
+  {"query": "Replay a MongoDB dump from a restic snapshot into the running container with restic dump and mongorestore, and tell me what to stop before the replay", "should_trigger": true},
+  {"query": "Recover a Postgres database in a Docker container from a restic backup that contains pg_dump files", "should_trigger": true},
+  {"query": "Restore only /docker/projectX from the latest restic snapshot into a staging directory, then replay the Postgres dump into the running container with restic dump; give me the exact commands in order", "should_trigger": true},
+  {"query": "Plan a full restic restore onto a fresh VPS: what order do I restore volumes, compose files and databases?", "should_trigger": true},
+  {"query": "Сервер умер, бэкапы в restic на R2. Как восстановить данные Docker и базы данных на новом сервере?", "should_trigger": true},
+  {"query": "Сервер упал, на новом другие UID и GID. Восстанови каталог проекта из последнего снапшота restic в /restore с владельцами по имени и проверкой содержимого, потом перенеси на место", "should_trigger": true},
+  {"query": "My server died and I am on a fresh one. Give me the first commands before any restore: recreate the credentials files, confirm access to the repository, list snapshots and find nginx.conf across snapshots", "should_trigger": true},
+  {"query": "Verify that my restic backup works before enabling the schedule: run check and a test restore", "should_trigger": false},
+  {"query": "Set up monitoring that alerts me if a restic backup stops running", "should_trigger": false},
+  {"query": "Create the restic repository and password on R2", "should_trigger": false},
+  {"query": "Restore a Git repository from GitHub after accidentally deleting a branch", "should_trigger": false},
+  {"query": "How do I restore a PostgreSQL database from a pg_dump file?", "should_trigger": false},
+  {"query": "Recover deleted files from an ext4 disk with testdisk", "should_trigger": false},
+  {"query": "Write the daily backup script with retention", "should_trigger": false},
+  {"query": "restic restore fails with 'wrong password or no key found'", "should_trigger": false}
+]

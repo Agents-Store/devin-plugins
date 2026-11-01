@@ -1,6 +1,6 @@
 ---
 name: troubleshoot
-description: Next.js common errors, debugging techniques, and solutions. This skill should be used when the user asks about "Next.js errors", "hydration error", "Next.js not working", "build errors", "debug Next.js", "'use client' errors", "deployment issues", or encounters problems during Next.js development.
+description: Diagnose Next.js 16 errors — hydration mismatches, 'use client' and server-only errors, build failures such as dynamic server usage, Cache Components errors like blocking-prerender and next-request-in-use-cache, next/image host errors, slow dev or build, and deployment problems. Use when something fails or behaves unexpectedly in a Next.js app.
 ---
 
 # Troubleshooting Next.js

@@ -1,6 +1,6 @@
 ---
 name: flow-automation
-description: Flow automation — triggers, operations, data chains, event hooks, webhooks, schedules. This skill should be used when the user asks to create automation flows, set up triggers, configure operations, build event-driven workflows, schedule tasks, or trigger flows programmatically in Directus.
+description: Build and run Directus flows, covering event hooks, schedules, webhook and manual triggers, operations such as condition, request, read and update data, and the data chain that passes values between operations. Use it for any Directus question about creating, wiring, scheduling or triggering an automation flow, in any language. For a flow that does not run or a condition that never matches use troubleshoot.
 ---
 
 # Flow Automation

@@ -1,0 +1,17 @@
+[
+  {"query": "Create a product in my Teleshop store: SKU TSH-M-BLK, title Black T-Shirt M, price 29, quantity 40, in category 12", "should_trigger": true},
+  {"query": "Raise the prices of all products in the Shoes category by 10 percent", "should_trigger": true},
+  {"query": "Set a discount price on product 301. Is there a rule about how it compares with the regular price?", "should_trigger": true},
+  {"query": "Product 88 has the wrong photos. Replace its images with image ids 501, 502 and 503 and fix its color and size attributes", "should_trigger": true},
+  {"query": "Delete products 101, 102 and 103 in one call", "should_trigger": true},
+  {"query": "Добавь в магазин Teleshop новый товар с артикулом, описанием и ценой и включи контроль остатков", "should_trigger": true},
+  {"query": "Как настроить вариантный товар в Teleshop: родитель и дочерние размеры?", "should_trigger": true},
+  {"query": "list available products in the store sorted by price descending, only active ones with stock control", "should_trigger": true},
+  {"query": "Create the Size attribute and add its values", "should_trigger": false},
+  {"query": "Import my entire catalog from JSON", "should_trigger": false},
+  {"query": "Create a Shopify product via the Admin API GraphQL", "should_trigger": false},
+  {"query": "Write a REST API for products in Express with validation", "should_trigger": false},
+  {"query": "List the orders of the last week", "should_trigger": false},
+  {"query": "Rename the category Electronics", "should_trigger": false},
+  {"query": "Optimize my Amazon product listing title and bullet points", "should_trigger": false}
+]

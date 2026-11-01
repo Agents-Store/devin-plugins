@@ -1,0 +1,14 @@
+[
+  {"query": "Firecrawl scrape keeps returning SCRAPE_ALL_ENGINES_FAILED for a JS-heavy page. What should I try?", "should_trigger": true},
+  {"query": "My web search MCP servers show as failed after a restart. How do I diagnose which one is broken?", "should_trigger": true},
+  {"query": "My Jina batch parallel read tool says tool not found since last month. What changed?", "should_trigger": true},
+  {"query": "Exa возвращает 422 Validation Error при поиске. Что проверить в параметрах?", "should_trigger": true},
+  {"query": "Ошибка 429 у Jina при чтении страниц: какие лимиты без ключа и что делать?", "should_trigger": true},
+  {"query": "Verify that my search services are connected", "should_trigger": false},
+  {"query": "Write a retry with exponential backoff in Python for a flaky API", "should_trigger": false},
+  {"query": "Debug a 502 from my nginx reverse proxy", "should_trigger": false},
+  {"query": "My Express app returns 401 for valid JWTs", "should_trigger": false},
+  {"query": "Which service should I use to read multiple pages at once?", "should_trigger": false},
+  {"query": "Stripe API returns 429. How should I back off?", "should_trigger": false},
+  {"query": "BeautifulSoup returns None for the element I selected", "should_trigger": false}
+]

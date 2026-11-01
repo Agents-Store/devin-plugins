@@ -1,0 +1,18 @@
+[
+  {"query": "How do I generate sitemap.xml and robots.txt in the Next.js App Router with sitemap.ts and robots.ts, including dynamic URLs from a CMS?", "should_trigger": true},
+  {"query": "My site has 50,000 product pages. How do I split the sitemap into multiple files and a sitemap index in Next.js?", "should_trigger": true},
+  {"query": "Add a multilingual sitemap with hreflang alternates for English and German pages in sitemap.ts, and explain when next-sitemap is still worth using", "should_trigger": true},
+  {"query": "next-sitemap vs the built-in sitemap.ts: which should I use and how do I set priority and lastModified?", "should_trigger": true},
+  {"query": "Update my robots.ts to manage AI crawlers such as GPTBot and ClaudeBot separately from Googlebot, differentiate production from staging and make sure /_next/ is not blocked", "should_trigger": true},
+  {"query": "Как сделать sitemap.xml и robots.txt в Next.js и добавить туда динамические страницы из CMS?", "should_trigger": true},
+  {"query": "Настрой sitemap.ts с динамическими страницами из CMS, выставь priority и changeFrequency по типам страниц и объясни, как проверить sitemap после деплоя", "should_trigger": true},
+  {"query": "My Next.js site has 80,000 URLs. Split the sitemap into several files with generateSitemaps, add a sitemap index and hreflang alternates to the entries", "should_trigger": true},
+  {"query": "Add canonical URLs and hreflang alternates to metadata", "should_trigger": false},
+  {"query": "Why does Google say 'Discovered - currently not indexed' for my page?", "should_trigger": false},
+  {"query": "Add noindex to a staging site with a meta tag and an HTTP header", "should_trigger": false},
+  {"query": "Create an RSS feed for my Next.js blog", "should_trigger": false},
+  {"query": "Write a Python crawler that fetches all URLs from a sitemap", "should_trigger": false},
+  {"query": "Set up 301 redirects in next.config.js", "should_trigger": false},
+  {"query": "Add the Open Graph image for each blog post", "should_trigger": false},
+  {"query": "Configure robots.txt for a Django site", "should_trigger": false}
+]

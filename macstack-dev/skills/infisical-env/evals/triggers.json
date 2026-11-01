@@ -1,0 +1,18 @@
+[
+  {"query": "Set up Infisical for this project: create .infisical.json, pull .env.prod and .env.dev, and make sure every key from resources.accesses exists.", "should_trigger": true},
+  {"query": "wire the env for this macstack project: the mandatory secrets scripts plus the /secrets-push and /env-audit slash commands", "should_trigger": true},
+  {"query": "macstack.json lists keys under resources.accesses but my .env.dev is missing three of them. Sync the secrets and install the scripts.", "should_trigger": true},
+  {"query": "Create the .infisical.json binding with the workspace id and defaultEnvironment prod for this project, then pull the env keys", "should_trigger": true},
+  {"query": "Collect the variables the project's enabled plugins need plus the architecture keys and write them to .env.prod and .env.dev", "should_trigger": true},
+  {"query": "Подключи Infisical к проекту: .infisical.json, подтянуть .env.prod и .env.dev и проверить, что все ключи из macstack.json на месте.", "should_trigger": true},
+  {"query": "Настрой синхронизацию секретов проекта: скрипты pull и push и slash-команды для env.", "should_trigger": true},
+  {"query": "scaffold-project reached the env step. Set up the secrets loop for this project.", "should_trigger": true},
+  {"query": "Run my dev server with the Infisical CLI and inject the staging secrets using infisical run", "should_trigger": false},
+  {"query": "Create the project rules in .claude/rules", "should_trigger": false},
+  {"query": "Set up dotenv-vault for my Node project", "should_trigger": false},
+  {"query": "The prototype does not resolve: the github: clone fails because the repository is private", "should_trigger": false},
+  {"query": "Validate macstack.json against the schema", "should_trigger": false},
+  {"query": "Write the Docker Compose file for local development with Postgres and Redis", "should_trigger": false},
+  {"query": "Generate a .env.example from the keys used in my Django settings.py", "should_trigger": false},
+  {"query": "Add a macstack.json to my project", "should_trigger": false}
+]

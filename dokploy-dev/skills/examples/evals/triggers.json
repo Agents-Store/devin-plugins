@@ -1,0 +1,18 @@
+[
+  {"query": "Show me an end-to-end walkthrough of deploying a Node.js web app on Dokploy from GitHub, including the domain.", "should_trigger": true},
+  {"query": "Give me a walkthrough for provisioning a PostgreSQL database in Dokploy and connecting an app to it.", "should_trigger": true},
+  {"query": "dokploy tutorial: deploy a docker compose stack (an app plus redis) step by step", "should_trigger": true},
+  {"query": "I'm new to Dokploy. Show me how to use it to ship a static site and a database, as a worked example.", "should_trigger": true},
+  {"query": "dokploy debug example - a concrete scenario of a failed deployment from the first symptom to the fix", "should_trigger": true},
+  {"query": "Walk me through a full-stack deployment on Dokploy: frontend, API, Postgres and domains", "should_trigger": true},
+  {"query": "Покажи пошаговый пример деплоя приложения в Dokploy вместе с базой данных", "should_trigger": true},
+  {"query": "Хочу туториал по Dokploy: как развернуть Docker Compose стек, на готовом примере", "should_trigger": true},
+  {"query": "What are all the Dokploy MCP tools for domain management and their parameters?", "should_trigger": false},
+  {"query": "How do I install Dokploy itself on a fresh Ubuntu VPS?", "should_trigger": false},
+  {"query": "Show me an end-to-end example of deploying an app to Fly.io with a Postgres database", "should_trigger": false},
+  {"query": "Walk me through deploying a Next.js app to Vercel with environment variables", "should_trigger": false},
+  {"query": "Show me an example docker-compose.yml for Postgres with pgAdmin", "should_trigger": false},
+  {"query": "How do I read the logs of every container of a compose stack in Dokploy?", "should_trigger": false},
+  {"query": "Give me a tutorial for CI/CD with GitHub Actions deploying over SSH", "should_trigger": false},
+  {"query": "Give me an example Kubernetes Deployment manifest for a Node app", "should_trigger": false}
+]

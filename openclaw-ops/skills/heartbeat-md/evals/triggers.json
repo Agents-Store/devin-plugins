@@ -1,0 +1,18 @@
+[
+  {"query": "How do I make my OpenClaw agent check my inbox and calendar every 30 minutes and only ping me when something is urgent?", "should_trigger": true},
+  {"query": "set up quiet hours for the OpenClaw heartbeat so it doesn't run between 22:00 and 07:00", "should_trigger": true},
+  {"query": "Heartbeats are burning tokens. How do I reduce the heartbeat token costs without losing the monitoring?", "should_trigger": true},
+  {"query": "We have an old workspace that still has a HEARTBEAT.md. Is it read at runtime? Where do heartbeat instructions live now?", "should_trigger": true},
+  {"query": "Как настроить периодическую проверку у агента OpenClaw, чтобы он сам напоминал о важном? Нужен heartbeat", "should_trigger": true},
+  {"query": "Как работают heartbeat-ы в OpenClaw и сколько токенов они расходуют?", "should_trigger": true},
+  {"query": "integrate standing orders into the heartbeat monitor so it checks overdue tasks each cycle", "should_trigger": true},
+  {"query": "I want background monitoring for the agent that surfaces anything needing attention, with the instructions stored through `openclaw automations scratch`", "should_trigger": true},
+  {"query": "Write a standing order for the agent to publish a weekly report every Friday without being asked", "should_trigger": false},
+  {"query": "Set up an uptime check for my website with a 1-minute ping and a Telegram alert", "should_trigger": false},
+  {"query": "Write a Kubernetes liveness probe and readiness probe for my service", "should_trigger": false},
+  {"query": "What runs when the OpenClaw gateway restarts? I want a BOOT.md checklist", "should_trigger": false},
+  {"query": "Schedule a Linux cron job that runs a backup script nightly", "should_trigger": false},
+  {"query": "Schedules fire twice on one OpenClaw instance, diagnose it", "should_trigger": false},
+  {"query": "Implement a heartbeat message over a WebSocket connection with ping/pong frames in Node", "should_trigger": false},
+  {"query": "Configure the Prometheus blackbox exporter to monitor HTTPS endpoints", "should_trigger": false}
+]

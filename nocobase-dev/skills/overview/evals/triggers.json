@@ -1,0 +1,18 @@
+[
+  {"query": "I want to build an internal CRM app on NocoBase v2 - where do I even start and should I use the REST API or the nb CLI?", "should_trigger": true},
+  {"query": "how do I manage a NocoBase instance from scripts - API or CLI, which one is better for what?", "should_trigger": true},
+  {"query": "Give me the big picture of NocoBase v2: which surfaces exist (REST, nb, built-in MCP) and which skill handles what", "should_trigger": true},
+  {"query": "We are evaluating NocoBase v2 for an internal tool. Does it expose a built-in MCP endpoint our agents could use, what URL and authentication does it take, and how do we choose between the REST API and the nb CLI?", "should_trigger": true},
+  {"query": "Хочу собрать приложение на NocoBase v2 - с чего начать и какой интерфейс выбрать: REST API или nb CLI?", "should_trigger": true},
+  {"query": "Расскажи, как работать с NocoBase v2: что умеет API, что умеет CLI и куда смотреть дальше", "should_trigger": true},
+  {"query": "NocoBase API or CLI? I need to call it from another service and also from my terminal", "should_trigger": true},
+  {"query": "manage NocoBase: I just inherited an instance and don't know what is possible - give me an overview of what to use for what", "should_trigger": true},
+  {"query": "Create an orders collection with a many-to-one relation to customers in NocoBase", "should_trigger": false},
+  {"query": "Build a page with a table block and a filter form for orders in NocoBase", "should_trigger": false},
+  {"query": "Set up row-level permissions in Directus so sales managers can edit only the items they created", "should_trigger": false},
+  {"query": "Develop a NocoBase plugin with a custom client-side block and a server action", "should_trigger": false},
+  {"query": "How do I choose between Retool and Appsmith for an internal CRM?", "should_trigger": false},
+  {"query": "Create a Notion CRM database with relations between contacts and companies and a pipeline board view", "should_trigger": false},
+  {"query": "Give me an overview of the Directus REST API and when to use the SDK instead", "should_trigger": false},
+  {"query": "What is the difference between Strapi and Payload CMS for a headless setup?", "should_trigger": false}
+]

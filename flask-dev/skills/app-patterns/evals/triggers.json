@@ -1,0 +1,18 @@
+[
+  {"query": "I'm restructuring my Flask app, everything lives in app.py. How do I move to an application factory with blueprints and extensions in a separate module without circular imports?", "should_trigger": true},
+  {"query": "Flask config: how should I organize Config, DevelopmentConfig and ProductionConfig and load SECRET_KEY from the environment? Also, what's new in the Flask 3.1 production settings?", "should_trigger": true},
+  {"query": "Add CSRFProtect to a Flask app with Flask-WTF and make sure my fetch POST requests send the token", "should_trigger": true},
+  {"query": "How do I write CRUD routes (list, create, edit, delete) for a `Client` model in a Flask blueprint, with a form that saves to the database?", "should_trigger": true},
+  {"query": "My Flask app uses a create_app factory with three blueprints. Add handlers for 404 and 500 that render error templates, and a context processor that injects the current year into every template - where in the factory do they go and how are they registered?", "should_trigger": true},
+  {"query": "How do I register two blueprints with url_prefix='/api/v1' and '/admin' inside create_app, and does the registration order matter?", "should_trigger": true},
+  {"query": "Как организовать структуру Flask-проекта: application factory, blueprints, расширения и конфиги для dev и production?", "should_trigger": true},
+  {"query": "Сделай CRUD для сущности «Клиент» во Flask: список, создание, редактирование и удаление через blueprint", "should_trigger": true},
+  {"query": "Scaffold a brand-new Flask project from scratch with requirements.txt, .flaskenv and a first migration", "should_trigger": false},
+  {"query": "Implement login and logout for my Flask app with Flask-Login and hashed passwords", "should_trigger": false},
+  {"query": "How do I list all registered routes and open a shell with the app context?", "should_trigger": false},
+  {"query": "ImportError: cannot import name 'db' from partially initialized module 'models'", "should_trigger": false},
+  {"query": "Structure a Django project with several apps and settings split by environment", "should_trigger": false},
+  {"query": "How do I structure a FastAPI app with routers and dependency injection?", "should_trigger": false},
+  {"query": "Write a Jinja2 base template with title and content blocks", "should_trigger": false},
+  {"query": "Define SQLAlchemy models with relationships and generate an Alembic migration", "should_trigger": false}
+]

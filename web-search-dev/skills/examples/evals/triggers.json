@@ -1,0 +1,17 @@
+[
+  {"query": "Show me end-to-end examples for the web search and scraping tools: scrape for an app, doc search workflow, media for content, content pipeline", "should_trigger": true},
+  {"query": "Do you have a worked scenario where I extract product data from a site and import it into my app?", "should_trigger": true},
+  {"query": "Open the content-pipeline scenario of this plugin: discover, extract, transform, load. Walk me through which services run at each stage", "should_trigger": true},
+  {"query": "Which scenario shows finding stock photos and videos for a blog with Pexels, Unsplash and Jina?", "should_trigger": true},
+  {"query": "Show me search workflow examples: search then read then use, and question then answer then verify", "should_trigger": true},
+  {"query": "Покажи сквозной пример скрейпинга для приложения: от поиска страниц до импорта данных", "should_trigger": true},
+  {"query": "Покажи из примеров плагина сценарий поиска документации при отладке ошибки фреймворка: какие инструменты и в каком порядке", "should_trigger": true},
+  {"query": "show me how to use the search tools together in a complete scenario", "should_trigger": true},
+  {"query": "Which MCP tool is best for crawling an entire site?", "should_trigger": false},
+  {"query": "Scrape this one page into JSON with a schema", "should_trigger": false},
+  {"query": "Show me examples of Playwright test scripts", "should_trigger": false},
+  {"query": "Show an example of a Python web scraper with BeautifulSoup", "should_trigger": false},
+  {"query": "Walk me through building a RAG pipeline with LangChain", "should_trigger": false},
+  {"query": "Show an example of an ETL job in Airflow", "should_trigger": false},
+  {"query": "Show examples of jq filters for nested JSON", "should_trigger": false}
+]

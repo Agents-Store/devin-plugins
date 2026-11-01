@@ -1,0 +1,16 @@
+[
+  {"query": "Write a Trigger.dev task that processes an uploaded CSV, retries 3 times with exponential backoff and limits concurrency to 2 through a queue", "should_trigger": true},
+  {"query": "Why can't I use Promise.all with triggerAndWait in a task? What should I use for fan-out, and how do I check result.ok?", "should_trigger": true},
+  {"query": "Create a background job in Trigger.dev that generates a PDF report and uses debouncing so rapid repeated requests collapse into one run", "should_trigger": true},
+  {"query": "How do I update progress metadata from a task, and what is the size limit?", "should_trigger": true},
+  {"query": "On our self-hosted Trigger.dev a task that does wait.for one hour keeps its concurrency slot and starves the queue. Are there checkpoints, and how do I restructure it?", "should_trigger": true},
+  {"query": "Как настроить ttl и очередь с ограничением параллелизма для задач Trigger.dev, и что побеждает: ttl в триггере, в задаче или в конфиге?", "should_trigger": true},
+  {"query": "Как обновлять metadata прогресса из задачи Trigger.dev и какой у неё лимит размера?", "should_trigger": true},
+  {"query": "Run a task every day at midnight on a cron", "should_trigger": false},
+  {"query": "Write an Inngest function with step.run and retries", "should_trigger": false},
+  {"query": "Build a BullMQ worker with retries and a rate limiter", "should_trigger": false},
+  {"query": "Show progress in the UI for a running task", "should_trigger": false},
+  {"query": "Build an LLM evaluator-optimizer loop on Trigger.dev", "should_trigger": false},
+  {"query": "Deploy tasks to production", "should_trigger": false},
+  {"query": "Write a Celery task with retry and a queue per priority", "should_trigger": false}
+]

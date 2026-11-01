@@ -1,0 +1,17 @@
+[
+  {"query": "Create a Size attribute for my Teleshop clothing store that can be used for product variants and add the values XS to XXL", "should_trigger": true},
+  {"query": "Add the values Black, Silver and Gold to the existing Color attribute without removing the old ones", "should_trigger": true},
+  {"query": "What is the difference between the select, color and text attribute types in Teleshop? I want a Material attribute that is informational only", "should_trigger": true},
+  {"query": "I need to rename the Size attribute to Clothing Size and turn on variants. Which call do I use?", "should_trigger": true},
+  {"query": "What happens to the products if I delete an attribute in the store?", "should_trigger": true},
+  {"query": "Создай в магазине Teleshop атрибут «Цвет» с типом color и флагом вариантов, затем добавь значения", "should_trigger": true},
+  {"query": "Как настроить атрибуты для магазина электроники: объём памяти как вариант, RAM как справочный?", "should_trigger": true},
+  {"query": "list all attributes in my Teleshop store sorted by name and show the values of Color", "should_trigger": true},
+  {"query": "Add a size chart image to the product page of my Shopify store", "should_trigger": false},
+  {"query": "Create a new product category Smartphones under Electronics", "should_trigger": false},
+  {"query": "Add custom fields to WooCommerce products", "should_trigger": false},
+  {"query": "Design a database schema for product variants with attributes in Postgres", "should_trigger": false},
+  {"query": "Set a product's price and discount price in the store", "should_trigger": false},
+  {"query": "Import a full catalog with attributes from JSON in one request", "should_trigger": false},
+  {"query": "Add custom attributes to a Directus collection", "should_trigger": false}
+]

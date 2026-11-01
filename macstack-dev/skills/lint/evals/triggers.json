@@ -1,0 +1,18 @@
+[
+  {"query": "Validate macstack.json against the schema and check the referential integrity, then check the macstack folder too.", "should_trigger": true},
+  {"query": "Проект заведён по стандарту MACSTACK: есть macstack/macstack.json и шесть клиентских документов. Прогони линтер по всем трём проходам и покажи статус: что в порядке, какие предупреждения есть и какую команду запускать следующей.", "should_trigger": true},
+  {"query": "lint macstack: I just edited the spec by hand and want to be sure it still passes before we scaffold", "should_trigger": true},
+  {"query": "Run the folder checks of rule group 12 on macstack/: tables inside client documents, prose in the wrong language, files that belong in inbox/ but sit in client/. Report every violation with its rule id.", "should_trigger": true},
+  {"query": "Verify macstack.json integrity: entity masters, triggers referenced by workflows, delegation direction, cross-stack prefixes", "should_trigger": true},
+  {"query": "Проверь macstack.json линтером и скажи, что нужно исправить.", "should_trigger": true},
+  {"query": "Клиент поправил документы, а я отредактировал macstack.json руками. Прогони проверку: схема, ссылочная целостность и папка macstack. Перечисли ошибки с номерами правил.", "should_trigger": true},
+  {"query": "Project status: what should I do next? Summarise the findings ordered by the cost of ignoring them.", "should_trigger": true},
+  {"query": "Run ESLint on my TypeScript project and fix the problems", "should_trigger": false},
+  {"query": "Validate this JSON file against a JSON Schema with ajv in Node", "should_trigger": false},
+  {"query": "My macstack lint says \"category not in registry\". What does it mean and how do I add a new category?", "should_trigger": false},
+  {"query": "Create a macstack.json for my project from scratch", "should_trigger": false},
+  {"query": "Run the YAML linter and format my GitHub workflows", "should_trigger": false},
+  {"query": "Reconcile the spec with the client documents", "should_trigger": false},
+  {"query": "Audit whether the code implements the user cases", "should_trigger": false},
+  {"query": "Check my Markdown files for broken links", "should_trigger": false}
+]

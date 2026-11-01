@@ -1,0 +1,18 @@
+[
+  {"query": "My deploy script needs the Stripe key, which lives in a Vaultwarden secure note as a custom field called key. How do I get it into ./deploy.sh's environment without it ending up in argv or the logs?", "should_trigger": true},
+  {"query": "How do I move a personal login item into our org's Infra collection with the bw CLI? The bw move command wants some body and I can't figure out what.", "should_trigger": true},
+  {"query": "Хочу скриптом подтверждать новых участников организации Vaultwarden через bw: как получить тех, кто принял приглашение, и подтвердить каждого?", "should_trigger": true},
+  {"query": "Rotate the password of an existing Vaultwarden login item from a script: generate 32 characters and write it back with bw edit, without printing anything sensitive.", "should_trigger": true},
+  {"query": "We run bw serve on a build box to skip the Node start-up on every lookup. Which endpoint returns just one item's password, and how should I unlock and protect it?", "should_trigger": true},
+  {"query": "Как сделать резервную копию хранилища Vaultwarden через bw export, чтобы файл можно было безопасно хранить и восстановить в другом инстансе?", "should_trigger": true},
+  {"query": "I need to create a secure note with hidden custom fields API_TOKEN and DB_URL using bw create item. Raw JSON gives me an error. What is the right invocation?", "should_trigger": true},
+  {"query": "Give me bw commands to list the items of one collection in our org (just ids and names), and then the org's members with their status.", "should_trigger": true},
+  {"query": "Which /admin route disables a Vaultwarden user and drops their devices?", "should_trigger": false},
+  {"query": "Before I write any automation, how do I check that the Vaultwarden server is reachable without credentials?", "should_trigger": false},
+  {"query": "After upgrading the CLI, bw login fails with a 404 on key-management/user-key-id. What should I do?", "should_trigger": false},
+  {"query": "Use python-vaultwarden to invite a user to our org with read-only access to a collection.", "should_trigger": false},
+  {"query": "Set up warden-mcp in stdio mode so Claude can search the vault without seeing passwords.", "should_trigger": false},
+  {"query": "Use the 1Password CLI (op read) to inject a database password into a docker run command.", "should_trigger": false},
+  {"query": "Walk me through backing up and upgrading a Vaultwarden server end to end.", "should_trigger": false},
+  {"query": "Which raw HTTP route invites a member to a Vaultwarden organization, and what bearer token does it need?", "should_trigger": false}
+]

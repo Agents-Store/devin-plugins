@@ -1,0 +1,18 @@
+[
+  {"query": "I just pulled the new Dify release and the .env.example changed. Compare it with my docker/.env, tell me which variables are new, removed or changed, and add the missing ones with defaults but don't touch my values", "should_trigger": true},
+  {"query": "after upgrading Dify my stack won't start and I suspect missing environment variables. Diff .env against .env.example for me - and please don't paste any passwords or keys into the chat", "should_trigger": true},
+  {"query": "what's the proper way to run dify-env-sync.sh? I heard it drops keys that aren't in the new .env.example. How do I restore the ones I need from my backup?", "should_trigger": true},
+  {"query": "my dify .env was copied from the old monolithic .env.example, and now there's an envs/ directory with shared.env.example and others. do I need to migrate, and how?", "should_trigger": true},
+  {"query": "Синхронизируй .env с .env.example для Dify после обновления: найди новые переменные, добавь недостающие со значениями по умолчанию и сохрани мои настройки", "should_trigger": true},
+  {"query": "Какие новые переменные окружения появились в последнем релизе Dify? Сравни .env.example с моим .env, секреты не показывай", "should_trigger": true},
+  {"query": "I upgraded Dify from 1.14 to 1.17.1 and my docker/.env is missing the new envs/ split. Compare it with the new .env.example files, list the keys that were added, removed or renamed (never print values) and add the missing ones with their defaults", "should_trigger": true},
+  {"query": "sync env for dify - check for new config variables since my last update, I'm on 1.16.2 and moving to 1.17.1", "should_trigger": true},
+  {"query": "Merge the latest Dify tag into my dev branch and handle the conflicts", "should_trigger": false},
+  {"query": "Which Dify containers should be running and what does the plugin_daemon do?", "should_trigger": false},
+  {"query": "Compare my Django settings.py with the sample settings and list missing keys", "should_trigger": false},
+  {"query": "Show me a good .env.example for a Next.js app with Supabase and Stripe, with comments", "should_trigger": false},
+  {"query": "Back up the Dify volumes before the upgrade with the stack stopped", "should_trigger": false},
+  {"query": "My Docker container does not pick up the changed environment variable in docker-compose. Why?", "should_trigger": false},
+  {"query": "Set the SECRET_KEY for a Flask app via environment variables on Heroku", "should_trigger": false},
+  {"query": "Walk me through a complete Dify update scenario with a tagged release", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "I have a streamText route in Next.js for my chat UI and I want to move it onto Trigger.dev as a durable chat.agent. What do I change on the server and on the client?", "should_trigger": true},
+  {"query": "Review my chat.agent frontend: it calls mintChatAccessToken(chatId) from a Server Action with no ownership check. What breaks, how do I record the owner on the Session metadata, and which chat ids should I use?", "should_trigger": true},
+  {"query": "What are the version requirements for chat agents and sessions on my self-hosted server, and what changed in 4.6?", "should_trigger": true},
+  {"query": "The stop button in my Trigger.dev chat updates the UI but the model keeps generating. What is missing in the agent?", "should_trigger": true},
+  {"query": "Where do I initialise chat.local in a chat.agent, onChatStart or onBoot, and why do continuation runs skip it?", "should_trigger": true},
+  {"query": "How do I limit concurrent chats per tenant for a Trigger.dev chat agent?", "should_trigger": true},
+  {"query": "Как построить на Trigger.dev долгоживущего чат-агента с useTriggerChatTransport, чтобы история сохранялась при обновлении страницы?", "should_trigger": true},
+  {"query": "Почему мой chat.agent не использует управляемый промпт и компакцию? Я импортировал streamText из пакета ai", "should_trigger": true},
+  {"query": "Explain prompt chaining and the orchestrator-workers pattern on Trigger.dev", "should_trigger": false},
+  {"query": "Subscribe to a run's progress in React with useRealtimeRun", "should_trigger": false},
+  {"query": "Build a chat UI with the Vercel AI SDK useChat hook and an OpenAI route", "should_trigger": false},
+  {"query": "List my Trigger.dev prompts and promote version 4", "should_trigger": false},
+  {"query": "Write a basic Trigger.dev task with retries", "should_trigger": false},
+  {"query": "Build a Discord chatbot with discord.js and conversation memory in Redis", "should_trigger": false},
+  {"query": "How do I deploy the Trigger.dev project to production?", "should_trigger": false}
+]

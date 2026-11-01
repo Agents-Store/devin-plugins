@@ -1,0 +1,17 @@
+[
+  {"query": "I am migrating my shop from another platform to Teleshop. I have categories and 2000 products in a spreadsheet. How do I import everything in one go?", "should_trigger": true},
+  {"query": "What is the difference between merge and replace mode when importing a catalog, and how are existing products matched?", "should_trigger": true},
+  {"query": "Import this catalog JSON: categories with externalId and parentExternalId, products with SKU, price and imageUrls. Group the T-shirt sizes as variants", "should_trigger": true},
+  {"query": "How do I describe a color attribute in the import format, name plus hex?", "should_trigger": true},
+  {"query": "My catalog import is too big. What is the size limit and how should I split it?", "should_trigger": true},
+  {"query": "Загрузи в Teleshop каталог из JSON: категории с иерархией и товары с артикулами, режим merge", "should_trigger": true},
+  {"query": "Хочу полностью заменить каталог магазина данными из выгрузки. Что нужно знать про режим replace?", "should_trigger": true},
+  {"query": "bulk-load products with images from URLs into my Telegram store, categories linked by externalId", "should_trigger": true},
+  {"query": "Create one product with SKU TSHIRT-M and a price of 29", "should_trigger": false},
+  {"query": "Delete several categories at once in the store", "should_trigger": false},
+  {"query": "Import a CSV of contacts into Mailchimp", "should_trigger": false},
+  {"query": "Migrate my WooCommerce database to PostgreSQL", "should_trigger": false},
+  {"query": "Raise the prices of selected products by 10 percent", "should_trigger": false},
+  {"query": "Export my Teleshop orders to a spreadsheet", "should_trigger": false},
+  {"query": "Import an Excel file into a pandas DataFrame and clean the columns", "should_trigger": false}
+]

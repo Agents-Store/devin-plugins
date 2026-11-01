@@ -1,0 +1,18 @@
+[
+  {"query": "What is @grammyjs/emoji for? Show how to install it and how I use it in a message so the emoji names are autocompleted.", "should_trigger": true},
+  {"query": "What does @grammyjs/hydrate do and how do I install it and wire it into my bot?", "should_trigger": true},
+  {"query": "How do I stream an LLM answer into a Telegram message while it is being generated in grammY? I read there is an official @grammyjs plugin for that, which one and how do I set it up?", "should_trigger": true},
+  {"query": "How do I use @grammyjs/parse-mode so I can stop escaping MarkdownV2 by hand?", "should_trigger": true},
+  {"query": "Which grammy version do the current @grammyjs/menu and @grammyjs/commands plugins require, and what goes wrong if my project is pinned to an older grammy release?", "should_trigger": true},
+  {"query": "Какие официальные плагины есть у grammY? Нужны меню, интернационализация через Fluent и ограничение частоты запросов.", "should_trigger": true},
+  {"query": "Мне для бота на grammY сразу нужны: меню с подменю, ограничение частоты запросов, локализация через Fluent и «печатает…» во время долгой работы. Как называются официальные плагины и какие из них — трансформеры, а не middleware?", "should_trigger": true},
+  {"query": "Which of the official @grammyjs plugins are transformers rather than middleware, and how does installing a transformer differ from installing a middleware plugin? Give me the install pattern for both.", "should_trigger": true},
+  {"query": "Write my own middleware for grammY that attaches the current user from the database to ctx.user", "should_trigger": false},
+  {"query": "Which npm packages are best for building Telegram bots in Python?", "should_trigger": false},
+  {"query": "What are the best VS Code extensions for TypeScript development?", "should_trigger": false},
+  {"query": "Choose between Redis and MongoDB for storing grammY sessions and show me the adapter setup", "should_trigger": false},
+  {"query": "Compare Express, Fastify and Hono plugins for CORS handling", "should_trigger": false},
+  {"query": "How do I deploy my grammY bot with webhooks to Fly.io?", "should_trigger": false},
+  {"query": "Write the code that sends a Telegram Stars invoice and handles the successful payment", "should_trigger": false},
+  {"query": "Which WordPress plugins do I need for a multilingual shop with a booking calendar?", "should_trigger": false}
+]

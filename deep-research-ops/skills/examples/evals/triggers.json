@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete example of a competitive analysis research workflow with these search tools - from query planning to the final comparison table", "should_trigger": true},
+  {"query": "I'd like to see reference tool-call patterns for the research capabilities: how do the search, scrape and batch_scrape calls look, with the fallback order between providers?", "should_trigger": true},
+  {"query": "do you have a worked example of the market research scenario, end to end, so I can see what the report is supposed to look like?", "should_trigger": true},
+  {"query": "walk me through the person-and-company lookup scenario with an example: which tools get called and in what order", "should_trigger": true},
+  {"query": "Покажи пример готового сценария исследования новостей и трендов: какие вызовы, в каком порядке и как выглядит итог", "should_trigger": true},
+  {"query": "Нужны эталонные примеры вызовов инструментов поиска и чтения для сценария «технический аудит»: покажи справочные паттерны и пример полного рабочего процесса из этого плагина, от запросов до итогового отчёта", "should_trigger": true},
+  {"query": "I'm writing training material for the team. Give me several end-to-end research workflow examples that cover the different research types", "should_trigger": true},
+  {"query": "show an example of a topic deep dive done with parallel searches and then batch reading of the top pages", "should_trigger": true},
+  {"query": "Do a market research report on the global lithium supply chain right now", "should_trigger": false},
+  {"query": "Explain what the ~~search capability is and which providers back it", "should_trigger": false},
+  {"query": "Show me a worked example of a REST API pagination loop in Python", "should_trigger": false},
+  {"query": "Summarize the latest news about OpenAI from this week", "should_trigger": false},
+  {"query": "Read https://example.com/post and give me the main points", "should_trigger": false},
+  {"query": "Give me end-to-end examples of Terraform modules for AWS VPCs", "should_trigger": false},
+  {"query": "Format my notes into a Deep Research Report template", "should_trigger": false},
+  {"query": "Which tools should I pick when one search provider is rate-limited?", "should_trigger": false}
+]

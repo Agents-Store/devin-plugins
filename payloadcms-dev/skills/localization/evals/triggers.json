@@ -1,0 +1,18 @@
+[
+  {"query": "I want English, German and Ukrainian content in Payload with English as fallback. How do I configure locales and mark fields as localized?", "should_trigger": true},
+  {"query": "How do I query a specific locale with the Local API and REST in Payload, and what does locale: 'all' return?", "should_trigger": true},
+  {"query": "Payload admin UI translations: how do I add a new admin language and override some translation strings of my own?", "should_trigger": true},
+  {"query": "Localized relationship and upload fields in Payload - how are they stored and what happens with drafts and versions per locale?", "should_trigger": true},
+  {"query": "Set fallbackLocale per request in Payload and disable fallback for one query", "should_trigger": true},
+  {"query": "Как включить локализацию в Payload v3 и сделать так, чтобы только поле title переводилось?", "should_trigger": true},
+  {"query": "Как добавить русский язык в интерфейс админки Payload и перевести собственные подписи полей?", "should_trigger": true},
+  {"query": "How do I read all locale versions of a document at once in Payload for a translation review screen?", "should_trigger": true},
+  {"query": "Add a text field and a select field to a Payload collection", "should_trigger": false},
+  {"query": "Set up next-intl routing with locale prefixes in Next.js App Router", "should_trigger": false},
+  {"query": "Translate my React app strings with i18next and lazy loaded namespaces", "should_trigger": false},
+  {"query": "Localization in Directus: how to configure translations interface for a collection?", "should_trigger": false},
+  {"query": "How do I make a Payload global with versions and drafts?", "should_trigger": false},
+  {"query": "Strapi i18n plugin: enable localization for a collection type", "should_trigger": false},
+  {"query": "Format dates and currency by locale in JavaScript with Intl", "should_trigger": false},
+  {"query": "Customize the Payload admin logo and nav", "should_trigger": false}
+]

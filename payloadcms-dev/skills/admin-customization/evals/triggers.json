@@ -1,0 +1,18 @@
+[
+  {"query": "I want to replace the default Payload dashboard with my own React server component showing stats cards. Where do I register it and how does the importMap get updated?", "should_trigger": true},
+  {"query": "How do I build a custom field component in Payload v3 that uses useField, and when must it be a client component?", "should_trigger": true},
+  {"query": "Add a custom admin view at /admin/reports to Payload and a nav link to it, using the v3 config", "should_trigger": true},
+  {"query": "Payload admin: swap the logo and the nav icon, and add a custom CSS file that overrides the default theme variables", "should_trigger": true},
+  {"query": "How does document locking work in the Payload admin panel and how do I turn it off for one collection?", "should_trigger": true},
+  {"query": "Как в Payload v3 подменить стандартный компонент списка документов своим и зачем нужен importMap?", "should_trigger": true},
+  {"query": "Нужно добавить свой виджет на дашборд админки Payload и кнопку в навигацию. С чего начать?", "should_trigger": true},
+  {"query": "Swap the default logo and nav links of my Payload v3 admin panel for custom React components, add a dashboard widget, and turn on document locking - show me the admin.components config and where each component file goes", "should_trigger": true},
+  {"query": "How do I enable live preview for a Payload collection?", "should_trigger": false},
+  {"query": "Create a Payload plugin that adds a field to every collection", "should_trigger": false},
+  {"query": "Style a React admin dashboard with Tailwind and shadcn/ui tables", "should_trigger": false},
+  {"query": "How do I hide a collection from the Payload admin panel for non-admin users?", "should_trigger": false},
+  {"query": "Customize the Django admin site with a custom dashboard and inline models", "should_trigger": false},
+  {"query": "Directus: how do I create a custom interface extension for a field?", "should_trigger": false},
+  {"query": "Render Lexical rich text as JSX on the Payload frontend", "should_trigger": false},
+  {"query": "Set up i18n for the Payload admin UI in French and Spanish", "should_trigger": false}
+]

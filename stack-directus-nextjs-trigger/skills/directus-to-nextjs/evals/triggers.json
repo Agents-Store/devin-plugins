@@ -1,0 +1,17 @@
+[
+  {"query": "Directus images give 403 in next/image. What is the right way to serve files that are not all public without putting the token in the URL?", "should_trigger": true},
+  {"query": "How do I tag Directus reads in Next.js so a Flow, or a Trigger.dev task that writes back to Directus, can expire the right pages?", "should_trigger": true},
+  {"query": "I get TS2353 when I pass cache to rest(). What is the supported way to cache Directus fetches in Next.js 16?", "should_trigger": true},
+  {"query": "With cacheComponents on, how do I tag and expire a Directus read with use cache, and why must I never cache a read made with a user's token?", "should_trigger": true},
+  {"query": "A Directus price comes back as a string in Next.js and author is typed string or Author. Update types/directus.ts and tell me how tsc can catch a field renamed in Directus 12", "should_trigger": true},
+  {"query": "Как не светить токен Directus в адресах картинок next/image? Нужен прокси-маршрут, который отдаёт одну папку", "should_trigger": true},
+  {"query": "Как закешировать запросы к Directus в Server Components и сбрасывать кеш при правке контента? Теги должны включать развёрнутые связи", "should_trigger": true},
+  {"query": "Our next/image URLs for Directus files carry an access token in the query string and it shows up in the page HTML. What are the two supported modes for serving files, public files or a proxy route, and what does each cost?", "should_trigger": true},
+  {"query": "Write a Directus Flow that sends item keys to a worker", "should_trigger": false},
+  {"query": "Implement NextAuth Credentials login against Directus", "should_trigger": false},
+  {"query": "Show me the Directus SDK readItems with a deep filter on a many-to-many relation", "should_trigger": false},
+  {"query": "Run a Trigger.dev task from a Server Action and subscribe to the run in the browser", "should_trigger": false},
+  {"query": "What is the difference between revalidate, no-store and force-cache in Next.js fetch?", "should_trigger": false},
+  {"query": "Set up Cloudinary image transformations in next/image with a custom loader", "should_trigger": false},
+  {"query": "Create a Directus collection for products with a decimal price and a many-to-one category", "should_trigger": false}
+]

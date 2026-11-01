@@ -1,0 +1,18 @@
+[
+  {"query": "macstack.json is validated. Now scaffold the project working files from it: prototype first, then stack plugins, then dev plugins.", "should_trigger": true},
+  {"query": "Build the project from macstack.json: copy the layout from the prototype, enable the stack plugins in .claude/settings.json and generate .mcp.json with ${VAR} placeholders.", "should_trigger": true},
+  {"query": "create the project working files from the spec: docker-compose, config files, scripts and .gitignore, taking them from the prototype named in macstack.json", "should_trigger": true},
+  {"query": "Generate project files from the spec. The prototype is github:acme/shop-starter#v2; clone it shallow and adapt its compose file and CLAUDE.md skeleton.", "should_trigger": true},
+  {"query": "Scaffold the project: enabledPlugins in settings, the .env.example from the stack plugin template, and a CLAUDE.md that references macstack.json without duplicating it", "should_trigger": true},
+  {"query": "Создай рабочие файлы проекта по macstack.json: сначала прототип, потом stack-плагины, затем dev-плагины.", "should_trigger": true},
+  {"query": "macstack.json прошёл линтер. Разверни из него проект: структура каталогов, compose, .mcp.json без значений.", "should_trigger": true},
+  {"query": "build the working tree from macstack.json", "should_trigger": true},
+  {"query": "Create a Next.js project with create-next-app and Tailwind", "should_trigger": false},
+  {"query": "Install the best-practice rules into the project", "should_trigger": false},
+  {"query": "Create a macstack.json for this existing repository", "should_trigger": false},
+  {"query": "Wire up .infisical.json and pull the env files for this project", "should_trigger": false},
+  {"query": "Scaffold a Rails app with rails new and PostgreSQL", "should_trigger": false},
+  {"query": "Generate a cookiecutter template for our Python services", "should_trigger": false},
+  {"query": "My scaffold broke my files and the prototype does not resolve. What went wrong?", "should_trigger": false},
+  {"query": "Set up a monorepo with turborepo and pnpm workspaces", "should_trigger": false}
+]

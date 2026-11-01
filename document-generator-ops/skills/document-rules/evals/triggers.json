@@ -1,0 +1,18 @@
+[
+  {"query": "Draft an estimate for repainting a three-bedroom apartment: 120 square meters of walls, two coats, materials included. Client: Mr. Alvarez. Ask me whatever you still need.", "should_trigger": true},
+  {"query": "generate a contract for freelance design work, I'll give you the details as we go", "should_trigger": true},
+  {"query": "I want to create my first document with this plugin, an invoice. Where do you save the files and what do you need to ask me before generating?", "should_trigger": true},
+  {"query": "Create a report for the board on Q3 results: revenue up 12%, costs flat. Make it a PDF.", "should_trigger": true},
+  {"query": "Before you generate anything: do you check that node and the PDF dependencies are installed first? Then make a quick proposal for a logo design project, $1,200.", "should_trigger": true},
+  {"query": "Make an NDA for a new contractor. Save it in ~/Documents/contracts.", "should_trigger": true},
+  {"query": "Составь счёт-фактуру для клиента. Недостающие данные уточни у меня по ходу", "should_trigger": true},
+  {"query": "Хочу сделать презентацию для инвесторов на 8 слайдов. Какие данные тебе нужны и куда ты сохранишь файл?", "should_trigger": true},
+  {"query": "What's the best font pairing for a legal contract?", "should_trigger": false},
+  {"query": "Show me sample JSON inputs for every document type", "should_trigger": false},
+  {"query": "What sections does a McKinsey-style report have and how long should the executive summary be?", "should_trigger": false},
+  {"query": "Change my company logo and update my default currency", "should_trigger": false},
+  {"query": "Explain what an NDA is and when I should ask a contractor to sign one", "should_trigger": false},
+  {"query": "Write a Python script that merges several PDFs with PyPDF2", "should_trigger": false},
+  {"query": "Translate this service contract from English into German, keeping the clause numbering", "should_trigger": false},
+  {"query": "Summarize this 40-page PDF report into five bullet points", "should_trigger": false}
+]

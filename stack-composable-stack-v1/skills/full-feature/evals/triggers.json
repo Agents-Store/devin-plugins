@@ -1,0 +1,17 @@
+[
+  {"query": "I need to build an order-processing feature end to end in our stack: orders table, NocoDB views, a NocoBase admin page and a payment workflow. What is the order of work?", "should_trigger": true},
+  {"query": "We are adding a support tickets feature: table in Postgres, kanban in NocoDB, form in NocoBase and an n8n notification on a new ticket. Give me the step-by-step recipe across all layers", "should_trigger": true},
+  {"query": "Where do I build the NocoBase pages first, on dev or prod, when I am adding a whole new feature with a data model and automation?", "should_trigger": true},
+  {"query": "walk me through implementing a new refund requests feature across the data, logic and interface layers, including how to verify it end to end at the end", "should_trigger": true},
+  {"query": "Сделай мне пошаговый рецепт полной фичи в нашем стеке: от таблицы в PostgreSQL до кнопки в NocoBase, которая запускает фоновую задачу", "should_trigger": true},
+  {"query": "Мне нужно реализовать фичу «заявки на отпуск» целиком: данные, представления, интерфейс, автоматизация. С чего начинать и в каком порядке соединять слои?", "should_trigger": true},
+  {"query": "what checklist should I use for each new feature in the stack so that the data model, workflows and UI are wired together, and what do I test last?", "should_trigger": true},
+  {"query": "Implement the full invoice generation feature: new table, a Trigger.dev PDF task, an n8n email step and a NocoBase button", "should_trigger": true},
+  {"query": "Create a Grid view and a Kanban view in NocoDB for the tasks table with a filter on assignee", "should_trigger": false},
+  {"query": "Add a due_date TIMESTAMPTZ column to the projects table and refresh the NocoDB schema", "should_trigger": false},
+  {"query": "Write a Trigger.dev task that retries three times and records the final failure in onFailure", "should_trigger": false},
+  {"query": "Choose between PostgREST and the PostgreSQL MCP for batch updates from an n8n workflow", "should_trigger": false},
+  {"query": "How do I trigger an n8n workflow from a NocoBase button?", "should_trigger": false},
+  {"query": "Plan the sprint for building the checkout feature: split the work into frontend, backend and QA tickets with estimates", "should_trigger": false},
+  {"query": "Write a release checklist for a new mobile app feature", "should_trigger": false}
+]

@@ -3,25 +3,28 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "The checkout API feels slow on the orders table. Using the PostgreSQL MCP server, find out whether a missing index is the cause and which existing indexes are never used.",
+      "prompt": "The checkout API feels slow on the orders table. Which PostgreSQL MCP server tools would you call, with which arguments and in which order, to find out whether a missing index is the cause and which existing indexes are never used?",
       "expected_output": "Uses list_table_stats for the orders table and reads idx_scan_ratio_percent, get_query_plan for the slow query (without executing it), list_indexes with only_unused for unused indexes; no write statements.",
       "files": [],
       "expectations": [
-        "Calls list_table_stats with table_name orders and reads the index-scan ratio",
-        "Calls get_query_plan (which does not execute the statement) rather than running the query for timing",
-        "Calls list_indexes with only_unused true to find indexes that were never used",
-        "Does not run DDL or DML through execute_sql during diagnosis"
+        "The answer says to check the orders table with list_table_stats and read its index-scan ratio (idx_scan_ratio_percent) to spot a missing index",
+        "The answer uses get_query_plan for the slow query and says it shows the plan without executing the statement",
+        "The answer uses list_indexes with only_unused set to true to find indexes that were never used",
+        "The answer proposes no DDL or DML statements during the diagnosis"
       ]
     },
     {
       "id": 2,
-      "prompt": "Drop the obsolete column legacy_code from products over MCP and make NocoDB show the change.",
+      "prompt": "Use the postgres-mcp-tools skill. I want to drop the obsolete column legacy_code from the products table over the PostgreSQL MCP server and make NocoDB show the change. What exactly do you do, step by step, including the SQL you would send?",
       "expected_output": "Asks for confirmation of the exact column and a backup first (see modify-schema), runs one ALTER TABLE ... DROP COLUMN statement per execute_sql call, then reminds to run Meta Sync in NocoDB / refresh the data source in NocoBase.",
       "files": [],
       "expectations": [
-        "Asks the user to confirm the exact object and recommends a backup before the DROP",
-        "Sends exactly one SQL statement per execute_sql call",
-        "Tells the user to run Meta Sync (NocoDB) or refresh the data source (NocoBase) afterwards"
+        "The answer asks the user to confirm the exact column before the DROP",
+        "The answer recommends a backup before the DROP",
+        "The answer sends ALTER TABLE products DROP COLUMN legacy_code as the sql of one execute_sql call",
+        "The answer sends one SQL statement per execute_sql call",
+        "The answer tells the user to run Meta Sync in NocoDB afterwards",
+        "The answer tells the user to refresh the data source in NocoBase afterwards"
       ]
     }
   ]

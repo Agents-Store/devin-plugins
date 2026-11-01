@@ -1,0 +1,18 @@
+[
+  {"query": "show me the dokploy logs for my API app: the last 200 lines, only errors, since 30 minutes ago", "should_trigger": true},
+  {"query": "My compose stack has web, worker and redis. How do I read the logs of every container in Dokploy, not just the first one?", "should_trigger": true},
+  {"query": "I need the build log of the latest deployment of 'billing-service' in Dokploy to see where the build broke", "should_trigger": true},
+  {"query": "Tail the Postgres database logs in Dokploy - I think connections are being refused. Is that possible over the API?", "should_trigger": true},
+  {"query": "grep the dokploy runtime logs for ECONNREFUSED for the last hour", "should_trigger": true},
+  {"query": "Does Dokploy expose logs over the API or MCP? I read somewhere that you can't get them", "should_trigger": true},
+  {"query": "Покажи логи приложения в Dokploy за последние 30 минут и найди ошибки", "should_trigger": true},
+  {"query": "Как прочитать логи всех контейнеров compose-стека в Dokploy?", "should_trigger": true},
+  {"query": "Analyze my failed deployment with Dokploy's AI", "should_trigger": false},
+  {"query": "Roll back my Dokploy application to the previous deployment", "should_trigger": false},
+  {"query": "How do I ship Docker container logs to Loki and Grafana?", "should_trigger": false},
+  {"query": "Read the nginx access log on my Ubuntu server and count the 404 responses", "should_trigger": false},
+  {"query": "Configure log rotation for Docker's json-file logging driver", "should_trigger": false},
+  {"query": "Set up Sentry for my Next.js app to capture runtime errors", "should_trigger": false},
+  {"query": "Why does Dokploy answer 401 to my API calls?", "should_trigger": false},
+  {"query": "kubectl logs for a crashing pod: how do I see the previous container's logs?", "should_trigger": false}
+]

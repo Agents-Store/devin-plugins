@@ -1,0 +1,16 @@
+[
+  {"query": "I need the current docs for the Next.js App Router caching options. Where do I look first and which tools do I use?", "should_trigger": true},
+  {"query": "Find current docs for Prisma findMany with relation filters. I want version-accurate answers, not blog posts", "should_trigger": true},
+  {"query": "How do I look up the Tailwind v4 config docs while coding? Which tool should be tried first for a known library?", "should_trigger": true},
+  {"query": "Find the current docs for the Vue 3 defineModel macro", "should_trigger": true},
+  {"query": "Look up the API reference for the Stripe Node SDK paymentIntents.create and summarise the required parameters from the current docs", "should_trigger": true},
+  {"query": "Найди актуальную документацию по React 19 use() и подскажи, какой инструмент искать первым для известной библиотеки", "should_trigger": true},
+  {"query": "Как искать документацию к фреймворку при отладке ошибки: Context7, Perplexity или Exa, и в каком порядке?", "should_trigger": true},
+  {"query": "Explain how React Server Components work conceptually", "should_trigger": false},
+  {"query": "Scrape the product list from a competitor site", "should_trigger": false},
+  {"query": "Find stock photos for my blog", "should_trigger": false},
+  {"query": "Show me the Perplexity SDK usage in Python", "should_trigger": false},
+  {"query": "Verify that my Context7 and Exa connections work", "should_trigger": false},
+  {"query": "Write a README for my library", "should_trigger": false},
+  {"query": "Fix this TypeScript error: Property does not exist on type", "should_trigger": false}
+]

@@ -1,0 +1,16 @@
+[
+  {"query": "Which environment variables does each place need in the Directus, Next.js and Trigger.dev stack: the Next.js host, the Directus container, the Trigger.dev environment and CI?", "should_trigger": true},
+  {"query": "We deploy the Next.js app and the tasks separately. How do I avoid version skew when the app starts sending a new payload field?", "should_trigger": true},
+  {"query": "Give me the production checklist for Directus, Next.js and Trigger.dev together, including alerts for failed runs and schedules that must not run in staging", "should_trigger": true},
+  {"query": "The page does not refresh after a task writes to Directus. Which collections must be in the revalidation Flow and in the route allow-list?", "should_trigger": true},
+  {"query": "Как запустить весь стек локально: Directus в Docker, Trigger.dev dev и Next.js? Какие файлы окружения нужны и чем они отличаются?", "should_trigger": true},
+  {"query": "Как задать переменные окружения для задач Trigger.dev на проде, чтобы токен Directus у задач был отдельным от токена Next.js?", "should_trigger": true},
+  {"query": "REVALIDATION_SECRET differs between the Directus container and the Trigger.dev environment. What breaks, and how would I notice?", "should_trigger": true},
+  {"query": "Deploy Next.js to Dokploy with a Dockerfile and a Traefik domain", "should_trigger": false},
+  {"query": "Install the self-hosted Trigger.dev server with docker compose and configure the registry", "should_trigger": false},
+  {"query": "Wire a Directus Flow to start a Trigger.dev task and stop it from looping", "should_trigger": false},
+  {"query": "How do I decide what runs in a Server Action and what in a Trigger.dev task?", "should_trigger": false},
+  {"query": "Set up GitHub Actions to build and push a Docker image to GHCR", "should_trigger": false},
+  {"query": "Add Sentry error tracking to a Next.js app", "should_trigger": false},
+  {"query": "Production checklist for a Django app: DEBUG, ALLOWED_HOSTS and secrets", "should_trigger": false}
+]

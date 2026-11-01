@@ -1,0 +1,16 @@
+[
+  {"query": "Payload is not working on Postgres: error relation posts does not exist on the first request after I added a collection. Debug it", "should_trigger": true},
+  {"query": "Payload crashes on startup with MongoServerError: Transaction numbers are only allowed on a replica set member or mongos. Help me debug it", "should_trigger": true},
+  {"query": "Live preview in my Payload admin is a blank white iframe. Debug it for me", "should_trigger": true},
+  {"query": "Ошибка «Cannot find module payload» после установки зависимостей в моём проекте Payload. Что делать?", "should_trigger": true},
+  {"query": "Payload сломался после обновления до 3.90: ключи API пропали, payload-jobs отдаёт 403, загрузки падают с 413. Помоги разобраться, что именно изменилось", "should_trigger": true},
+  {"query": "Maximum call stack size exceeded inside a Payload hook - how do I decode it and break the loop?", "should_trigger": true},
+  {"query": "Set up Payload for the first time with create-payload-app", "should_trigger": false},
+  {"query": "How do I customize the Payload admin panel with a custom view?", "should_trigger": false},
+  {"query": "Debug a Postgres 'relation does not exist' error in a Django project", "should_trigger": false},
+  {"query": "My Next.js build fails with Module not found: Can't resolve 'fs'", "should_trigger": false},
+  {"query": "Fix a Docker container exiting with code 137", "should_trigger": false},
+  {"query": "Directus returns 403 for a role - how do I check permissions?", "should_trigger": false},
+  {"query": "Explain Payload query operators with examples", "should_trigger": false},
+  {"query": "Fix TypeScript error 'Property does not exist on type' in a React component", "should_trigger": false}
+]

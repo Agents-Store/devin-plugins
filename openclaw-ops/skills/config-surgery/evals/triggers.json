@@ -1,0 +1,18 @@
+[
+  {"query": "Our OpenClaw gateway refuses to start after I edited the instance config to change the model chain - how do I find what broke and restore it?", "should_trigger": true},
+  {"query": "I changed agents.defaults.heartbeat in the config but nothing changed. Does it need a restart, or is the process ignoring the file?", "should_trigger": true},
+  {"query": "There's a stray config backup and a rejected sidecar file next to the OpenClaw config. What are they and is it safe to delete them?", "should_trigger": true},
+  {"query": "Split my OpenClaw config into includes: channels in one file, models in another. How do I do that safely?", "should_trigger": true},
+  {"query": "Мне нужно поменять цепочку моделей в конфиге OpenClaw и подключить секрет по ссылке, не ломая остальное. Как безопасно править?", "should_trigger": true},
+  {"query": "Правка конфига OpenClaw удалила несколько строк. Как восстановить и что нужно перезапускать после изменения?", "should_trigger": true},
+  {"query": "explain what this part of my OpenClaw config does - the tools allow list and the session reset setting - and which changes need a restart", "should_trigger": true},
+  {"query": "add a new Telegram channel to the OpenClaw config with its bot token as a secret reference", "should_trigger": true},
+  {"query": "Is the config key agents.defaults.heartbeat still current in the latest OpenClaw release, or was it renamed? Cite the docs", "should_trigger": false},
+  {"query": "Which Infisical keys is the instance receiving? It seems to get fewer than its siblings", "should_trigger": false},
+  {"query": "Edit my nginx.conf to add a reverse proxy for port 18789 and reload nginx safely", "should_trigger": false},
+  {"query": "Fix my Docker Compose YAML, the indentation breaks the service definition", "should_trigger": false},
+  {"query": "Edit my VS Code settings.json to enable format on save for Python files", "should_trigger": false},
+  {"query": "Split my Kubernetes manifests into base and overlays with Kustomize", "should_trigger": false},
+  {"query": "Add a rule to the agent's AGENTS.md about group chat behavior", "should_trigger": false},
+  {"query": "Split the Home Assistant configuration.yaml into packages", "should_trigger": false}
+]

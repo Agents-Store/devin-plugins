@@ -1,0 +1,17 @@
+[
+  {"query": "I want a Trigger.dev task to run whenever an editor saves an article in Directus. What is the full pipeline from the Flow to the receiver to the task?", "should_trigger": true},
+  {"query": "My Directus Flow keeps firing the enrichment task in a loop: the task writes ai_summary, which triggers items.update, which fires the webhook again. How do I stop it?", "should_trigger": true},
+  {"query": "Our Directus Flow posts the whole changed item to the Trigger.dev receiver and the task trusts that payload. What should the task read instead, and why is an update's payload incomplete?", "should_trigger": true},
+  {"query": "Editors save the same item many times in a minute. Should I use an idempotency key or a debounce for tasks started from Directus saves?", "should_trigger": true},
+  {"query": "How should a Trigger.dev task read and write Directus? Can it import lib/directus.ts from the Next.js app?", "should_trigger": true},
+  {"query": "Нужно, чтобы после создания записи в Directus запускалась задача Trigger.dev и писала результат обратно. Как организовать Flow, приёмник в Next.js и защиту от цикла?", "should_trigger": true},
+  {"query": "Почему в логе Directus Flow успех, хотя задача Trigger.dev упала? Как ловить такие ошибки?", "should_trigger": true},
+  {"query": "A bulk import changed 5000 items in Directus. Do I start a task run per key from the receiver?", "should_trigger": true},
+  {"query": "Trigger a Trigger.dev task from a Next.js Server Action after the user clicks a button", "should_trigger": false},
+  {"query": "Write a Directus Flow with a condition operation and a Run Script that formats a date", "should_trigger": false},
+  {"query": "Configure a Directus webhook that posts to Slack when an item is deleted", "should_trigger": false},
+  {"query": "Show me the AI enrichment pipeline scenario end to end", "should_trigger": false},
+  {"query": "Make a Trigger.dev task with retries and a queue that limits concurrency to 5", "should_trigger": false},
+  {"query": "Forward Stripe webhooks to a Trigger.dev task and verify the signature", "should_trigger": false},
+  {"query": "How do I debounce a search input in React?", "should_trigger": false}
+]

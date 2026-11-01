@@ -1,0 +1,18 @@
+[
+  {"query": "I just added the DataForSEO MCP server to Claude Code. Can you verify that the connection works and the credentials are valid?", "should_trigger": true},
+  {"query": "is DataForSEO working? run whatever check shows the MCP integration is operational before I start a big keyword job", "should_trigger": true},
+  {"query": "set up DataForSEO credentials for the MCP server - I have the login and password from my dashboard, where do they go and how do I test it?", "should_trigger": true},
+  {"query": "test the DataForSEO setup: it should list the tools, and a free call should show my account balance", "should_trigger": true},
+  {"query": "Проверь подключение к DataForSEO: сервер MCP запущен, логин и пароль подхвачены, инструменты доступны?", "should_trigger": true},
+  {"query": "Помоги настроить DataForSEO MCP с нуля: какие переменные окружения нужны и как убедиться, что всё работает", "should_trigger": true},
+  {"query": "i installed the dataforseo plugin yesterday, but i'm not sure it's actually connected. can you confirm the MCP server is running?", "should_trigger": true},
+  {"query": "before we start the SEO research, make sure the DataForSEO integration is set up properly and tell me what's missing", "should_trigger": true},
+  {"query": "DataForSEO api_request returns 40101 Authentication failed after working all morning", "should_trigger": false},
+  {"query": "Set up Google Search Console API access with a service account", "should_trigger": false},
+  {"query": "Set up the Playwright MCP server in Claude Code and check it works", "should_trigger": false},
+  {"query": "Which DataForSEO endpoint gives SERP features? Show me the request body", "should_trigger": false},
+  {"query": "How much will a keyword research run cost?", "should_trigger": false},
+  {"query": "Create a .env file for my Django project with DEBUG, SECRET_KEY and DATABASE_URL", "should_trigger": false},
+  {"query": "Find 100 keyword ideas for 'standing desk'", "should_trigger": false},
+  {"query": "Verify that my SSH key works with GitHub and fix the agent if not", "should_trigger": false}
+]

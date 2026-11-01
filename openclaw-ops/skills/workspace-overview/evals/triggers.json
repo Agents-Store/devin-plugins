@@ -1,0 +1,18 @@
+[
+  {"query": "I'm new to OpenClaw. How is the workspace structured and which files are loaded automatically?", "should_trigger": true},
+  {"query": "What are the character limits for the workspace files that get injected into context, and what happens when I exceed them?", "should_trigger": true},
+  {"query": "What goes where in the OpenClaw workspace: AGENTS.md, SOUL.md, USER.md, memory/, skills/? Give me the big picture", "should_trigger": true},
+  {"query": "how should I organize subfolders in my agent workspace? I have notes, projects and reference docs", "should_trigger": true},
+  {"query": "Объясни структуру рабочего пространства OpenClaw: какие файлы грузятся автоматически и какие у них лимиты символов", "should_trigger": true},
+  {"query": "Я только начал с OpenClaw. Покажи, что где лежит в workspace и с чего начать настройку", "should_trigger": true},
+  {"query": "what are the scan categories A-J for the workspace and how does file loading work?", "should_trigger": true},
+  {"query": "organize my OpenClaw workspace: I think too much loads at start and the agent is slow", "should_trigger": true},
+  {"query": "Write the operating rules and the session startup sequence for AGENTS.md", "should_trigger": false},
+  {"query": "Refine the personality in SOUL.md", "should_trigger": false},
+  {"query": "Organize my VS Code workspace with multi-root folders and shared settings", "should_trigger": false},
+  {"query": "Organize my monorepo with pnpm workspaces and Turborepo pipelines", "should_trigger": false},
+  {"query": "Set up an Obsidian vault structure with folders and templates for notes", "should_trigger": false},
+  {"query": "Recommend a folder structure for a Django project with several apps", "should_trigger": false},
+  {"query": "What files does Claude Code load automatically at startup: CLAUDE.md, rules, settings?", "should_trigger": false},
+  {"query": "List the OpenClaw instances on this host with their status", "should_trigger": false}
+]

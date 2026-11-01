@@ -1,0 +1,15 @@
+[
+  {"query": "List all the webhooks on the Tasks table in NocoDB and delete the one named 'old-sync'", "should_trigger": true},
+  {"query": "Нужен hook в NocoDB: при обновлении записи в таблице Заказы отправлять письмо, но только если изменилось поле Статус", "should_trigger": true},
+  {"query": "Как в NocoDB создать hook через Meta API: триггеры, поля, тип уведомления URL и проверка работы?", "should_trigger": true},
+  {"query": "update an existing NocoDB hook so it also fires on delete and test it with a sample payload", "should_trigger": true},
+  {"query": "Disable the NocoDB hook named 'notify-sales' on the Leads table without deleting it, then test it with a sample payload", "should_trigger": true},
+  {"query": "Configure a Mailgun inbound route that forwards parsed emails to my API endpoint", "should_trigger": false},
+  {"query": "Create a Slack Incoming Webhook and send a message with curl", "should_trigger": false},
+  {"query": "Set up a GitHub webhook for push events that triggers a Jenkins build", "should_trigger": false},
+  {"query": "Configure a Stripe webhook endpoint in Next.js and verify the signature", "should_trigger": false},
+  {"query": "Create a Directus Flow that triggers on item create and calls a URL", "should_trigger": false},
+  {"query": "List the executions of a NocoDB workflow from the last hour", "should_trigger": false},
+  {"query": "Create a Trello butler automation that sends an email when a card moves to Done", "should_trigger": false},
+  {"query": "Create a NocoDB table called Events with a Title field", "should_trigger": false}
+]

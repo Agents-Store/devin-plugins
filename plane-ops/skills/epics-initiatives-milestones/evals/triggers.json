@@ -1,0 +1,16 @@
+[
+  {"query": "Which calls create a milestone in Plane and attach work items to it, and when should I use a milestone instead of an epic or an initiative?", "should_trigger": true},
+  {"query": "Report progress on a long-running goal that spans multiple sprints and modules: should this be an initiative or an epic?", "should_trigger": true},
+  {"query": "How does the milestone health report in Plane decide between Red, Yellow and Green from remaining points, weekly velocity and the target date?", "should_trigger": true},
+  {"query": "Чем в Plane отличаются эпик, инициатива и milestone и как построить роадмап на квартал?", "should_trigger": true},
+  {"query": "How does the Plane initiative rollup compute progress across its epics, and how do I read the health of a milestone?", "should_trigger": true},
+  {"query": "Как в Plane посчитать прогресс эпика по дочерним задачам и оценить здоровье milestone: красный, жёлтый или зелёный?", "should_trigger": true},
+  {"query": "Break the epic into smaller user stories using INVEST criteria", "should_trigger": false},
+  {"query": "Group work items by feature area into a module", "should_trigger": false},
+  {"query": "Plan the next sprint with a sprint goal", "should_trigger": false},
+  {"query": "Create a roadmap slide deck for the board meeting", "should_trigger": false},
+  {"query": "Create a GitHub milestone for release 1.4", "should_trigger": false},
+  {"query": "What is an epic in Jira and how does it differ from a story?", "should_trigger": false},
+  {"query": "Create a work item 'Update docs'", "should_trigger": false},
+  {"query": "Show the burndown chart for the cycle", "should_trigger": false}
+]

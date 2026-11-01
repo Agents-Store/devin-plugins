@@ -3,54 +3,54 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Decompose epic 'Multi-tenant support' (currently 21 points) for TaskFlow. Must include data isolation, per-tenant billing, per-tenant branding, admin tenant switcher. Break into stories that fit in a 2-week sprint.",
+      "prompt": "Use the task-decomposition skill. Decompose epic 'Multi-tenant support' (currently 21 points) for TaskFlow. Must include data isolation, per-tenant billing, per-tenant branding, admin tenant switcher. Break into stories that fit in a 2-week sprint. List each story with its points and acceptance criteria, and show the create call that attaches it to the epic. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "4-6 vertical stories each ≤8 points, created in Plane with parent set to the epic, total ≈21, each with user story format + acceptance criteria. Uses Split by Business Rule or Split by Workflow Step pattern.",
       "files": [],
       "expectations": [
-        "Uses Split by Business Rule or Split by Workflow Step, NOT horizontal slicing by layer",
-        "Creates 4-6 child stories, each ≤ 8 points",
-        "Each child is independently deliverable (a tenant admin could use one without the others)",
-        "Child points sum to ~21 (preservation rule)",
-        "Uses User Story template with Given/When/Then acceptance criteria in description_html",
-        "Calls workitem(action=create) with the parent field set to the epic's work item ID (the epic is itself a workitem of type Epic, found with workitem_type(action=resolve, name=\"Epic\"))"
+        "The answer splits the epic vertically and not by architecture layer",
+        "The answer keeps every story at 8 points or less",
+        "The answer makes the story points add up to about 21",
+        "The answer writes the acceptance criteria as Given/when/then lines in description_html",
+        "The answer creates each story with workitem(action=create, parent=<epic work item id>)",
+        "The answer verifies the split with workitem(action=list, pql='childOf(\"<epic identifier>\")')"
       ]
     },
     {
       "id": 2,
-      "prompt": "Split this 13-point story: 'User can manage their profile' — covers viewing, editing name/bio, uploading picture, and deleting account.",
+      "prompt": "Use the task-decomposition skill. Split this 13-point story: 'User can manage their profile' — covers viewing, editing name/bio, uploading picture, and deleting account. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Uses Split by Workflow Step pattern, produces 3-4 children summing to ~13 points, each a vertical slice.",
       "files": [],
       "expectations": [
-        "Recognizes this as Split by Workflow Step pattern",
-        "Creates 3-4 child stories (view / edit name+bio / upload picture / delete account)",
-        "Child points sum to ~13 (preservation rule)",
-        "Each child is a vertical slice (not split by FE/BE/DB layers)",
-        "Creates children in Plane with workitem(action=create, parent=<original id>) and can list them back with pql childOf(\"<identifier>\")"
+        "The answer recognizes this as Split by Workflow Step pattern",
+        "The answer says to create 3-4 child stories (view / edit name+bio / upload picture / delete account)",
+        "In the answer the child points sum to ~13 (preservation rule)",
+        "In the answer each child is a vertical slice (not split by FE/BE/DB layers)",
+        "The answer says to create children in Plane with workitem(action=create, parent=<original id>) and can list them back with pql childOf(\"<identifier>\")"
       ]
     },
     {
       "id": 3,
-      "prompt": "Someone split 'Build signup flow' into: (1) Create users DB schema, (2) Build auth API endpoints, (3) Build signup UI. Review this decomposition.",
+      "prompt": "Use the task-decomposition skill. Someone split 'Build signup flow' into: (1) Create users DB schema, (2) Build auth API endpoints, (3) Build signup UI. Review this decomposition. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Rejects — this is a horizontal (layer-based) slice. None of the three deliver value alone and all depend on each other. Recommend splitting by feature/behavior instead.",
       "files": [],
       "expectations": [
-        "Identifies this as the horizontal slicing anti-pattern",
-        "Explains that none of the 3 pieces deliver value independently",
-        "Fails INVEST 'Independent' and 'Valuable' criteria",
-        "Suggests vertical alternative: signup with happy path → validation errors → email verification"
+        "The answer identifies this as the horizontal slicing anti-pattern",
+        "The answer explains that none of the 3 pieces deliver value independently",
+        "The answer says to fail INVEST 'Independent' and 'Valuable' criteria",
+        "The answer suggests vertical alternative: signup with happy path → validation errors → email verification"
       ]
     },
     {
       "id": 4,
-      "prompt": "Validate this user story against INVEST: 'As a support agent, I want to flag tickets, so that I can follow up later' — 21 points, no acceptance criteria, depends on a new tags system being built first.",
+      "prompt": "Use the task-decomposition skill. Validate this user story against INVEST: 'As a support agent, I want to flag tickets, so that I can follow up later' — 21 points, no acceptance criteria, depends on a new tags system being built first. Go through every INVEST criterion with a PASS or FAIL verdict and say what to do about each failure. Answer in text; everything you need is in this message.",
       "expected_output": "Fails Small (21 pts), Testable (no AC), and Independent (blocked by tags system). Specific remediation for each.",
       "files": [],
       "expectations": [
-        "Checks each INVEST criterion individually",
-        "Reports Small: FAIL (21 pts > 8), split required",
-        "Reports Testable: FAIL (no acceptance criteria), write Given/When/Then",
-        "Reports Independent: FAIL (blocked by tags system), either wait or scope it in",
-        "Does NOT just say 'looks good'"
+        "The answer says to check each INVEST criterion individually",
+        "The answer reports Small: FAIL (21 pts > 8), split required",
+        "The answer reports Testable: FAIL (no acceptance criteria), write Given/When/Then",
+        "The answer reports Independent: FAIL (blocked by tags system), either wait or scope it in",
+        "The answer does NOT just say 'looks good'"
       ]
     }
   ]

@@ -1,13 +1,6 @@
 ---
 name: webhooks
-description: |
-  Configure NocoDB webhooks (HookV3) — triggers, field scoping, and notification targets (URL, Email, Slack/Discord/Telegram/Whatsapp/Twilio messaging, Script). Use when:
-  - "add a webhook"
-  - "fire a Slack message on insert"
-  - "send email when a record changes"
-  - "trigger n8n on update"
-  - "list webhooks on a table"
-  - "delete a hook"
+description: Configure NocoDB webhooks (HookV3) on a table — insert, update and delete triggers, field scoping, and notification targets URL, Email, Slack, Discord, Telegram, Whatsapp, Twilio or Script, plus listing, updating, testing and deleting hooks. Use when a NocoDB table should notify another system. The business-user view of webhooks is nocodb-ops.
 ---
 
 # Webhooks (HookV3)

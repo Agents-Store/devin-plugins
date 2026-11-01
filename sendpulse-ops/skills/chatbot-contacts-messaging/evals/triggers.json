@@ -1,0 +1,18 @@
+[
+  {"query": "Find the Telegram bot subscriber with the email anna@example.com in SendPulse and send her a direct message that her order has shipped", "should_trigger": true},
+  {"query": "Look up a SendPulse chatbot contact by phone number, set the variable 'plan' to 'pro' and add the tag 'vip'", "should_trigger": true},
+  {"query": "Show me the chat history with a subscriber in my SendPulse WhatsApp bot and leave a note on the contact that she asked about a refund", "should_trigger": true},
+  {"query": "Find all chatbot contacts in SendPulse whose variable city equals Kyiv and message them on Instagram", "should_trigger": true},
+  {"query": "How do I send a direct message to one SendPulse contact in the right channel - what is the channel suffix for Viber vs Telegram vs Facebook?", "should_trigger": true},
+  {"query": "Какие инструменты SendPulse MCP ставят переменную и теги контакту чат-бота и создают заметку оператора? Назови инструменты и входные поля", "should_trigger": true},
+  {"query": "Добавь контакту в чат-боте SendPulse переменную и тег, а затем создай заметку о том, что клиент просил перезвонить", "should_trigger": true},
+  {"query": "Which SendPulse MCP tool sends a direct message to a TikTok subscriber, and what are the channel suffixes for Live Chat, Instagram and Viber?", "should_trigger": true},
+  {"query": "Send a SendPulse chatbot campaign to everyone with the tag 'webinar' and show bot statistics", "should_trigger": false},
+  {"query": "Run the welcome automation flow in SendPulse for a given contact", "should_trigger": false},
+  {"query": "Create a CRM contact in SendPulse with the email and phone of a new lead", "should_trigger": false},
+  {"query": "Add subscribers to a SendPulse email addressbook from a CSV", "should_trigger": false},
+  {"query": "Send a message to a customer on Telegram using the python-telegram-bot library", "should_trigger": false},
+  {"query": "Look up a HubSpot contact by email and add a note", "should_trigger": false},
+  {"query": "How do I build a WhatsApp Business API webhook handler in Node?", "should_trigger": false},
+  {"query": "Send a transactional email through SendPulse SMTP", "should_trigger": false}
+]

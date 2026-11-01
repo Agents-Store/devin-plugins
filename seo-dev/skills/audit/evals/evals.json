@@ -3,18 +3,16 @@
   "evals": [
     {
       "id": 3,
-      "prompt": "My product pages don't show rich results in Google. The Lighthouse SEO score is 72.",
+      "prompt": "Use the audit skill. My product pages don't show rich results in Google. The Lighthouse SEO score is 72. In this session you have no project files and no shell, and nobody to ask. Do not ask questions: assume a typical Next.js App Router project and answer in text with concrete findings, what you would check, the fixes and the code you would write.",
       "expected_output": "Diagnoses missing Product structured data and meta tag issues, implements fixes",
       "files": [],
       "expectations": [
-        "Checks for existing structured data (JSON-LD scripts)",
-        "Adds Product + Offer schema with price, currency, availability, sku",
-        "Verifies generateMetadata exports unique title and description per product",
-        "Checks for canonical URLs on product pages",
-        "Verifies OG image configuration (1200x630)",
-        "Checks heading hierarchy (single H1 per page)",
-        "Checks all images have alt text",
-        "Recommends validation via Google Rich Results Test"
+        "The answer checks the product pages for existing application/ld+json structured data",
+        "The answer checks that the structured data matches the visible page content",
+        "The answer validates the markup with the Rich Results Test",
+        "The answer checks that every page has a unique title and a unique description",
+        "The answer checks alternates.canonical on every page",
+        "The answer checks that the OG image is 1200x630"
       ]
     }
   ]

@@ -6,24 +6,24 @@
       "prompt": "I have an existing products table in my NocoDB-connected PostgreSQL database. I need to: rename the 'name' column to 'title', change the 'price' column from int4 to decimal(10,2), and add a new 'description' text column. Show me the SQL.",
       "expected_output": "Three ALTER TABLE statements: RENAME COLUMN, ALTER COLUMN TYPE with USING cast, ADD column. Correct PostgreSQL syntax with quoted identifiers.",
       "files": [],
-      "expectations": [
-        {"assertion": "rename_syntax", "text": "Uses ALTER TABLE ... RENAME COLUMN \"name\" TO \"title\" syntax"},
-        {"assertion": "type_change_with_using", "text": "Uses ALTER COLUMN ... TYPE decimal(10,2) USING cast syntax"},
-        {"assertion": "drop_default_before_type_change", "text": "Drops default before changing type (ALTER COLUMN ... DROP DEFAULT)"},
-        {"assertion": "add_column_syntax", "text": "Uses ALTER TABLE ... ADD \"description\" text syntax"},
-        {"assertion": "quoted_identifiers", "text": "Uses double-quoted identifiers for table and column names"}
+      "assertions": [
+        {"id": "rename_syntax", "text": "Uses ALTER TABLE ... RENAME COLUMN \"name\" TO \"title\" syntax"},
+        {"id": "type_change_with_using", "text": "Uses ALTER COLUMN ... TYPE decimal(10,2) USING cast syntax"},
+        {"id": "drop_default_before_type_change", "text": "Drops default before changing type (ALTER COLUMN ... DROP DEFAULT)"},
+        {"id": "add_column_syntax", "text": "Uses ALTER TABLE ... ADD \"description\" text syntax"},
+        {"id": "quoted_identifiers", "text": "Uses double-quoted identifiers for table and column names"}
       ]
     },
     {
       "id": 2,
-      "prompt": "I need to completely remove a many-to-many relationship between products and tags in my PostgreSQL database. The junction table is nc_m2m_products_tags. What's the safe order of operations?",
+      "prompt": "I need to completely remove a many-to-many relationship between products and tags in my PostgreSQL database. The junction table is nc_m2m_products_tags and it has two foreign key constraints, fk_products_tags_1 and fk_products_tags_2. Give me the SQL in the safe order of operations.",
       "expected_output": "Drop FK constraints first (both fk_products_tags_1 and fk_products_tags_2), then DROP TABLE. Shows the correct teardown order.",
       "files": [],
-      "expectations": [
-        {"assertion": "drops_constraints_first", "text": "Drops FK constraints before dropping the table"},
-        {"assertion": "drops_both_fks", "text": "Drops both FK constraints (two ALTER TABLE DROP CONSTRAINT statements)"},
-        {"assertion": "drops_table_last", "text": "DROP TABLE IF EXISTS comes after constraint removal"},
-        {"assertion": "correct_order", "text": "Shows operations in the correct safe order: constraints first, then table"}
+      "assertions": [
+        {"id": "drops_constraints_first", "text": "Drops FK constraints before dropping the table"},
+        {"id": "drops_both_fks", "text": "Drops both FK constraints (two ALTER TABLE DROP CONSTRAINT statements)"},
+        {"id": "drops_table_last", "text": "DROP TABLE IF EXISTS comes after constraint removal"},
+        {"id": "correct_order", "text": "Shows operations in the correct safe order: constraints first, then table"}
       ]
     },
     {
@@ -31,11 +31,11 @@
       "prompt": "Drop the obsolete legacy_notes column from products. The database is connected to both NocoDB and NocoBase.",
       "expected_output": "Asks for confirmation of the exact column and recommends a backup (pg_dump) first, because the drop cannot be undone and external sources have no NocoDB trash. Shows ALTER TABLE ... DROP COLUMN, then tells the user to run Meta Sync in NocoDB and refresh the data source in NocoBase.",
       "files": [],
-      "expectations": [
-        {"assertion": "asks_confirmation", "text": "Asks the user to confirm the exact column before dropping it"},
-        {"assertion": "recommends_backup", "text": "Recommends a backup such as pg_dump before the drop"},
-        {"assertion": "drop_column_syntax", "text": "Uses ALTER TABLE ... DROP COLUMN with quoted identifiers"},
-        {"assertion": "syncs_platforms", "text": "Tells the user to run Meta Sync in NocoDB and refresh the data source in NocoBase afterwards"}
+      "assertions": [
+        {"id": "asks_confirmation", "text": "Asks the user to confirm the exact column before dropping it"},
+        {"id": "recommends_backup", "text": "Recommends a backup such as pg_dump before the drop"},
+        {"id": "drop_column_syntax", "text": "Uses ALTER TABLE ... DROP COLUMN with quoted identifiers"},
+        {"id": "syncs_platforms", "text": "Tells the user to run Meta Sync in NocoDB and refresh the data source in NocoBase afterwards"}
       ]
     }
   ]

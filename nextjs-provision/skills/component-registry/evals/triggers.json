@@ -1,0 +1,18 @@
+[
+  {"query": "I ran `npx shadcn@latest add form` and `npx shadcn@latest add date-picker` in my Next.js project and the CLI wrote no files. What am I supposed to install instead for a form and a date picker?", "should_trigger": true},
+  {"query": "TypeScript says `asChild` doesn't exist on DialogTrigger in my new shadcn project created with the default preset. What replaces it, and does it apply to DropdownMenuTrigger and SheetTrigger too?", "should_trigger": true},
+  {"query": "list the shadcn studio blocks available for a pricing section and install one of them", "should_trigger": true},
+  {"query": "Хочу сделать кнопку-ссылку в shadcn v4 через <Button render={<a />}>. Правильно ли это, и как оформить ссылку со стилем кнопки так, чтобы сохранилась семантика ссылки?", "should_trigger": true},
+  {"query": "Добавь в проект компонент shadcn card и покажи, как правильно использовать его вместе с Button", "should_trigger": true},
+  {"query": "How do I see what `npx shadcn add button` would change before it writes anything, and how do I compare my local components/ui/button.tsx with the registry now that `shadcn diff` is deprecated?", "should_trigger": true},
+  {"query": "What is the difference between the @shadcn-studio, @ss-components, @ss-blocks, @ss-pages and @ss-themes registries, and which of them need a license?", "should_trigger": true},
+  {"query": "find a form block in shadcn studio and add it to my signup page", "should_trigger": true},
+  {"query": "Search the shadcn directory for animated components from magicui and aceternity", "should_trigger": false},
+  {"query": "Initialize shadcn/ui in my existing Next.js app and configure the studio registries", "should_trigger": false},
+  {"query": "Switch my shadcn app to a dark theme with our brand colors", "should_trigger": false},
+  {"query": "Add a Material UI DataGrid with column sorting to my React app", "should_trigger": false},
+  {"query": "Install Chakra UI and wrap my Next.js app in the ChakraProvider", "should_trigger": false},
+  {"query": "npx shadcn add button fails with 'No Tailwind CSS configuration found'", "should_trigger": false},
+  {"query": "Write a Next.js server action that validates a form with zod and revalidates the page", "should_trigger": false},
+  {"query": "Write a headless combobox from scratch with React hooks and ARIA roles, no component library", "should_trigger": false}
+]

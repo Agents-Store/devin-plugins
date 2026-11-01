@@ -1,6 +1,6 @@
 ---
 name: site-audit
-description: This skill should be used when the user asks about "site audit", "on-page audit", "lighthouse audit", "page speed", "technical SEO audit", "crawl site", "page analysis", "content analysis", "technology detection", or needs to analyze website pages and content using DataForSEO.
+description: Use for page and site inspection with DataForSEO OnPage, Content Analysis and Domain Analytics - Lighthouse and page speed, on-page SEO checks (title, meta, headings, alt text), site crawls, parsing a page's content, content and sentiment analysis for a keyword, the technologies a domain runs, and WHOIS data. Not for backlinks (backlink-audit), competitor comparison (competitor-analysis) or keyword research.
 ---
 
 # Site Audit

@@ -1,0 +1,18 @@
+[
+  {"query": "On Directus 12.4.1 without a license I gave the Public policy read access to directus_files, but only for the 'Public' folder with a filter, and saving the permission fails with 403 RESOURCE_RESTRICTED. What does that error mean and what are my options for serving public images?", "should_trigger": true},
+  {"query": "my Directus MCP won't connect - the client says /mcp not found or '403 MCP must be enabled'. what do I check?", "should_trigger": true},
+  {"query": "Getting 422 'Invalid payload' when creating items through the REST API on a collection with a required field and a relation. How do I read the error and fix it?", "should_trigger": true},
+  {"query": "I'm creating a field on a collection and Directus says 'Field already exists', even though I can't see it in the UI. How do I diagnose?", "should_trigger": true},
+  {"query": "Our Directus 12.4 on Postgres: GET /items/orders?filter[customer][country][_eq]=DE&filter[lines][product][category][_eq]=chairs&fields=*.*.* now takes 9 seconds on 200k orders after we added those deep filters. Diagnose the slowness: what do I check (indexes, field depth, query limit, cache) and in which order?", "should_trigger": true},
+  {"query": "A Directus flow on items.update of `orders` has a condition operation with the rule { $trigger: { payload: { status: { _eq: 'paid' } } } } that never takes the resolve path, and the request operation after it shows no error. The flow is active. Walk me through diagnosing it: where do I see the data chain and the operation logs, and what usually breaks a condition on the payload?", "should_trigger": true},
+  {"query": "Directus выдаёт ошибку 401 Unauthorized при запросах с токеном, хотя вчера всё работало. Как диагностировать?", "should_trigger": true},
+  {"query": "В Directus MCP получаю ошибку «data must be an array» при создании полей. Что делать?", "should_trigger": true},
+  {"query": "How do I configure a healthcheck for Directus in docker compose?", "should_trigger": false},
+  {"query": "Troubleshoot a Flask 500 error where the Jinja template can't be found", "should_trigger": false},
+  {"query": "How do I debug a failed deployment on Dokploy when the build log shows an npm error?", "should_trigger": false},
+  {"query": "Postgres got slow: how do I find the slowest queries with pg_stat_statements?", "should_trigger": false},
+  {"query": "How do I add a 'priority' field of type integer to my tasks collection?", "should_trigger": false},
+  {"query": "How do I send a Slack notification from a Directus flow?", "should_trigger": false},
+  {"query": "Why is the Stripe API returning 429 Too Many Requests in my checkout service?", "should_trigger": false},
+  {"query": "git push to GitHub is rejected with a 403 - what should I check?", "should_trigger": false}
+]

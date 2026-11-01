@@ -1,12 +1,6 @@
 ---
 name: codemap-explain
-description: >
-  This skill should be used when the user asks to "explain this code", "what does this file do", "how does this work",
-  "walk me through this function", "explain this module", "what is this for",
-  "help me understand this", "break down this code for me", "give me a tour of this codebase",
-  or needs a beginner-friendly step-by-step explanation of code, files, functions, or modules.
-  Also triggers when the user points at code and asks "why" or "how" questions, or says
-  "I don't understand this", "what's happening here", "trace this flow for me".
+description: Use when the user wants existing code explained as a learner - what a file, function or module does, how a request or data flows through the project, why it was built that way, or a tour of a codebase. Gives a structured step-by-step explanation (context, data flow, details, pitfalls) pitched at the user's level, preferred to an ad-hoc answer when the user is learning the code. Not for code review (codemap-review) or diagrams (codemap-diagram).
 ---
 
 # Code Explanation for Beginners

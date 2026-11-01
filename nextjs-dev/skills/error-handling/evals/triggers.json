@@ -1,0 +1,17 @@
+[
+  {"query": "Add error handling to my Next.js App Router app: an error.tsx for the dashboard segment with a retry button and a global-error.tsx for the root layout", "should_trigger": true},
+  {"query": "In Next.js 16.3 my error.tsx still calls unstable_retry from 16.2. What replaced it, and what exactly does retry() do compared with reset()?", "should_trigger": true},
+  {"query": "I want an error boundary around only the chart widget on my Next.js dashboard page, not the whole route segment. Which API exists in 16.3, where is it imported from, and does it interfere with notFound() or redirect()?", "should_trigger": true},
+  {"query": "Как в Next.js 16 показать запасной экран при ошибке в корневом layout? Нужен global-error.tsx - объясни, почему там должны быть собственные html и body.", "should_trigger": true},
+  {"query": "Как в Next.js обработать ошибку в одном компоненте, не ломая всю страницу? Слышал про catchError", "should_trigger": true},
+  {"query": "Покажи, как сделать error boundary на уровне маршрута в App Router и как вложенные error.tsx поднимают ошибку вверх", "should_trigger": true},
+  {"query": "Design a fallback UI and error recovery with reset() for failed data fetches in a Next.js layout", "should_trigger": true},
+  {"query": "My Next.js app shows 'Text content does not match server-rendered HTML', how do I debug this hydration problem?", "should_trigger": false},
+  {"query": "Set up Sentry for a Next.js app with source maps and release tracking", "should_trigger": false},
+  {"query": "Write a global exception filter in NestJS that maps domain errors to HTTP status codes", "should_trigger": false},
+  {"query": "Implement an ErrorBoundary class component in a plain React SPA with Vite", "should_trigger": false},
+  {"query": "Validate a Server Action form with zod and show field errors inline", "should_trigger": false},
+  {"query": "Retry failed fetches with exponential backoff in a Node.js script using p-retry", "should_trigger": false},
+  {"query": "Add structured logging with pino to a Next.js route handler", "should_trigger": false},
+  {"query": "Create a 404 page and a 500 page in Express with a custom error middleware", "should_trigger": false}
+]

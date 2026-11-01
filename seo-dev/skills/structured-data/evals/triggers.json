@@ -1,0 +1,17 @@
+[
+  {"query": "How do I add JSON-LD structured data to a Next.js App Router page - Article schema with author, datePublished and image - and render it safely in a script tag?", "should_trigger": true},
+  {"query": "I want rich results for products: Product schema with offers, aggregateRating and availability in a Next.js product page. Show the JSON-LD", "should_trigger": true},
+  {"query": "How do I implement BreadcrumbList and Organization schema in Next.js and validate them with the Rich Results Test?", "should_trigger": true},
+  {"query": "Create the schema factory functions for organization, article, product and breadcrumb in lib/schema.ts for my Next.js project and show where the sitewide Organization schema goes in the root layout", "should_trigger": true},
+  {"query": "Как добавить микроразметку Schema.org (JSON-LD) для статей и организации на сайте Next.js?", "should_trigger": true},
+  {"query": "Какие типы JSON-LD Google в 2026 ещё показывает как расширенные результаты, и как объединить Organization, WebSite и Article в один @graph в Next.js?", "should_trigger": true},
+  {"query": "What's the difference between JSON-LD, Microdata and RDFa, and which does the plugin recommend for Next.js?", "should_trigger": true},
+  {"query": "Set title and description with generateMetadata", "should_trigger": false},
+  {"query": "Generate sitemap.xml for my Next.js site", "should_trigger": false},
+  {"query": "Why does Google show duplicate content for my pages?", "should_trigger": false},
+  {"query": "Design a JSON schema for validating API request bodies", "should_trigger": false},
+  {"query": "Add schema validation with zod in a Next.js server action", "should_trigger": false},
+  {"query": "Use Open Graph tags for social sharing", "should_trigger": false},
+  {"query": "Add Google Tag Manager to my site", "should_trigger": false},
+  {"query": "Explain the Knowledge Graph in Google search results", "should_trigger": false}
+]

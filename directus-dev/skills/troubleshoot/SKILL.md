@@ -1,6 +1,6 @@
 ---
 name: troubleshoot
-description: Directus troubleshooting — common errors, diagnostics, MCP connection issues, permission problems, schema conflicts. This skill should be used when the user encounters "Directus errors", "Directus not working", "Directus connection issues", "Directus 403/422/500 errors", or needs to diagnose and fix problems.
+description: Diagnose Directus problems such as 401, 403, 404, 409, 422 and 500 responses on items, fields, relations or assets, MCP connection and tool-call errors, permission and policy issues, schema conflicts, slow queries, and flows that never fire or whose conditions never match. Use it for any Directus question about something failing or behaving unexpectedly. For Docker setup use docker-local-dev; for building flows use flow-automation.
 ---
 
 # Troubleshooting

@@ -40,28 +40,8 @@ Copy this directory's contents into your Devin plugin directory. The manifest (`
 - "NocoDB tool reference"
 - "listTools / callTool"
 
-- `record-management` — Create, read, update, and delete NocoDB records. Use when:
-- "add a new record"
-- "create entries in NocoDB"
-- "update a record"
-- "delete records"
-- "bulk import data"
-- "search and edit records"
-- "how many records match..."
-- "restore deleted records"
-
-- `search-filter` — NocoDB filter syntax reference for searching, filtering, and sorting records. Use when:
-- "filter records"
-- "search for records where"
-- "NocoDB where clause"
-- "how to filter by date"
-- "sort results"
-- "query syntax"
-- "find records matching"
-- "filter by status"
-- "records created this week"
-- "combine multiple filters"
-
+- `record-management` — Create, read, update and delete records in NocoDB tables — single and bulk creates, finding a record and changing it, counting records that match a condition, deduplicating and restoring deleted records. Use when working with the data inside a NocoDB table. Filter syntax is search-filter, CSV import and export is import-export, reports are views-and-reports.
+- `search-filter` — NocoDB filter syntax for searching, filtering and sorting records — the where clause and structured filter, text, numeric, date and multi-select operators, relative date ranges, AND/OR groups, null and empty checks, and sort objects. Use when writing or debugging a NocoDB query condition. Creating or changing records is record-management.
 - `setup` — Verify NocoDB connection and MCP setup. Use when:
 - "check my NocoDB connection"
 - "verify MCP is working"

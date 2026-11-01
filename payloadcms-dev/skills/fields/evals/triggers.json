@@ -1,0 +1,18 @@
+[
+  {"query": "Which Payload field type should I use to model a page builder with several layouts? Show me a blocks field with two block types and how to add conditional fields", "should_trigger": true},
+  {"query": "How do I add a join field in Payload so a category shows all its posts, and what are the limits of polymorphic joins in 3.90?", "should_trigger": true},
+  {"query": "I need a virtual field in Payload that computes fullName from firstName and lastName on read. How do I define it?", "should_trigger": true},
+  {"query": "Payload point field for geolocation: how do I store coordinates and query nearby documents with near?", "should_trigger": true},
+  {"query": "How do I validate a text field in Payload with a custom validate function and show a custom error message?", "should_trigger": true},
+  {"query": "Добавь в Payload поле slug через slugField из ядра: какие опции он принимает и как включить автогенерацию slug из title?", "should_trigger": true},
+  {"query": "Как использовать slugField из Payload core и генерировать slug автоматически из title?", "should_trigger": true},
+  {"query": "Relationship vs upload vs array: what are hasMany, maxDepth and filterOptions on a Payload relationship field?", "should_trigger": true},
+  {"query": "How do I create a Payload collection from scratch with versions and drafts?", "should_trigger": false},
+  {"query": "Configure the Lexical editor with a custom block feature inside a richText field", "should_trigger": false},
+  {"query": "Which database column types should I use for money in Postgres?", "should_trigger": false},
+  {"query": "Add a custom field component to the Payload admin that uses useField", "should_trigger": false},
+  {"query": "Translate Payload field labels and enable localized content in French and German", "should_trigger": false},
+  {"query": "Define a Directus field with a conditional interface using the data model API", "should_trigger": false},
+  {"query": "Set field-level access in Payload so only admins can read a field", "should_trigger": false},
+  {"query": "What are the different field types in Strapi and how do I add a relation?", "should_trigger": false}
+]

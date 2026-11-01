@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 5,
-      "prompt": "I want to build a blog CMS in Directus. What collections do I need and in what order should I create them?",
+      "prompt": "Use the schema-design skill. I want to build a blog CMS in Directus. What collections do I need and in what order should I create them? Show the MCP collections tool call for the first collection you would create.",
       "expected_output": "Blog collections with creation order, system fields, display templates",
       "files": [],
       "expectations": [
@@ -11,12 +11,12 @@
         "Specifies creation order: independent first, then dependent, then junction",
         "Mentions system fields (status, user_created, date_created)",
         "Mentions display_template for item presentation",
-        "Shows MCP tool call examples"
+        "The answer shows the MCP collections tool call (action create) for the first collection"
       ]
     },
     {
       "id": 6,
-      "prompt": "What's the difference between schema: {} and schema: null when creating a Directus collection?",
+      "prompt": "Use the schema-design skill. What's the difference between schema: {} and schema: null when creating a Directus collection?",
       "expected_output": "schema:{} = real table, schema:null = folder-only UI grouping",
       "files": [],
       "expectations": [

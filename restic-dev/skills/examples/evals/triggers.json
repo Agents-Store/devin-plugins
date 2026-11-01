@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete end-to-end restic walkthrough with Cloudflare R2 for a Docker server, from install to the first restore test", "should_trigger": true},
+  {"query": "Give me a worked example of backing up a Docker server with restic including databases and a nightly timer", "should_trigger": true},
+  {"query": "I want a tutorial-style scenario of disaster recovery with restic: server lost, rebuild from R2, services back online", "should_trigger": true},
+  {"query": "How would the restic backup setup work on my server? Walk me through a full example scenario", "should_trigger": true},
+  {"query": "Show an example of restic with R2 on a small VPS running Postgres and a few web apps, with all steps in order", "should_trigger": true},
+  {"query": "Покажи сквозной пример бэкапа Docker-сервера через restic и Cloudflare R2 от установки до проверки восстановления", "should_trigger": true},
+  {"query": "Какие готовые сценарии есть для restic-dev: Docker-сервер на R2, хост без systemd с cron, аварийное восстановление, несколько баз данных? Покажи, что в каждом", "should_trigger": true},
+  {"query": "Is there a complete scenario that shows discovery, repository setup, backup script, schedule and monitoring in one place?", "should_trigger": true},
+  {"query": "What is the syntax of restic forget with keep-daily and prune?", "should_trigger": false},
+  {"query": "My restic backup fails in cron with exit code 1 but works in a shell", "should_trigger": false},
+  {"query": "Show me a complete Ansible playbook that installs Docker", "should_trigger": false},
+  {"query": "Walk me through an end-to-end CI/CD example with GitHub Actions and Docker", "should_trigger": false},
+  {"query": "Example of borg backup with a remote repository", "should_trigger": false},
+  {"query": "Example restic exit codes and what they mean", "should_trigger": false},
+  {"query": "Give me a full example of a systemd timer for a daily job", "should_trigger": false},
+  {"query": "Complete example of Postgres streaming replication", "should_trigger": false}
+]

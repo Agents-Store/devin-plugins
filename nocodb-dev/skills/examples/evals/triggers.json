@@ -1,0 +1,18 @@
+[
+  {"query": "show me a schema example in NocoDB: build a CRM with Contacts, Companies and Deals, with links between them", "should_trigger": true},
+  {"query": "How do I build an e-commerce schema in NocoDB? Walk me through products, orders and order items end to end", "should_trigger": true},
+  {"query": "I want a schema design walkthrough for NocoDB: create a table from scratch, add a field, rename a field and build a Kanban view", "should_trigger": true},
+  {"query": "Give me a NocoDB dev scenario that wires a Slack webhook on insert and adds a formula field", "should_trigger": true},
+  {"query": "Покажи пример схемы в NocoDB: CRM с контактами, компаниями и сделками, всё пошагово", "should_trigger": true},
+  {"query": "Как построить схему интернет-магазина в NocoDB? Нужен сквозной пример с таблицами и связями", "should_trigger": true},
+  {"query": "show me the same schema example over MCP on Cloud or a licensed self-hosted edition", "should_trigger": true},
+  {"query": "walk me through designing a project tracker schema in NocoDB, with views and a webhook", "should_trigger": true},
+  {"query": "List all records of the Customers table where Status is Active", "should_trigger": false},
+  {"query": "What fields does the NocoDB table 'Orders' have?", "should_trigger": false},
+  {"query": "Show me a schema example for Airtable: CRM bases with linked records and a Kanban interface", "should_trigger": false},
+  {"query": "Design a relational schema for an e-commerce database in Postgres with foreign keys and indexes", "should_trigger": false},
+  {"query": "Show me how to build a CRM in Notion with linked databases and rollups", "should_trigger": false},
+  {"query": "Give me a Directus example: create a collection with relations through the API", "should_trigger": false},
+  {"query": "Walk me through importing a CSV of customers into NocoDB", "should_trigger": false},
+  {"query": "Why does my NocoDB formula return ERR?", "should_trigger": false}
+]

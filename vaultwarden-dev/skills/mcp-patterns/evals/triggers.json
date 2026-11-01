@@ -1,0 +1,18 @@
+[
+  {"query": "I'd like Claude Code to look up credentials in our self-hosted Vaultwarden instead of me running bw commands. Which MCP server should I use and how do I register it in .mcp.json?", "should_trigger": true},
+  {"query": "Is warden-mcp safe to use with an agent? I don't want it to dump passwords into the conversation, and I'd like it read-only.", "should_trigger": true},
+  {"query": "I connected @bitwarden/mcp-server to our Vaultwarden and every organization tool returns 404. Is that a config problem?", "should_trigger": true},
+  {"query": "Хочу подключить Claude к Vaultwarden через MCP: чтобы он искал записи и коллекции, но не видел сами пароли. Какой сервер выбрать и как его настроить?", "should_trigger": true},
+  {"query": "Как настроить @icoretech/warden-mcp в stdio-режиме, чтобы учётные данные брались из переменных окружения, а не лежали в .mcp.json?", "should_trigger": true},
+  {"query": "The official Bitwarden MCP server's unlock tool hangs on our headless CI box. What other way is there to give it a session?", "should_trigger": true},
+  {"query": "Which tools does warden-mcp expose for searching items and listing org collections, and which ones go away if I set READONLY?", "should_trigger": true},
+  {"query": "Can an AI agent invite and remove members of a Vaultwarden organization over MCP?", "should_trigger": true},
+  {"query": "How do I read a password with bw get password inside a shell script without printing it?", "should_trigger": false},
+  {"query": "Automate invites to a Vaultwarden organization from Python.", "should_trigger": false},
+  {"query": "How do I get a bearer token for the Vaultwarden client API from my personal API key?", "should_trigger": false},
+  {"query": "A bw get item output showed my password in the chat. Which steps should I take now?", "should_trigger": false},
+  {"query": "Write a .mcp.json entry for a read-only Postgres MCP server for Claude Code.", "should_trigger": false},
+  {"query": "Connect Claude Code to the GitHub MCP server with a fine-grained token.", "should_trigger": false},
+  {"query": "Which /admin route sends a test email through Vaultwarden's SMTP settings?", "should_trigger": false},
+  {"query": "bw sync hangs forever against my Vaultwarden behind a reverse proxy.", "should_trigger": false}
+]

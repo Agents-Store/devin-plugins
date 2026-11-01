@@ -1,0 +1,17 @@
+[
+  {"query": "macstack lint fails with \"entity master problem\" on the Customer entity. What does it mean and how do I fix it?", "should_trigger": true},
+  {"query": "My prototype doesn't resolve: github:acme/shop-starter fails to clone because the repo is private.", "should_trigger": true},
+  {"query": "After scaffold my files were overwritten and the cross-stack reference foo:orders does not work. What went wrong?", "should_trigger": true},
+  {"query": "Скрипт подтягивания секретов затёр мой .env пустым файлом, а обязательный ключ из macstack.json после синхронизации пуст. Что пошло не так и как всё восстановить?", "should_trigger": true},
+  {"query": "I ran scaffold-project and now several of my existing files (docker-compose.yml, CLAUDE.md) look overwritten, and the generated files contradict the architecture of the prototype. What went wrong and how do I restore my files?", "should_trigger": true},
+  {"query": "prototype не резолвится: цикл A→B→A или в репозитории прототипа нет macstack.json. Что делать?", "should_trigger": true},
+  {"query": "infisical secrets reads the wrong organization for this macstack project and env keys are missing after scaffold. How do I diagnose it?", "should_trigger": true},
+  {"query": "Create macstack.json for my project", "should_trigger": false},
+  {"query": "Validate macstack.json and show me the project status", "should_trigger": false},
+  {"query": "Debug my docker compose service that exits with code 1", "should_trigger": false},
+  {"query": "Fix the TypeScript error TS2345 in my Next.js project", "should_trigger": false},
+  {"query": "docker build fails with failed to solve: failed to compute cache key. What does it mean?", "should_trigger": false},
+  {"query": "Scaffold the project working files from macstack.json", "should_trigger": false},
+  {"query": "Explain what the MACSTACK standard is", "should_trigger": false},
+  {"query": "Write the changelog for the release", "should_trigger": false}
+]

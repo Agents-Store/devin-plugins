@@ -1,0 +1,18 @@
+[
+  {"query": "The official n8n templates have nothing for a Notion to Linear sync. Look on GitHub for community n8n workflows that do it.", "should_trigger": true},
+  {"query": "find n8n workflow on github for scraping LinkedIn job posts, and tell me which repos are worth trusting", "should_trigger": true},
+  {"query": "Where else besides the official template library can I find n8n workflows? Search the community sources for an invoice-OCR automation", "should_trigger": true},
+  {"query": "Search github for n8n automation repositories with Telegram bot workflows and rank them by quality", "should_trigger": true},
+  {"query": "Найди на GitHub готовые n8n workflow для рассылки в WhatsApp, официальных шаблонов не хватает", "should_trigger": true},
+  {"query": "Официальный поиск шаблонов n8n ничего не дал по запросу 'Shopify в Google Sheets'. Поищи в сообществе и на GitHub", "should_trigger": true},
+  {"query": "which github repos have good collections of community n8n workflow JSON? I want to fetch the raw file of one of them", "should_trigger": true},
+  {"query": "Look for community n8n workflow sources beyond GitHub (forums, gists) and assess quality and red flags before I use any", "should_trigger": true},
+  {"query": "Search the official n8n template library for Slack notification templates", "should_trigger": false},
+  {"query": "Find open-source JavaScript libraries on GitHub for parsing PDF invoices", "should_trigger": false},
+  {"query": "Search GitHub for Home Assistant automations that switch on the lights at sunset", "should_trigger": false},
+  {"query": "Find Zapier templates for syncing Notion to Linear", "should_trigger": false},
+  {"query": "Import this workflow JSON into my n8n instance and verify it", "should_trigger": false},
+  {"query": "Find a good n8n community node for Telegram on npm and tell me how to install it", "should_trigger": false},
+  {"query": "Find open-source Airflow DAG repositories on GitHub for ETL from Shopify to BigQuery", "should_trigger": false},
+  {"query": "Search arXiv for recent papers on workflow orchestration for LLM agents", "should_trigger": false}
+]

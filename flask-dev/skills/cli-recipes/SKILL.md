@@ -1,9 +1,6 @@
 ---
 name: cli-recipes
-description: >
-  Use when the user asks about "Flask CLI", "flask run", "flask shell",
-  "flask routes", "Flask command line", "custom Flask CLI command",
-  "run Flask from terminal", or needs ready-to-use Flask CLI commands.
+description: Ready-to-use Flask CLI commands, covering flask run options and environment variables, flask shell with the app context, flask routes, Flask-Migrate (db init, migrate, upgrade, downgrade), custom click commands registered inside an application factory, and FLASK_APP and .flaskenv setup. Use it for any question about running, inspecting or scripting a Flask app from the terminal, in any language. For the project layout use project-scaffold.
 ---
 
 # Flask CLI Recipes

@@ -1,0 +1,17 @@
+[
+  {"query": "How do I boot the App class of Teams SDK 2.1 and register middleware with app.use? Does next() take arguments?", "should_trigger": true},
+  {"query": "I need per-conversation state in my Teams bot instead of a module-level Map. What does new App with state true give me, and how do I make it durable for two instances?", "should_trigger": true},
+  {"query": "Mount the Teams endpoint on my existing Express server. ExpressAdapter or http.Server? I get ERR_HTTP_HEADERS_SENT", "should_trigger": true},
+  {"query": "My Teams bot exits right after app.start with no error when the port is already in use. Where does the SDK report start-up failures and how do I register a handler for them?", "should_trigger": true},
+  {"query": "Which route name fires for install.add and for meetingStart? I need the activity routing table", "should_trigger": true},
+  {"query": "What is the difference between app.use and plugins in the Teams SDK, and when does onStart run?", "should_trigger": true},
+  {"query": "Как организовать маршрутизацию активностей в боте Teams на SDK 2.1: app.on, app.message, app.event и порядок обработчиков?", "should_trigger": true},
+  {"query": "Как включить подробные логи SDK Teams и почему LOG с неверным шаблоном глушит логгер?", "should_trigger": true},
+  {"query": "Send a message with mentions in a Teams channel", "should_trigger": false},
+  {"query": "Create an Express middleware that logs request durations", "should_trigger": false},
+  {"query": "Use Koa with a custom router for my REST API", "should_trigger": false},
+  {"query": "Set up OpenTelemetry tracing for a Node service", "should_trigger": false},
+  {"query": "Add SSO to the Teams bot", "should_trigger": false},
+  {"query": "Scaffold a new Teams bot project with the CLI", "should_trigger": false},
+  {"query": "Implement state management with Redux Toolkit in React", "should_trigger": false}
+]

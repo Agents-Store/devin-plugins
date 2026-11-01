@@ -1,0 +1,17 @@
+[
+  {"query": "I need a new events section on the site that lists Directus events and has a detail page. Give me the recipe for the whole feature, from the collection to the verified page", "should_trigger": true},
+  {"query": "Build a full CRUD feature for testimonials: Directus collection, types, tagged reads, server actions with auth and revalidation", "should_trigger": true},
+  {"query": "Create a page that shows a Directus collection in Next.js with generateStaticParams and generateMetadata, and register the collection for revalidation", "should_trigger": true},
+  {"query": "I just created an events collection in Directus. Walk me through everything I add in Next.js to ship an events page: types, tagged read in lib/content, actions, the Flow and route allow-list, and the verification", "should_trigger": true},
+  {"query": "Add a dashboard section that displays Directus content. What is the six-step pattern this stack uses?", "should_trigger": true},
+  {"query": "Нужна новая страница с данными из коллекции Directus: шаги от модели данных до проверки, что правка в Directus доходит до страницы", "should_trigger": true},
+  {"query": "Как правильно добавить Server Action для создания записи в Directus: с аутентификацией, записью и обновлением тега?", "should_trigger": true},
+  {"query": "what is the template I should fill in for every new feature that spans Directus and Next.js?", "should_trigger": true},
+  {"query": "Design a Directus data model for a booking system with rooms, bookings and customers", "should_trigger": false},
+  {"query": "Write Next.js middleware for locale detection", "should_trigger": false},
+  {"query": "Build a feature across NocoDB, n8n and NocoBase from the table to the button", "should_trigger": false},
+  {"query": "Set up the Directus and Next.js project from scratch with environment variables", "should_trigger": false},
+  {"query": "Explain the production checklist before going live with Directus and Next.js", "should_trigger": false},
+  {"query": "Build a complete feature for a Django app with Celery", "should_trigger": false},
+  {"query": "Add a contact form to my Next.js app that posts to an API route and sends an email", "should_trigger": false}
+]

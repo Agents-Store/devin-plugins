@@ -1,0 +1,16 @@
+[
+  {"query": "When a record is created in the orders collection in NocoBase I want to call an n8n webhook with the order data. How do I set it up with the NocoBase workflow engine?", "should_trigger": true},
+  {"query": "I have a custom action button on a NocoBase table block. I want it to start an n8n workflow with the current row. Which webhook URL goes into the button config, test or production?", "should_trigger": true},
+  {"query": "Hook a NocoBase scheduled workflow to n8n so every hour it hits a webhook and n8n writes the results back through the API", "should_trigger": true},
+  {"query": "Should I prototype the NocoBase to n8n webhook on the dev or prod NocoBase instance, and when do I swap the URLs?", "should_trigger": true},
+  {"query": "What naming convention do we use for NocoBase workflows that call n8n, for example a notify warehouse step after create?", "should_trigger": true},
+  {"query": "Как из интерфейса NocoBase запустить процесс в n8n по нажатию кнопки, передав данные текущей записи?", "should_trigger": true},
+  {"query": "Сделай так, чтобы NocoBase после обновления записи в коллекции invoices отправлял HTTP-запрос в n8n, а n8n потом обновлял запись через API. Где хранить ключ API?", "should_trigger": true},
+  {"query": "Build a NocoBase workflow with an approval node and a condition branch for expense reports", "should_trigger": false},
+  {"query": "Create a collection with a many-to-many relation in NocoBase using the MCP tools", "should_trigger": false},
+  {"query": "Trigger an n8n workflow whenever a NocoDB row changes", "should_trigger": false},
+  {"query": "Start a Trigger.dev task when a NocoDB webhook fires", "should_trigger": false},
+  {"query": "Build an n8n workflow from scratch with a Webhook node, a Set node and a Respond to Webhook node", "should_trigger": false},
+  {"query": "Write a Zapier zap that posts to Slack when a Google Sheet row is added", "should_trigger": false},
+  {"query": "How do I add a new menu and page in NocoBase with a table block over the orders collection?", "should_trigger": false}
+]

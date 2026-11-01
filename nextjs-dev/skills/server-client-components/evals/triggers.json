@@ -1,0 +1,15 @@
+[
+  {"query": "Where do I put next-themes and SessionProvider in the App Router so only {children} is wrapped and the layout stays a Server Component, and does Better Auth need a provider too?", "should_trigger": true},
+  {"query": "Where do I put `import 'server-only'` and `client-only` in a Next.js project, how do I install both guard packages, and what error appears if a Client Component imports lib/data.ts?", "should_trigger": true},
+  {"query": "Где в Next.js ставить import 'server-only', как установить пакеты server-only и client-only и какая ошибка появится, если Client Component импортирует lib/data.ts?", "should_trigger": true},
+  {"query": "Сторонний компонент-карусель без 'use client' ломается в Server Component. Нужно ли заворачивать его в свой файл-обёртку и как потом подключить?", "should_trigger": true},
+  {"query": "What is the decision matrix for server versus client components in Next.js 16 and how do I minimize client boundaries?", "should_trigger": true},
+  {"query": "Write a Server Action form with useActionState and Zod validation in Next.js", "should_trigger": false},
+  {"query": "Explain React Server Components internals: the flight format and how streaming works under the hood", "should_trigger": false},
+  {"query": "Convert my class components to hooks in a legacy React 16 app", "should_trigger": false},
+  {"query": "Set up server-side rendering for a Vue app with Nuxt and hydration", "should_trigger": false},
+  {"query": "Optimize bundle size by lazy loading a heavy client component with next/dynamic", "should_trigger": false},
+  {"query": "Fix 'Text content does not match server-rendered HTML' coming from a Date in my Next.js page", "should_trigger": false},
+  {"query": "Implement data fetching with Suspense and parallel requests in a Next.js Server Component", "should_trigger": false},
+  {"query": "Build a context provider with useReducer in a React Native app", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "How do I serve a React single-page app as a tab from my Teams bot with app.tab, and what must the manifest declare?", "should_trigger": true},
+  {"query": "My Teams tab is blank in the client although the page works in the browser. What about validDomains?", "should_trigger": true},
+  {"query": "How can the tab page call the bot server's code as the signed-in user? app.function and teams.client", "should_trigger": true},
+  {"query": "A configurable tab does not save. Which TeamsJS calls does the config page need?", "should_trigger": true},
+  {"query": "app.start() from @microsoft/teams.client fails in my browser outside Teams. Is that expected?", "should_trigger": true},
+  {"query": "How do I get a Graph token silently in a tab with MSAL createNestablePublicClientApplication?", "should_trigger": true},
+  {"query": "Как сделать вкладку (tab) в приложении Teams на SDK 2.1 и вызвать из неё функцию на сервере бота?", "should_trigger": true},
+  {"query": "Почему во вкладке Teams возвращается 401 при вызове app.function? Какие данные из контекста проверяются, а какие нет?", "should_trigger": true},
+  {"query": "Open a modal dialog from the bot using task/fetch and OpenDialogData", "should_trigger": false},
+  {"query": "Build a SharePoint SPFx web part with React", "should_trigger": false},
+  {"query": "Add a React tab to Microsoft Teams using Teams Toolkit in VS Code", "should_trigger": false},
+  {"query": "Set up SSO and an OAuth flow in the bot", "should_trigger": false},
+  {"query": "Create a Vite React app with Tailwind and routing", "should_trigger": false},
+  {"query": "Configure CORS on an Express server for a React frontend", "should_trigger": false},
+  {"query": "Embed a Power BI report in a web page with the JS client", "should_trigger": false}
+]

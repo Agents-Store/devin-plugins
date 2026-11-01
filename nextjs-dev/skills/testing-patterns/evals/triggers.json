@@ -1,0 +1,18 @@
+[
+  {"query": "Set up Vitest for my Next.js 16 App Router project: config, jsdom, path aliases and a test script", "should_trigger": true},
+  {"query": "How do I mock next/navigation and next/headers when unit testing a Next.js client component and a Server Action?", "should_trigger": true},
+  {"query": "Write Playwright E2E tests for my Next.js login flow, reusing authenticated state between tests", "should_trigger": true},
+  {"query": "How should I test a Next.js Route Handler with Vitest — calling GET and POST directly with a Request object?", "should_trigger": true},
+  {"query": "Как тестировать Server Components и Server Actions в Next.js? Какие инструменты и как организовать файлы тестов?", "should_trigger": true},
+  {"query": "Настрой Playwright для Next.js: конфиг, запуск dev-сервера перед тестами и пример теста формы", "should_trigger": true},
+  {"query": "set up CI to run Vitest unit tests and Playwright e2e tests for a Next.js app and organize the test files", "should_trigger": true},
+  {"query": "What is the `instant()` helper from @next/playwright in Next.js 16.3 and how do I use it in a Playwright test for both client navigation and initial load with a baseURL?", "should_trigger": true},
+  {"query": "Write Jest tests for a Node.js Express controller with supertest", "should_trigger": false},
+  {"query": "Set up Cypress component testing for a Vue 3 app", "should_trigger": false},
+  {"query": "Test a Django view with pytest-django and factory_boy", "should_trigger": false},
+  {"query": "Why does my Next.js build fail on type errors in the app router pages?", "should_trigger": false},
+  {"query": "Add error.tsx and not-found.tsx files to my Next.js app", "should_trigger": false},
+  {"query": "Test an iOS app with XCTest and UI tests", "should_trigger": false},
+  {"query": "Set up k6 load tests for my API and run them in CI", "should_trigger": false},
+  {"query": "Implement a form in Next.js with a Server Action and Zod validation", "should_trigger": false}
+]

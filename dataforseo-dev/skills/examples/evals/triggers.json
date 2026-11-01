@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete SEO analysis example with DataForSEO - the full flow from keyword discovery to a prioritized content plan, not just single API calls", "should_trigger": true},
+  {"query": "Show me a worked example scenario, the full chained walkthrough, of competitor research with DataForSEO: which calls in which order and what the final comparison table looks like", "should_trigger": true},
+  {"query": "Do you have complete DataForSEO workflow examples I can study? I'd like several end-to-end scenarios (keyword research to content plan, competitor research, backlink prospecting, technical audit) laid out step by step", "should_trigger": true},
+  {"query": "show me how to use DataForSEO for a backlink prospecting scenario from start to finish - I've never used it", "should_trigger": true},
+  {"query": "Покажи пример полного SEO-анализа через DataForSEO: от подбора ключевых слов до приоритизированного списка тем для контента", "should_trigger": true},
+  {"query": "Дай готовый сценарий-пример по DataForSEO, полную цепочку вызовов от начала до конца: аудит ссылочного профиля, поиск конкурентов и итоговый отчёт", "should_trigger": true},
+  {"query": "do you have any DataForSEO workflow examples for an agency onboarding a new client site? I'd like to see all the steps chained", "should_trigger": true},
+  {"query": "walk me through the AI visibility (GEO) scenario with DataForSEO end to end so I can copy it for a client", "should_trigger": true},
+  {"query": "Give me the exact body for POST /v3/dataforseo_labs/google/keyword_ideas/live", "should_trigger": false},
+  {"query": "Show me an end-to-end example of a Next.js blog with full SEO setup: metadata, sitemap and JSON-LD", "should_trigger": false},
+  {"query": "Walk me through a complete example of an ETL pipeline from the Google Analytics API into BigQuery", "should_trigger": false},
+  {"query": "DataForSEO says 'tool not found', how do I fix that?", "should_trigger": false},
+  {"query": "What does DataForSEO cost per SERP call?", "should_trigger": false},
+  {"query": "Run a quick keyword search volume lookup for 'trail running shoes'", "should_trigger": false},
+  {"query": "Explain the difference between informational, navigational and transactional search intent", "should_trigger": false},
+  {"query": "Write a case study blog post about how we doubled organic traffic in six months", "should_trigger": false}
+]

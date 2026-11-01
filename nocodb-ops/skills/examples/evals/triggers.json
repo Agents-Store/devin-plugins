@@ -1,0 +1,18 @@
+[
+  {"query": "show me a NocoDB example: list all the tables in my base, then query the records of one with a filter", "should_trigger": true},
+  {"query": "how do I use NocoDB for tracking customer orders? Give me scenario walkthroughs a business user can follow", "should_trigger": true},
+  {"query": "Show me a worked NocoDB scenario for a business user: list the tables in my base, count the open tickets, then aggregate average resolution time per team. Walk through each call in order", "should_trigger": true},
+  {"query": "workflow examples for NocoDB: create a record, update it, then verify with a count", "should_trigger": true},
+  {"query": "Покажи примеры работы с NocoDB для бизнес-пользователя: найти записи, создать новую, посчитать по условию", "should_trigger": true},
+  {"query": "Как использовать NocoDB для учёта заявок? Нужны сценарии шаг за шагом", "should_trigger": true},
+  {"query": "I'm new to NocoDB, what are some use cases and tips for business users with real examples?", "should_trigger": true},
+  {"query": "show me a NocoDB use case: get a table schema, then run an aggregation to see totals by category", "should_trigger": true},
+  {"query": "Add Contacts, Companies and Deals tables to my NocoDB base with a link between Deals and Companies", "should_trigger": false},
+  {"query": "Import this CSV of customers into the Customers table in NocoDB", "should_trigger": false},
+  {"query": "Which MCP parameters does queryRecords take in NocoDB — filter vs where?", "should_trigger": false},
+  {"query": "Example of using Airtable to track customer orders with views and automations", "should_trigger": false},
+  {"query": "Show me an example of pivot tables in Excel for sales by region", "should_trigger": false},
+  {"query": "How do I use Notion databases for tracking customer orders?", "should_trigger": false},
+  {"query": "My NocoDB filter isn't working, it returns nothing", "should_trigger": false},
+  {"query": "Give me examples of Postgres queries for customer order tracking with joins and group by", "should_trigger": false}
+]

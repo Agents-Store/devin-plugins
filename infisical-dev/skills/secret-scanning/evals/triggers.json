@@ -1,0 +1,18 @@
+[
+  {"query": "Before open-sourcing our repo, scan the whole git history for leaked API keys and tokens with Infisical and write the findings to a JSON report", "should_trigger": true},
+  {"query": "Set up a pre-commit hook that blocks commits containing secrets. We use Husky, so which Infisical command goes into the hook?", "should_trigger": true},
+  {"query": "How do I ignore known legacy findings so that infisical scan only reports new leaks in CI? I think there is a baseline option.", "should_trigger": true},
+  {"query": "Run an Infisical scan in GitHub Actions that fails the build on leaks and uploads a SARIF report to code scanning", "should_trigger": true},
+  {"query": "I want to scan only my staged changes for secrets quickly before I commit, and I need to know how to temporarily disable the hook for a test fixture", "should_trigger": true},
+  {"query": "Как просканировать репозиторий на утёкшие секреты с помощью Infisical и поставить pre-commit хук?", "should_trigger": true},
+  {"query": "Нашлись ложные срабатывания при infisical scan. Как добавить baseline или игнор, чтобы CI не падал на старых находках?", "should_trigger": true},
+  {"query": "Does infisical scan work offline, and what is the --confidence flag for a deeper audit of old history?", "should_trigger": true},
+  {"query": "I committed an AWS key by accident last week. How do I rotate it and purge it from the git history?", "should_trigger": false},
+  {"query": "Inject my app's secrets into the process at runtime with infisical run", "should_trigger": false},
+  {"query": "Set up GitHub Dependabot security updates for my npm packages", "should_trigger": false},
+  {"query": "Scan my Docker images for CVE vulnerabilities with Trivy in CI", "should_trigger": false},
+  {"query": "Install pre-commit hooks for ESLint and Prettier with Husky and lint-staged", "should_trigger": false},
+  {"query": "Authenticate to Infisical from a CI pipeline with a machine identity", "should_trigger": false},
+  {"query": "Use gitleaks to scan my repository for secrets", "should_trigger": false},
+  {"query": "Set up the Infisical CLI login on a new laptop", "should_trigger": false}
+]

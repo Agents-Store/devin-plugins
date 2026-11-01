@@ -1,0 +1,17 @@
+[
+  {"query": "Before enabling the schedule I want to verify my restic backup works: run the first backup, list snapshots, run restic check, and test-restore a file. What are the steps?", "should_trigger": true},
+  {"query": "How do I prove that a restic backup is restorable? Show me a test restore into a temp dir and a way to compare checksums with the originals", "should_trigger": true},
+  {"query": "I just finished the first restic backup on a new server. Run me through the gate before enabling the timer: confirm the snapshot, restic check with a 5% read-data subset, and a test restore with diff", "should_trigger": true},
+  {"query": "After the first restic backup finishes, how do I confirm snapshots exist and the repository is healthy before turning on the timer?", "should_trigger": true},
+  {"query": "Validate the backups I just set up: first run, snapshots, integrity check, test restore, then enable the systemd timer", "should_trigger": true},
+  {"query": "Как проверить, что бэкап restic рабочий: запустить первый бэкап, посмотреть снапшоты, выполнить check и тестовое восстановление?", "should_trigger": true},
+  {"query": "Перед включением расписания хочу проверить восстановление из restic. Что именно сделать пошагово?", "should_trigger": true},
+  {"query": "Set up monitoring so I get alerted when backups stop", "should_trigger": false},
+  {"query": "A full disaster-recovery rebuild of a dead server from restic", "should_trigger": false},
+  {"query": "Write the daily restic backup script", "should_trigger": false},
+  {"query": "Create the restic repo on R2", "should_trigger": false},
+  {"query": "Check the integrity of a ZIP archive and a tar.gz file", "should_trigger": false},
+  {"query": "Verify an SHA256 checksum of a downloaded ISO", "should_trigger": false},
+  {"query": "How do I test my Postgres replication is working?", "should_trigger": false},
+  {"query": "restic check fails with 'pack not referenced in any index' - what now?", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "I want to set up restic backups on my Linux server. First check its architecture, OS, init system, timezone and free disk, then install the right latest restic binary", "should_trigger": true},
+  {"query": "Install the newest restic on an arm64 Ubuntu server without apt's outdated package - how do I pick and verify the binary?", "should_trigger": true},
+  {"query": "Prepare a fresh VPS for backups: is it systemd or OpenRC, what timezone is it, and how much free disk for staging dumps?", "should_trigger": true},
+  {"query": "Which restic version and architecture build do I need for this machine? How do I check uname and glibc/musl first?", "should_trigger": true},
+  {"query": "Start the backup project on this host: do a recon of the server before configuring anything", "should_trigger": true},
+  {"query": "Установи restic на мой сервер: сначала определи архитектуру, ОС и init-систему, затем поставь актуальную версию", "should_trigger": true},
+  {"query": "Подготовь Linux-сервер к бэкапам: проверь часовой пояс, свободное место и поставь restic", "should_trigger": true},
+  {"query": "Self-update restic to the latest release on a server where I installed it by hand a year ago", "should_trigger": true},
+  {"query": "Create the restic repository on R2 and set the password", "should_trigger": false},
+  {"query": "Install Docker on Ubuntu 24.04", "should_trigger": false},
+  {"query": "Set up Beszel agents on all my servers", "should_trigger": false},
+  {"query": "How do I check the CPU architecture of a Linux server?", "should_trigger": false},
+  {"query": "Install the AWS CLI on a Raspberry Pi", "should_trigger": false},
+  {"query": "Write the nightly backup script", "should_trigger": false},
+  {"query": "Configure ufw firewall rules for SSH only", "should_trigger": false},
+  {"query": "Which timezone does cron use by default?", "should_trigger": false}
+]

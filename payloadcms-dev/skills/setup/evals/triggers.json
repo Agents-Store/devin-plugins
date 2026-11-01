@@ -1,0 +1,17 @@
+[
+  {"query": "Script the creation of a new Payload v3 project in CI with create-payload-app non-interactively: which flags for pnpm, the blank template and postgres with recommended settings, and how do I avoid the coding-agent prompt hanging?", "should_trigger": true},
+  {"query": "Walk me through payload.config.ts for a fresh project - editor, db adapter, secret, typescript outputFile and admin user", "should_trigger": true},
+  {"query": "After create-payload-app: what did the scaffolder generate (route groups, payload.config.ts, Users and Media collections, .env), and how do I start the dev server and create the first admin user?", "should_trigger": true},
+  {"query": "Which templates does create-payload-app offer (blank, website, ecommerce, with-cloudflare-d1, plugin) and which databases can I choose at scaffold time?", "should_trigger": true},
+  {"query": "What are the prerequisites for Payload v3 - Node range, pnpm, and a database - and how do I initialise it in an existing Next.js app?", "should_trigger": true},
+  {"query": "Как создать проект Payload v3 через create-payload-app неинтерактивно, чтобы не зависнуть на вопросе про coding agent? Какие флаги указать?", "should_trigger": true},
+  {"query": "Установи PayloadCMS в мой существующий Next.js проект и покажи минимальный payload.config.ts", "should_trigger": true},
+  {"query": "Deploy Payload to production on Vercel with Postgres", "should_trigger": false},
+  {"query": "Create a migration after changing a Payload collection", "should_trigger": false},
+  {"query": "Initialize a new Strapi project with the CLI and SQLite", "should_trigger": false},
+  {"query": "Scaffold a Next.js 15 app with TypeScript and Tailwind", "should_trigger": false},
+  {"query": "Install Directus with docker compose and create the first admin", "should_trigger": false},
+  {"query": "How do I add the S3 storage adapter to Payload?", "should_trigger": false},
+  {"query": "Set up a Django project with Postgres", "should_trigger": false},
+  {"query": "My Payload admin says 'Could not resolve component' on first start", "should_trigger": false}
+]

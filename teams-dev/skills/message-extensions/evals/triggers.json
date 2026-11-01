@@ -1,0 +1,17 @@
+[
+  {"query": "I am building a Teams message extension search command. Which route handles the typed query, and what do the result cards and the preview cards look like?", "should_trigger": true},
+  {"query": "How do I make link unfurling work for my domain in Teams? Pasted links do nothing", "should_trigger": true},
+  {"query": "My Teams message extension action command has fetchTask true and I wrote a dialog.open handler, but the form never opens. Which route name do I need and what does the response envelope look like?", "should_trigger": true},
+  {"query": "How do I read the selected message in a message action command? What are the messagePayload fields?", "should_trigger": true},
+  {"query": "What does a message extension settings page need, and where do I store the setting?", "should_trigger": true},
+  {"query": "What goes into composeExtensions commands in the manifest for a search command with a parameter?", "should_trigger": true},
+  {"query": "Как сделать поисковое расширение сообщений для Teams: обработчик message.ext.query и команда в манифесте?", "should_trigger": true},
+  {"query": "Как включить разворачивание ссылок (link unfurling) в Teams для моего домена?", "should_trigger": true},
+  {"query": "Open a dialog from a card with OpenDialogData", "should_trigger": false},
+  {"query": "Add a tab to my Teams app with app.tab()", "should_trigger": false},
+  {"query": "Create a Chrome extension that adds a context menu item on selected text", "should_trigger": false},
+  {"query": "Build a VS Code extension command with a quick pick search", "should_trigger": false},
+  {"query": "Make a Slack message shortcut that opens a modal", "should_trigger": false},
+  {"query": "Send a card with a submit button from the bot", "should_trigger": false},
+  {"query": "Write the Outlook add-in manifest for a task pane", "should_trigger": false}
+]

@@ -3,22 +3,22 @@
   "evals": [
     {
       "id": 21,
-      "prompt": "Give me a docker-compose setup to run Directus locally with Postgres so I can develop a Next.js frontend against it",
+      "prompt": "Use the docker-local-dev skill. Give me a docker-compose setup to run Directus locally with Postgres so I can develop a Next.js frontend against it",
       "expected_output": "Compose file with database, redis, directus; pinned 12.x image; env-driven secrets; /server/ping health check",
       "files": [],
       "expectations": [
-        "Uses the directus/directus image with a pinned version tag (12.x), not latest",
-        "Reads SECRET, database password and admin credentials from ${VAR} references or an .env file, not hardcoded values",
-        "Includes PostgreSQL and Redis services with healthchecks and depends_on service_healthy",
-        "Uses /server/ping (not /server/health) for the Directus health check",
-        "Sets PUBLIC_URL and CORS_ORIGIN for the frontend dev server",
+        "The answer uses the directus/directus image with a pinned version tag (12.x), not latest",
+        "The answer reads SECRET, database password and admin credentials from ${VAR} references or an .env file, not hardcoded values",
+        "The answer includes PostgreSQL and Redis services with healthchecks and depends_on service_healthy",
+        "The answer uses /server/ping (not /server/health) for the Directus health check",
+        "The answer sets PUBLIC_URL and CORS_ORIGIN for the frontend dev server",
         "Mounts uploads and extensions volumes",
         "Tells the user to gitignore .env"
       ]
     },
     {
       "id": 22,
-      "prompt": "My local Directus container shows unhealthy and /server/health returns 403 or 503. What is going on?",
+      "prompt": "Use the docker-local-dev skill. My local Directus container shows unhealthy and /server/health returns 403 or 503. What is going on?",
       "expected_output": "403 needs a token in Directus 12; ping for liveness; storage permission and 127.0.0.1 healthcheck causes",
       "files": [],
       "expectations": [
@@ -30,7 +30,7 @@
     },
     {
       "id": 30,
-      "prompt": "Is it safe to publish the Directus port from my local compose file on all interfaces? And my healthcheck complains about start_interval on an old Docker.",
+      "prompt": "Use the docker-local-dev skill. Is it safe to publish the Directus port from my local compose file on all interfaces? And my healthcheck complains about start_interval on an old Docker.",
       "expected_output": "Loopback binding; start_interval needs Compose 2.20.2 and Engine 25",
       "files": [],
       "expectations": [

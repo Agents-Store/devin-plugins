@@ -1,6 +1,6 @@
 ---
 name: filter-queries
-description: This skill should be used when the user asks about "grammY filter query", "bot.on syntax", "listen for specific update types", "message:text", "filter photos", "filter URLs", or needs to understand grammY's filter-query DSL — the framework's signature feature for routing updates with type narrowing.
+description: The grammY filter query syntax of bot.on. Covers the update tree (message, edited_message, channel_post, callback_query), colon paths such as message:text or message:entities:url, wildcard and shortcut forms (msg, edit, :text, :file), combining queries as OR arrays or AND chains, and how ctx is type-narrowed. Use when choosing which updates a handler receives. For command handlers use commands-and-keyboards, for handler order and next() use middleware.
 ---
 
 # grammY — Filter Queries

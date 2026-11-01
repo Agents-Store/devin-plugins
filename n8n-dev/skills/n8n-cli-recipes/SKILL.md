@@ -1,6 +1,6 @@
 ---
 name: n8n-cli-recipes
-description: n8n CLI commands for self-hosted instances. Use when executing workflows from command line, exporting/importing workflows and credentials, managing licenses, resetting user accounts, running security audits via CLI, or managing community nodes. Also use when asking about "n8n CLI", "command line", "n8n execute", "export workflow".
+description: The n8n server CLI for self-hosted instances (execute, export and import of workflows and credentials, publish and unpublish, entities backup, user reset, security audit, community nodes) in npm, Docker or Docker Compose installs. Use when the task is an n8n command run on the host or in the container rather than a REST API or MCP tool call.
 ---
 
 # n8n CLI Recipes

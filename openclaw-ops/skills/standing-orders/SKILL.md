@@ -1,6 +1,6 @@
 ---
 name: standing-orders
-description: Design patterns for standing orders — autonomous programs that give agents permanent operating authority for defined tasks. Use this skill whenever the user needs recurring tasks, scheduled agent operations, autonomous execution rules, or the execute-verify-report pattern. Also applies when discussing cron jobs with OpenClaw, periodic reports, automated monitoring, content scheduling, or any task the agent should do on its own without prompting each time.
+description: Design patterns for OpenClaw standing orders — autonomous programs that give an agent permanent operating authority for defined tasks. Use when the user wants an OpenClaw agent to run recurring or scheduled work on its own, such as periodic reports, monitoring or content scheduling, or asks for the execute-verify-report pattern or cron jobs with OpenClaw. Heartbeat tuning belongs to heartbeat-md.
 ---
 
 # Standing Orders Design Guide

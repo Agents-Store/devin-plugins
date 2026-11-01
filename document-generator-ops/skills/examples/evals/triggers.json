@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete worked example of generating an invoice with this plugin: the JSON input and the command to run.", "should_trigger": true},
+  {"query": "I want to see sample JSON for each document type (proposal, invoice, estimate, report, presentation, contract, NDA, act), both minimal and full versions.", "should_trigger": true},
+  {"query": "Walk me through creating a proposal step by step: what do I say, what gets asked, what comes out?", "should_trigger": true},
+  {"query": "Is there a sample presentation input I can copy and adapt for a 6-slide product launch deck?", "should_trigger": true},
+  {"query": "I want to learn the document generator by example: show me a worked run for an estimate - the complete JSON input, the command that is run and what comes out - and tell me where the sample inputs for the other document types are.", "should_trigger": true},
+  {"query": "Where can I find the example inputs for the contract template, so I can follow the pattern for my own consulting agreement?", "should_trigger": true},
+  {"query": "Покажи пример готового JSON для генерации счёта и пошаговый сценарий работы с плагином", "should_trigger": true},
+  {"query": "Дай образец входных данных для акта выполненных работ: минимальный и полный вариант", "should_trigger": true},
+  {"query": "Create an invoice for Acme: 10 hours at $100, due in 14 days", "should_trigger": false},
+  {"query": "Which font sizes should headings, subheadings and body text have in a report?", "should_trigger": false},
+  {"query": "Show me a sample invoice layout from Stripe for inspiration on how to present totals", "should_trigger": false},
+  {"query": "Show me an example of a Python script that generates PDFs with ReportLab", "should_trigger": false},
+  {"query": "Show me an example of a strong cover letter for a product manager role", "should_trigger": false},
+  {"query": "Show me an example n8n workflow JSON that sends an email when a form is submitted", "should_trigger": false},
+  {"query": "I want to change my style preferences and add a logo", "should_trigger": false},
+  {"query": "Which fields are required for the report document type?", "should_trigger": false}
+]

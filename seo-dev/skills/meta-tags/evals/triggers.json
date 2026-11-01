@@ -1,0 +1,18 @@
+[
+  {"query": "How do I set page-level metadata in the Next.js App Router with generateMetadata - title template, description, canonical and alternates?", "should_trigger": true},
+  {"query": "My og:image doesn't show on LinkedIn or Slack. How should I define Open Graph tags and image size in Next.js metadata?", "should_trigger": true},
+  {"query": "How do I generate dynamic OG images in Next.js with opengraph-image.tsx and ImageResponse for each blog post?", "should_trigger": true},
+  {"query": "Twitter Card setup in Next.js: summary_large_image vs summary, required fields and the twitter-image convention", "should_trigger": true},
+  {"query": "What title and description length should metadata have, and how do I make titles unique across dynamic routes with a template?", "should_trigger": true},
+  {"query": "Как настроить generateMetadata в Next.js 15 для динамических страниц и canonical URL с metadataBase?", "should_trigger": true},
+  {"query": "Как сделать превью для соцсетей: og:image, og:title и Twitter Card в Next.js App Router?", "should_trigger": true},
+  {"query": "Set up opengraph-image.tsx with a custom font for ImageResponse in Next.js, the twitter-image convention and the required Open Graph properties with the image dimensions", "should_trigger": true},
+  {"query": "Generate sitemap.xml and robots.txt for a Next.js site", "should_trigger": false},
+  {"query": "Add Article JSON-LD to blog posts", "should_trigger": false},
+  {"query": "How do I add a favicon and apple-touch-icon in Next.js?", "should_trigger": false},
+  {"query": "Write a persuasive meta description for a bakery's homepage", "should_trigger": false},
+  {"query": "Why is my page not indexed in Google Search Console?", "should_trigger": false},
+  {"query": "Set HTTP security headers in next.config.js", "should_trigger": false},
+  {"query": "Meta tags in a plain HTML page for Facebook", "should_trigger": false},
+  {"query": "Optimize my Next.js bundle size with dynamic imports", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "Which release channel is current for OpenClaw right now, and what's the current stable version? I need a source I can cite", "should_trigger": true},
+  {"query": "Does the `openclaw automations scratch` subcommand exist in the latest release, or is it called something else? Two guides disagree", "should_trigger": true},
+  {"query": "Is the HEARTBEAT.md file still used by OpenClaw or deprecated? Please check the docs and cite where", "should_trigger": true},
+  {"query": "My instance's local docs look older than the project's. What auth methods does OpenClaw support today?", "should_trigger": true},
+  {"query": "Какой сейчас актуальный ключ конфигурации для модели по умолчанию в OpenClaw? Нужна ссылка на документацию", "should_trigger": true},
+  {"query": "Проверь по официальным источникам: поддерживает ли OpenClaw ещё Gemini через OAuth, или это убрали? Мне нужны цитаты", "should_trigger": true},
+  {"query": "I'm offline on a plane and need to tell my team the current OpenClaw CLI flag for exporting a trajectory. What can I still say without a live source?", "should_trigger": true},
+  {"query": "Two sources disagree on the docker image tag name of the OpenClaw beta channel. Resolve it and cite the page", "should_trigger": true},
+  {"query": "Summarize the latest React 19 release notes and give citations", "should_trigger": false},
+  {"query": "Search the web for the best Python library for PDF parsing", "should_trigger": false},
+  {"query": "Which version of Node.js does Next.js 16 require? Cite the docs", "should_trigger": false},
+  {"query": "Upgrade my OpenClaw fleet to the current stable and pin the image digest", "should_trigger": false},
+  {"query": "Find research papers about the evaluation of retrieval augmented generation", "should_trigger": false},
+  {"query": "Verify this claim with a source: Postgres 17 removed the pg_stat_statements extension", "should_trigger": false},
+  {"query": "Look up the Kubernetes deprecation of PodSecurityPolicy and its timeline", "should_trigger": false},
+  {"query": "List the OpenClaw instances on this host with their ports and status", "should_trigger": false}
+]

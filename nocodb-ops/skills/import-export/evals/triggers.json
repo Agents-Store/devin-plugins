@@ -1,0 +1,18 @@
+[
+  {"query": "Import this CSV of 300 leads into the Leads table in NocoDB: first check the schema, then batch the creation", "should_trigger": true},
+  {"query": "Export all records from the NocoDB table Orders where Status is Shipped to a CSV I can send to accounting", "should_trigger": true},
+  {"query": "bulk create records in NocoDB from this JSON array and validate the data before import", "should_trigger": true},
+  {"query": "migrate data between two NocoDB tables: copy the rows of 'Old Customers' into 'Customers' and deduplicate by email", "should_trigger": true},
+  {"query": "Загрузи в NocoDB данные из CSV в таблицу Контакты, перед этим проверь дубликаты", "should_trigger": true},
+  {"query": "Выгрузи из NocoDB все записи таблицы Заказы за прошлый месяц в CSV: только поля Номер, Клиент и Сумма", "should_trigger": true},
+  {"query": "extract all records of a NocoDB table, it has about 12,000 rows, and download the table data", "should_trigger": true},
+  {"query": "load data into this table from a pasted CSV text in one call with importCsv", "should_trigger": true},
+  {"query": "Find all records in the Orders table created this week with status Pending", "should_trigger": false},
+  {"query": "Update the status of record 42 in Customers to Active", "should_trigger": false},
+  {"query": "Import a CSV into Mailchimp as a new audience and map the tags", "should_trigger": false},
+  {"query": "Export a Google Sheet as CSV and import it into Excel keeping the date formats", "should_trigger": false},
+  {"query": "Bulk import 20,000 rows into PostgreSQL with COPY and handle conflicts", "should_trigger": false},
+  {"query": "Export my Notion database to Markdown and CSV", "should_trigger": false},
+  {"query": "Add a Single Select field Priority to a NocoDB table", "should_trigger": false},
+  {"query": "Import contacts into HubSpot from a spreadsheet and deduplicate by email", "should_trigger": false}
+]

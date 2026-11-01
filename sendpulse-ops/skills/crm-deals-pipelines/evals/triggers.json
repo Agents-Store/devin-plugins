@@ -1,0 +1,18 @@
+[
+  {"query": "Set up a complete sales pipeline in SendPulse CRM: Lead, Qualified, Proposal, Won and Lost steps, then create the first deal in it", "should_trigger": true},
+  {"query": "Move deal 12345 in SendPulse CRM from the 'Proposal' step to 'Won' and add a comment with the final amount", "should_trigger": true},
+  {"query": "List all deals in the pipeline 'Enterprise' of the SendPulse CRM and show their stages", "should_trigger": true},
+  {"query": "Add, rename and delete steps in an existing SendPulse CRM pipeline, and explain what happens to the deals in a deleted step", "should_trigger": true},
+  {"query": "Move a deal between two different pipelines in SendPulse CRM and show the contacts attached to it", "should_trigger": true},
+  {"query": "Создай в SendPulse CRM воронку продаж с этапами и добавь в неё сделку", "should_trigger": true},
+  {"query": "Перенеси сделку на этап «Переговоры» в CRM SendPulse и оставь комментарий", "should_trigger": true},
+  {"query": "Create a deal for contact Anna Lee worth 1,500 USD in SendPulse CRM and put it into the first stage of the default pipeline", "should_trigger": true},
+  {"query": "Create a new CRM contact with email and phone in SendPulse", "should_trigger": false},
+  {"query": "Add the product 'Annual plan' to a deal and compute the deal value", "should_trigger": false},
+  {"query": "Create a Kanban board with tasks for the sales team", "should_trigger": false},
+  {"query": "Set up a pipeline in Pipedrive with automation rules", "should_trigger": false},
+  {"query": "Draw a sales funnel diagram with conversion rates", "should_trigger": false},
+  {"query": "Forecast Q4 revenue from the pipeline using a spreadsheet", "should_trigger": false},
+  {"query": "Create a Salesforce opportunity with stage 'Proposal'", "should_trigger": false},
+  {"query": "Send the proposal by email through the SendPulse SMTP service", "should_trigger": false}
+]

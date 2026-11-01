@@ -3,56 +3,57 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Sprint 15 for TaskFlow just ended. Generate a full sprint review report: goal status, completion metrics, delivered vs not-delivered tables, velocity trend vs last 3 sprints. Format it so I can demo it to stakeholders.",
+      "prompt": "Use the sprint-review-retro skill. Sprint 15 for TaskFlow just ended. Generate a full sprint review report: goal status, completion metrics, what was completed and what was not, velocity trend vs last 3 sprints. Format it so I can demo it to stakeholders. Sprint 15 data: goal 'Ship checkout v2'; 34 of 40 points done and 8 of 10 items done; not delivered: PROJ-312 (3 points, in progress) and PROJ-315 (3 points, blocked); the last three completed sprints delivered 28, 31 and 30 points. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Stakeholder-ready review: sprint name + dates + goal, completion rate in points and item count, Delivered table (ID/title/points/owner), Not Delivered list with reasons, velocity comparison to previous 3 sprints, goal achievement verdict (Yes/Partial/No).",
       "files": [],
       "expectations": [
-        "Resolves 'Sprint 15' via cycle(action=list) (status=completed or current; not assumed)",
-        "Separates items into Delivered (completed group) and Not Delivered (everything else) explicitly",
-        "Reports BOTH points completion AND item count completion",
-        "Compares velocity to the last 3 completed cycles (cycle(action=list, status=completed); trend context)",
-        "States goal achievement as a verdict, not just metrics",
-        "Output is structured like the SPRINT REVIEW template in the skill, not free prose"
+        "The answer gets the sprint with cycle(action=list, status=completed)",
+        "The answer counts the items per state group with workitem(action=count, pql='cycle = \"<cycle_id>\"', group_by=state__group)",
+        "The answer shows the line Completion: 34/40 points (85%)",
+        "The answer shows the line Items: 8/10 completed",
+        "The answer starts the report with the heading SPRINT REVIEW: Sprint 15",
+        "The answer lists PROJ-312 and PROJ-315 under NOT COMPLETED"
       ]
     },
     {
       "id": 2,
-      "prompt": "Run a retrospective for Sprint 14. Use the DAKI format. Previous retro's action items were: (1) 'Review PRs within 4 hours' - done, (2) 'Set up staging deploy' - still open.",
+      "prompt": "Use the sprint-review-retro skill. Run a retrospective for Sprint 14. Use the DAKI format. Previous retro's action items were: (1) 'Review PRs within 4 hours' - done, (2) 'Set up staging deploy' - still open. Give the order of the session, the new action items you propose, and what gets recorded in Plane and how. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Starts with previous action review, shows DAKI prompts, creates 2-3 new action items with SMART criteria, saves as a page.",
       "files": [],
       "expectations": [
-        "Reviews previous action items FIRST before new retro",
-        "Acknowledges the completed one, asks why the staging deploy is still open",
-        "Uses DAKI format (Drop/Add/Keep/Improve), not Start-Stop-Continue",
-        "Limits new action items to 2-3",
-        "Each new action is SMART (specific, measurable, assignable, with a deadline)",
-        "Creates work items with the retro-action label via workitem(action=create) and saves a project page via page(action=create)"
+        "The answer reviews the two previous action items before it opens the DAKI prompts",
+        "The answer uses the four DAKI headings DROP, ADD, KEEP and IMPROVE",
+        "The answer limits the new action items to 2-3",
+        "The answer creates each action item with workitem(action=create) and a name that starts with [RETRO]",
+        "The answer labels the action items with retro-action",
+        "The answer saves the notes with page(action=create) under a name like Retro — Sprint 14 (YYYY-MM-DD)"
       ]
     },
     {
       "id": 3,
-      "prompt": "Sprint 14 is done. 3 items still in progress, 1 blocked, 1 not started. Walk me through closing the sprint.",
+      "prompt": "Use the sprint-review-retro skill. Sprint 14 is done. 3 items still in progress, 1 blocked, 1 not started. Walk me through closing the sprint. Show each call in order with its parameters, and say what happens to each of the five unfinished items. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
       "expected_output": "Take blocked and not-started items out of the cycle (cycle manage_workitems remove_ids) so they return to the backlog, complete the cycle, transfer the remaining unfinished in-progress items to the next cycle, then archive the current cycle.",
       "files": [],
       "expectations": [
-        "Creates the next cycle first if it doesn't exist (cycle(action=create) with owned_by)",
-        "Transfers the 3 in-progress items (nearly done) to the next cycle with cycle(action=transfer_workitems, new_cycle_id), after cycle(action=complete) because the server rejects a transfer from a cycle that has not ended",
-        "Returns the blocked and not-started items to backlog (not transferred) by removing them with cycle(action=manage_workitems, remove_ids=[...]) BEFORE the transfer, since transfer_workitems moves every unfinished item",
-        "Archives the current cycle with cycle(action=archive) as the last step, after complete and transfer (archive ends a still-running cycle first)",
-        "Records completed points for velocity history"
+        "The answer removes the blocked and the not-started item with cycle(action=manage_workitems, remove_ids=[...]) before the transfer",
+        "The answer creates the next cycle with cycle(action=create, ..., owned_by=...)",
+        "The answer ends the sprint with cycle(action=complete) before the transfer",
+        "The answer moves the three in-progress items with cycle(action=transfer_workitems, cycle_id, new_cycle_id)",
+        "The answer archives the sprint with cycle(action=archive) as the last call",
+        "The answer records completed_points for the velocity history"
       ]
     },
     {
       "id": 4,
-      "prompt": "Our last 4 sprints completed at 65%, 68%, 72%, 60%. Retro action items rarely get done. What should the retro facilitator focus on?",
+      "prompt": "Use the sprint-review-retro skill. Our last 4 sprints completed at 65%, 68%, 72%, 60%. Retro action items rarely get done. What should the retro facilitator focus on? Say what the numbers mean, what to change about the next commitment, and how the retro should handle action items. Answer in text; everything you need is in this message.",
       "expected_output": "Diagnoses completion rate as WARNING (<70% consistently), action items as WARNING. Suggests reducing commitment by 20% and limiting retro to ONE action item to improve follow-through.",
       "files": [],
       "expectations": [
-        "Reads completion rates against the health metrics thresholds",
-        "Flags commitment as too aggressive (reduce by 20%)",
-        "Flags low action item follow-through as a process issue",
-        "Recommends limiting to 1 action item until follow-through improves",
-        "Suggests reviewing previous actions at the START of each retro for accountability"
+        "The answer says to read completion rates against the health metrics thresholds",
+        "The answer flags commitment as too aggressive (reduce by 20%)",
+        "The answer flags low action item follow-through as a process issue",
+        "The answer recommends limiting to 1 action item until follow-through improves",
+        "The answer suggests reviewing previous actions at the START of each retro for accountability"
       ]
     }
   ]

@@ -1,0 +1,18 @@
+[
+  {"query": "List all OpenClaw instances on this host with their status, ports and versions", "should_trigger": true},
+  {"query": "Which OpenClaw instance is the reference one? Show inventory and health for every gateway instance", "should_trigger": true},
+  {"query": "Tail the logs of the 'canary' OpenClaw instance and show its provider auth state", "should_trigger": true},
+  {"query": "I want to run a command inside the 'support' OpenClaw instance without a hand-written docker exec. How does this plugin address one instance?", "should_trigger": true},
+  {"query": "Покажи инвентарь инстансов OpenClaw на сервере: имена, статус, порты, версии", "should_trigger": true},
+  {"query": "Выбери инстанс 'prod-ru' и покажи его конфиг и подключённые секреты", "should_trigger": true},
+  {"query": "what's the memory and shared skills status of all OpenClaw instances on this host?", "should_trigger": true},
+  {"query": "I only remember that one of our OpenClaw instances runs an older model name. Find it instead of guessing from memory", "should_trigger": true},
+  {"query": "List all Docker containers on this host with their ports and health", "should_trigger": false},
+  {"query": "Show the status of my systemd services and tail the logs for nginx", "should_trigger": false},
+  {"query": "Which Kubernetes namespaces have the most pods? List them", "should_trigger": false},
+  {"query": "Clone the reference OpenClaw instance into a new tenant instance", "should_trigger": false},
+  {"query": "Upgrade the OpenClaw fleet to the current stable release", "should_trigger": false},
+  {"query": "Run kubectl exec into the redis pod and flush the cache", "should_trigger": false},
+  {"query": "Inventory all virtual machines in my Proxmox cluster with CPU and RAM", "should_trigger": false},
+  {"query": "List the Dokploy applications and their domains", "should_trigger": false}
+]

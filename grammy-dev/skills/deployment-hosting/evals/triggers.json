@@ -1,0 +1,18 @@
+[
+  {"query": "Deploy my grammY bot to Cloudflare Workers using webhooks. I use TypeScript and wrangler; where does webhookCallback go and how do I set the webhook afterwards?", "should_trigger": true},
+  {"query": "Should I use long polling or webhooks for a bot with about 200 daily users on a 5 dollar VPS? What are the tradeoffs and how do I switch?", "should_trigger": true},
+  {"query": "Set up my grammY bot on Vercel with Next.js app router. Which adapter string do I pass to webhookCallback?", "should_trigger": true},
+  {"query": "deploying grammy to fly.io, I need a Dockerfile and fly.toml, the bot uses webhooks with a secret token", "should_trigger": true},
+  {"query": "I want to run my bot on Deno Deploy with the std/http adapter and set secret_token so only Telegram can call the endpoint", "should_trigger": true},
+  {"query": "Как задеплоить grammY-бота на VPS через Docker с вебхуками за nginx? Нужен webhookCallback для express и setWebhook с секретным токеном.", "should_trigger": true},
+  {"query": "Какой адаптер webhookCallback выбрать для Fastify и как переключить уже работающего бота с long polling на вебхук без потери апдейтов?", "should_trigger": true},
+  {"query": "Put my grammY bot into an AWS Lambda behind API Gateway. Do I use the aws-lambda or the aws-lambda-async adapter?", "should_trigger": true},
+  {"query": "Write the bot.catch handler for my grammY bot that logs GrammyError and HttpError separately", "should_trigger": false},
+  {"query": "Scale my polling grammY bot to 500 updates per second with the runner plugin", "should_trigger": false},
+  {"query": "Deploy a Next.js app to Vercel and configure environment variables for the database URL", "should_trigger": false},
+  {"query": "Set up a Telegram bot with python-telegram-bot and deploy it to Heroku with a webhook", "should_trigger": false},
+  {"query": "Add a /start command and an inline keyboard to my grammY bot", "should_trigger": false},
+  {"query": "Write a Dockerfile and docker-compose.yml for a Node.js Express API with a Postgres container", "should_trigger": false},
+  {"query": "How do I get a bot token from BotFather and run my first grammY echo bot locally?", "should_trigger": false},
+  {"query": "How do I verify the X-Hub-Signature header of a GitHub webhook in an Express handler?", "should_trigger": false}
+]

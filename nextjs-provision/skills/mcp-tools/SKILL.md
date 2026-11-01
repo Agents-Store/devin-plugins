@@ -1,10 +1,6 @@
 ---
 name: mcp-tools
-description: >
-  Set up and use the official shadcn MCP server for AI-assisted component discovery and installation. This skill
-  should be used when the user asks about "shadcn MCP", "shadcn MCP server", "set up shadcn MCP for Claude",
-  "component MCP tools", "shadcn mcp init", "Jpisnice shadcn MCP", "shadcn-ui-mcp-server", "AI component
-  installation", or needs to configure MCP for shadcn/ui component work.
+description: Set up and use the official shadcn MCP server (npx shadcn@latest mcp) — mcp init per client for Claude Code, Cursor, VS Code, Codex and opencode, its seven tools, how items are addressed as @registry/item, and why the community shadcn-ui-mcp-server is no longer shipped. Use when configuring or using MCP for shadcn component work.
 ---
 
 One MCP server enables AI-assisted shadcn/ui component discovery and installation: the **official shadcn MCP**, built into the shadcn CLI (`npx shadcn@latest mcp`). This plugin's `.mcp.json` declares exactly that server.

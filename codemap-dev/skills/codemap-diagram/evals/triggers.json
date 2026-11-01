@@ -1,0 +1,18 @@
+[
+  {"query": "I just joined the team and need to understand how our Flask + SQLAlchemy app fits together. Can you draw an architecture diagram of the whole project - app factory, blueprints, the Postgres database and the external payment API?", "should_trigger": true},
+  {"query": "create an ERD for the database in this repo, the models are in app/models/. I want primary and foreign keys and the cardinality on the relationships", "should_trigger": true},
+  {"query": "Create a draw.io dependency diagram for the onboarding wiki and colour it by layer (data, logic, interface, external). server.js imports routes/orders.js and routes/users.js; both routes import services/pricing.js; pricing.js imports models/order.js and config/db.js", "should_trigger": true},
+  {"query": "Make a sequence diagram of POST /login for our wiki. Code: def login(): user = auth_service.authenticate(email, pw); session['uid'] = user.id (401 if None); authenticate() queries the User table and checks bcrypt", "should_trigger": true},
+  {"query": "Нарисуй диаграмму архитектуры нашего проекта: какие сервисы есть, как они общаются между собой и где лежат данные", "should_trigger": true},
+  {"query": "Сделай ER-диаграмму для схемы базы данных этого приложения, с типами колонок и связями между таблицами", "should_trigger": true},
+  {"query": "visualize the request lifecycle of our Express API as a flow diagram, from the router through middleware to the controller and the DB call", "should_trigger": true},
+  {"query": "need a C4 container diagram for the monorepo (web, api, worker, redis, postgres) that I can put into our onboarding wiki", "should_trigger": true},
+  {"query": "Explain what the function process_refund() in billing/refunds.py does, step by step. I'm new to Python", "should_trigger": false},
+  {"query": "Review my pull request #218 for security problems and beginner mistakes", "should_trigger": false},
+  {"query": "Make a bar chart of our monthly signups for 2026 using matplotlib and save it as signups.png", "should_trigger": false},
+  {"query": "Test my React admin panel in a browser (the dev server is already running) and tell me about console errors and broken forms", "should_trigger": false},
+  {"query": "Write the SQL DDL for a table users with email unique, created_at timestamp and a foreign key to organizations", "should_trigger": false},
+  {"query": "Design a logo for a coffee shop called Bean There - something simple that works on a paper cup", "should_trigger": false},
+  {"query": "Draw a Gantt chart of the project plan in Excel with tasks from October to December", "should_trigger": false},
+  {"query": "Rename the variable usr to user across the repo and update the imports", "should_trigger": false}
+]

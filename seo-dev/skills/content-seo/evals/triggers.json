@@ -1,0 +1,18 @@
+[
+  {"query": "How should I structure headings on a long Next.js blog post - one h1, h2/h3 hierarchy - and what makes a good heading for search?", "should_trigger": true},
+  {"query": "What's the best alt text for product images, and how do I name image files and use next/image sizes for image SEO?", "should_trigger": true},
+  {"query": "Plan internal linking for my docs site built with Next.js: how many links, what anchor text and how do I avoid orphan pages?", "should_trigger": true},
+  {"query": "What should URL slugs look like for SEO - length, hyphens, stop words, dates - and how do I handle slug changes?", "should_trigger": true},
+  {"query": "My blog posts have two h1 tags because the layout adds one. How bad is that for SEO and how do I fix the hierarchy?", "should_trigger": true},
+  {"query": "Как оптимизировать изображения для SEO: alt-тексты, имена файлов и размеры в Next.js?", "should_trigger": true},
+  {"query": "Подскажи, как выстроить иерархию заголовков h1-h3 и внутренние ссылки на странице статьи, чтобы это помогало поиску", "should_trigger": true},
+  {"query": "Content optimization for a landing page: heading structure, keyword placement in the first paragraph and anchor text for internal links", "should_trigger": true},
+  {"query": "Create sitemap.ts and robots.ts for my Next.js app", "should_trigger": false},
+  {"query": "Add JSON-LD BreadcrumbList to category pages", "should_trigger": false},
+  {"query": "Improve CLS caused by images without dimensions", "should_trigger": false},
+  {"query": "Write an SEO-optimized article about project management software", "should_trigger": false},
+  {"query": "Do keyword research for the phrase 'crm for small business'", "should_trigger": false},
+  {"query": "Generate Open Graph images with opengraph-image.tsx", "should_trigger": false},
+  {"query": "Add hreflang tags for English and German versions", "should_trigger": false},
+  {"query": "How do I fix a 404 on dynamic routes in Next.js?", "should_trigger": false}
+]

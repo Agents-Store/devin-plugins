@@ -1,0 +1,18 @@
+[
+  {"query": "Audit the backlink profile of acme-shoes.example.com with DataForSEO - totals, referring domains, anchor text distribution, and tell me which links look toxic", "should_trigger": true},
+  {"query": "I need a disavow list. Pull the backlinks of mysite.example.org with a high spam score, one per referring domain, and write them as a disavow.txt for Google Search Console", "should_trigger": true},
+  {"query": "backlink gap: which domains link to both competitor-a.example.com and competitor-b.example.com but not to us? I want link-building prospects", "should_trigger": true},
+  {"query": "look at our new/lost backlinks of the last 90 days for blog.example.net and tell me if the drop in referring domains is real", "should_trigger": true},
+  {"query": "Проведи аудит ссылочного профиля сайта example-shop.ru через DataForSEO: сколько ссылающихся доменов, какие анкоры, есть ли подозрительные ссылки", "should_trigger": true},
+  {"query": "Найди через DataForSEO домены, которые ссылаются на конкурентов, но не на нас, и составь список для аутрича", "should_trigger": true},
+  {"query": "what is the anchor text distribution for example.com? i think someone ran a negative SEO campaign with exact-match commercial anchors", "should_trigger": true},
+  {"query": "which of our pages have the most backlinks and which ones have broken backlinks pointing to a 404? using DataForSEO backlinks API", "should_trigger": true},
+  {"query": "Find keyword ideas and search volumes for 'electric bike' in Germany using DataForSEO", "should_trigger": false},
+  {"query": "Compare organic traffic and ranking keywords of acme-shoes.example.com against two competitors", "should_trigger": false},
+  {"query": "Do a technical on-page audit of https://example.com/blog/post-1 with Lighthouse and heading analysis", "should_trigger": false},
+  {"query": "Write a cold outreach email template for guest posting that I can send to bloggers in the fitness niche", "should_trigger": false},
+  {"query": "Explain how Google treats nofollow, sponsored and ugc link attributes now, and when to use each", "should_trigger": false},
+  {"query": "Set up a 301 redirect map in Next.js for 40 old URLs from our previous site", "should_trigger": false},
+  {"query": "My DataForSEO api_request returns a 401, what could be wrong?", "should_trigger": false},
+  {"query": "Draw a diagram of how link equity flows through a typical website hierarchy", "should_trigger": false}
+]

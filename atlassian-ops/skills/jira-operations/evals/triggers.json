@@ -1,0 +1,18 @@
+[
+  {"query": "ok so our sprint is ending and I need to move DEV-482, DEV-483 and DEV-490 to Done in Jira Cloud - we're on the standard software workflow. can you do it with curl, the token is already in my env", "should_trigger": true},
+  {"query": "Create a Jira bug in project PAY: summary 'Refund webhook returns 500 on partial refunds', description with steps to reproduce, assign it to maria.k@acme-example.com and set priority High", "should_trigger": true},
+  {"query": "I need a JQL query for all unresolved bugs in project WEB assigned to me, created in the last 30 days, sorted by priority - then run it against our Jira site and show me key, summary and status", "should_trigger": true},
+  {"query": "Log 2h 30m of work on INFRA-77 with the comment 'rotated the TLS certs', started yesterday at 14:00", "should_trigger": true},
+  {"query": "Создай в Jira версию релиза 2.4.0 в проекте MOBILE с датой выпуска 2026-11-15 и привяжи к ней задачи MOBILE-310 и MOBILE-311 через fixVersions", "should_trigger": true},
+  {"query": "Привет! Нужно в Jira найти все задачи проекта OPS без исполнителя, которые висят больше 14 дней, и оставить в каждой комментарий 'Нужен владелец'. Через REST API, пожалуйста", "should_trigger": true},
+  {"query": "attach the file ./logs/crash-2026-10-03.txt to PLAT-1204 and link that issue as 'is blocked by' PLAT-1198", "should_trigger": true},
+  {"query": "can you give me a curl command that creates a new Jira project with key SHOP, type software, me as lead, and then adds the components 'API' and 'Frontend'", "should_trigger": true},
+  {"query": "Create a Confluence page called 'Q3 Retro' in space TEAM under the page 'Retrospectives' with a short summary of what went well and what didn't", "should_trigger": false},
+  {"query": "My curl to https://example.atlassian.net/rest/api/3/myself returns 401 even though I just made a new API token. What is wrong?", "should_trigger": false},
+  {"query": "How do I generate an Atlassian API token and where do I find my cloudId? I haven't connected anything yet", "should_trigger": false},
+  {"query": "I exported all our Jira tickets to issues.csv (columns: Issue key, Created, Resolved, Status, Story Points). Write a pandas script that computes the median cycle time per month and plots it", "should_trigger": false},
+  {"query": "What's the difference between an epic, a story and a task in Jira, and when should a team use sub-tasks? We're just starting with kanban", "should_trigger": false},
+  {"query": "Create a GitHub issue for the flaky test in tests/test_checkout.py using the gh CLI, label it bug and flaky", "should_trigger": false},
+  {"query": "Walk me through the Jira Automation UI: I want a rule that auto-assigns new bugs to the component lead. Which trigger and action do I pick?", "should_trigger": false},
+  {"query": "Show me a full worked example that creates a Confluence space, adds a parent page with two children and labels them", "should_trigger": false}
+]

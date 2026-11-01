@@ -1,0 +1,18 @@
+[
+  {"query": "ImportError: cannot import name 'db' from partially initialized module 'app' (most likely due to a circular import). My Flask project has models.py importing app. How do I fix it?", "should_trigger": true},
+  {"query": "Flask returns 500 on /clients but the terminal shows nothing useful. How do I debug it?", "should_trigger": true},
+  {"query": "jinja2.exceptions.TemplateNotFound: clients/list.html - the file exists in templates/clients. Why?", "should_trigger": true},
+  {"query": "My form POST returns 400 'The CSRF token is missing' even though I use Flask-WTF", "should_trigger": true},
+  {"query": "I set FLASK_ENV=development but debug mode isn't on in Flask 3. What changed?", "should_trigger": true},
+  {"query": "flask run says 'Error: Could not locate a Flask application' with my factory in app.py", "should_trigger": true},
+  {"query": "Flask падает с ошибкой циклического импорта при импорте db из models. Как исправить структуру?", "should_trigger": true},
+  {"query": "Форма во Flask возвращает 400 Bad Request: CSRF token missing. Что проверить?", "should_trigger": true},
+  {"query": "Create the folder structure for a new Flask project", "should_trigger": false},
+  {"query": "Write CRUD routes for a Product model in a Flask blueprint", "should_trigger": false},
+  {"query": "Django raises TemplateDoesNotExist in the admin after I moved my templates", "should_trigger": false},
+  {"query": "Gunicorn workers time out and nginx returns 502 on my Ubuntu VPS", "should_trigger": false},
+  {"query": "Alembic can't detect that I renamed a column in my model", "should_trigger": false},
+  {"query": "Python ModuleNotFoundError: No module named 'requests' in my virtualenv", "should_trigger": false},
+  {"query": "Why does my FastAPI endpoint return 422 Unprocessable Entity?", "should_trigger": false},
+  {"query": "React hydration error: Text content did not match server-rendered HTML", "should_trigger": false}
+]

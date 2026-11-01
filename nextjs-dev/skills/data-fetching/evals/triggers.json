@@ -1,0 +1,18 @@
+[
+  {"query": "revalidateTag('posts') now shows a deprecation warning in Next.js 16. What is the new signature, what does the second argument take, and how does it differ from updateTag in a Server Action?", "should_trigger": true},
+  {"query": "How does the 'use cache' directive work in Next.js 16 with cacheLife and cacheTag? I want product lists cached for an hour and revalidated when an admin edits a product", "should_trigger": true},
+  {"query": "When do I use updateTag vs refresh vs revalidateTag after a mutation in Next.js 16? I need read-your-own-writes in a Server Action so the user sees the new comment immediately.", "should_trigger": true},
+  {"query": "В Next.js 16 включён cacheComponents. Как закэшировать функцию getProducts на час с тегом 'products' через 'use cache', cacheLife и cacheTag, и как потом сбросить этот кэш?", "should_trigger": true},
+  {"query": "What is the difference between 'use cache', 'use cache: remote' and 'use cache: private' in Next.js 16, and which one do I need on serverless where each instance has its own memory?", "should_trigger": true},
+  {"query": "Объясни кэширование данных в Next.js App Router: request memoization, fetch cache и разница между статикой и динамикой", "should_trigger": true},
+  {"query": "I upgraded to Next.js 16 and the fetch() calls in my Server Components are no longer cached like before. Is implicit fetch caching gone, and how do I check which caching model my project uses?", "should_trigger": true},
+  {"query": "Directus должен сообщать Next.js 16 об изменениях через webhook. Как сделать Route Handler, который инвалидирует теги (секрет в заголовке, список разрешённых тегов), и как привязать теги к fetch?", "should_trigger": true},
+  {"query": "Build the signup form in Next.js with useActionState, useFormStatus and Zod errors shown under each field", "should_trigger": false},
+  {"query": "Design a Route Handler for a public REST endpoint with CORS and versioning", "should_trigger": false},
+  {"query": "Set up TanStack Query in a React SPA with optimistic updates and cache invalidation on mutation", "should_trigger": false},
+  {"query": "Fetch data in Nuxt 3 with useAsyncData and server routes", "should_trigger": false},
+  {"query": "Use SWR with a revalidateOnFocus strategy in a Create React App project", "should_trigger": false},
+  {"query": "Why does my Next.js page show stale data after deploying to Vercel? It's an error I can't reproduce locally", "should_trigger": false},
+  {"query": "Write SQL for a paginated query with a keyset cursor in Postgres", "should_trigger": false},
+  {"query": "Configure Apollo Client cache policies for a GraphQL list with fetchMore", "should_trigger": false}
+]

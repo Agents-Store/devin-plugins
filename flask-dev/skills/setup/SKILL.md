@@ -1,9 +1,6 @@
 ---
 name: setup
-description: >
-  Use when the user asks to "verify Flask project setup", "check Flask structure",
-  "is my Flask app set up correctly", "validate Flask project", or needs to confirm
-  that a Flask project follows recommended patterns and has correct file structure.
+description: Audit an existing Flask project against the recommended patterns, covering the application factory, blueprint registration, config classes and SECRET_KEY handling, CSRF protection, dependencies and file structure. Use it when the user asks whether a Flask app is set up correctly, wants its structure or configuration reviewed, or has inherited a codebase before adding features, in any language. For starting a new project use project-scaffold.
 ---
 
 # Flask Project Setup Verification

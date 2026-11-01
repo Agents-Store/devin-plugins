@@ -3,53 +3,45 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Draw me the architecture of this application",
-      "expected_output": "C4 container diagram saved as .drawio file and rendered via drawio-mcp",
+      "prompt": "Draw me the architecture of this application as a diagram. Do not look for files in the directory; the list below is everything there is. The project is a small Flask app:\n\n- app/__init__.py: create_app() factory, registers blueprints auth_bp (routes/auth.py) and deals_bp (routes/deals.py)\n- app/models.py: SQLAlchemy models User, Company, Deal stored in PostgreSQL\n- app/services/billing.py: calls the external Stripe API to create invoices\n- app/templates/: Jinja2 templates rendered by the blueprints\n- docker-compose.yml: services web (gunicorn) and db (postgres:16)",
+      "expected_output": "The skill's first step: asks whether to delegate to the diagrammer agent or proceed inline; no Mermaid and no saved-file claim",
       "files": [],
       "expectations": [
-        "Analyzes root configs, entry points, and top-level directories",
-        "Generates mxGraph XML with real names from code",
-        "Applies color coding per layer (data=blue, logic=green, interface=yellow, external=red)",
-        "Saves to docs/codemap/diagrams/architecture.drawio",
-        "Calls create_diagram MCP tool for preview (inline only in MCP Apps clients)"
+        "The answer either contains native mxGraph XML (an <mxGraphModel> element), or reports that the diagram was rendered through drawio-mcp, or states that drawio-mcp or file writing is unavailable, or asks whether to delegate to the diagrammer agent or proceed inline",
+        "The answer contains no code block in Mermaid or PlantUML syntax and no ASCII box drawing",
+        "If the answer shows or describes the finished diagram, the data layer (models, PostgreSQL) is coloured #dae8fc, the external Stripe API #f8cecc and the route blueprints #d5e8d4. An answer that only asks how to run the task or says the tools are unavailable passes this requirement"
       ]
     },
     {
       "id": 2,
-      "prompt": "Create an ERD for this project's database",
-      "expected_output": "ERD diagram with tables, columns, PK/FK markers, and relationship cardinality",
+      "prompt": "Use the codemap-diagram skill to create an ERD for this project's database, here in this chat please. These are the models:\n\nclass Company(db.Model):\n    id = db.Column(db.Integer, primary_key=True)\n    name = db.Column(db.String(120), nullable=False)\n\nclass User(db.Model):\n    id = db.Column(db.Integer, primary_key=True)\n    email = db.Column(db.String(255), unique=True, nullable=False)\n    company_id = db.Column(db.Integer, db.ForeignKey('company.id'))\n\nclass Deal(db.Model):\n    id = db.Column(db.Integer, primary_key=True)\n    title = db.Column(db.String(200), nullable=False)\n    amount = db.Column(db.Numeric(10, 2))\n    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))\n    company_id = db.Column(db.Integer, db.ForeignKey('company.id'))",
+      "expected_output": "ERD as native mxGraph XML with tables, columns, PK/FK markers and relationship cardinality",
       "files": [],
       "expectations": [
-        "Auto-detects ORM and reads model definitions",
-        "Extracts tables, columns, types, foreign keys, relationships",
-        "Uses Data layer color (blue #dae8fc)",
-        "Includes cardinality labels on relationships (1, N, M)",
-        "Saves to docs/codemap/diagrams/erd.drawio"
+        "The answer either contains native mxGraph XML (an <mxGraphModel> element), or reports that the diagram was rendered through drawio-mcp, or states that drawio-mcp or file writing is unavailable, or asks whether to delegate to the diagrammer agent or proceed inline",
+        "The answer contains no code block in Mermaid or PlantUML syntax and no ASCII box drawing",
+        "If the answer shows or describes the finished diagram, it has the tables Company, User and Deal with PK and FK markers and cardinality such as 1:N. An answer that only asks how to run the task or says the tools are unavailable passes this requirement"
       ]
     },
     {
       "id": 3,
-      "prompt": "Show me the login flow as a sequence diagram",
-      "expected_output": "Sequence diagram with lifelines for each component involved in the login flow",
+      "prompt": "Use the codemap-diagram skill to show me the login flow as a sequence diagram, here in this chat. This is the code:\n\n# routes/auth.py\n@auth_bp.post('/login')\ndef login():\n    data = request.get_json()\n    user = auth_service.authenticate(data['email'], data['password'])\n    if user is None:\n        return jsonify(error='invalid credentials'), 401\n    session['user_id'] = user.id\n    return jsonify(ok=True)\n\n# services/auth_service.py\ndef authenticate(email, password):\n    user = User.query.filter_by(email=email).first()\n    if user and bcrypt.check_password_hash(user.password_hash, password):\n        return user\n    return None",
+      "expected_output": "Sequence diagram as native mxGraph XML with lifelines for the login route, the auth service and the database",
       "files": [],
       "expectations": [
-        "Traces the login route handler through all called functions",
-        "Generates sequence diagram with lifelines and labeled arrows",
-        "Uses real function and file names from the code",
-        "No XML comments in generated mxGraph XML",
-        "Does not fall back to Mermaid or text diagrams"
+        "The answer either contains native mxGraph XML (an <mxGraphModel> element), or reports that the diagram was rendered through drawio-mcp, or states that drawio-mcp or file writing is unavailable, or asks whether to delegate to the diagrammer agent or proceed inline",
+        "The answer contains no code block in Mermaid or PlantUML syntax and no ASCII box drawing",
+        "If the answer lists the lifelines or participants of the diagram, they include the login route and auth_service. An answer that only asks how to run the task or says the tools are unavailable passes this requirement"
       ]
     },
     {
       "id": 4,
-      "prompt": "Draw a diagram for an empty project with no source code",
-      "expected_output": "Gracefully handles missing code — informs user, does not generate empty or placeholder diagram",
+      "prompt": "Use the codemap-diagram skill to draw a diagram for an empty project with no source code. There are no files in this directory yet.",
+      "expected_output": "Does not produce a placeholder or text diagram for a project without code",
       "files": [],
       "expectations": [
-        "Does NOT generate a Mermaid (.mmd) file",
-        "Does NOT create a placeholder diagram with generic labels",
-        "Informs user that no code was found to diagram",
-        "Suggests what the user can provide for a useful diagram"
+        "The answer does not contain a placeholder diagram with generic labels such as Service A or Component 1",
+        "The answer either tells the user that no source code was found or asks whether to delegate to the diagrammer agent or proceed inline"
       ]
     }
   ]

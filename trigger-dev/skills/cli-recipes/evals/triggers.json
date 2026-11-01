@@ -1,0 +1,17 @@
+[
+  {"query": "I use Trigger.dev dev branches from the CLI. How do I start the dev server on a branch and archive the branch when I am done?", "should_trigger": true},
+  {"query": "How do I install the Trigger.dev MCP server for Cursor and Claude Code only, locked to one project and in dev-only mode?", "should_trigger": true},
+  {"query": "Push my local .env variables to the production environment of my self-hosted Trigger.dev from the terminal with the CLI env command, then list them", "should_trigger": true},
+  {"query": "I manage a cloud and a self-hosted instance. How do I log in with profiles and switch between them?", "should_trigger": true},
+  {"query": "npx trigger.dev init fails in CI with no TTY. Which flags do I need?", "should_trigger": true},
+  {"query": "How do I install the agent skills (trigger-authoring-tasks and the others) with the CLI? Is install-rules still a thing?", "should_trigger": true},
+  {"query": "Какие флаги у команды dev в Trigger.dev CLI и как запустить её с другим env-файлом и ограничить число параллельных запусков?", "should_trigger": true},
+  {"query": "Как запустить MCP-сервер Trigger.dev только для чтения и что при этом скрывается?", "should_trigger": true},
+  {"query": "Write a task that runs on a cron schedule", "should_trigger": false},
+  {"query": "Explain how to configure build extensions for Prisma in trigger.config.ts", "should_trigger": false},
+  {"query": "Use the Vercel CLI to deploy and set environment variables", "should_trigger": false},
+  {"query": "Use the AWS CLI to list S3 buckets", "should_trigger": false},
+  {"query": "Why does my deploy fail with unauthorized authentication required on the registry push?", "should_trigger": false},
+  {"query": "Explain all 41 MCP tools and their parameters", "should_trigger": false},
+  {"query": "Set up Trigger.dev in my project from scratch", "should_trigger": false}
+]

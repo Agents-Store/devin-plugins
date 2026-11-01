@@ -1,0 +1,18 @@
+[
+  {"query": "Add a new record to the Customers table in NocoDB: name Acme GmbH, status Active, city Berlin", "should_trigger": true},
+  {"query": "Update the status of all NocoDB Tasks assigned to Maria from Open to In Progress", "should_trigger": true},
+  {"query": "find the NocoDB record for the customer with email anna@example.com and change her phone number", "should_trigger": true},
+  {"query": "How many records in the Orders table are overdue? Count the ones where DueDate is before today", "should_trigger": true},
+  {"query": "Удали в NocoDB все тестовые записи из таблицы Заявки, у которых Название начинается с 'test' (сначала покажи их)", "should_trigger": true},
+  {"query": "Переведи в NocoDB все задачи Марии из статуса Open в In Progress", "should_trigger": true},
+  {"query": "deduplicate the Contacts table in NocoDB by email: keep the newest record and delete the older duplicates", "should_trigger": true},
+  {"query": "restore the records I deleted by mistake from the NocoDB table Invoices", "should_trigger": true},
+  {"query": "Add a new Single Select field to the Tasks table in NocoDB", "should_trigger": false},
+  {"query": "Show me all filter operators for dates in NocoDB, such as isWithin and exactDate", "should_trigger": false},
+  {"query": "Import this CSV of 500 customers into NocoDB", "should_trigger": false},
+  {"query": "Insert a row into PostgreSQL with an upsert on conflict", "should_trigger": false},
+  {"query": "Add a row to a Google Sheet when a form is submitted using Apps Script", "should_trigger": false},
+  {"query": "Add a new record to Airtable via the API with a linked record field", "should_trigger": false},
+  {"query": "Create a new contact in HubSpot and associate it with a company", "should_trigger": false},
+  {"query": "Update a Jira issue's status to In Progress through the REST API", "should_trigger": false}
+]

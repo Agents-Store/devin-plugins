@@ -1,0 +1,18 @@
+[
+  {"query": "We run six OpenClaw instances and the versions have drifted. What's the current stable, and how do we upgrade without everything breaking?", "should_trigger": true},
+  {"query": "Which OpenClaw release channel and registry dist-tag should I follow? And should I pin the image by digest?", "should_trigger": true},
+  {"query": "After updating OpenClaw the gateway won't start. What do I check and how do I roll back?", "should_trigger": true},
+  {"query": "Schedules started firing several times per tick after I upgraded one OpenClaw instance. Known issue? What changed in that release?", "should_trigger": true},
+  {"query": "Хочу обновить флот OpenClaw: с какой версии на какую, сколько держать canary до остальных и как откатиться?", "should_trigger": true},
+  {"query": "Сессия протухла через некоторое время после обновления OpenClaw. Это связано с релизом? Что добавили в этой версии?", "should_trigger": true},
+  {"query": "what did the latest OpenClaw release add? I need to decide whether to move to it, with a soak window on the canary", "should_trigger": true},
+  {"query": "pin the OpenClaw image tag by digest in our compose file and plan a hold-back window before moving the other instances", "should_trigger": true},
+  {"query": "Upgrade my Ubuntu server from 22.04 to 24.04 with do-release-upgrade", "should_trigger": false},
+  {"query": "Update Next.js from 15 to 16 using the official codemods", "should_trigger": false},
+  {"query": "Upgrade Postgres 15 to 17 with pg_upgrade and minimal downtime", "should_trigger": false},
+  {"query": "Roll out a new version of my Kubernetes deployment with a canary strategy in Argo Rollouts", "should_trigger": false},
+  {"query": "Clone the reference OpenClaw instance into a new canary instance", "should_trigger": false},
+  {"query": "Update Docker Compose from v1 to v2 and migrate the syntax", "should_trigger": false},
+  {"query": "Which Python version is current stable and when does 3.9 go end of life?", "should_trigger": false},
+  {"query": "An OpenClaw instance is restarting in a loop, diagnose it", "should_trigger": false}
+]

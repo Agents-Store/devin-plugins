@@ -1,0 +1,18 @@
+[
+  {"query": "How should I structure a medium-sized Next.js 16 app with about 20 routes: where do feature folders, shared components and the data layer go?", "should_trigger": true},
+  {"query": "What are good naming conventions in Next.js: private folders with underscore, route groups with parentheses, and colocating components next to routes?", "should_trigger": true},
+  {"query": "We're growing a Next.js monorepo app past 40 routes. Recommend a feature-based structure and path aliases for @/features and @/lib", "should_trigger": true},
+  {"query": "Is it OK to use barrel exports (index.ts) in a Next.js project? What are the anti-patterns for file organization?", "should_trigger": true},
+  {"query": "Как организовать структуру проекта Next.js, чтобы код был модульным: features, shared, колокация и пути с алиасами?", "should_trigger": true},
+  {"query": "Где в Next.js лучше хранить общий код — server-only утилиты, типы, константы — и как назвать файлы и каталоги?", "should_trigger": true},
+  {"query": "Where does the data access layer belong in a Next.js project and how should it be organized by domain?", "should_trigger": true},
+  {"query": "Review my Next.js folder layout: app/, components/, utils/, helpers/, lib/, services/ all contain mixed stuff. How should I reorganize?", "should_trigger": true},
+  {"query": "Scaffold a Next.js project with shadcn studio templates and a Turborepo monorepo", "should_trigger": false},
+  {"query": "How do route groups, parallel routes and intercepting routes work in the App Router?", "should_trigger": false},
+  {"query": "Organize a Django project with multiple apps, a core app and settings split by environment", "should_trigger": false},
+  {"query": "Recommend a folder structure for a Flask application with blueprints and SQLAlchemy models", "should_trigger": false},
+  {"query": "Structure a NestJS monolith into modules with clean architecture layers", "should_trigger": false},
+  {"query": "Where should I put my Dockerfile and docker compose files for a Next.js app?", "should_trigger": false},
+  {"query": "Set up path aliases in tsconfig for a Vite React project", "should_trigger": false},
+  {"query": "Organize a Flutter app with feature-first folders and Riverpod providers", "should_trigger": false}
+]

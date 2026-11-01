@@ -1,0 +1,16 @@
+[
+  {"query": "Is the React Compiler enabled by default in Next.js 16? I want to drop our manual useMemo and useCallback - which config flag and package do I need?", "should_trigger": true},
+  {"query": "Next.js 16.3 added an experimental Rust-based React Compiler inside Turbopack. Which flag turns it on, does reactCompiler: true still have to be set, and is it safe for production?", "should_trigger": true},
+  {"query": "Как в Next.js 16 управлять prefetch у Link при включённых cacheComponents и partialPrefetching: что делает prefetch={true} и почему не стоит ставить его на каждую карточку в большой сетке?", "should_trigger": true},
+  {"query": "What do `export const prefetch = 'partial'` and 'force-disabled' do on a segment in Next.js 16.3, and what does a plain <Link> prefetch compared with prefetch={true}?", "should_trigger": true},
+  {"query": "Как улучшить Core Web Vitals в Next.js: LCP, INP и CLS — с чего начать и что измерять?", "should_trigger": true},
+  {"query": "What is prefetchInlining in Next.js 16.3, what does it do for small prefetch payloads, and when would I turn it on?", "should_trigger": true},
+  {"query": "How do I cache data with 'use cache' and revalidate it by tag in Next.js 16?", "should_trigger": false},
+  {"query": "Configure a Dockerfile for Next.js with standalone output to shrink the image", "should_trigger": false},
+  {"query": "Optimize a slow Postgres query with EXPLAIN ANALYZE and a composite index", "should_trigger": false},
+  {"query": "Make my WordPress site faster with a page cache plugin and a CDN", "should_trigger": false},
+  {"query": "Reduce the cold start time of an AWS Lambda function written in Node.js", "should_trigger": false},
+  {"query": "Fix Next.js hydration mismatch for a locale-dependent date", "should_trigger": false},
+  {"query": "Improve the performance of a React Native FlatList with thousands of items", "should_trigger": false},
+  {"query": "Set up Lighthouse CI in GitHub Actions to fail the build on regressions", "should_trigger": false}
+]

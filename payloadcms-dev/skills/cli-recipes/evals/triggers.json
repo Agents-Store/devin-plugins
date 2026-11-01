@@ -1,0 +1,18 @@
+[
+  {"query": "I changed a field in my Payload collection on Postgres. What are the exact payload CLI commands to create and run the migration, and how do I check what's pending?", "should_trigger": true},
+  {"query": "What's the difference between payload migrate:down, migrate:refresh, migrate:reset and migrate:fresh? I want to roll back only the last batch", "should_trigger": true},
+  {"query": "How do I run a one-off script with the Payload Local API from the command line, like seeding data? I've heard of payload run", "should_trigger": true},
+  {"query": "When do I need payload generate:importmap and payload generate:types, and what do I wire into package.json and CI?", "should_trigger": true},
+  {"query": "Payload jobs: how do I process the queue from the CLI with jobs:run and what does jobs:handle-schedules do?", "should_trigger": true},
+  {"query": "Как в Payload посмотреть статус миграций и создать новую миграцию с именем add-slug? Нужны точные команды payload migrate", "should_trigger": true},
+  {"query": "Какая команда Payload генерирует схему БД (generate:db-schema) и зачем она нужна для Drizzle?", "should_trigger": true},
+  {"query": "Write the GitHub Actions steps for a Payload project on Postgres that run payload migrate:status and payload migrate before deploy, regenerate types with payload generate:types and fail the job if payload-types.ts changed", "should_trigger": true},
+  {"query": "Scaffold a React Native app with Expo and TypeScript", "should_trigger": false},
+  {"query": "How do I scaffold a new Payload project with create-payload-app?", "should_trigger": false},
+  {"query": "Prisma migrate dev vs migrate deploy - when to use which?", "should_trigger": false},
+  {"query": "Explain how Django makemigrations and migrate work", "should_trigger": false},
+  {"query": "Run Drizzle Kit generate and push for a Postgres project", "should_trigger": false},
+  {"query": "How do I schedule a recurring job in Payload using the jobs queue config?", "should_trigger": false},
+  {"query": "Configure GitHub Actions to build and deploy a Next.js app to Vercel", "should_trigger": false},
+  {"query": "Write a bash script that runs database backups with pg_dump every night", "should_trigger": false}
+]

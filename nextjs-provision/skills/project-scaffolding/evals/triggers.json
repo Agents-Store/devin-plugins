@@ -1,0 +1,18 @@
+[
+  {"query": "Scaffold a new Next.js dashboard project with shadcn/ui using a shadcn studio template", "should_trigger": true},
+  {"query": "How should I organize my components folder in a Next.js app that uses shadcn/ui - ui/, blocks/, features/? Give me the structure", "should_trigger": true},
+  {"query": "Scaffold a Next.js app straight from a shadcn template with `init -t next -n my-app`, and tell me how to switch the base from Base UI to Radix.", "should_trigger": true},
+  {"query": "Как организовать каталоги в проекте Next.js с shadcn: что можно класть в components/ui, куда переносить блоки shadcn studio и почему lib/utils.ts теперь делает re-export cn из пакета?", "should_trigger": true},
+  {"query": "Создай каркас проекта Next.js со стартовым шаблоном для дашборда на shadcn и объясни структуру папок", "should_trigger": true},
+  {"query": "Как лучше организовать компоненты shadcn: разделение на server и client компоненты и barrel exports?", "should_trigger": true},
+  {"query": "Use a shadcn starter kit to bootstrap a SaaS landing page plus dashboard, with one-step init that also creates the Next.js app", "should_trigger": true},
+  {"query": "Set up a Turborepo monorepo with apps/web and a shared packages/ui shadcn package. Which components.json fields (aliases, tailwind css path) must point at the shared package in each workspace?", "should_trigger": true},
+  {"query": "Install and initialize shadcn/ui in my existing project", "should_trigger": false},
+  {"query": "What is a good folder structure for a Next.js 15 App Router app with route groups, API routes and a lib folder?", "should_trigger": false},
+  {"query": "Scaffold a NestJS project with TypeORM and Postgres", "should_trigger": false},
+  {"query": "Scaffold a Vite + React + Tailwind project and add React Router", "should_trigger": false},
+  {"query": "Scaffold a Django project with a custom user model and Django REST framework", "should_trigger": false},
+  {"query": "Change my shadcn color palette to a brand orange", "should_trigger": false},
+  {"query": "Install the shadcn accordion component", "should_trigger": false},
+  {"query": "Create a Turborepo with a Go service and a Python worker sharing a protobuf package", "should_trigger": false}
+]

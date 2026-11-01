@@ -1,0 +1,18 @@
+[
+  {"query": "Shared skills are mounted into our OpenClaw instances but the trees are empty. What's wrong?", "should_trigger": true},
+  {"query": "The same skill is copied into every OpenClaw instance. Deduplicate it into the shared tree and register it for all instances", "should_trigger": true},
+  {"query": "I edited the shared copy of a skill and nothing changed in the agent's behaviour. Why?", "should_trigger": true},
+  {"query": "An installed plugin never appears in the registered list of the instance, and there's a suspect install lock", "should_trigger": true},
+  {"query": "Нужно раскатить общий навык на все инстансы OpenClaw на хосте и проверить, что он зарегистрирован", "should_trigger": true},
+  {"query": "Кандидат на загрузку отклонён из-за владельца файлов в общем дереве навыков OpenClaw. Как исправить?", "should_trigger": true},
+  {"query": "promote a skill from one instance to the shared tree and verify that every instance sees it", "should_trigger": true},
+  {"query": "a plugin change did nothing in my OpenClaw fleet; the shared copy was updated but instances load another copy", "should_trigger": true},
+  {"query": "Install a Claude Code plugin from a marketplace and enable it", "should_trigger": false},
+  {"query": "Share a Python package across several services in a monorepo with workspaces", "should_trigger": false},
+  {"query": "Set up a shared NFS mount between two Docker containers for static assets", "should_trigger": false},
+  {"query": "Deduplicate files in a directory with fdupes and hardlinks", "should_trigger": false},
+  {"query": "Publish an npm package to a private registry and install it in several apps", "should_trigger": false},
+  {"query": "Install a WordPress plugin on a multisite so all sites share it", "should_trigger": false},
+  {"query": "List the OpenClaw instances with their status and ports", "should_trigger": false},
+  {"query": "Roll out a new Helm chart version to all clusters with Argo CD ApplicationSets", "should_trigger": false}
+]

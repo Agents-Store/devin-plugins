@@ -1,17 +1,6 @@
 ---
 name: search-filter
-description: |
-  NocoDB filter syntax reference for searching, filtering, and sorting records. Use when:
-  - "filter records"
-  - "search for records where"
-  - "NocoDB where clause"
-  - "how to filter by date"
-  - "sort results"
-  - "query syntax"
-  - "find records matching"
-  - "filter by status"
-  - "records created this week"
-  - "combine multiple filters"
+description: NocoDB filter syntax for searching, filtering and sorting records — the where clause and structured filter, text, numeric, date and multi-select operators, relative date ranges, AND/OR groups, null and empty checks, and sort objects. Use when writing or debugging a NocoDB query condition. Creating or changing records is record-management.
 ---
 
 # Search and Filter Reference

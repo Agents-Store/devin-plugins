@@ -1,0 +1,18 @@
+[
+  {"query": "Show me a complete SEO implementation for a blog in Next.js App Router: metadata, JSON-LD, sitemap, RSS and canonical URLs, ready to copy", "should_trigger": true},
+  {"query": "Give me an e-commerce SEO recipe for Next.js - product pages with Product schema, category pages with breadcrumbs, faceted navigation handling", "should_trigger": true},
+  {"query": "I need a full SEO template for a SaaS landing page in Next.js including OG image, FAQ schema and pricing page metadata", "should_trigger": true},
+  {"query": "Copy-paste ready SEO setup for a Next.js landing page: layout metadata, robots, sitemap and structured data in one go", "should_trigger": true},
+  {"query": "Show a worked SEO example for a documentation site: breadcrumbs, canonical, sitemap per section", "should_trigger": true},
+  {"query": "Покажи готовый пример SEO для блога на Next.js App Router: метаданные, JSON-LD, sitemap и OG-картинки целиком", "should_trigger": true},
+  {"query": "Нужен полный рецепт SEO для интернет-магазина на Next.js, который можно скопировать в проект", "should_trigger": true},
+  {"query": "Which SEO page types have worked examples - blog, e-commerce, landing page, SaaS - and what does each include?", "should_trigger": true},
+  {"query": "What does the generateMetadata function return?", "should_trigger": false},
+  {"query": "Audit my site SEO and give a report", "should_trigger": false},
+  {"query": "My OG image isn't showing in Slack previews", "should_trigger": false},
+  {"query": "Give me a complete e-commerce checkout example in Next.js with Stripe", "should_trigger": false},
+  {"query": "Show a full Next.js blog with MDX and syntax highlighting", "should_trigger": false},
+  {"query": "Write a Remix SEO setup with meta functions", "should_trigger": false},
+  {"query": "Complete example of a WordPress SEO configuration with Yoast", "should_trigger": false},
+  {"query": "Full example of structured data for a recipe page", "should_trigger": false}
+]

@@ -1,16 +1,6 @@
 ---
 name: field-management
-description: |
-  Create, update, and delete NocoDB fields across all 35 supported types — text, numeric, date, select, attachment, JSON, geometry, links, lookup, rollup, formula, button, barcode/QR, system fields. Use when:
-  - "add a field"
-  - "create a column"
-  - "rename a field"
-  - "change field type"
-  - "delete a column"
-  - "add a formula"
-  - "set up lookup or rollup"
-  - "link two tables"
-  - "add a select option"
+description: Create, update and delete NocoDB fields across all 35 types, including select options, formulas, links with lookups and rollups, attachments, barcode and button fields, plus safe type changes and deletes. Use when a NocoDB table needs a new or changed column. Creating the table itself is table-management, hiding or ordering columns in a view is view-management.
 ---
 
 # Field Management — All 35 Types

@@ -1,0 +1,18 @@
+[
+  {"query": "Verify that my n8n MCP connection works - I added the server to .mcp.json and want to be sure the integration is operational", "should_trigger": true},
+  {"query": "Configure the n8n MCP servers for this project: both the external (stdio) one and the native HTTP one. What goes into .mcp.json and which env vars do I set?", "should_trigger": true},
+  {"query": "Check n8n MCP: is n8n-mcp-external reachable and does my N8N_API_KEY work?", "should_trigger": true},
+  {"query": "set up the n8n MCP with OAuth instead of a token for the native server", "should_trigger": true},
+  {"query": "Настрой MCP для n8n в этом проекте: нужен .mcp.json и переменные окружения, потом проверь, что всё подключилось", "should_trigger": true},
+  {"query": "Проверь подключение к n8n через MCP, у меня self-hosted инстанс, ключ API лежит в N8N_API_KEY", "should_trigger": true},
+  {"query": "Which n8n MCP should I use - external or native? I want to build workflows and also run them. Set it up for me", "should_trigger": true},
+  {"query": "Test my n8n setup: run the quick verification checklist for both MCP servers and tell me what's missing", "should_trigger": true},
+  {"query": "The n8n MCP tool calls return 401 Unauthorized when I create workflows - help me debug it", "should_trigger": false},
+  {"query": "Deploy n8n on a fresh VPS over SSH with Docker Compose", "should_trigger": false},
+  {"query": "Set up the Slack MCP server for Claude Code with a bot token", "should_trigger": false},
+  {"query": "Configure the Playwright MCP server in .mcp.json so the agent can drive a browser", "should_trigger": false},
+  {"query": "Set up the GitHub MCP server with a personal access token in Claude Code", "should_trigger": false},
+  {"query": "Create credentials in n8n for Google Sheets OAuth2 in the web UI and test the connection", "should_trigger": false},
+  {"query": "Create an n8n workflow that triggers on a webhook and writes the body to a Data Table", "should_trigger": false},
+  {"query": "Set up n8n queue mode with Redis and two workers", "should_trigger": false}
+]

@@ -1,0 +1,18 @@
+[
+  {"query": "Which search tool should my OpenClaw agent use first? Document the priority order: internal wiki, then web search, then browser", "should_trigger": true},
+  {"query": "How do I tell the agent about my devices - the NAS is 'vault', the printer is 'inkjet-1'? Where do these notes go?", "should_trigger": true},
+  {"query": "add tool notes to the agent: our staging API base path and which CLI to prefer for deploys", "should_trigger": true},
+  {"query": "We still have a TOOLS.md in an old workspace. Is it loaded on current releases or did it move into AGENTS.md?", "should_trigger": true},
+  {"query": "Как записать для агента OpenClaw приоритет поисковых инструментов и названия моих устройств?", "should_trigger": true},
+  {"query": "Добавь в заметки об инструментах агента информацию о локальной инфраструктуре: порты, имена хостов, устройства", "should_trigger": true},
+  {"query": "set up device and API references for the agent: camera names and the Home Assistant entity naming", "should_trigger": true},
+  {"query": "document the tool preferences for my agent so it uses ripgrep before the slow search", "should_trigger": true},
+  {"query": "Add a rule for group chats and safety red lines to the agent's operating rules", "should_trigger": false},
+  {"query": "Add a team member and their permissions to the agent's user profile", "should_trigger": false},
+  {"query": "Set up the Playwright MCP server in my project", "should_trigger": false},
+  {"query": "Configure the allowed tools in my Claude Code settings.json permissions", "should_trigger": false},
+  {"query": "Document my homelab network: VLANs, IPs and hostnames in a README", "should_trigger": false},
+  {"query": "List the Home Assistant entities for my lights", "should_trigger": false},
+  {"query": "Write a .cursorrules file telling Cursor which search tools to prefer", "should_trigger": false},
+  {"query": "Register tools for an OpenAI function calling agent with JSON schema", "should_trigger": false}
+]

@@ -3,9 +3,16 @@
   "evals": [
     {
       "id": 7,
-      "prompt": "I'm building a tech blog and need some high-quality landscape photos of modern office workspaces for my hero sections. Also need a few short background videos. Find me some options.",
+      "prompt": "I'm building a tech blog and need some high-quality landscape photos of modern office workspaces for my hero sections. Also need a few short background videos. Find me some options. Show me the requests you would make with this plugin's tools; do not run them.",
       "expected_output": "Should call the Pexels REST API (GET /v1/search with orientation=landscape, GET /v1/videos/search for videos) using ${PEXELS_API_KEY}. May also suggest Unsplash GET /search/photos as an alternative, and if it does, must mention the Unsplash API requirements (hotlink photo.urls, call download_location, attribution with utm parameters). Should mention image sizes (src.large for hero) and licensing/attribution info.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The answer searches Pexels photos with GET /v1/search and orientation=landscape",
+        "The answer searches background videos with GET /v1/videos/search",
+        "The answer sends the Pexels key in the Authorization header without a Bearer prefix",
+        "The answer recommends a src size such as large for hero images",
+        "The answer mentions the Pexels attribution requirement, a link to Pexels and the photographer credit"
+      ]
     }
   ]
 }

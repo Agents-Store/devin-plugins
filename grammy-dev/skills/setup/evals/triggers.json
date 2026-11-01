@@ -1,0 +1,18 @@
+[
+  {"query": "I've never built a Telegram bot. Walk me through getting a token from BotFather, installing grammY on Node 22 and running a first echo bot.", "should_trigger": true},
+  {"query": "set up a new grammy project with typescript, tsx for dev and a .env for the bot token. what are the steps to verify it works?", "should_trigger": true},
+  {"query": "I'm starting a brand-new Telegram bot project on Deno 2 and I've never used grammY. Give me the first-run setup: where I get the token, the npm: import, the deno run permissions I need for network and env vars, and the smallest bot I can verify in Telegram.", "should_trigger": true},
+  {"query": "I created a bot with BotFather and have the token. How do I install grammy with Bun and confirm that bot.start() works?", "should_trigger": true},
+  {"query": "Bootstrap a minimal TypeScript grammY bot from scratch: package.json, tsconfig and src/bot.ts with a /start handler", "should_trigger": true},
+  {"query": "Хочу создать своего первого Telegram-бота на grammY. Как получить токен у BotFather, установить библиотеку и запустить эхо-бота?", "should_trigger": true},
+  {"query": "Как поставить grammY и проверить, что бот вообще запускается? Нужен минимальный проект на Node.js с TypeScript.", "should_trigger": true},
+  {"query": "verify my grammy installation: I ran npm install grammy but I'm not sure the token works and the bot answers", "should_trigger": true},
+  {"query": "Set up a new Express and TypeScript project with ESLint and Prettier", "should_trigger": false},
+  {"query": "Create a Discord bot with discord.js v14: get the token from the developer portal and run a ping command", "should_trigger": false},
+  {"query": "Deploy my finished grammY bot to Cloudflare Workers with webhooks", "should_trigger": false},
+  {"query": "Register a /help command and inline buttons in my grammY bot", "should_trigger": false},
+  {"query": "Create a Slack app and get a bot token with the right OAuth scopes", "should_trigger": false},
+  {"query": "Install the @grammyjs/conversations plugin and add a registration wizard", "should_trigger": false},
+  {"query": "Set up a Python virtualenv, install python-telegram-bot and run an echo bot", "should_trigger": false},
+  {"query": "Initialize a Bun project with bun init and configure tsconfig for strict mode", "should_trigger": false}
+]

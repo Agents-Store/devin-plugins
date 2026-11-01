@@ -1,0 +1,18 @@
+[
+  {"query": "Create a SendPulse CRM board 'Website redesign' with columns Backlog, In progress, Review and Done", "should_trigger": true},
+  {"query": "Add a task 'Prepare the proposal' to the Review column of my SendPulse CRM board and assign it with a due date next Friday", "should_trigger": true},
+  {"query": "List all open tasks on the board 'Q4 launch' in SendPulse CRM and tell me which ones are overdue", "should_trigger": true},
+  {"query": "Rename a column on a SendPulse CRM board and add a comment to a task", "should_trigger": true},
+  {"query": "Mark a task in SendPulse CRM as completed and add a comment that the client approved it", "should_trigger": true},
+  {"query": "Создай в SendPulse CRM Kanban-доску «Запуск курса» с колонками и добавь три задачи", "should_trigger": true},
+  {"query": "Покажи задачи по доске в SendPulse CRM и отметь выполненные", "should_trigger": true},
+  {"query": "Set up a project board for onboarding in the SendPulse CRM and review the task board afterwards", "should_trigger": true},
+  {"query": "Create a deal in the sales pipeline and move it to the negotiation stage", "should_trigger": false},
+  {"query": "Create a new CRM contact for the lead who called today", "should_trigger": false},
+  {"query": "Create a Trello board with lists for a sprint", "should_trigger": false},
+  {"query": "Set up a Jira Kanban board with WIP limits", "should_trigger": false},
+  {"query": "Create a Plane work item in the current cycle", "should_trigger": false},
+  {"query": "Add the product 'Premium plan' to the deal", "should_trigger": false},
+  {"query": "Make a Notion database for tasks with a board view", "should_trigger": false},
+  {"query": "Send a message to the contact on Telegram about the task", "should_trigger": false}
+]

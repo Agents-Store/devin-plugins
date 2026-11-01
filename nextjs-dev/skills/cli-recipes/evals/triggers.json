@@ -1,0 +1,17 @@
+[
+  {"query": "How do I run next dev on port 4000 with Turbopack and open the browser automatically? And how do I analyze the bundle after next build?", "should_trigger": true},
+  {"query": "My CI step runs `next lint` and fails after upgrading to Next.js 16. Was it removed? What do I run instead, and does next build still lint?", "should_trigger": true},
+  {"query": "How do I get an interactive bundle treemap in Next.js 16 with Turbopack? I used @next/bundle-analyzer with ANALYZE=true before and it shows nothing now.", "should_trigger": true},
+  {"query": "Как в Next.js 16 запустить next dev с отладчиком Node.js так, чтобы он цеплялся к нужному процессу? И можно ли одновременно держать запущенными next dev и next build?", "should_trigger": true},
+  {"query": "Покажи все основные команды Next.js CLI: dev, build, start, lint, typegen — что делает каждая?", "should_trigger": true},
+  {"query": "Is there a built-in upgrade command in Next.js 16 instead of running codemods by hand? I'm on 16.0 and want the latest, and I also need the middleware-to-proxy codemod.", "should_trigger": true},
+  {"query": "Хочу отключить Turbopack для next build в Next.js 16 из-за кастомного webpack-плагина. Какой флаг? И как включить локальный HTTPS для next dev?", "should_trigger": true},
+  {"query": "Write a multi-stage Dockerfile for Next.js with standalone output and a docker compose file with Postgres", "should_trigger": false},
+  {"query": "Verify that my Next.js project is configured correctly and ready for development", "should_trigger": false},
+  {"query": "Create a new Vite + React app with pnpm create vite and add Tailwind", "should_trigger": false},
+  {"query": "Use the Angular CLI to generate a component and a service in a standalone project", "should_trigger": false},
+  {"query": "Run Django management commands to migrate the database and create a superuser", "should_trigger": false},
+  {"query": "Set up ESLint with the flat config for TypeScript in a Node.js library", "should_trigger": false},
+  {"query": "Explain how Turbopack differs from webpack in terms of architecture and incremental builds", "should_trigger": false},
+  {"query": "My Next.js build crashes with 'JavaScript heap out of memory', debug it", "should_trigger": false}
+]

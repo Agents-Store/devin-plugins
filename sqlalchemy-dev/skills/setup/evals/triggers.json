@@ -1,0 +1,18 @@
+[
+  {"query": "Can you check that SQLAlchemy is properly set up in my project - versions, database URI, db.init_app pattern and model definitions?", "should_trigger": true},
+  {"query": "Which SQLAlchemy version is installed here and is it ready for 2.1? Check the dependencies", "should_trigger": true},
+  {"query": "Verify my database connection string and driver for SQLAlchemy with Postgres - I'm not sure psycopg is the right package", "should_trigger": true},
+  {"query": "Is my Flask-SQLAlchemy initialization correct? I use an app factory and db = SQLAlchemy(model_class=Base)", "should_trigger": true},
+  {"query": "Is SQLAlchemy configured correctly for this repo? Run the verification steps and tell me what's wrong", "should_trigger": true},
+  {"query": "Проверь, правильно ли настроен SQLAlchemy в моём Flask-проекте: версии, DATABASE_URL, инициализация и модели", "should_trigger": true},
+  {"query": "Помоги убедиться, что подключение к базе через SQLAlchemy работает: какую версию я использую и что проверить в первую очередь?", "should_trigger": true},
+  {"query": "Test the SQLAlchemy database setup of this Python project and list common setup issues I should fix", "should_trigger": true},
+  {"query": "Create a new SQLAlchemy model for invoices with a relationship to customers", "should_trigger": false},
+  {"query": "My app raises OperationalError: could not connect to server. How do I debug it?", "should_trigger": false},
+  {"query": "Create and apply an Alembic migration for the new column", "should_trigger": false},
+  {"query": "Install and configure Postgres in Docker for local development", "should_trigger": false},
+  {"query": "Set up Django's database settings for MySQL", "should_trigger": false},
+  {"query": "How do I configure Prisma with a Postgres datasource?", "should_trigger": false},
+  {"query": "Write a pytest fixture that creates a temporary database for SQLAlchemy tests", "should_trigger": false},
+  {"query": "Show a list of all mapped_column options", "should_trigger": false}
+]

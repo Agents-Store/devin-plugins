@@ -1,0 +1,18 @@
+[
+  {"query": "I'm launching a blog about trail running. Give me 150 keyword ideas around 'trail running shoes' with monthly search volume, CPC and keyword difficulty for the US, and sort them by opportunity", "should_trigger": true},
+  {"query": "find long-tail keywords for an online store that sells organic dog food in Germany (language de), with search intent for each one so I can split them by funnel stage", "should_trigger": true},
+  {"query": "What is the monthly search volume trend for 'solar panels' in Spain over the last two years? I want to know whether the topic is seasonal and which months to publish in, using DataForSEO", "should_trigger": true},
+  {"query": "what's the search volume and difficulty of 'ai meeting notes', 'meeting transcription' and 'note taker app'? give me a table and tell me which to target first", "should_trigger": true},
+  {"query": "Подбери ключевые слова для интернет-магазина кофемашин: объём запросов, сложность и интент, регион - Россия", "should_trigger": true},
+  {"query": "Сформируй стратегию по ключевым словам для блога про личные финансы: основные темы, длинные хвосты и оценка сложности через DataForSEO", "should_trigger": true},
+  {"query": "for my 'standing desk' content cluster I need related keywords and the questions people ask, with volume and difficulty - pull it from DataForSEO and group by intent", "should_trigger": true},
+  {"query": "I have a list of 400 keywords in a CSV (first rows: standing desk, ergonomic chair, desk converter, monitor arm, lumbar cushion). Bulk-check their keyword difficulty and search volume with DataForSEO and drop everything above difficulty 50", "should_trigger": true},
+  {"query": "Audit the backlinks of example.com with DataForSEO", "should_trigger": false},
+  {"query": "Add meta title and description to each Next.js page using generateMetadata", "should_trigger": false},
+  {"query": "Explain how Google decides which keyword a page ranks for, in simple terms for my boss", "should_trigger": false},
+  {"query": "Write a 1200-word article optimized for the keyword 'best trail running shoes 2026'", "should_trigger": false},
+  {"query": "Compare our domain's traffic against two competitors", "should_trigger": false},
+  {"query": "How much will a DataForSEO keyword ideas call with limit 1000 cost me?", "should_trigger": false},
+  {"query": "Which words does ChatGPT associate with our brand? Track the AI mentions", "should_trigger": false},
+  {"query": "Set up Google Search Console and verify my domain with a DNS TXT record", "should_trigger": false}
+]

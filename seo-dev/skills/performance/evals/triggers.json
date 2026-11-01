@@ -1,0 +1,18 @@
+[
+  {"query": "My Next.js site has a poor LCP of 4.2s on mobile. How do I diagnose and fix it with next/image priority, fonts and server components?", "should_trigger": true},
+  {"query": "How do I improve INP and CLS in a Next.js App Router app? Walk me through the typical causes and fixes", "should_trigger": true},
+  {"query": "Configure next/font to avoid layout shift and next/image with the right sizes and loading strategy for a hero banner", "should_trigger": true},
+  {"query": "Reduce JavaScript bundle size in Next.js with dynamic imports, code splitting and bundle analyzer - what should I look for?", "should_trigger": true},
+  {"query": "PageSpeed Insights says 'Reduce unused JavaScript' and 'Properly size images' for my Next.js site. What do I change?", "should_trigger": true},
+  {"query": "Как улучшить Core Web Vitals на Next.js: LCP, INP, CLS - с чего начать и какие пороги считаются хорошими?", "should_trigger": true},
+  {"query": "Сайт на Next.js медленно грузится на мобильных. Как оптимизировать шрифты, изображения и ленивую загрузку?", "should_trigger": true},
+  {"query": "Give me the quick wins checklist for Core Web Vitals in my Next.js App Router project: LCP image priority, next/font, image dimensions, ISR revalidation and the measurement tools", "should_trigger": true},
+  {"query": "Add structured data for products in Next.js", "should_trigger": false},
+  {"query": "Why is Google not indexing my pages?", "should_trigger": false},
+  {"query": "Optimize PostgreSQL queries for a slow dashboard", "should_trigger": false},
+  {"query": "Profile a React component re-render problem with the React DevTools", "should_trigger": false},
+  {"query": "Set up a CDN cache for static assets on Cloudflare", "should_trigger": false},
+  {"query": "Audit SEO health with a checklist", "should_trigger": false},
+  {"query": "Speed up my Django admin", "should_trigger": false},
+  {"query": "Set up generateMetadata for static pages", "should_trigger": false}
+]

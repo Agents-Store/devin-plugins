@@ -1,0 +1,18 @@
+[
+  {"query": "NocoDB not working: my agent gets a 401 error on every call even though the token worked yesterday", "should_trigger": true},
+  {"query": "NocoDB MCP tool not responding - connection error after I changed the URL to my self-hosted instance", "should_trigger": true},
+  {"query": "Since this morning every NocoDB MCP call from my agent returns 401 Unauthorized although the token worked yesterday. What do I check, in order?", "should_trigger": true},
+  {"query": "Getting a timeout error querying a NocoDB table with 80,000 rows. Any performance tips?", "should_trigger": true},
+  {"query": "NocoDB выдаёт ошибку соединения при запросе из MCP. Как диагностировать?", "should_trigger": true},
+  {"query": "Фильтр в NocoDB не работает: возвращает пустой список, хотя записи есть. В чём дело?", "should_trigger": true},
+  {"query": "debug NocoDB: record create returns a data error about a field type, what could be wrong?", "should_trigger": true},
+  {"query": "The agent says a NocoDB tool call returned 'Table not found' for the Orders table that I can see in the web UI. Diagnose it", "should_trigger": true},
+  {"query": "Verify my NocoDB setup before I begin — a simple health check of the connection", "should_trigger": false},
+  {"query": "Show me filter syntax for NocoDB dates", "should_trigger": false},
+  {"query": "Build a report from NocoDB data: total Amount per Region", "should_trigger": false},
+  {"query": "My Postgres connection pool is exhausted with 'too many clients already', fix it", "should_trigger": false},
+  {"query": "Airtable API returns 422 INVALID_VALUE_FOR_COLUMN when I create a record", "should_trigger": false},
+  {"query": "Zapier shows 'Timeout error' on my Salesforce trigger step", "should_trigger": false},
+  {"query": "Directus returns 403 FORBIDDEN on a collection read", "should_trigger": false},
+  {"query": "Supabase REST returns 401 JWT expired, how do I refresh the token?", "should_trigger": false}
+]

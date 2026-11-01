@@ -1,0 +1,17 @@
+[
+  {"query": "I want my Teams bot to answer with an LLM, streaming tokens into the chat, with tools the model can call. How do I wire the openai package with runTools() on Teams SDK 2.1?", "should_trigger": true},
+  {"query": "How do I keep conversation history for an AI agent in a Teams bot, and how much should I trim without breaking tool calls?", "should_trigger": true},
+  {"query": "How do I add the AI-generated label, feedback buttons and citations to a streamed answer in Teams?", "should_trigger": true},
+  {"query": "My Teams agent keeps calling the same tool forever with runTools. Cap the rounds, return error text instead of throwing, and make Stop abort the runner", "should_trigger": true},
+  {"query": "Can the agent ask the user a clarifying question with a card instead of guessing, then continue with their choice?", "should_trigger": true},
+  {"query": "Add suggested follow-up prompts, citations and feedback buttons to my Teams AI bot's answers, and keep the conversation history in turn state with a cap", "should_trigger": true},
+  {"query": "Хочу добавить в бота Teams поведение на основе OpenAI с вызовом функций и стримингом ответа. Как это устроено в SDK 2.1?", "should_trigger": true},
+  {"query": "Как подключить Azure OpenAI к боту Teams и хранить историю диалога в состоянии шага? Чем отличается AzureOpenAI от OpenAI в клиенте?", "should_trigger": true},
+  {"query": "Expose my Teams bot as an MCP server with a notify tool", "should_trigger": false},
+  {"query": "Write a Python LangChain agent with a web search tool", "should_trigger": false},
+  {"query": "Build a Slack bot that answers questions with GPT", "should_trigger": false},
+  {"query": "Send a proactive notification to a Teams user who never wrote to the bot", "should_trigger": false},
+  {"query": "How do I call Microsoft Graph to read the user's calendar from the bot?", "should_trigger": false},
+  {"query": "Stream a response with the Vercel AI SDK in a Next.js route handler", "should_trigger": false},
+  {"query": "Set up SSO for my Teams bot with addOAuthFlow", "should_trigger": false}
+]

@@ -3,52 +3,56 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "I have a new feature request 'Two-factor authentication' to add to TaskFlow. Create it with acceptance criteria, estimate 5 points, label it type/feature + area/auth, and drop it into the current cycle 'Sprint 15'. Show me the exact MCP tool calls.",
-      "expected_output": "Sequence of concrete tool calls with exact parameter names: project(action=list) → label(action=list) → cycle(action=list) → workitem(action=create) (with point, labels, description_html containing Given/When/Then AC) → cycle(action=manage_workitems) (with add_ids array).",
+      "prompt": "Use the examples skill. I have a new feature request 'Two-factor authentication' to add to TaskFlow. Create it with acceptance criteria, estimate 5 points, label it type/feature + area/auth, and drop it into the current cycle 'Sprint 15'. Show me the exact MCP tool calls and name the reference file of the examples skill that gives the parameter formats. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "expected_output": "Concrete calls in order: project(action=list), label(action=list), cycle(action=list, status=current), workitem(action=create) with point and labels, cycle(action=manage_workitems) with add_ids, read back with list_workitems.",
       "files": [],
       "expectations": [
-        "Lists labels before creating (to resolve label names → IDs)",
-        "Uses description_html with Given/When/Then format, not raw text",
-        "Passes point=5 and labels as an array of label UUIDs (the workitem tool's fixed parameter name)",
-        "Uses cycle(action=manage_workitems) with add_ids (an array of work item UUIDs)",
-        "Resolves cycle by name from cycle(action=list) (not assumed)",
-        "References tool-patterns.md for exact parameter formats"
+        "The answer resolves the label names to ids with label(action=list, project_id)",
+        "The answer creates the item with workitem(action=create, ..., point=5, labels=[<label uuids>])",
+        "The answer finds the cycle with cycle(action=list, project_id, status=current)",
+        "The answer adds the item with cycle(action=manage_workitems, project_id, cycle_id, add_ids=[<work item id>])",
+        "The answer reads the cycle content back with cycle(action=list_workitems)",
+        "The answer names tool-patterns.md as the reference for the exact parameter formats"
       ]
     },
     {
       "id": 2,
-      "prompt": "Walk me through the full sprint lifecycle from planning to close in Plane. Read the sprint-lifecycle scenario reference and show me the tool calls at each phase.",
-      "expected_output": "Opens references/scenarios/sprint-lifecycle.md, extracts each phase (planning, execution, standup, close, retro), and lists the concrete MCP tool calls from the scenario.",
+      "prompt": "Use the examples skill. Walk me through the full sprint lifecycle from planning to close in Plane. Read the sprint-lifecycle scenario reference and show me the tool calls at each phase. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "expected_output": "The Monday-to-Friday scenario of sprint-lifecycle.md with its concrete calls: capacity, planning, standup, blocker, close and retro.",
       "files": [],
       "expectations": [
-        "Explicitly reads references/scenarios/sprint-lifecycle.md (not just SKILL.md)",
-        "Names all key phases: planning, execution, standup, close, retro",
-        "Shows concrete tool calls (cycle(action=list, status=completed), cycle(action=create), cycle(action=manage_workitems), etc.), not just prose",
-        "Links to dedicated skills (sprint-planning, daily-standup, sprint-review-retro) for deep-dives"
+        "The answer puts the sprint capacity at about 15 points",
+        "The answer adds the planned items to the sprint with cycle(action=manage_workitems, add_ids=[...])",
+        "The answer gets the standup state totals with workitem(action=count, pql='cycle = \"<id>\"', group_by=state__group)",
+        "The answer records the blocker with workitem_relation(action=create, relation_type=blocked_by)",
+        "The answer closes the sprint with cycle(action=complete) before cycle(action=archive)",
+        "The answer publishes the retro notes with page(action=create)"
       ]
     },
     {
       "id": 3,
-      "prompt": "I need to publish a sprint report as a Plane page but last time my bullet list rendered broken. What's the correct HTML format?",
+      "prompt": "Use the examples skill. I need to publish a sprint report as a Plane page but last time my bullet list rendered broken. What's the correct HTML format? Answer in text; everything you need is in this message.",
       "expected_output": "Points to page-formatting.md, explains the list gotchas (nested list must start with text, no empty li, no data-checked).",
       "files": [],
       "expectations": [
-        "Routes to the page-formatting.md reference",
-        "Explicitly names the 'li must start with text not nested list' gotcha",
-        "Warns against data-checked attributes (stripped by Plane)",
-        "Warns against empty <li></li> elements"
+        "The answer routes to the page-formatting.md reference",
+        "The answer explicitly names the 'li must start with text not nested list' gotcha",
+        "The answer warns against data-checked attributes (stripped by Plane)",
+        "The answer warns against empty <li></li> elements"
       ]
     },
     {
       "id": 4,
-      "prompt": "What's a realistic workflow for linking a PR to a work item and moving it to review?",
-      "expected_output": "Sequence using /link add → /work-item update state → /comment → /assign, from everyday-commands.md.",
+      "prompt": "Use the examples skill. What's a realistic workflow for linking a PR to a work item and moving it to review? Show the day-to-day plugin commands in order, and say what the link gives us later. Answer in text; everything you need is in this message.",
+      "expected_output": "The four-command sequence of everyday-commands.md: /link add, /work-item update, /comment add, /assign.",
       "files": [],
       "expectations": [
-        "Routes to everyday-commands.md",
-        "Shows the full 4-step command sequence",
-        "Mentions that PR linking enables release notes generation",
-        "Uses the new command shortcuts (/link, /comment, /assign) not raw MCP"
+        "The answer attaches the PR URL with /link add",
+        "The answer moves the item to review with /work-item update ... --state \"In Review\"",
+        "The answer posts a comment with /comment add",
+        "The answer reassigns the item with /assign ... --replace",
+        "The answer orders the commands /link add, /work-item update, /comment add, /assign",
+        "The answer says the PR link is discoverable by release-notes generation"
       ]
     }
   ]

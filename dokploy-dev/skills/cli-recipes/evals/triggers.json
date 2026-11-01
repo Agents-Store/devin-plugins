@@ -1,0 +1,18 @@
+[
+  {"query": "Install @dokploy/cli and authenticate it against my Dokploy server from a CI runner using environment variables, not the interactive login.", "should_trigger": true},
+  {"query": "Using only the dokploy cli, create a project, an application from a GitHub repo, set its env vars and deploy it. Give me the exact commands.", "should_trigger": true},
+  {"query": "How do I set environment variables for an app with the dokploy command line? The API seems to want companion flags - which ones?", "should_trigger": true},
+  {"query": "dokploy cli: provision a PostgreSQL database, start it, and then list everything in the project from the terminal", "should_trigger": true},
+  {"query": "How is the dokploy CLI organised - are its commands named after the MCP tools, like project all or application deploy? Show me the pattern and a couple of recipes for listing projects and deploying an app from a script.", "should_trigger": true},
+  {"query": "In a GitHub Actions step I want the dokploy CLI to redeploy my compose stack 'billing' and wipe its volumes first. Give me the exact command and flags, and tell me whether the CLI can send that option at all.", "should_trigger": true},
+  {"query": "Как через командную строку dokploy создать приложение, задать переменные окружения и запустить деплой? Нужны точные команды", "should_trigger": true},
+  {"query": "Установи и авторизуй dokploy CLI на сервере сборки, а потом покажи, как разворачивать приложение из терминала", "should_trigger": true},
+  {"query": "Call the Dokploy MCP tool application-create with these parameters and then deploy", "should_trigger": false},
+  {"query": "Install the Vercel CLI and deploy my Next.js app to production", "should_trigger": false},
+  {"query": "Deploy a docker compose stack to a VPS with plain docker compose up over SSH", "should_trigger": false},
+  {"query": "How do I use the Railway CLI to set environment variables for a service?", "should_trigger": false},
+  {"query": "Why does Dokploy show 502 Bad Gateway on my domain?", "should_trigger": false},
+  {"query": "How do I check that Dokploy is reachable and my API key is valid?", "should_trigger": false},
+  {"query": "Use the gh CLI to create a pull request with a template body", "should_trigger": false},
+  {"query": "How do I configure Traefik labels in a docker-compose.yml by hand?", "should_trigger": false}
+]

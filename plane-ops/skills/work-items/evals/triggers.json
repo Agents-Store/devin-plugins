@@ -1,0 +1,15 @@
+[
+  {"query": "What does the description template for a new Plane work item look like, and why must labels and assignees be passed as UUID arrays?", "should_trigger": true},
+  {"query": "How do I log time on a Plane work item: which call, in what unit is the duration, and what must be enabled on the project first?", "should_trigger": true},
+  {"query": "How do I attach a PR link with a visible title to a Plane work item, and which URL schemes does Plane accept?", "should_trigger": true},
+  {"query": "Какие поля нужны для создания work item в Plane - project_id, name, state, priority, labels, assignees - и как оформить описание в HTML с критериями приёмки?", "should_trigger": true},
+  {"query": "Как в Plane искать задачи через PQL: по человекочитаемому идентификатору, полнотекстовым поиском и фильтрами? Покажи примеры", "should_trigger": true},
+  {"query": "Break this epic into stories", "should_trigger": false},
+  {"query": "Create a milestone and a roadmap", "should_trigger": false},
+  {"query": "Plan the next sprint", "should_trigger": false},
+  {"query": "Create a GitHub issue for the bug", "should_trigger": false},
+  {"query": "Open a Jira ticket for the outage", "should_trigger": false},
+  {"query": "Create a to-do in Apple Reminders", "should_trigger": false},
+  {"query": "Triage the intake queue", "should_trigger": false},
+  {"query": "Design the state workflow for our Plane project", "should_trigger": false}
+]

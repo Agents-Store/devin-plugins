@@ -1,0 +1,18 @@
+[
+  {"query": "An OpenClaw feature is silently off even though the config looks right. I suspect the instance isn't receiving a key through the Infisical wrapper", "should_trigger": true},
+  {"query": "This OpenClaw instance receives far fewer secrets than its siblings through the injection wrapper. How do I compare?", "should_trigger": true},
+  {"query": "I found a plaintext env file inside the state tree of an OpenClaw instance, and a client id in a backup. Clean it up properly", "should_trigger": true},
+  {"query": "Rotate the Telegram bot token for an OpenClaw instance and prove the new value was delivered. The restart must not break because a referenced key no longer resolves", "should_trigger": true},
+  {"query": "Добавь новый ключ в Infisical для инстанса OpenClaw и проверь, что он реально доставлен в контейнер", "should_trigger": true},
+  {"query": "Как связаны machine identity и привязка проекта Infisical у инстанса OpenClaw? Инстанс не получает секреты", "should_trigger": true},
+  {"query": "is it safe to restart this OpenClaw gateway? some secret references in the config may not resolve anymore", "should_trigger": true},
+  {"query": "a token ended up in an identity copy of the instance - how do I find it and fix it properly?", "should_trigger": true},
+  {"query": "Set up Infisical machine identity auth in GitHub Actions to inject secrets into a deploy job", "should_trigger": false},
+  {"query": "Rotate AWS access keys for an IAM user without downtime", "should_trigger": false},
+  {"query": "Pull the Infisical secrets of my workspace into a local .env file", "should_trigger": false},
+  {"query": "Model calls return unauthorized on the OpenClaw instance and it says logged out", "should_trigger": false},
+  {"query": "Is the OpenClaw gateway port reachable from outside the host?", "should_trigger": false},
+  {"query": "Configure HashiCorp Vault with the Kubernetes auth method and the agent injector", "should_trigger": false},
+  {"query": "Add a secret to Docker Swarm and mount it in a service", "should_trigger": false},
+  {"query": "Scan my git history for committed API keys with gitleaks", "should_trigger": false}
+]

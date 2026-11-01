@@ -1,0 +1,18 @@
+[
+  {"query": "set up a webhook in NocoDB so that n8n gets called when a record in Orders changes", "should_trigger": true},
+  {"query": "What does the NocoDB webhook payload look like when a record is updated? I need to build the receiving side", "should_trigger": true},
+  {"query": "trigger something when a record changes in NocoDB: I want a notification only when the status becomes 'Paid'", "should_trigger": true},
+  {"query": "fire a webhook from a button in NocoDB — how does the Button trigger work and how do I test it?", "should_trigger": true},
+  {"query": "Как настроить вебхук в NocoDB через интерфейс, чтобы данные уходили в другую систему при создании записи?", "should_trigger": true},
+  {"query": "Какие события бывают у вебхуков NocoDB и что получает принимающая система?", "should_trigger": true},
+  {"query": "list the webhooks on the Customers table in NocoDB", "should_trigger": true},
+  {"query": "send NocoDB data to another system whenever a new lead is created, using a webhook with a condition on the source field", "should_trigger": true},
+  {"query": "Export the Leads table of NocoDB to a CSV file", "should_trigger": false},
+  {"query": "Set up a Stripe webhook endpoint in Express and verify the signature", "should_trigger": false},
+  {"query": "Set up a GitHub webhook that fires on pull request events to my CI", "should_trigger": false},
+  {"query": "Create a Zapier trigger that fires when a new row is added to Google Sheets", "should_trigger": false},
+  {"query": "Configure a Shopify webhook for order creation and process the payload", "should_trigger": false},
+  {"query": "Set up an Airtable automation that calls a webhook when a record enters a view", "should_trigger": false},
+  {"query": "Add a record to the Leads table in NocoDB", "should_trigger": false},
+  {"query": "Why doesn't my NocoDB filter work?", "should_trigger": false}
+]

@@ -1,0 +1,17 @@
+[
+  {"query": "We have an n8n workflow that pulls 40k rows from a CRM every night and a Trigger.dev project already set up. Where should the nightly ETL live in our stack, and where do the retries go? I want one rule for all jobs, not a guess per job", "should_trigger": true},
+  {"query": "need to generate PDF invoices after an order is paid, about 2 minutes per invoice. should this be an n8n workflow or a Trigger.dev task? and how do I record that it failed?", "should_trigger": true},
+  {"query": "How do we split background processing between n8n and Trigger.dev in the Composable Stack? Specifically a Slack notification relay, a scheduled report and an LLM summarisation pipeline", "should_trigger": true},
+  {"query": "Set up a queue for sending 5000 emails with rate limiting and ordered execution. Which service in our stack handles queue-based processing and which handles a quick webhook relay?", "should_trigger": true},
+  {"query": "Какой сервис в нашем стеке брать для фоновой задачи, которая обрабатывает загруженный файл около 10 минут: n8n или Trigger.dev? И как отслеживать её статус в таблице?", "should_trigger": true},
+  {"query": "Хочу запускать повторяющуюся задачу раз в час - синхронизацию заказов с внешним сервисом. Что лучше в нашем стеке: расписание в n8n или cron в Trigger.dev, и куда складывать упавшие задания?", "should_trigger": true},
+  {"query": "What do we do with jobs that fail after all retries in the stack? I want a dead letter table and a status field on the NocoDB table that kicks off the job", "should_trigger": true},
+  {"query": "Design the error handling for a webhook-triggered background job: which values should the job_status field go through and who alerts on critical failures?", "should_trigger": true},
+  {"query": "How do I build an n8n workflow that merges the results of two HTTP Request nodes before writing a row into Google Sheets?", "should_trigger": false},
+  {"query": "How do I configure the n8n HTTP Request node to retry three times with a 2 second wait between attempts?", "should_trigger": false},
+  {"query": "Add a NocoDB webhook that calls an n8n workflow when a record in the orders table is updated", "should_trigger": false},
+  {"query": "Which path should n8n use to read the database: NocoDB MCP, PostgreSQL MCP or PostgREST?", "should_trigger": false},
+  {"query": "Make my Celery worker retry failed tasks with exponential backoff in a Django project", "should_trigger": false},
+  {"query": "Create a systemd timer that runs a backup script every night at 03:00", "should_trigger": false},
+  {"query": "Set up the environment variables and verify the MCP connections for the whole stack on a new laptop", "should_trigger": false}
+]

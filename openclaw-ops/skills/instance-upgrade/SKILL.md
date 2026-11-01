@@ -1,6 +1,6 @@
 ---
 name: instance-upgrade
-description: Use when an OpenClaw instance or a fleet of them is being upgraded, or when the question is which version to move to — version drift between instances, what the current stable is, a release channel or a registry dist-tag, an image tag or digest pin, a soak or hold-back window, a gateway that will not start after an update, schedules that started firing several times per tick, a session that expired some time after an update, or what a given release added.
+description: Use when an OpenClaw instance or fleet is being upgraded, or when the question is which OpenClaw version to move to — version drift between instances, the current stable release, a release channel or registry dist-tag, an image tag or digest pin, a soak or hold-back window, a gateway that will not start after an update, schedules firing several times per tick, a session that expired after an update, or what a given OpenClaw release added.
 ---
 
 # Instance upgrade

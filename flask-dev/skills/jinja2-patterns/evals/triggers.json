@@ -1,0 +1,18 @@
+[
+  {"query": "How do I set up Jinja2 template inheritance in Flask: a base.html with blocks for title, content and scripts, and child templates extending it?", "should_trigger": true},
+  {"query": "Write a Jinja2 macro for rendering form fields with labels and error messages that I can import into all my templates", "should_trigger": true},
+  {"query": "custom Jinja2 filter in flask to format a datetime as 'Oct 5, 2026' and register it in the app factory", "should_trigger": true},
+  {"query": "In a Flask template, how do I loop over `clients` and show a table, with an empty-state message when there are none and alternating row classes?", "should_trigger": true},
+  {"query": "pre-select the current value in a <select> inside a Jinja2 form for editing a record", "should_trigger": true},
+  {"query": "How do I use url_for('static', ...) for CSS and JS in templates and keep file references working inside a blueprint?", "should_trigger": true},
+  {"query": "Покажи, как во Flask сделать базовый шаблон с наследованием и блоками, а потом дочерние страницы на Jinja2", "should_trigger": true},
+  {"query": "Как написать макрос Jinja2 для повторяющихся полей формы и пользовательский фильтр для дат?", "should_trigger": true},
+  {"query": "jinja2.exceptions.TemplateNotFound: dashboard.html even though the file exists", "should_trigger": false},
+  {"query": "Create CRUD routes for clients in a Flask blueprint", "should_trigger": false},
+  {"query": "Set up CSRFProtect in my Flask application factory and exempt the JSON API blueprint from it", "should_trigger": false},
+  {"query": "Write a Handlebars template with partials and a custom helper", "should_trigger": false},
+  {"query": "How do I write a custom template tag in Django?", "should_trigger": false},
+  {"query": "Build a React component with conditional rendering and list keys", "should_trigger": false},
+  {"query": "Use Jinja2 templating in an Ansible playbook to generate nginx configs per host", "should_trigger": false},
+  {"query": "Use Jinja2 macros inside dbt models to avoid repeating SQL", "should_trigger": false}
+]

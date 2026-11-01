@@ -1,0 +1,17 @@
+[
+  {"query": "Show me a full Taiga workflow: log in, create a project from a template, invite my team and set up the statuses", "should_trigger": true},
+  {"query": "Give me an end-to-end example of running sprint planning through the Taiga API from a list of five stories", "should_trigger": true},
+  {"query": "Walk me through bug triage in Taiga as an example: find the classifier ids, file the issue, assign it, comment, attach a screenshot and resolve it", "should_trigger": true},
+  {"query": "Is there a worked example of reporting and export in Taiga: search, filtered lists, project stats, then a full export?", "should_trigger": true},
+  {"query": "I would like to see several Taiga API calls chained together for a real scenario. Which scenarios do you have?", "should_trigger": true},
+  {"query": "Покажи пошаговый пример создания нового проекта в Taiga с приглашением команды", "should_trigger": true},
+  {"query": "Дай сквозной пример планирования спринта в Taiga через API", "should_trigger": true},
+  {"query": "example of setting up a project in Taiga from scratch, with the curl calls included", "should_trigger": true},
+  {"query": "Move one story to In Progress in Taiga", "should_trigger": false},
+  {"query": "How do I authenticate to Taiga with a refresh token?", "should_trigger": false},
+  {"query": "Taiga says Archived element when I edit a story. What now?", "should_trigger": false},
+  {"query": "Show me an example of sprint planning in Jira using its REST API", "should_trigger": false},
+  {"query": "Give me an example Postman collection for the GitHub API", "should_trigger": false},
+  {"query": "Walk me through a Scrum retrospective format for my team", "should_trigger": false},
+  {"query": "Show me how to chain curl and jq to paginate through a REST API", "should_trigger": false}
+]

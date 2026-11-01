@@ -1,0 +1,18 @@
+[
+  {"query": "Give me a full worked Chatwoot integration: a custom website widget that creates a contact, opens a conversation and posts the first message through the public client API", "should_trigger": true},
+  {"query": "Show me an end-to-end example of a Chatwoot agent bot - register the bot, receive message_created on a webhook, and reply through the application API", "should_trigger": true},
+  {"query": "I have a CSV of 2,000 customers with plan and company columns. Walk me through bulk importing them as Chatwoot contacts with custom attributes and then searching a few back", "should_trigger": true},
+  {"query": "Can you walk me through triaging a Chatwoot queue from the terminal start to finish - login, list, reply with a note, assign, resolve - a complete scenario, not just single commands?", "should_trigger": true},
+  {"query": "Покажи сквозной пример интеграции с Chatwoot: заводим контакт, создаём разговор, отправляем сообщение через API и проверяем результат", "should_trigger": true},
+  {"query": "Нужен пошаговый пример от начала до конца: массово импортировать 500 клиентов из CSV в Chatwoot как контакты с кастомными атрибутами, а потом проверить результат поиском", "should_trigger": true},
+  {"query": "I'd like to seed some demo conversations into a fresh Chatwoot instance for a sales demo - is there a worked example I can adapt that chains setup, API and webhooks?", "should_trigger": true},
+  {"query": "bulk import contacts to chatwoot from a json file with pagination at the end to verify, show the whole flow", "should_trigger": true},
+  {"query": "What is the exact endpoint and request body to create a Chatwoot contact in the application API?", "should_trigger": false},
+  {"query": "Why does my Chatwoot webhook signature never match? I compute sha256 of the parsed JSON body", "should_trigger": false},
+  {"query": "Show me an end-to-end example of a Slack bot that answers FAQ questions using a vector database", "should_trigger": false},
+  {"query": "Walk me through a full example of importing contacts into HubSpot from a CSV using their API", "should_trigger": false},
+  {"query": "Set up the chatwoot CLI and verify that my token works", "should_trigger": false},
+  {"query": "Chatwoot 404 on every account call, what's the usual cause?", "should_trigger": false},
+  {"query": "Describe the three API families of Chatwoot in two sentences each", "should_trigger": false},
+  {"query": "Explain what a Chatwoot inbox is and which channel types exist, for our onboarding doc", "should_trigger": false}
+]

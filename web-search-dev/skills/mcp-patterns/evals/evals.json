@@ -3,9 +3,16 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "I need to scrape some product data from a website and then find stock photos for my app. Which MCP tools should I use for each task? Give me the specific tool names and a quick overview of what's available.",
+      "prompt": "I need to scrape some product data from a website and then find stock photos for my app. Which MCP tools should I use for each task? Give me the specific tool names and a quick overview of what's available. Use the mcp-patterns skill.",
       "expected_output": "Should reference the mcp-patterns skill routing table, recommend specific tools like firecrawl_scrape (formats [\"json\"] with jsonOptions) or firecrawl_agent for structured scraping, and the Pexels/Unsplash REST APIs (curl with PEXELS_API_KEY / UNSPLASH_ACCESS_KEY) for stock media, and show awareness of the full tool ecosystem across services.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The answer recommends firecrawl_scrape with formats json and jsonOptions for the product data",
+        "The answer recommends firecrawl_agent when the product URLs are not known",
+        "The answer names search_images for the stock photos",
+        "The answer says to pass return_url true to search_images",
+        "The answer names the Pexels REST API /v1/search as a fallback for photos"
+      ]
     }
   ]
 }

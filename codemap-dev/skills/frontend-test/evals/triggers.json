@@ -1,0 +1,18 @@
+[
+  {"query": "I have a Next.js dashboard running on localhost:3000, can you test the frontend and check if everything works? Focus on the /settings and /users pages", "should_trigger": true},
+  {"query": "Check my app's admin panel for UI issues, broken forms and console errors - I think there are some JavaScript bugs somewhere", "should_trigger": true},
+  {"query": "I need a frontend health report for my app. It's on localhost:8080 and requires login, test the main user flows after logging in", "should_trigger": true},
+  {"query": "open my running app in the browser (the dev server is already up) and click through the checkout flow, tell me if anything is broken or throws errors in the console", "should_trigger": true},
+  {"query": "Проверь фронтенд моего приложения в браузере (dev-сервер уже запущен): открой страницы, заполни формы и скажи, какие есть ошибки в консоли", "should_trigger": true},
+  {"query": "Протестируй админку по адресу http://localhost:8000/admin: хочу отчёт о сломанных кнопках, ошибках сети и проблемах в интерфейсе", "should_trigger": true},
+  {"query": "can you browse our staging site https://staging.example.com/signup and see if the signup form validation works? i changed the email regex today and want to make sure nothing broke", "should_trigger": true},
+  {"query": "verify that the app works in a browser after my last deploy - go through the pricing page, the contact form and the 404 page and report network failures", "should_trigger": true},
+  {"query": "Write Jest and React Testing Library unit tests for the Button component in components/Button.tsx", "should_trigger": false},
+  {"query": "Explain how the useEffect cleanup in components/Chart.tsx works and why it runs twice in dev", "should_trigger": false},
+  {"query": "Review my React code in pages/users.tsx for bad practices", "should_trigger": false},
+  {"query": "Draw a diagram of the frontend architecture: pages, components, state store and API client", "should_trigger": false},
+  {"query": "Fix the CSS so the sidebar collapses on screens narrower than 768px", "should_trigger": false},
+  {"query": "Set up a GitHub Actions workflow that runs npm test and npm run build on every pull request", "should_trigger": false},
+  {"query": "Run a load test against the /api/search endpoint with k6, 200 virtual users for 2 minutes", "should_trigger": false},
+  {"query": "Which is better for a new project in 2026, Vite or Next.js? We build an internal dashboard for around 50 users", "should_trigger": false}
+]

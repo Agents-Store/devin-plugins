@@ -1,0 +1,17 @@
+[
+  {"query": "How do I send a reply in a Teams bot that quotes the user's message and also mentions someone so they get notified?", "should_trigger": true},
+  {"query": "Streaming in a Teams bot dies after about two minutes with ContentStreamNotAllowed. How do I outlast that?", "should_trigger": true},
+  {"query": "How can my bot send a proactive message later from a cron job? What do I store, and how do I reach a user who never wrote to the bot?", "should_trigger": true},
+  {"query": "Send a message that only one person in a channel can see, a targeted message. What does the SDK need?", "should_trigger": true},
+  {"query": "How do I download an attachment a user uploaded to my Teams bot? contentUrl does not download", "should_trigger": true},
+  {"query": "How do I add a reaction to a message from the bot, and which names exist?", "should_trigger": true},
+  {"query": "Как отправить в Teams упоминание пользователя так, чтобы пришло уведомление, и как ответить с цитатой?", "should_trigger": true},
+  {"query": "Почему в канале Teams стриминг ответа бота не виден? Как проверить тип беседы и отправить итоговый текст?", "should_trigger": true},
+  {"query": "Build an Adaptive Card with inputs and handle card.action.save", "should_trigger": false},
+  {"query": "Stream an LLM answer with runTools in my Teams agent", "should_trigger": false},
+  {"query": "Send a Slack message with chat.postMessage and thread_ts", "should_trigger": false},
+  {"query": "Send email through Microsoft Graph sendMail from the bot", "should_trigger": false},
+  {"query": "Send a Telegram message with grammy and an inline keyboard", "should_trigger": false},
+  {"query": "Register middleware with app.use and next", "should_trigger": false},
+  {"query": "Deploy the bot to Azure Container Apps", "should_trigger": false}
+]

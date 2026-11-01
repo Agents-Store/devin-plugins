@@ -1,6 +1,6 @@
 ---
 name: troubleshoot
-description: "This skill is the symptom-to-cause lookup reference for Dokploy problems — domains, databases, Docker, Traefik, MCP connection. Use for known-symptom diagnosis. For an end-to-end failed-deploy workflow, the canonical entry point is the `debug-deploy` skill and the `/dokploy-dev:debug` command. Triggers: \"dokploy 502\", \"domain not resolving\", \"database connection refused\", \"mcp tools not found\", \"dokploy api 401\", \"traefik dashboard\"."
+description: Symptom-to-cause lookup for an app, domain, database or proxy on Dokploy - a domain that does not open or resolve, an SSL certificate error on a new domain, 502 or 404 from Traefik while the container runs (Traefik dashboard), connection refused between containers (internal hostname), a known deploy or compose error such as a registry pull or port conflict, Dokploy MCP or API errors such as missing tools or 401. Not for a full failed-deploy walkthrough (debug-deploy) or reading logs (read-logs).
 ---
 
 # Dokploy Troubleshooting Reference

@@ -1,0 +1,18 @@
+[
+  {"query": "read this article for me and extract the key claims and numbers: https://example.com/blog/state-of-observability-2026 - the page is JS-heavy, so if the first fetch comes back empty try a renderer", "should_trigger": true},
+  {"query": "crawl the docs site https://docs.example.com and extract every page that mentions rate limits, then give me a table of limits by plan", "should_trigger": true},
+  {"query": "Read these five competitor pricing pages and extract plan names, monthly prices and included seats into a JSON structure: https://example.com/acme/pricing, https://example.com/beta/pricing, https://example.com/gamma/pricing, https://example.com/delta/pricing, https://example.com/epsilon/pricing", "should_trigger": true},
+  {"query": "extract the tables and equations from this PDF paper: https://example.com/papers/attention-variants.pdf and tell me the reported benchmark numbers", "should_trigger": true},
+  {"query": "take a screenshot of https://example.com/landing and read the hero text and the footer links", "should_trigger": true},
+  {"query": "Прочитай страницу https://example.com/news/ai-act и вытащи оттуда только фрагменты про штрафы и сроки вступления в силу, остальное не нужно", "should_trigger": true},
+  {"query": "Обойди сайт https://docs.example.com целиком и выгрузи список страниц с их заголовками, а потом прочитай три самые важные", "should_trigger": true},
+  {"query": "scrape these 8 URLs in batches and pull out author, publish date and the main text of each, one record per URL: https://example.com/p/1, https://example.com/p/2, https://example.com/p/3, https://example.com/p/4, https://example.com/p/5, https://example.com/p/6, https://example.com/p/7, https://example.com/p/8", "should_trigger": true},
+  {"query": "Do a comprehensive market research report on the electric bike market in Europe with forecasts", "should_trigger": false},
+  {"query": "What's the best search tool for finding recent news, Exa or Perplexity? Compare their strengths", "should_trigger": false},
+  {"query": "Format my findings into an Executive Summary with a methodology section and citations", "should_trigger": false},
+  {"query": "Build a production web scraper in Node.js with Playwright that runs nightly and stores results in Postgres", "should_trigger": false},
+  {"query": "Open the file docs/spec.pdf in my repo and summarize section 3", "should_trigger": false},
+  {"query": "Take a screenshot of my local app on localhost:3000 and tell me if the layout is broken", "should_trigger": false},
+  {"query": "Convert this HTML snippet I pasted into clean markdown", "should_trigger": false},
+  {"query": "Compare Firecrawl, Exa and Jina on pricing and rate limits for an app I'm building", "should_trigger": false}
+]

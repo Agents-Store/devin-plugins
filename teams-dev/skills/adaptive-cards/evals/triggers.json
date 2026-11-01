@@ -1,0 +1,17 @@
+[
+  {"query": "I sent an Adaptive Card from my Teams bot with a text input and a Submit button, but when I click the button nothing arrives. I use @microsoft/teams.cards 2.1 and my handler is app.on('card.action', ...)", "should_trigger": true},
+  {"query": "How do I make an Action.Execute button in a Teams card collect all the input values and route to card.action.save_profile?", "should_trigger": true},
+  {"query": "My card checkbox value comes back as the string 'true' in the handler. Is that expected, and how should I compare it?", "should_trigger": true},
+  {"query": "I designed a card in the Adaptive Card Designer and have the JSON. How do I send it from my Teams bot on the 2.x SDK and add one more action with the builder?", "should_trigger": true},
+  {"query": "Choice set that searches as the user types in a Teams card: which route answers the search?", "should_trigger": true},
+  {"query": "The card builder code from an old Teams SDK sample does not compile in 2.1: chained add calls for children and an id as the first constructor argument. What changed?", "should_trigger": true},
+  {"query": "В моём боте Teams карточка с полями ввода. Как сделать, чтобы кнопка отправляла значения всех полей, и как вернуть из обработчика новую карточку вместо старой?", "should_trigger": true},
+  {"query": "Как валидировать поля Adaptive Card в Teams: обязательное поле и регулярное выражение для email?", "should_trigger": true},
+  {"query": "Open a dialog from a card in a Teams bot with OpenDialogData and handle dialog.submit", "should_trigger": false},
+  {"query": "Send a plain text reply with an @mention in a Teams channel", "should_trigger": false},
+  {"query": "Create a Slack Block Kit message with buttons and an input block", "should_trigger": false},
+  {"query": "My Teams bot does not reply at all and the log says No credentials configured", "should_trigger": false},
+  {"query": "Return a search result card from a message extension query", "should_trigger": false},
+  {"query": "Render an Adaptive Card in a React web app with the adaptivecards npm package", "should_trigger": false},
+  {"query": "Write the JSON schema for an Outlook actionable message card", "should_trigger": false}
+]

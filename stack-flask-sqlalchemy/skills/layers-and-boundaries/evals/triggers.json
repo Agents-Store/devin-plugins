@@ -1,0 +1,17 @@
+[
+  {"query": "I get RuntimeError: Working outside of application context in a background thread that uses db.session. What is the rule?", "should_trigger": true},
+  {"query": "My Flask route adds an object and returns, but the data is gone in production while the tests pass. Why?", "should_trigger": true},
+  {"query": "DetachedInstanceError after I commit and read the object in a template. Should I turn expire_on_commit off?", "should_trigger": true},
+  {"query": "What must a pytest fixture for a Flask-SQLAlchemy app never do, so that tests cannot hide a missing commit in a route?", "should_trigger": true},
+  {"query": "Our list page runs one SELECT per client in the Jinja loop. How do I make that fail loudly and fix it at the route-to-template edge?", "should_trigger": true},
+  {"query": "ImportError: cannot import name db from partially initialized module. Where should db live in a Flask and SQLAlchemy app?", "should_trigger": true},
+  {"query": "Когда во Flask нужно вызывать commit(): в маршруте, в методе модели или в сервисе? И когда нужен flush?", "should_trigger": true},
+  {"query": "После IntegrityError сессия SQLAlchemy во Flask перестаёт работать. Что делать с rollback и как собрать транзакцию из клиента и записи?", "should_trigger": true},
+  {"query": "Add a new CRUD section to the app: model, blueprint, template and nav link", "should_trigger": false},
+  {"query": "Write a SQLAlchemy query that joins orders and customers and groups by month", "should_trigger": false},
+  {"query": "How do I configure Flask-Login to remember users across sessions?", "should_trigger": false},
+  {"query": "Django ORM N+1 queries: when do I use select_related versus prefetch_related?", "should_trigger": false},
+  {"query": "Write pytest tests for a Flask JSON endpoint that returns 400 on invalid input", "should_trigger": false},
+  {"query": "Write an Alembic migration that adds a NOT NULL column with a server default to an existing table", "should_trigger": false},
+  {"query": "Configure FastAPI with SQLAlchemy async sessions and dependency injection", "should_trigger": false}
+]
