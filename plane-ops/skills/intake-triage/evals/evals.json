@@ -3,34 +3,34 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the intake-triage skill. Triage the intake queue for TaskFlow. I want to see what's waiting. Start with how you find the Plane tools. The list returns three items: 'Export button does nothing' (9 days old), 'Add dark mode please' (6 days old, one customer), 'App crashes on login for all users' (1 day old, reported by three customers). Give the triage summary. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the intake-triage skill. Triage the intake queue for TaskFlow. I want to see what's waiting. Start with how you find the Plane tools. The list returns three items: 'Export button does nothing' (9 days old), 'Add dark mode please' (6 days old, one customer), 'App crashes on login for all users' (1 day old, reported by three customers). Give the triage summary in the skill's usual format, in the order you would work through the queue. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Queue listed oldest first with a decision per item and a summary table with Item, Decision, Target, Notes.",
       "files": [],
       "expectations": [
-        "The answer lists the queue with intake(action=list, project_id=<id>) and follows next_cursor",
-        "The answer sorts the three items by age, oldest first",
+        "The answer says to list the queue with intake(action=list, project_id=<id>) and to follow next_cursor",
+        "The answer says to sort the three items by age, oldest first",
         "The answer routes 'App crashes on login for all users' as Accept+escalate",
         "The answer defers 'Add dark mode please' because it comes from a single customer",
-        "The answer gives the summary as a table with the columns Item, Decision, Target and Notes"
+        "The answer says to give the summary as a table with the columns Item, Decision, Target and Notes"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use the intake-triage skill. The intake has a report 'App crashes on login for all users'. What's the decision? Show the exact calls with parameters, who gets the item, and what the work item records about where the report came from. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the intake-triage skill. The intake has a report 'App crashes on login for all users'. What's the decision? Show the exact calls with parameters, who gets the item, and what the work item records about where the report came from. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Accept + escalate, create an urgent work item, assign on-call.",
       "files": [],
       "expectations": [
-        "The answer accepts the item with intake(action=update, status=1)",
-        "The answer sets priority=\"urgent\" with workitem(action=update)",
-        "The answer assigns the on-call engineer through assignees=[...] in that workitem(action=update)",
+        "The answer says to accept the item with intake(action=update, status=1)",
+        "The answer says to set priority=\"urgent\" with workitem(action=update)",
+        "The answer says to assign the on-call engineer through assignees=[...] in that workitem(action=update)",
         "The answer does not create a second work item with workitem(action=create)",
-        "The answer passes the issue field of the intake record as workitem_id",
-        "The answer puts the source link of the report into the description_html of the work item"
+        "The answer says to pass the issue field of the intake record as workitem_id",
+        "The answer says to put the source link of the report into the description_html of the work item"
       ]
     },
     {
       "id": 3,
-      "prompt": "Use the intake-triage skill. The intake has 'Add dark mode please' from one customer. What's the decision? Show the exact call with its parameters and what you record for the reporter. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the intake-triage skill. The intake has 'Add dark mode please' from one customer. What's the decision? Show the exact call with its parameters and what you record for the reporter. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Defer with rationale, revisit next grooming.",
       "files": [],
       "expectations": [
@@ -41,15 +41,15 @@
     },
     {
       "id": 4,
-      "prompt": "Use the intake-triage skill. Intake has 'Login returns 500 on Safari' but PROJ-148 already tracks this exact issue. What do I do? Show the exact calls and say what happens to the intake entry afterwards. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the intake-triage skill. Intake has 'Login returns 500 on Safari' but PROJ-148 already tracks this exact issue. What do I do? Show the exact calls and say what happens to the intake entry afterwards. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Reject as duplicate, link the existing PROJ-148 in the rejection comment so the reporter feels heard.",
       "files": [],
       "expectations": [
-        "The answer marks the intake item with intake(action=update, status=2, duplicate_to=<id of PROJ-148>)",
-        "The answer posts a comment with workitem_comment(action=create) that links PROJ-148",
+        "The answer says to mark the intake item with intake(action=update, status=2, duplicate_to=<id of PROJ-148>)",
+        "The answer says to post a comment with workitem_comment(action=create) that links PROJ-148",
         "The answer does not create a new work item",
         "The answer does not call intake(action=delete) on the intake item",
-        "The answer passes the issue field of the intake record as workitem_id"
+        "The answer says to pass the issue field of the intake record as workitem_id"
       ]
     }
   ]

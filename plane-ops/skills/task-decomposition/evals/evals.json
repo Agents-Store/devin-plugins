@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the task-decomposition skill. Decompose epic 'Multi-tenant support' (currently 21 points) for TaskFlow. Must include data isolation, per-tenant billing, per-tenant branding, admin tenant switcher. Break into stories that fit in a 2-week sprint. List each story with its points and acceptance criteria, and show the create call that attaches it to the epic. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the task-decomposition skill. Decompose epic 'Multi-tenant support' (currently 21 points) for TaskFlow. Must include data isolation, per-tenant billing, per-tenant branding, admin tenant switcher. Break into stories that fit in a 2-week sprint. List each story with its points and acceptance criteria, and show the create call that attaches it to the epic. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "4-6 vertical stories each ≤8 points, created in Plane with parent set to the epic, total ≈21, each with user story format + acceptance criteria. Uses Split by Business Rule or Split by Workflow Step pattern.",
       "files": [],
       "expectations": [
@@ -11,13 +11,13 @@
         "The answer keeps every story at 8 points or less",
         "The answer makes the story points add up to about 21",
         "The answer writes the acceptance criteria as Given/when/then lines in description_html",
-        "The answer creates each story with workitem(action=create, parent=<epic work item id>)",
-        "The answer verifies the split with workitem(action=list, pql='childOf(\"<epic identifier>\")')"
+        "The answer says to create each story with workitem(action=create, parent=<epic work item id>)",
+        "The answer says to verify the split with workitem(action=list, pql='childOf(\"<epic identifier>\")')"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use the task-decomposition skill. Split this 13-point story: 'User can manage their profile' — covers viewing, editing name/bio, uploading picture, and deleting account. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the task-decomposition skill. Split this 13-point story: 'User can manage their profile' — covers viewing, editing name/bio, uploading picture, and deleting account. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Uses Split by Workflow Step pattern, produces 3-4 children summing to ~13 points, each a vertical slice.",
       "files": [],
       "expectations": [
@@ -30,7 +30,7 @@
     },
     {
       "id": 3,
-      "prompt": "Use the task-decomposition skill. Someone split 'Build signup flow' into: (1) Create users DB schema, (2) Build auth API endpoints, (3) Build signup UI. Review this decomposition. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the task-decomposition skill. Someone split 'Build signup flow' into: (1) Create users DB schema, (2) Build auth API endpoints, (3) Build signup UI. Review this decomposition. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Rejects — this is a horizontal (layer-based) slice. None of the three deliver value alone and all depend on each other. Recommend splitting by feature/behavior instead.",
       "files": [],
       "expectations": [

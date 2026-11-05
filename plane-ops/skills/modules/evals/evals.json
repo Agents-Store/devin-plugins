@@ -3,21 +3,21 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the modules skill. Create a module 'Billing v2' in project TaskFlow, led by Alice, targeting June 30 2026. Say how you find the tools and resolve the ids, show the create call, and say what you offer next. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the modules skill. Create a module 'Billing v2' in project TaskFlow, led by Alice, targeting June 30 2026. Say how you find the tools and resolve the ids, show the create call, and say what you offer next. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Resolves project and lead UUIDs, calls module(action=create) with status='planned'.",
       "files": [],
       "expectations": [
-        "The answer resolves the project with project(action=list)",
-        "The answer finds Alice's user id with member(action=list_project, project_id=<id>)",
-        "The answer creates the module with module(action=create, project_id, name=\"Billing v2\", ...)",
-        "The answer sets lead=<Alice's user uuid> and target_date=2026-06-30 in the create call",
-        "The answer sets status=\"planned\" in the create call",
-        "The answer offers module(action=manage_workitems, module_id, add_ids=[...]) as the next step"
+        "The answer says to resolve the project with project(action=list)",
+        "The answer says to find Alice's user id with member(action=list_project, project_id=<id>)",
+        "The answer says to create the module with module(action=create, project_id, name=\"Billing v2\", ...)",
+        "The answer says to set lead=<Alice's user uuid> and target_date=2026-06-30 in the create call",
+        "The answer says to set status=\"planned\" in the create call",
+        "The answer says to offer module(action=manage_workitems, module_id, add_ids=[...]) as the next step"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use the modules skill. Should I use a module or a cycle for tracking the Stripe migration (spans 3 sprints)? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the modules skill. Should I use a module or a cycle for tracking the Stripe migration (spans 3 sprints)? If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Recommends a module because scope is >1 sprint, cites the module-vs-cycle decision table.",
       "files": [],
       "expectations": [
@@ -28,20 +28,20 @@
     },
     {
       "id": 3,
-      "prompt": "Use the modules skill. Show me the progress of the 'Billing v2' module. Use this listing: BILL-1 (5 points, done), BILL-2 (8 points, done), BILL-3 (5 points, in progress), BILL-4 (3 points, not started, blocked by BILL-3). Show the calls, the completion rate and what needs attention. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the modules skill. Show me the progress of the 'Billing v2' module. Use this listing: BILL-1 (5 points, done), BILL-2 (8 points, done), BILL-3 (5 points, in progress), BILL-4 (3 points, not started, blocked by BILL-3). Show the calls, the completion rate and what needs attention. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Lists module items, groups by state, reports completion_rate and active blockers.",
       "files": [],
       "expectations": [
-        "The answer counts the items per state group with workitem(action=count, project_id, pql='module = \"<module_id>\"', group_by=state__group)",
-        "The answer lists the items with their points through module(action=list_workitems)",
+        "The answer says to count the items per state group with workitem(action=count, project_id, pql='module = \"<module_id>\"', group_by=state__group)",
+        "The answer says to list the items with their points through module(action=list_workitems)",
         "The answer computes the completion rate as 13 of 21 points, about 62%",
-        "The answer finds blockers with workitem_relation(action=list) for the open items",
+        "The answer says to find blockers with workitem_relation(action=list) for the open items",
         "The answer names BILL-4 as blocked by BILL-3"
       ]
     },
     {
       "id": 4,
-      "prompt": "Use the modules skill. The 'Onboarding revamp' module hasn't moved in 2 sprints. What should I do? Say which lifecycle rule applies, give the exact call, and say what to do with the team before work resumes. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the modules skill. The 'Onboarding revamp' module hasn't moved in 2 sprints. What should I do? Say which lifecycle rule applies, give the exact call, and say what to do with the team before work resumes. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Recommends explicitly pausing or archiving the module per the lifecycle rules; do not leave it 'in progress'.",
       "files": [],
       "expectations": [

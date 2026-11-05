@@ -3,21 +3,21 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the sprint-planning skill. Plan Sprint 16 for TaskFlow. 1-week sprint starting Monday. Team: 3 devs, one of them (Bob) is part-time 50%. Our last 3 sprints completed 18, 22, 20 points. Set a sprint goal, calculate capacity, pick items from backlog, create the cycle. Candidates from the backlog: PROJ-201 (5 points, has acceptance criteria), PROJ-202 (3, has acceptance criteria), PROJ-203 (8, has acceptance criteria), PROJ-204 (13, no acceptance criteria), PROJ-205 (2, blocked by PROJ-204). Walk each candidate through the readiness checklist, and show the create-cycle call and how the items are added and checked. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the sprint-planning skill. Plan Sprint 16 for TaskFlow. 1-week sprint starting Monday. Team: 3 devs. Our last 3 sprints completed 18, 22, 20 points. Set a sprint goal, calculate capacity, pick items from backlog, create the cycle. Candidates from the backlog: PROJ-201 (5 points, has acceptance criteria), PROJ-202 (3, has acceptance criteria), PROJ-203 (8, has acceptance criteria), PROJ-204 (13, no acceptance criteria), PROJ-205 (2, blocked by PROJ-204). Walk each candidate through the readiness checklist, and show the create-cycle call and how the items are added and checked. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Full planning ceremony: velocity avg 20 × 0.85 ≈ 17 → adjusted for Bob's 50% (team has 2.5 FTE not 3, so ~14-15 capacity), sprint goal in the 'users can X so that Y' format, item selection honoring DoR, cycle(action=create) call with owned_by, cycle(action=manage_workitems) with add_ids.",
       "files": [],
       "expectations": [
-        "The answer computes the capacity as 20 × 0.85 = 17 points before the part-time adjustment",
-        "The answer reduces the capacity for Bob's 50% part-time",
-        "The answer flags PROJ-204 for decomposition because it is above 8 points",
-        "The answer writes the sprint goal as By end of this sprint, [users] can [capability] so that [value]",
-        "The answer creates the cycle with cycle(action=create, ..., owned_by=<current user id>, description=<sprint goal>)",
-        "The answer adds the items with cycle(action=manage_workitems, add_ids=[...])"
+        "The answer takes the average velocity of the last three sprints as 20 points",
+        "The answer computes the capacity as 20 × 0.85 = 17 points",
+        "The answer says PROJ-204 (13 points) has to be decomposed before it can enter a sprint",
+        "The answer does not take PROJ-205 because it is blocked by PROJ-204",
+        "The answer says to create the cycle with cycle(action=create, ..., owned_by=<current user id>)",
+        "The answer says to add the items with cycle(action=manage_workitems, add_ids=[...])"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use the sprint-planning skill. Calculate next sprint capacity for our team of 5 devs, 2-week sprint. Our last 4 sprints completed 32, 28, 35, 30 points. Alice is on PTO for 3 days. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the sprint-planning skill. Calculate next sprint capacity for our team of 5 devs, 2-week sprint. Our last 4 sprints completed 32, 28, 35, 30 points. Alice is on PTO for 3 days. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Uses velocity-based capacity (avg 31.25 × 0.85 ≈ 26.5), then adjusts for PTO (3/50 person-days lost), resulting in ~25 points.",
       "files": [],
       "expectations": [

@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the velocity-metrics skill. Give me a Sprint Health dashboard for TaskFlow's active sprint right now. I want burndown status, velocity context, WIP, blockers, and a completion forecast. The calls return: Sprint 12, day 3 of 5, 40 points planned and 22 completed; the last three completed sprints delivered 28, 31 and 30 points; the team has 5 people and 4 items in progress; MP-47 is blocked by MP-45. Render the dashboard. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the velocity-metrics skill. Give me a Sprint Health dashboard for TaskFlow's active sprint right now. I want burndown status, velocity context, WIP, blockers, and a completion forecast. The calls return: Sprint 12, day 3 of 5, 40 points planned and 22 completed; the last three completed sprints delivered 28, 31 and 30 points; the team has 5 people and 4 items in progress; MP-47 is blocked by MP-45. Render the dashboard. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Combined dashboard: burndown (day X of Y, actual vs ideal), velocity trend across last 5 sprints with confidence tier, WIP current vs limit, blocker count, projected completion points. Concrete recommendations at the bottom.",
       "files": [],
       "expectations": [
@@ -17,20 +17,20 @@
     },
     {
       "id": 2,
-      "prompt": "Use the velocity-metrics skill. Analyze burndown for active Sprint 14. Sprint is day 3 of 5, 40 points total, 22 completed. Should we be worried? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the velocity-metrics skill. Analyze burndown for active Sprint 14. Sprint is day 3 of 5, 40 points total, 22 completed. Should we be worried? If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Ideal remaining = 40 × (2/5) = 16 pts. Actual remaining = 18. That's 1.125× ideal → AT RISK (needs >1.2× to be fully AT RISK, but close). Recommend focus on in-progress, not starting new.",
       "files": [],
       "expectations": [
         "The answer calculates ideal remaining correctly (16 pts)",
         "The answer computes actual vs ideal ratio (18/16 = 1.125)",
         "The answer categorizes as ON TRACK / AT RISK / BEHIND per the skill's thresholds",
-        "The answer gives concrete advice: focus on completing in-progress, don't start new items",
+        "The answer says to give concrete advice: focus on completing in-progress, don't start new items",
         "The answer calculates required pace for the remaining days"
       ]
     },
     {
       "id": 3,
-      "prompt": "Use the velocity-metrics skill. Our 5-person team has 9 items in progress right now. Is that a problem? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the velocity-metrics skill. Our 5-person team has 9 items in progress right now. Is that a problem? If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Yes — WIP limit for 5-person team is floor(5 × 1.5) = 7. Currently 9/7, OVER LIMIT. Suggest finishing items before starting new work.",
       "files": [],
       "expectations": [
@@ -43,7 +43,7 @@
     },
     {
       "id": 4,
-      "prompt": "Use the velocity-metrics skill. Last sprint: 'Upload avatar' was estimated 2 points, team logged 6 hours. 'Change email' was estimated 5 points, team logged 5 hours. Team baseline is 1.8 hrs/pt. Any issues? Say what pattern you see and what to do with it at the next estimation session. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the velocity-metrics skill. Last sprint: 'Upload avatar' was estimated 2 points, team logged 6 hours. 'Change email' was estimated 5 points, team logged 5 hours. Team baseline is 1.8 hrs/pt. Any issues? Say what pattern you see and what to do with it at the next estimation session. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Avatar is ratio 3.0 (> 1.8 × 1.5) → UNDERESTIMATED. Email is ratio 1.0 (< 1.8 × 0.5 = 0.9? No, 1.0 > 0.9) → borderline, not overestimated. Pattern: file-handling tasks underestimated.",
       "files": [],
       "expectations": [
@@ -56,15 +56,15 @@
     },
     {
       "id": 5,
-      "prompt": "Use the velocity-metrics skill. How many work items did TaskFlow finish in each of the last 4 sprints, and how many are in progress right now? Show the calls and how you turn the counts into sprint names, and say whether this gives velocity in points. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the velocity-metrics skill. How many work items did TaskFlow finish in each of the last 4 sprints, and how many are in progress right now? Show the calls and how you turn the counts into sprint names, and say whether this gives velocity in points. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Throughput per completed sprint from one workitem(action=count) call grouped by cycle_id, and current WIP from a second count on the started state group; cycle ids mapped to sprint names.",
       "expectations": [
-        "The answer counts the finished items per sprint with workitem(action=count, ..., group_by=cycle_id)",
+        "The answer says to count the finished items per sprint with workitem(action=count, ..., group_by=cycle_id)",
         "The answer uses pql='cycle IN completedCycles() AND stateGroup = \"completed\"' in that count",
-        "The answer maps the cycle ids to sprint names with cycle(action=list, status=completed)",
-        "The answer counts the current WIP with workitem(action=count, pql='stateGroup = \"started\"')",
+        "The answer says to map the cycle ids to sprint names with cycle(action=list, status=completed)",
+        "The answer says to count the current WIP with workitem(action=count, pql='stateGroup = \"started\"')",
         "The answer says count returns items and not story points",
-        "The answer filters with stateGroup and not with state__group"
+        "The answer says to filter with stateGroup and not with state__group"
       ],
       "files": []
     }

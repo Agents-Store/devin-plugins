@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the labels-states-properties skill. I want to track which environment a bug was found in. Should that be a label or a property? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the labels-states-properties skill. I want to track which environment a bug was found in. Should that be a label or a property? If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Recommends a select-type custom property scoped to the Bug work item type, with options prod/staging/dev.",
       "files": [],
       "expectations": [
@@ -15,7 +15,7 @@
     },
     {
       "id": 2,
-      "prompt": "Use the labels-states-properties skill. Our label list has 80 entries and nobody can find anything. Help. Give the cleanup plan: how to measure which labels are used, how to consolidate them (with examples from names such as bug, Bug, bugs, bugfix, feature, feat, ui, frontend), and how often to repeat it. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the labels-states-properties skill. Our label list has 80 entries and nobody can find anything. Help. Give the cleanup plan: how to measure which labels are used, how to consolidate them (with examples from names such as bug, Bug, bugs, bugfix, feature, feat, ui, frontend), and how often to repeat it. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Quarterly taxonomy audit: drop labels with <3 uses, introduce prefixed namespaces, merge near-duplicates.",
       "files": [],
       "expectations": [
@@ -29,7 +29,7 @@
     },
     {
       "id": 3,
-      "prompt": "Use the labels-states-properties skill. Design a state machine for our support team in Plane. Give the state list with their groups and order, the exact state-creation calls, how many active states you recommend, and a way to tell tickets that were solved from tickets closed without a fix. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the labels-states-properties skill. Design a state machine for our support team in Plane. Give the state list with their groups and order, the exact state-creation calls, how many active states you recommend, and a way to tell tickets that were solved from tickets closed without a fix. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Recommends the support/triage state set: New → Triaged/Needs Info → In Progress/Waiting on Customer → Resolved | Closed.",
       "files": [],
       "expectations": [

@@ -3,27 +3,29 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the backlog-management skill. Our TaskFlow project backlog has 67 items. Run a health check — I need concrete numbers on what's ready vs what needs work, and a prioritized list of what to fix first. The calls return: 67 open backlog items in total, 14 with nobody assigned, 21 with priority none; the listing shows 18 items without points, 11 with an empty description and 6 above 8 points; 29 items have points, a priority and a description. Show the calls, the six numbers and the score. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the backlog-management skill. Our TaskFlow project backlog has 67 items. Run a health check — I need concrete numbers on what's ready vs what needs work, and a prioritized list of what to fix first. The calls return: 67 open backlog items in total, 14 with nobody assigned, 21 with priority none; the listing shows 18 items without points, 11 with an empty description and 6 above 8 points; 29 items have points, a priority and a description. Show the calls, the six numbers and the score. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Full health report: total items, unestimated count, no-priority count, no-assignee count, oversized items, missing descriptions, health score %, status tier (Healthy/Good/Needs Work/Unhealthy), and a prioritized remediation plan.",
       "files": [],
       "expectations": [
-        "The answer says to count the PQL-filterable metrics with workitem(action=count, pql=...) and lists the backlog with workitem(action=list, pql='stateGroup IN (\"backlog\",\"unstarted\")') following next_cursor",
-        "The answer calculates all 6 metrics: total, unestimated, unassigned, no_priority, no_description, large_items",
-        "The answer produces a health score using the (ready_items / total_items) × 100 formula",
-        "The answer says to map the score to a tier (Healthy/Good/Needs Work/Unhealthy)",
-        "The answer gives a concrete remediation plan ordered by impact (estimate first, split oversized, set priorities)"
+        "The answer counts the open backlog with workitem(action=count, pql='stateGroup IN (\"backlog\",\"unstarted\")')",
+        "The answer says to list the backlog items with workitem(action=list, pql='stateGroup IN (\"backlog\",\"unstarted\")') and to follow next_cursor",
+        "The answer states 18 items without points, 14 without an assignee and 21 without a priority",
+        "The answer computes health_score as (ready_items / total_items) × 100",
+        "The answer reports a health score of 43% (29 ready items of 67)",
+        "The answer puts the score 43% in the Unhealthy tier (below 50%)"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use the backlog-management skill. Prioritize these three backlog items with WSJF: (a) 'Add SSO login' — big revenue unlock for enterprise deal due next month, 8 points; (b) 'Fix typo on pricing page' — 1 point, no deadline; (c) 'Migrate logging to new provider' — 5 points, reduces outage risk, no hard deadline. Score each factor from 1 to 10 yourself, show the ranked table and say which Plane priority each item gets. Answer in text; everything you need is in this message.",
-      "expected_output": "Calculates WSJF for each item using BV + TC + RR / Job Size, ranks them, suggests Plane priority values.",
+      "prompt": "Use the backlog-management skill. Rank these three backlog items with WSJF and show the ranked table. (a) 'Add SSO login': business value 8, time criticality 9, risk reduction 2, 8 points. (b) 'Fix typo on pricing page': business value 1, time criticality 1, risk reduction 1, 1 point. (c) 'Migrate logging to new provider': business value 3, time criticality 2, risk reduction 8, 5 points. Answer in text; everything you need is in this message.",
+      "expected_output": "WSJF = (BV + TC + RR) / job size: typo 3.0, logging 2.6, SSO 2.4.",
       "files": [],
       "expectations": [
-        "The answer uses the WSJF formula (Business Value + Time Criticality + Risk Reduction) / Job Size",
-        "The answer gives the SSO item a higher Time Criticality score than the other two items, and the logging migration a higher Risk Reduction score than the typo fix",
-        "The answer shows a ranked table with a WSJF value for each of the three items, computed with that formula",
-        "The answer maps the ranked items to Plane priority values (urgent/high/medium/low)"
+        "The answer says to use the WSJF formula (Business Value + Time Criticality + Risk Reduction) / Job Size",
+        "The answer says to give the typo fix a WSJF of 3.0",
+        "The answer says to give the logging migration a WSJF of 2.6",
+        "The answer says to give the SSO login a WSJF of 2.4",
+        "The answer ranks the typo fix first, the logging migration second and the SSO login third"
       ]
     },
     {
@@ -53,15 +55,15 @@
     },
     {
       "id": 5,
-      "prompt": "Use the backlog-management skill. Which backlog items in TaskFlow have gone stale and have nobody assigned? Don't pull the whole backlog into the conversation. Also tell me what to do with the stale ones, and how to find the items that have no estimate or no description. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the backlog-management skill. Which backlog items in TaskFlow have gone stale and have nobody assigned? Don't pull the whole backlog into the conversation. Also tell me what to do with the stale ones, and how to find the items that have no estimate or no description. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Server-side PQL filter on the backlog state groups, hasNoAssignee() and updatedAt < daysAgo(n), counted first and listed second; stale items proposed for cancel-then-archive, never silently deleted.",
       "expectations": [
-        "The answer passes a pql filter to workitem(action=list) instead of filtering client-side",
-        "The answer uses hasNoAssignee() in the pql filter",
-        "The answer uses updatedAt < daysAgo(42) in the pql filter",
-        "The answer counts first with workitem(action=count) and reads total_count before listing",
-        "The answer cancels the stale items and then archives them with workitem(action=archive)",
-        "The answer reads the point and description_stripped fields of the listed items to find unestimated or no-description items"
+        "The answer says to pass a pql filter to workitem(action=list) instead of filtering client-side",
+        "The answer says to use hasNoAssignee() in the pql filter",
+        "The answer says to use updatedAt < daysAgo(42) in the pql filter",
+        "The answer says to count first with workitem(action=count) and to read total_count before listing",
+        "The answer says to cancel the stale items and then to archive them with workitem(action=archive)",
+        "The answer says to read the point and description_stripped fields of the listed items to find unestimated or no-description items"
       ],
       "files": []
     }

@@ -3,44 +3,44 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the sprint-review-retro skill. Sprint 15 for TaskFlow just ended. Generate a full sprint review report: goal status, completion metrics, what was completed and what was not, velocity trend vs last 3 sprints. Format it so I can demo it to stakeholders. Sprint 15 data: goal 'Ship checkout v2'; 34 of 40 points done and 8 of 10 items done; not delivered: PROJ-312 (3 points, in progress) and PROJ-315 (3 points, blocked); the last three completed sprints delivered 28, 31 and 30 points. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the sprint-review-retro skill. Sprint 15 for TaskFlow just ended. Generate a full sprint review report: goal status, completion metrics, what was completed and what was not, velocity trend vs last 3 sprints. Format it so I can demo it to stakeholders. Sprint 15 data: goal 'Ship checkout v2'; 34 of 40 points done and 8 of 10 items done; not delivered: PROJ-312 (3 points, in progress) and PROJ-315 (3 points, blocked); the last three completed sprints delivered 28, 31 and 30 points. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Stakeholder-ready review: sprint name + dates + goal, completion rate in points and item count, Delivered table (ID/title/points/owner), Not Delivered list with reasons, velocity comparison to previous 3 sprints, goal achievement verdict (Yes/Partial/No).",
       "files": [],
       "expectations": [
-        "The answer gets the sprint with cycle(action=list, status=completed)",
-        "The answer counts the items per state group with workitem(action=count, pql='cycle = \"<cycle_id>\"', group_by=state__group)",
+        "The answer says to get the sprint with cycle(action=list, status=completed)",
+        "The answer says to count the items per state group with workitem(action=count, pql='cycle = \"<cycle_id>\"', group_by=state__group)",
         "The answer shows the line Completion: 34/40 points (85%)",
         "The answer shows the line Items: 8/10 completed",
-        "The answer starts the report with the heading SPRINT REVIEW: Sprint 15",
-        "The answer lists PROJ-312 and PROJ-315 under NOT COMPLETED"
+        "The answer says to transfer PROJ-312 (in progress) to the next sprint",
+        "The answer says to list PROJ-312 and PROJ-315 under NOT COMPLETED"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use the sprint-review-retro skill. Run a retrospective for Sprint 14. Use the DAKI format. Previous retro's action items were: (1) 'Review PRs within 4 hours' - done, (2) 'Set up staging deploy' - still open. Give the order of the session, the new action items you propose, and what gets recorded in Plane and how. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the sprint-review-retro skill. Run a retrospective for Sprint 14. Use the DAKI format. Previous retro's action items were: (1) 'Review PRs within 4 hours' - done, (2) 'Set up staging deploy' - still open. Give the order of the session, the new action items you propose, and what gets recorded in Plane and how. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Starts with previous action review, shows DAKI prompts, creates 2-3 new action items with SMART criteria, saves as a page.",
       "files": [],
       "expectations": [
         "The answer reviews the two previous action items before it opens the DAKI prompts",
-        "The answer uses the four DAKI headings DROP, ADD, KEEP and IMPROVE",
+        "The answer says to use the four DAKI headings DROP, ADD, KEEP and IMPROVE",
         "The answer limits the new action items to 2-3",
-        "The answer creates each action item with workitem(action=create) and a name that starts with [RETRO]",
-        "The answer labels the action items with retro-action",
-        "The answer saves the notes with page(action=create) under a name like Retro — Sprint 14 (YYYY-MM-DD)"
+        "The answer says to create each action item with workitem(action=create) and a name that starts with [RETRO]",
+        "The answer says to label the action items with retro-action",
+        "The answer says to save the notes with page(action=create) under a name like Retro — Sprint 14 (YYYY-MM-DD)"
       ]
     },
     {
       "id": 3,
-      "prompt": "Use the sprint-review-retro skill. Sprint 14 is done. 3 items still in progress, 1 blocked, 1 not started. Walk me through closing the sprint. Show each call in order with its parameters, and say what happens to each of the five unfinished items. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the sprint-review-retro skill. Sprint 14 is done. 3 items still in progress, 1 blocked, 1 not started. Walk me through closing the sprint. Show each call in order with its parameters, and say what happens to each of the five unfinished items. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Take blocked and not-started items out of the cycle (cycle manage_workitems remove_ids) so they return to the backlog, complete the cycle, transfer the remaining unfinished in-progress items to the next cycle, then archive the current cycle.",
       "files": [],
       "expectations": [
-        "The answer removes the blocked and the not-started item with cycle(action=manage_workitems, remove_ids=[...]) before the transfer",
-        "The answer creates the next cycle with cycle(action=create, ..., owned_by=...)",
-        "The answer ends the sprint with cycle(action=complete) before the transfer",
-        "The answer moves the three in-progress items with cycle(action=transfer_workitems, cycle_id, new_cycle_id)",
-        "The answer archives the sprint with cycle(action=archive) as the last call",
-        "The answer records completed_points for the velocity history"
+        "The answer says to remove the blocked and the not-started item with cycle(action=manage_workitems, remove_ids=[...]) before the transfer",
+        "The answer says to create the next cycle with cycle(action=create, ..., owned_by=...)",
+        "The answer says to end the sprint with cycle(action=complete) before the transfer",
+        "The answer says to move the three in-progress items with cycle(action=transfer_workitems, cycle_id, new_cycle_id)",
+        "The answer says to archive the sprint with cycle(action=archive) as the last call",
+        "The answer says to record completed_points for the velocity history"
       ]
     },
     {

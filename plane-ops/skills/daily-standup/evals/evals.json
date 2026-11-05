@@ -3,30 +3,30 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the daily-standup skill. Generate today's standup dashboard for TaskFlow Sprint 12. It's day 3 of 5. Show sprint-level burn, per-person status, and flag anything at risk. The calls return: Sprint 12 runs Monday to Friday and today is Wednesday (day 3 of 5); 40 points planned, 22 completed; 10 items of which 5 are done, 3 in progress, 1 not started and 1 blocked. By assignee: Alice has 4 items (2 done, 1 in progress, 1 not started), Bob has 3 (1 done, 1 in progress, 1 blocked by Bob's own in-progress item), Carol has 3 (2 done, 1 in progress). Render the dashboard. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the daily-standup skill. Generate today's standup dashboard for TaskFlow Sprint 12. It's day 3 of 5. Show sprint-level burn, per-person status, and flag anything at risk. The calls return: Sprint 12 runs Monday to Friday and today is Wednesday (day 3 of 5); 40 points planned, 22 completed; 10 items of which 5 are done, 3 in progress, 1 not started and 1 blocked. By assignee: Alice has 4 items (2 done, 1 in progress, 1 not started), Bob has 3 (1 done, 1 in progress, 1 blocked by Bob's own in-progress item), Carol has 3 (2 done, 1 in progress). Render the dashboard. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Team-level dashboard: points done/total, items by state, WIP status, pace vs needed pace. Per-person section with DONE/DOING/NEXT/BLOCKED. Attention section listing stalled, blocked, and not-started items.",
       "files": [],
       "expectations": [
-        "The answer finds the active sprint with cycle(action=list, status=current)",
-        "The answer gets the state-group totals with workitem(action=count, pql='cycle = \"<cycle_id>\"', group_by=state__group)",
+        "The answer says to find the active sprint with cycle(action=list, status=current)",
+        "The answer says to get the state-group totals with workitem(action=count, pql='cycle = \"<cycle_id>\"', group_by=state__group)",
         "The answer reports 22/40 points completed (55%)",
         "The answer has a Pace line that gives the points per day and the points per day needed",
         "The answer contains a section headed [!] Attention",
-        "The answer lists Bob's blocked item in that [!] Attention section"
+        "The answer's at-risk section names Bob's blocked item"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use the daily-standup skill. Give me a per-person standup breakdown for the Billing team's active sprint. The listing shows: Dana has 3 items (2 done, 1 in progress, unchanged for 4 days); Eli has 2 (1 in progress, 1 not started); Fay has 1 item, blocked by Eli's in-progress item. Is Dana's long-running item really stalled? In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the daily-standup skill. Give me a per-person standup breakdown for the Billing team's active sprint. The listing shows: Dana has 3 items (2 done, 1 in progress, unchanged for 4 days); Eli has 2 (1 in progress, 1 not started); Fay has 1 item, blocked by Eli's in-progress item. Is Dana's long-running item really stalled? If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Per-person breakdown with DONE/DOING/NEXT/BLOCKED labels; the stalled candidate is found by the PQL filter and confirmed with workitem_activity before it is called stalled.",
       "files": [],
       "expectations": [
-        "The answer gets the team roster with member(action=list_project)",
-        "The answer gets the sprint items with cycle(action=list_workitems)",
-        "The answer labels each person's items with [DONE], [DOING], [NEXT] and [BLOCKED]",
-        "The answer finds stalled items with pql='stateGroup = \"started\" AND updatedAt < daysAgo(2)'",
+        "The answer says to get the team roster with member(action=list_project)",
+        "The answer says to get the sprint items with cycle(action=list_workitems)",
+        "The answer says to label each person's items with [DONE], [DOING], [NEXT] and [BLOCKED]",
+        "The answer says to find stalled items with pql='stateGroup = \"started\" AND updatedAt < daysAgo(2)'",
         "The answer confirms with workitem_activity(action=list) before calling Dana's item stalled",
-        "The answer finds Fay's blocker with workitem_relation(action=list)"
+        "The answer says to find Fay's blocker with workitem_relation(action=list)"
       ]
     },
     {
@@ -43,7 +43,7 @@
     },
     {
       "id": 4,
-      "prompt": "Use the daily-standup skill. We're an async remote team across 5 timezones. How should we run standup and where do we publish the update? Give the cadence you recommend, the exact call that publishes the update with the page name you use so history stays browsable, and where the rules for formatting the page body come from. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the daily-standup skill. We're an async remote team across 5 timezones. How should we run standup and where do we publish the update? Give the cadence you recommend, the exact call that publishes the update with the page name you use so history stays browsable, and where the rules for formatting the page body come from. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Recommends async cadence 3x/week, publish as a Plane project page per day.",
       "files": [],
       "expectations": [

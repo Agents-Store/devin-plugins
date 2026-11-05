@@ -3,35 +3,35 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the work-items skill. Create a work item in project TaskFlow: 'Fix login 500 on Safari', high priority, 3 points, assigned to Alice, labeled 'bug'. Show every call including how names become ids, and the description you write. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the work-items skill. Create a work item in project TaskFlow: 'Fix login 500 on Safari', high priority, 3 points, assigned to Alice, labeled 'bug'. Show every call including how names become ids, and the description you write. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "project(action=list), member(action=list_project), label(action=list), then workitem(action=create) with description_html, priority, point, assignees and labels.",
       "files": [],
       "expectations": [
-        "The answer finds the project with project(action=list)",
-        "The answer resolves Alice's user id with member(action=list_project, project_id=<id>)",
-        "The answer resolves the label bug to its id with label(action=list, project_id=<id>)",
-        "The answer writes description_html with an Acceptance Criteria heading",
-        "The answer sets priority=\"high\" and point=3 in the workitem(action=create) call",
-        "The answer sets assignees=[<Alice's uuid>] and labels=[<bug label uuid>] in the workitem(action=create) call"
+        "The answer says to find the project with project(action=list)",
+        "The answer says to resolve Alice's user id with member(action=list_project, project_id=<id>)",
+        "The answer says to resolve the label bug to its id with label(action=list, project_id=<id>)",
+        "The answer says to write description_html with an Acceptance Criteria heading",
+        "The answer says to set priority=\"high\" and point=3 in the workitem(action=create) call",
+        "The answer says to set assignees=[<Alice's uuid>] and labels=[<bug label uuid>] in the workitem(action=create) call"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use the work-items skill. Mark PROJ-148 as blocked by PROJ-140. Show the calls in order and how you check the result. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the work-items skill. Mark PROJ-148 as blocked by PROJ-140. Show the calls in order and how you check the result. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Resolves both item UUIDs and calls workitem_relation(action=create) with relation_type blocked_by.",
       "files": [],
       "expectations": [
-        "The answer resolves PROJ-148 with workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-148\")",
-        "The answer resolves PROJ-140 with workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-140\")",
-        "The answer calls workitem_relation(action=create) with workitem_id=<PROJ-148 uuid>",
-        "The answer passes relation_type=\"blocked_by\"",
-        "The answer passes workitem_ids=[<PROJ-140 uuid>]",
-        "The answer reads the relation back with workitem_relation(action=list)"
+        "The answer says to resolve PROJ-148 with workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-148\")",
+        "The answer says to resolve PROJ-140 with workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-140\")",
+        "The answer says to call workitem_relation(action=create) with workitem_id=<PROJ-148 uuid>",
+        "The answer says to pass relation_type=\"blocked_by\"",
+        "The answer says to pass workitem_ids=[<PROJ-140 uuid>]",
+        "The answer says to read the relation back with workitem_relation(action=list)"
       ]
     },
     {
       "id": 3,
-      "prompt": "Use the work-items skill. Log 2 hours 30 minutes of work on PROJ-148 with description 'Debug + fix'. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the work-items skill. Log 2 hours 30 minutes of work on PROJ-148 with description 'Debug + fix'. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Calls work_log(action=create) with duration as integer minutes (150) after checking that time tracking is enabled.",
       "files": [],
       "expectations": [
@@ -43,24 +43,24 @@
     },
     {
       "id": 4,
-      "prompt": "Use the work-items skill. Find all work items in TaskFlow that mention 'webhook'. Show the exact call or calls and how results are limited to TaskFlow. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the work-items skill. Find all work items in TaskFlow that mention 'webhook'. Show the exact call or calls and how results are limited to TaskFlow. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "workitem(action=search, query) as a workspace-wide search filtered to TaskFlow, or the project-scoped pql title filter.",
       "files": [],
       "expectations": [
-        "The answer calls workitem(action=search, query=\"webhook\")",
+        "The answer says to call workitem(action=search, query=\"webhook\") for the text search",
         "The answer says the search is workspace-scoped and has no project_id",
-        "The answer filters the search results to the TaskFlow project client-side",
-        "The answer offers the server-side filter workitem(action=list, project_id, pql='title ~ \"webhook\"')",
-        "The answer resolves the project_id of TaskFlow with project(action=list)"
+        "The answer says to limit the results to TaskFlow, either by filtering the search results by project client-side or by passing project_id to workitem(action=list)",
+        "The answer says the server-side filter workitem(action=list, project_id, pql='title ~ \"webhook\"') can be used instead",
+        "The answer says to resolve the project_id of TaskFlow with project(action=list)"
       ]
     },
     {
       "id": 5,
-      "prompt": "Use the work-items skill. Add a comment to PROJ-148: 'Reproduced on Safari 17.4, root cause is the Set-Cookie SameSite flag'. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the work-items skill. Add a comment to PROJ-148: 'Reproduced on Safari 17.4, root cause is the Set-Cookie SameSite flag'. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "Resolves work item by identifier and calls workitem_comment(action=create) with an HTML comment_html body.",
       "files": [],
       "expectations": [
-        "The answer uses workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-148\") to resolve PROJ-148",
+        "The answer says to use workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-148\") to resolve PROJ-148",
         "The answer says to call workitem_comment(action=create) with comment_html (not description_html)",
         "The answer says to wrap the comment text in valid HTML",
         "The answer says to confirm the comment was posted by reading it back or checking the call result"
@@ -68,21 +68,21 @@
     },
     {
       "id": 6,
-      "prompt": "Use the work-items skill. Show me every urgent or high priority item assigned to me in TaskFlow that is still open, and how many items each person has in progress. Show each call with its filter, say how you stay within the filter limits and look up the filter syntax, and how you page through long results. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the work-items skill. Show me every urgent or high priority item assigned to me in TaskFlow that is still open, and how many items each person has in progress. Show each call with its filter, say how you stay within the filter limits and look up the filter syntax, and how you page through long results. If you can't run it here, show me the exact calls you would make, in order, and what they return. Keep it brief: no preamble, the key points and calls first, about 15 lines in all.",
       "expected_output": "PQL-filtered workitem list with assignee = currentUser(), plus a count grouped by assignee; no client-side filtering of a full listing.",
       "expectations": [
-        "The answer lists with workitem(action=list, project_id, pql=...) instead of filtering a full listing client-side",
+        "The answer says to list with workitem(action=list, project_id, pql=...) instead of filtering a full listing client-side",
         "The answer has assignee = currentUser() in the pql",
-        "The answer has priority IN (\"urgent\",\"high\") in the pql",
-        "The answer counts the in-progress items per person with workitem(action=count, pql='stateGroup = \"started\"', group_by=assignees__id)",
-        "The answer calls get_pql_reference to look up the filter syntax",
-        "The answer follows next_cursor when the first page is not the last"
+        "The answer's pql includes priority IN (\"urgent\",\"high\")",
+        "The answer says to count the in-progress items per person with workitem(action=count, pql='stateGroup = \"started\"', group_by=assignees__id)",
+        "The answer says to call get_pql_reference to look up the filter syntax",
+        "The answer says to follow next_cursor when the first page is not the last"
       ],
       "files": []
     },
     {
       "id": 7,
-      "prompt": "Use the work-items skill. Set the 'RICE score' custom property on PROJ-148 to 42. In this session you have no Plane tools and no shell, only file reading and a text answer: say which Plane MCP calls you would make (resource(action=..., ...) with their parameters), in what order, and what you would check, and show the result you would give me.",
+      "prompt": "Use the work-items skill. Set the 'RICE score' custom property on PROJ-148 to 42. If you can't run it here, show me the exact calls you would make, in order, and what they return.",
       "expected_output": "Resolves the property id through workitem_property list and writes the value with workitem_property(action=set_value); does not try to pass it through workitem update.",
       "expectations": [
         "The answer says to resolve PROJ-148 with workitem(action=retrieve_by_identifier, workitem_identifier=\"PROJ-148\")",

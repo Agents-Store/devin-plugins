@@ -1,7 +1,7 @@
 [
   {"query": "Which calls create a milestone in Plane and attach work items to it, and when should I use a milestone instead of an epic or an initiative?", "should_trigger": true},
   {"query": "Report progress on a long-running goal that spans multiple sprints and modules: should this be an initiative or an epic?", "should_trigger": true},
-  {"query": "How does the milestone health report in Plane decide between Red, Yellow and Green from remaining points, weekly velocity and the target date?", "should_trigger": true},
+  {"query": "What is the difference between an epic and a module in Plane, and how do I create an epic when the server has no epic tool?", "should_trigger": true},
   {"query": "Чем в Plane отличаются эпик, инициатива и milestone и как построить роадмап на квартал?", "should_trigger": true},
   {"query": "How does the Plane initiative rollup compute progress across its epics, and how do I read the health of a milestone?", "should_trigger": true},
   {"query": "Как в Plane посчитать прогресс эпика по дочерним задачам и оценить здоровье milestone: красный, жёлтый или зелёный?", "should_trigger": true},
