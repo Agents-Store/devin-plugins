@@ -4,7 +4,7 @@
   {"query": "У сотрудника потерялся телефон с 2FA. Как через админский API Vaultwarden снять двухфакторную аутентификацию и разлогинить его на всех устройствах? Админский токен у меня есть.", "should_trigger": true},
   {"query": "I POSTed {\"signups_allowed\": false} to /admin/config with curl and now the SMTP settings I configured in the admin page are gone. What happened, and what is the safe way to change a single setting?", "should_trigger": true},
   {"query": "Is there a way to trigger a consistent SQLite backup of a running Vaultwarden over HTTP from a cron job? I have ADMIN_TOKEN configured.", "should_trigger": true},
-  {"query": "What JSON body does the admin API want to change a member's role in an organization to Admin? I'd like to do it from a script, not from the web vault.", "should_trigger": true},
+  {"query": "Promote bob@example.com to Admin in our Vaultwarden organization from a shell script. I only have the admin token, not the web vault.", "should_trigger": true},
   {"query": "Хочу скриптом удалить аккаунт уволенного сотрудника и пустую организацию через админку Vaultwarden. Какие вызовы нужны и что проверить до удаления, чтобы ничего не потерять?", "should_trigger": true},
   {"query": "My script against the Vaultwarden /admin routes gets 401 \"Session expired\" in the middle of a long run. How does admin login work there and how long does a session last?", "should_trigger": true},
   {"query": "Create a login item in our Infra collection with bw, using a generated 32-character password.", "should_trigger": false},

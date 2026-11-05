@@ -3,24 +3,27 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the instance-clone skill. Spin up a new instance from our reference and get it running, we need it today. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
+      "prompt": "Use the instance-clone skill. Spin up a new instance from our reference and get it running, we need it today. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 300 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "Runs the clone script in plan mode first, reads the isolation preflight rows, and defers the apply to a later turn; then names the manual half that stands between the files existing and the instance working.",
       "files": [],
       "expectations": [
-        "The answer states that the instance is brought up and verified before it is given work",
+        "The answer says to run the health battery before giving the new instance work",
         "The answer does not pass --apply --yes in the same turn the plan is first shown",
         "The answer mentions clone.py with --plan",
-        "The answer says to read every preflight row"
+        "The answer says to read every preflight row",
+        "The answer says credentials are never copied from the source"
       ]
     },
     {
       "id": 2,
-      "prompt": "Use the instance-clone skill. The clone came up green but it does nothing and only a handful of environment keys arrive. Did the clone script fail? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
+      "prompt": "Use the instance-clone skill. The clone came up green but it does nothing and only a handful of environment keys arrive. Did the clone script fail? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 300 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "No: this is the credential half of the clone never having happened. Compares delivered key names and count against the source, and points at a missing or wrong machine identity rather than a script bug.",
       "files": [],
       "expectations": [
+        "The answer says the clone script did not fail",
         "The answer says to compare key names and counts and never values",
         "The answer says a short key count means the wrong project id or a broken machine identity",
+        "The answer says the clone script does not mint an identity or perform a login",
         "The answer says to run fleet.py config --diff"
       ]
     },

@@ -7,37 +7,56 @@
       "expected_output": "product name: text, price: decimal(10,2), discount: double precision, is_active: bool, rating: smallint, metadata: json (jsonb only as an option for GIN indexes or operators). No ENUM.",
       "files": [],
       "assertions": [
-        {"id": "text_for_name", "text": "Uses 'text' for product name"},
-        {"id": "decimal_for_price", "text": "Uses 'decimal' with precision/scale (e.g. decimal(10,2)) for price"},
-        {"id": "double_for_percent", "text": "Uses 'double precision' for discount percentage"},
-        {"id": "bool_for_active", "text": "Uses 'bool' for is_active flag"},
-        {"id": "smallint_for_rating", "text": "Uses 'smallint' for rating"},
-        {"id": "json_default", "text": "Uses 'json' as the default for metadata; mentions jsonb only as an accepted option, not as a requirement or a prohibition"}
+        {
+          "id": "text_for_name",
+          "text": "Uses 'text' for product name"
+        },
+        {
+          "id": "decimal_for_price",
+          "text": "Uses 'decimal' with precision/scale (e.g. decimal(10,2)) for price"
+        },
+        {
+          "id": "double_for_percent",
+          "text": "Uses 'double precision' for discount percentage"
+        },
+        {
+          "id": "bool_for_active",
+          "text": "Uses 'bool' for is_active flag"
+        },
+        {
+          "id": "smallint_for_rating",
+          "text": "Uses 'smallint' for rating"
+        },
+        {
+          "id": "json_default",
+          "text": "Uses 'json' as the default for metadata; mentions jsonb only as an accepted option, not as a requirement or a prohibition"
+        }
       ]
     },
     {
       "id": 2,
-      "prompt": "My NocoBase external database needs a contacts table with email, phone, website URL, and a status field that should be a dropdown (active/inactive/pending). What PostgreSQL types are compatible?",
-      "expected_output": "email: character varying, phone: character varying, website: text, status: text (with SingleSelect in NocoDB UI). No PostgreSQL ENUM type.",
+      "prompt": "Use the column-types skill. I create fields in NocoDB on a PostgreSQL database: Email, Phone number, Rating, Percent and a plain Number. Which PostgreSQL column type does NocoDB create for each of them, so I can match them when I add the same columns by hand?",
+      "expected_output": "Email: character varying; PhoneNumber: character varying; Rating: smallint; Percent: double precision; Number: bigint (int8).",
       "files": [],
-      "assertions": [
-        {"id": "varchar_for_email", "text": "Uses 'character varying' for email"},
-        {"id": "varchar_for_phone", "text": "Uses 'character varying' for phone"},
-        {"id": "text_for_url", "text": "Uses 'text' for URL"},
-        {"id": "text_for_select", "text": "Uses 'text' for the status dropdown/select field, NOT PostgreSQL ENUM"},
-        {"id": "explains_select_pattern", "text": "Explains that NocoDB manages select options in UI, stored as text in PostgreSQL"}
+      "expectations": [
+        "The answer says an Email field is character varying",
+        "The answer says a Phone number field is character varying",
+        "The answer says a Rating field is smallint",
+        "The answer says a Percent field is double precision",
+        "The answer says a plain Number field is bigint (int8)"
       ]
     },
     {
       "id": 3,
-      "prompt": "Does NocoDB or NocoBase accept jsonb, uuid and array columns, or do I have to avoid them?",
-      "expected_output": "None is banned. jsonb: both read it as JSON (NocoBase field type json). uuid: NocoBase maps uuid, NocoDB reads it as text and keeps an existing uuid primary key. ARRAY: NocoBase reads it as array, NocoDB has no field type for it. Safe defaults: json, text/serial, json. Says to check on the target versions.",
+      "prompt": "Use the column-types skill. Our PostgreSQL database already has a uuid primary key, a text[] column, a native ENUM column and a point column. How does NocoDB show each of them, and what is the safest type for each if we redesign?",
+      "expected_output": "uuid: read as a single-line text field and the existing PK is kept; text[]: no field type mapping in NocoDB; native ENUM: read as SingleSelect from release 2026.04.5, safe default text + SingleSelect; point: read as a Geometry field.",
       "files": [],
-      "assertions": [
-        {"id": "jsonb_accepted", "text": "Says jsonb is read by both platforms as JSON, with json remaining the default"},
-        {"id": "uuid_accepted", "text": "Says uuid is supported (NocoBase uuid field type; NocoDB keeps an existing uuid key)"},
-        {"id": "array_per_platform", "text": "Says ARRAY is read by NocoBase but not mapped to a field type by NocoDB, and suggests json as the safe default"},
-        {"id": "recommends_version_check", "text": "Recommends confirming on the target NocoDB and NocoBase versions"}
+      "expectations": [
+        "The answer says NocoDB reads an existing uuid column as a single-line text field and keeps an existing uuid primary key",
+        "The answer says NocoDB has no field type mapping for an ARRAY column such as text[]",
+        "The answer says NocoDB reads a native ENUM as SingleSelect from release 2026.04.5",
+        "The answer says NocoDB reads a point column as a Geometry field",
+        "The answer gives text with SingleSelect as the safe default instead of a native ENUM"
       ]
     }
   ]

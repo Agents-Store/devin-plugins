@@ -3,7 +3,7 @@
   {"query": "Configure @payloadcms/plugin-seo for posts with a generateTitle and generateDescription function and a preview", "should_trigger": true},
   {"query": "Set up the Payload multi-tenant plugin with tenant-scoped collections and a tenant selector in the admin", "should_trigger": true},
   {"query": "Stripe plugin for Payload: which env vars do I need, and what is the webhook endpoint? What changed for rest in 3.90?", "should_trigger": true},
-  {"query": "Form builder plugin: why can my second auth collection not read form-submissions after 3.90?", "should_trigger": true},
+  {"query": "Does the Payload form builder plugin let a second auth collection read form-submissions by default, and which override do I set to allow it?", "should_trigger": true},
   {"query": "Как подключить плагин redirects в Payload и использовать его на Next.js фронтенде?", "should_trigger": true},
   {"query": "Какие официальные плагины @payloadcms/plugin-* нужны для Sentry и для импорта/экспорта данных в Payload? Как их установить и подключить в массив plugins?", "should_trigger": true},
   {"query": "Set up the official Payload MCP plugin: where is /api/mcp, and how do I create the Bearer API key in the MCP API Keys admin collection (shown once since 3.90)?", "should_trigger": true},

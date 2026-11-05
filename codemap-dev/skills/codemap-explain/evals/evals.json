@@ -46,13 +46,15 @@
     },
     {
       "id": 4,
-      "prompt": "Explain the file src/nonexistent_module.py",
-      "expected_output": "Asks user to verify the path instead of hallucinating",
+      "prompt": "Use the codemap-explain skill. Explain the auth system.",
+      "expected_output": "Before explaining anything, asks whether to delegate to the architect-explainer agent or proceed inline, then asks about scope, depth (Overview, Moderate, Deep dive), the aspect of interest and the user's experience level with the stack; does not explain yet.",
       "files": [],
       "expectations": [
-        "The answer does not invent the contents of the file or an explanation of it",
-        "The answer asks the user to check the path or provide the correct one",
-        "The answer does not jump to explaining a different file without confirming first"
+        "The answer asks whether to delegate to the architect-explainer agent or proceed inline",
+        "The answer offers the depth levels Overview, Moderate and Deep dive",
+        "The answer asks about the user's experience level with the stack",
+        "The answer asks which aspect interests the user most, such as how it works, why it is built this way, how data flows or how to modify it",
+        "The answer does not yet explain how the auth system works"
       ]
     },
     {

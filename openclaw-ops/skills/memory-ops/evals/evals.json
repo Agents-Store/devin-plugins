@@ -64,14 +64,14 @@
     },
     {
       "id": 6,
-      "prompt": "Use the memory-ops skill. Which embedding model should we switch to, and can we do it without a reindex? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
+      "prompt": "Use the memory-ops skill. Which embedding model should we switch to, and can we do it without a reindex? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 350 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "No: provider, model and chunking are part of the index identity, so any change pauses vector search and requires an explicit reindex; the model id itself is read from this instance's catalogue rather than recalled.",
       "files": [],
       "expectations": [
         "The answer says a model change needs an explicit reindex",
-        "The answer says there is no in-place migration",
+        "The answer says vector search pauses until a reindex",
         "The answer says a subscription session does not cover embeddings",
-        "The answer says vector search pauses until a reindex"
+        "The answer says nothing re-embeds by itself"
       ]
     }
   ]

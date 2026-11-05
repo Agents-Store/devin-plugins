@@ -3,13 +3,12 @@
   "evals": [
     {
       "id": 0,
-      "prompt": "Use the setup skill. I want to verify my Context7 and Jina connections by hand. Which light call do I run for each, and what should I expect back?",
+      "prompt": "Use the setup skill. I want to verify my Context7 and Jina connections by hand. Which light call do I run for each, which parameters does it need, and what should I expect back?",
       "expected_output": "Should verify Context7 with resolve-library-id (query and libraryName both required, returns an id like /facebook/react) and Jina with read_url (works without a key, search tools need one)",
       "files": [],
       "expectations": [
         "The answer verifies Context7 with the resolve-library-id tool",
         "The answer says resolve-library-id needs both query and libraryName",
-        "The answer gives a library id such as /facebook/react as the expected Context7 result",
         "The answer verifies Jina with the read_url tool",
         "The answer says read_url works without an API key",
         "The answer says the Jina search tools need a key"

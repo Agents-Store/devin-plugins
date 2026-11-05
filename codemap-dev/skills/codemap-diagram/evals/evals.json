@@ -9,7 +9,9 @@
       "expectations": [
         "The answer either contains native mxGraph XML (an <mxGraphModel> element), or reports that the diagram was rendered through drawio-mcp, or states that drawio-mcp or file writing is unavailable, or asks whether to delegate to the diagrammer agent or proceed inline",
         "The answer contains no code block in Mermaid or PlantUML syntax and no ASCII box drawing",
-        "If the answer shows or describes the finished diagram, the data layer (models, PostgreSQL) is coloured #dae8fc, the external Stripe API #f8cecc and the route blueprints #d5e8d4. An answer that only asks how to run the task or says the tools are unavailable passes this requirement"
+        "If the answer shows or describes the finished diagram, the data layer (models, PostgreSQL) is coloured #dae8fc. An answer that only asks how to run the task or says the tools are unavailable passes this requirement",
+        "If the answer shows or describes the finished diagram, the external Stripe API is coloured #f8cecc. An answer that only asks how to run the task or says the tools are unavailable passes this requirement",
+        "If the answer shows or describes the finished diagram, the route blueprints are coloured #d5e8d4. An answer that only asks how to run the task or says the tools are unavailable passes this requirement"
       ]
     },
     {

@@ -5,7 +5,7 @@
   {"query": "I just created an events collection in Directus. Walk me through everything I add in Next.js to ship an events page: types, tagged read in lib/content, actions, the Flow and route allow-list, and the verification", "should_trigger": true},
   {"query": "Add a dashboard section that displays Directus content. What is the six-step pattern this stack uses?", "should_trigger": true},
   {"query": "Нужна новая страница с данными из коллекции Directus: шаги от модели данных до проверки, что правка в Directus доходит до страницы", "should_trigger": true},
-  {"query": "Как правильно добавить Server Action для создания записи в Directus: с аутентификацией, записью и обновлением тега?", "should_trigger": true},
+  {"query": "Нужна новая секция «События» на сайте: коллекция в Directus и страница в Next.js. Дай рецепт целиком: типы, чтение с тегами, Flow для ревалидации и проверка, что правка в Directus доходит до страницы", "should_trigger": true},
   {"query": "what is the template I should fill in for every new feature that spans Directus and Next.js?", "should_trigger": true},
   {"query": "Design a Directus data model for a booking system with rooms, bookings and customers", "should_trigger": false},
   {"query": "Write Next.js middleware for locale detection", "should_trigger": false},

@@ -6,7 +6,7 @@
   {"query": "Set fallbackLocale per request in Payload and disable fallback for one query", "should_trigger": true},
   {"query": "Как включить локализацию в Payload v3 и сделать так, чтобы только поле title переводилось?", "should_trigger": true},
   {"query": "Как добавить русский язык в интерфейс админки Payload и перевести собственные подписи полей?", "should_trigger": true},
-  {"query": "How do I read all locale versions of a document at once in Payload for a translation review screen?", "should_trigger": true},
+  {"query": "Build a translation review screen for my Payload site that loads every locale of a post at once, so editors can compare the English, German and Ukrainian titles side by side.", "should_trigger": true},
   {"query": "Add a text field and a select field to a Payload collection", "should_trigger": false},
   {"query": "Set up next-intl routing with locale prefixes in Next.js App Router", "should_trigger": false},
   {"query": "Translate my React app strings with i18next and lazy loaded namespaces", "should_trigger": false},

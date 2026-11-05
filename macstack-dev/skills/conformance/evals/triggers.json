@@ -2,7 +2,7 @@
   {"query": "Check the implementation against the client documents: does the code do what each acceptance bullet in USER-CASES says? One verdict per case id.", "should_trigger": true},
   {"query": "Audit the platform: for every case, trigger and screen prohibition tell me implemented, partial, absent or externally blocked, with evidence.", "should_trigger": true},
   {"query": "what is actually built? run a conformance review of the stack against the requirements and write the verdicts into the ledger", "should_trigger": true},
-  {"query": "Does the code do what the spec says for C-07 and C-12? Check whether the forbidden items on the Orders screen are really unreachable.", "should_trigger": true},
+  {"query": "Run the code check against our documents: for case C-07 and C-12 and the Orders screen prohibitions, write the verdict with file evidence and give me the dated review plus the plain-language twin for the client.", "should_trigger": true},
   {"query": "Test the whole stack against the requirements and give me a technical review plus a plain-language summary for the client", "should_trigger": true},
   {"query": "Проверь реализацию против документов: что из USER-CASES реально сделано? Нужен вердикт по каждому id кейса.", "should_trigger": true},
   {"query": "Проведи аудит платформы на соответствие требованиям: какие триггеры из AUTOMATION.md действительно срабатывают в коде?", "should_trigger": true},

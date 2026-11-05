@@ -18,12 +18,14 @@
     },
     {
       "id": 2,
-      "prompt": "What's wrong with this code? Check my work please",
-      "expected_output": "Asks which file or code to review, in a patient tone, without inventing code",
+      "prompt": "Use the codemap-review skill. Check my work in app/routes/deals.py please.",
+      "expected_output": "Before reviewing, asks whether to delegate to the code-reviewer agent or proceed inline; invents no findings.",
       "files": [],
       "expectations": [
-        "The answer asks the user which file or code to review, or to paste it",
-        "The answer does not invent code or fabricate review findings"
+        "The answer names the code-reviewer agent as an option",
+        "The answer offers to proceed inline in the chat as the other option",
+        "The answer asks this before doing any review work",
+        "The answer does not invent review findings for app/routes/deals.py"
       ]
     },
     {
@@ -35,19 +37,21 @@
         "Each finding names the file it concerns, app/auth.py or app/utils.py",
         "The answer flags the plain-text password comparison user.password == password as CRITICAL and recommends hashing, for example check_password_hash",
         "The answer flags the hardcoded SECRET_KEY as CRITICAL and recommends an environment variable or secret manager",
-        "Critical issues come before warnings and suggestions",
-        "The answer suggests a clearer name than f or x in app/utils.py and explains why naming matters",
-        "Each finding includes a short explanation of the underlying concept for a learner"
+        "Each finding has a field titled Why this matters",
+        "Each finding has a field titled Learn more"
       ]
     },
     {
       "id": 4,
-      "prompt": "Review the file that_doesnt_exist.py",
-      "expected_output": "Asks user to verify the file path",
+      "prompt": "Use the codemap-review skill. Review this file inline, no agent please:\n\n# app/utils.py\ndef f(x):\n    r = []\n    for i in x:\n        if i is not None:\n            r.append(i * 2)\n    return r\n",
+      "expected_output": "Findings use the skill's output format: severity label, File, Issue, Why this matters, Fix with a snippet and Learn more; notes what is done well; stays proportional for a short file.",
       "files": [],
       "expectations": [
-        "The answer does not invent a code review of a file it cannot see",
-        "The answer asks the user to check the file path or provide the correct one"
+        "Each finding has a field titled Why this matters",
+        "Each finding has a field titled Learn more with one sentence about the underlying concept",
+        "Each finding is labelled CRITICAL, WARNING or SUGGESTION",
+        "Each finding has a Fix with a code snippet",
+        "The answer notes what is done well in the code"
       ]
     }
   ]

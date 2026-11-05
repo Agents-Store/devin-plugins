@@ -5,7 +5,7 @@
   {"query": "Give me a step-by-step runbook for backing up Vaultwarden and upgrading to a new release without breaking the bw CLI and the mobile apps.", "should_trigger": true},
   {"query": "Нужен пошаговый пример оффбординга сотрудника в Vaultwarden: заблокировать аккаунт, отозвать членство в организации, затем составить список паролей на ротацию.", "should_trigger": true},
   {"query": "I want an end-to-end example that combines the admin panel, the client API and bw: invite someone to the org, then confirm them after they accept.", "should_trigger": true},
-  {"query": "What does a cron job look like that reads database credentials from Vaultwarden at run time with its own service account?", "should_trigger": true},
+  {"query": "Show me a worked example, end to end: a nightly cron job on a server pulls the database credentials out of Vaultwarden with a dedicated service account and never leaks them into logs", "should_trigger": true},
   {"query": "Is there a worked example of rolling back a failed Vaultwarden upgrade, restoring the data folder and the previous image?", "should_trigger": true},
   {"query": "What is the bw command to delete an item permanently instead of sending it to the trash?", "should_trigger": false},
   {"query": "Which admin route forces every client to resync?", "should_trigger": false},

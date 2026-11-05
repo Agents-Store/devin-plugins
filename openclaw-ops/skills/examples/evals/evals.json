@@ -3,13 +3,13 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use the examples skill. I have just been given access to a server that runs a bunch of OpenClaw containers. I know nothing about them. Where do I start? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
+      "prompt": "Use the examples skill. I have just been given access to a server that runs a bunch of OpenClaw containers. I know nothing about them. Where do I start? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 300 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "Follows the cold-start scenario: verify the host, discover before deciding, read the inventory including alien and legacy rows, write the fleet config with the decisions autodetect cannot make, then the health-versus-liveness table, versions, security, and a baseline snapshot — all read-only.",
       "files": [],
       "expectations": [
-        "The answer says to start from discovery rather than from remembered paths",
-        "The answer says the first run is read-only and uses no --yes",
-        "The answer says health and liveness are read as separate columns and their disagreement is the finding",
+        "The answer says to start with fleet.py discover rather than from remembered paths",
+        "The answer says no --yes is used on the first run",
+        "The answer says the disagreement between health and liveness is the finding",
         "The answer mentions healthcheck.py",
         "The answer mentions fleet.py config --init"
       ]
@@ -41,23 +41,24 @@
     },
     {
       "id": 4,
-      "prompt": "Use the examples skill. Create a new instance from our reference and confirm it is properly isolated before we use it. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
+      "prompt": "Use the examples skill. Create a new instance from our reference and confirm it is properly isolated before we use it. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 300 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "Follows the clone scenario: plan first with the isolation preflight, a port free by four measures, apply in a later turn, then the manual credential half, then the isolation proof and the health battery before any work.",
       "files": [],
       "expectations": [
         "The answer mentions clone.py with --plan",
         "The answer says to compare the mount tables",
-        "The answer says to start the clone and run the health battery before giving it work",
-        "The answer mentions healthcheck.py"
+        "The answer says to run the health battery before giving the clone any work",
+        "The answer mentions healthcheck.py",
+        "The answer says --apply --yes is not run in the same turn as the plan"
       ]
     },
     {
       "id": 5,
-      "prompt": "Use the examples skill. Show me what a full run of this plugin actually looks like end to end. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
+      "prompt": "Use the examples skill. Show me what a full run of this plugin actually looks like end to end. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 300 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
       "expected_output": "Points at the four scenarios and the shape common to all of them: discover before deciding, split health from liveness, name the finding, fetch before recommending, plan then apply, and verify with an observation that changed.",
       "files": [],
       "expectations": [
-        "The answer starts with fleet.py discover --table before any other step",
+        "The answer mentions fleet.py discover --table",
         "The answer mentions healthcheck.py",
         "The answer mentions versions.py",
         "The answer mentions report.py",

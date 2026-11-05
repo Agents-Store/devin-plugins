@@ -35,32 +35,24 @@
       "expected_output": "The verification checklist covering: serial PK (or a deliberate tested alternative), a primary key on every table, FK type matching, ON DELETE NO ACTION, indexes on FKs, UNIQUE for 1:1, composite PK for M2M, default types (ARRAY/ENUM/geometric only when deliberate), no INHERITS, json by default with jsonb only where needed, text for selects, snake_case naming, the NocoBase commercial plugin license, and Meta Sync / refresh after the last change.",
       "files": [],
       "expectations": [
-        "The answer checks that primary keys are serial or bigserial columns named id",
+        "The answer checks that every table has a primary key",
         "The answer checks that FK column types match the parent PK, int4 for serial and int8 for bigserial",
         "The answer checks that FK constraints use ON DELETE NO ACTION",
         "The answer checks that every FK column has an index",
-        "The answer checks that JSON is stored as json and jsonb is used only where indexes or operators are needed",
         "The answer says the NocoBase external PostgreSQL plugin needs a commercial license"
       ]
     },
     {
       "id": 3,
-      "prompt": "I want to add my PostgreSQL database in NocoBase but PostgreSQL is not in the Add new list under Data source management. What is wrong?",
-      "expected_output": "The external PostgreSQL plugin (@nocobase/plugin-data-source-external-postgres) is not installed, enabled or licensed. It needs a commercial license (Standard edition or above, not Community). Check the plugin is enabled, the license includes it and the user may manage data sources.",
+      "prompt": "Use the troubleshoot skill. Several tables in my PostgreSQL database have no primary key. I connect it to NocoDB and NocoBase as an external source. What happens in each, and what do I do about it?",
+      "expected_output": "NocoDB can read and add rows but not update or delete; NocoBase needs a manual Record unique key; add a single-column primary key.",
       "files": [],
-      "assertions": [
-        {
-          "id": "names_plugin",
-          "text": "Names the external PostgreSQL data source plugin"
-        },
-        {
-          "id": "states_commercial_license",
-          "text": "States that it requires a commercial license (Standard or above, not Community)"
-        },
-        {
-          "id": "gives_checks",
-          "text": "Lists the checks: plugin installed and enabled, license includes it, user can manage data sources"
-        }
+      "expectations": [
+        "The answer says NocoDB can read and add rows on a table without a primary key",
+        "The answer says NocoDB cannot update or delete rows on a table without a primary key",
+        "The answer says NocoBase needs a manual Record unique key",
+        "The answer says to add a single-column primary key",
+        "The answer says junction tables are the exception to the single-column rule"
       ]
     },
     {

@@ -1,6 +1,5 @@
 [
-  {"query": "I'm generating a quarterly report for a consulting client and want it to look as credible as a McKinsey report: how should the executive summary be structured, how are charts and action titles used, and which colors fit?", "should_trigger": true},
-  {"query": "Our freelance invoices from the document generator get paid late. How should the invoice be laid out so totals, due date and payment details are impossible to miss, the way Stripe-style invoices do it?", "should_trigger": true},
+  {"query": "Our generated reports look cluttered. What does the plugin's design guide say about the 60-30-10 color rule and the font size scale for headings, body text and captions?", "should_trigger": true},
   {"query": "We are generating the investor deck for Thursday with the document generator and I'd like it to feel like an Apple keynote. How many bullets and how many words per bullet can one slide carry, and how should the title slide and the content slides look?", "should_trigger": true},
   {"query": "We generate our service contracts with this plugin and clients say they're hard to read. Which design rules apply to a legal contract: numbering, clause spacing, margins, signature blocks? I want to settle them before the next one.", "should_trigger": true},
   {"query": "My client wants a 'corporate look' for the proposal. What's the recommended structure, layout and color strategy? Don't generate anything yet, I want to decide on the design first.", "should_trigger": true},
