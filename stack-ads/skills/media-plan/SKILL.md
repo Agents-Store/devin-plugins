@@ -1,6 +1,6 @@
 ---
 name: media-plan
-description: This skill should be used when the user asks to "build a media plan", "plan the ad campaign", "which platform should we advertise on", "how should we split the ad budget", "is this budget enough". Writes the plan only: for creating ads use launch-campaign, for results performance-report.
+description: This skill should be used when the user asks to "build a media plan", "plan the ad campaign", "which platform should we advertise on", "how should we split the ad budget", "is this budget enough". Writes the plan only. For creating ads use launch-campaign, for results performance-report.
 ---
 
 # Media plan

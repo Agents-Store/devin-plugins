@@ -1,6 +1,6 @@
 ---
 name: ad-copy
-description: This skill should be used when the user asks to "write ad copy", "write headlines and descriptions", "shorten these ad texts", "more ad text variants", or needs texts for Google, Meta or TikTok ads. Text only: for images and video use ad-creatives, for creating ads launch-campaign.
+description: This skill should be used when the user asks to "write ad copy", "write headlines and descriptions", "shorten these ad texts", "more ad text variants", or needs texts for Google, Meta or TikTok ads. Text only. For images and video use ad-creatives, for creating ads launch-campaign.
 ---
 
 # Ad copy

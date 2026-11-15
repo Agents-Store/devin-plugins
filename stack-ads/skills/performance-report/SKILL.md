@@ -1,6 +1,6 @@
 ---
 name: performance-report
-description: This skill should be used when the user asks "how are the ads performing", "make an ads report", "compare Google, Meta and TikTok results", "why is the cost per lead so high". Read-only: for API errors use troubleshoot, to change a campaign launch-campaign. Not for SEO reports.
+description: This skill should be used when the user asks "how are the ads performing", "make an ads report", "compare Google, Meta and TikTok results", "why is the cost per lead so high". Read-only. For API errors use troubleshoot, to change a campaign launch-campaign. Not for SEO reports.
 ---
 
 # Performance report
