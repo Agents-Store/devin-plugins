@@ -1,0 +1,14 @@
+[
+  {"query": "python3 ads/tools/ads.py google search fails with CLOUD_PROJECT_NOT_APPROVED_FOR_PRODUCTION. The keys are in ads/.env and doctor says configured. What is wrong?", "should_trigger": true},
+  {"query": "launch apply stopped at the adset step with 'Meta error 100/1885272'. The campaign was already created. What now, will rerunning it duplicate the campaign?", "should_trigger": true},
+  {"query": "my tiktok ad got rejected after activation, the status says AD_STATUS_AUDIT_DENY. how do i find out why and fix it", "should_trigger": true},
+  {"query": "Команда ads.py doctor --live пишет rejected для Apify, хотя токен я только что вставил в ads/.env. Что не так и как починить?", "should_trigger": true},
+  {"query": "не подключается mcp сервер meta-ads из рекламного плагина, в /mcp пишет failed, остальные серверы работают", "should_trigger": true},
+  {"query": "Image generation worked yesterday. Today `ads.py image` says the model was not found. Did the provider remove it, and how do I get it working again?", "should_trigger": true},
+  {"query": "Where do I get a Firecrawl API key and where do I put it?", "should_trigger": false},
+  {"query": "My Next.js build fails with a hydration error on the pricing page.", "should_trigger": false},
+  {"query": "Why is our cost per lead so high this week?", "should_trigger": false},
+  {"query": "Create the campaign in Google Ads from the plan file.", "should_trigger": false},
+  {"query": "Write ad texts for our weight-loss product that will not get rejected.", "should_trigger": false},
+  {"query": "Почему в ноябре упал трафик из поиска на сайт?", "should_trigger": false}
+]

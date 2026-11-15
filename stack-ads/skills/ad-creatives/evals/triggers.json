@@ -1,0 +1,14 @@
+[
+  {"query": "Generate the visuals for the Meta trial campaign: one 4:5 and one 9:16 image per angle (outcome, pain, offer), brand colours from ads/brand.json, no text inside the image.", "should_trigger": true},
+  {"query": "Make an 8 second vertical video ad for TikTok from our product photo ads/brand/bottle.png, bike on gravel at golden hour, and tell me what it will cost before you generate it.", "should_trigger": true},
+  {"query": "resize this banner for stories and for the google 1200x628 landscape slot and keep the product centered: ads/creatives/hero.png", "should_trigger": true},
+  {"query": "Сгенерируй креативы для рекламы: баннеры 1:1 и 9:16 с нашей бутылкой и короткое видео для рилс. Ключи Gemini и fal уже лежат в ads/.env.", "should_trigger": true},
+  {"query": "нужна озвучка на русском для рекламного ролика на 15 секунд и фоновая музыка без вокала, сделай файлы", "should_trigger": true},
+  {"query": "Remove the background from ads/brand/product.jpg and put the product on a clean studio backdrop for a carousel ad. Use whatever fal model fits.", "should_trigger": true},
+  {"query": "Write headlines and primary texts to go with these ad images.", "should_trigger": false},
+  {"query": "Upload hero.png to the Meta ad account and create the ad with it.", "should_trigger": false},
+  {"query": "Design a new logo for our company, three concepts in vector format.", "should_trigger": false},
+  {"query": "Analyse which of our ad creatives had the best click rate this month.", "should_trigger": false},
+  {"query": "Describe what kind of images our competitors use in their Meta ads.", "should_trigger": false},
+  {"query": "Сверстай hero-блок на сайте: баннер с картинкой, заголовком и кнопкой на Tailwind.", "should_trigger": false}
+]

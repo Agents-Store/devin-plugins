@@ -1,0 +1,14 @@
+[
+  {"query": "Advertise this project. We have never run ads: figure out what we sell, who to target, make the creatives and get campaigns ready on Google and Meta. Budget 1,500 EUR a month.", "should_trigger": true},
+  {"query": "Take our new landing page https://example.com/de from zero to running ads end to end: brief, research, plan, copy, images, launch. Stop where you need my OK.", "should_trigger": true},
+  {"query": "we want ads for the bottle shop live by friday on meta + tiktok, starting from nothing. do the whole thing and tell me what you need from me", "should_trigger": true},
+  {"query": "Запусти рекламу этого проекта с нуля: разберись в продукте, собери таргетинг, сделай креативы и запусти кампании в Google Ads и Meta. Бюджет 100 тысяч в месяц.", "should_trigger": true},
+  {"query": "нужно всё под ключ: от исследования конкурентов до запущенной рекламы в тиктоке, проект лежит в этой папке", "should_trigger": true},
+  {"query": "Continue yesterday's ad campaign work: check the campaign checklist in ads/plan and pick up at the next open stage.", "should_trigger": true},
+  {"query": "Run the dry run for ads/launch/de_search.json.", "should_trigger": false},
+  {"query": "Write ad copy for the Google campaign.", "should_trigger": false},
+  {"query": "Set up the ads workspace and get the Google keys.", "should_trigger": false},
+  {"query": "Build the whole onboarding feature end to end: API, UI and tests.", "should_trigger": false},
+  {"query": "Make the weekly ads report.", "should_trigger": false},
+  {"query": "Составь только медиаплан на месяц, без запуска кампаний.", "should_trigger": false}
+]

@@ -11,7 +11,7 @@ git clone <this-repo>
 cp -r agents-store-devin-plugins/<plugin-name> ~/.devin/plugins/<plugin-name>
 ```
 
-## Плагины (44)
+## Плагины (45)
 
 | Плагин | Описание | Skills | Agents | Commands | MCP |
 |---|---|---|---|---|---|
@@ -48,6 +48,7 @@ cp -r agents-store-devin-plugins/<plugin-name> ~/.devin/plugins/<plugin-name>
 | [seo-dev](./seo-dev) | SEO development plugin for Agents Store. Technical SEO, structured data (JSON-LD), metadata API, Core Web Vitals, sitemaps, and content optimization patterns fo | 10 | 1 | 1 | — |
 | [session-doctor-dev](./session-doctor-dev) | Read-only audit of a Claude Code session: where it runs, what context it loaded, which model and effort it used, the skills it invoked, every HTTP request with  | 2 | 0 | 0 | — |
 | [sqlalchemy-dev](./sqlalchemy-dev) | SQLAlchemy dev plugin for Agents Store. Typed SQLAlchemy 2.0 style (Mapped, mapped_column, select) with a SQLAlchemy 2.1 section: model definition patterns, rel | 6 | 1 | 0 | — |
+| [stack-ads](./stack-ads) | Paid advertising stack for any project. Researches the product and its market, derives targeting, writes ad copy, generates images, video and voice-over, launch | 11 | 1 | 0 | ✓ |
 | [stack-composable-stack-v1](./stack-composable-stack-v1) | Composable Stack v1 architecture plugin. How PostgreSQL (direct MCP + PostgREST API), NocoDB, n8n, Trigger.dev, and NocoBase (prod + dev sandbox) fit together f | 7 | 1 | 0 | ✓ |
 | [stack-directus-nextjs](./stack-directus-nextjs) | Directus + Next.js architecture plugin. How Directus (content, files, access) and a Next.js App Router frontend fit together: who holds the token, how the cache | 6 | 1 | 0 | ✓ |
 | [stack-directus-nextjs-trigger](./stack-directus-nextjs-trigger) | Directus + Next.js + Trigger.dev architecture plugin. How Directus (content, files, access), a Next.js App Router frontend and self-hosted Trigger.dev (durable  | 8 | 1 | 0 | ✓ |

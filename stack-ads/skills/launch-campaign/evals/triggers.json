@@ -1,0 +1,16 @@
+[
+  {"query": "Launch the Google Search campaign from the approved media plan: build the plan file, run the dry run and show me what would be created. Don't spend anything yet.", "should_trigger": true},
+  {"query": "Create the Meta campaign for the trial offer in our ad account, paused, with the images from ads/creatives and the texts from ads/plan/copy/meta.json.", "should_trigger": true},
+  {"query": "ok the paused campaign looks right in ads manager. activate de_meta_trial_202612, 20 eur a day", "should_trigger": true},
+  {"query": "Запусти рекламную кампанию в TikTok по утверждённому плану: сначала dry run, покажи что создастся, потом создай всё на паузе.", "should_trigger": true},
+  {"query": "поставь на паузу всё, что мы создали в гугл адс по плану de_search_solution_202612, и откати, если понадобится", "should_trigger": true},
+  {"query": "Add these three negative keywords to the running search campaign and raise its daily budget from 28 to 32 EUR. Validate first.", "should_trigger": true},
+  {"query": "Advertise this project from scratch: research, creatives, launch, everything.", "should_trigger": false},
+  {"query": "Launch the new version of the app to production on Vercel and run the smoke tests.", "should_trigger": false},
+  {"query": "How is the campaign we launched last week doing?", "should_trigger": false},
+  {"query": "launch apply failed at the adset step with Meta error 100 subcode 1885272, what does that mean?", "should_trigger": false},
+  {"query": "Plan which campaigns to run in December and their budgets.", "should_trigger": false},
+  {"query": "Подготовь тексты и картинки для кампании в Meta, запускать пока не надо.", "should_trigger": false},
+  {"query": "Should we raise the budget of the search campaign, going by last week's numbers?", "should_trigger": false},
+  {"query": "How much budget should we put into TikTok next month?", "should_trigger": false}
+]

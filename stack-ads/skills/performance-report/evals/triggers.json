@@ -1,0 +1,14 @@
+[
+  {"query": "How are the ads performing? Pull last week for Google and Meta, compare against our 15 EUR per trial target and tell me what to change.", "should_trigger": true},
+  {"query": "Make the weekly ads report: spend, clicks, conversions and cost per result by campaign for 1 to 7 December against the week before, saved to ads/reports.", "should_trigger": true},
+  {"query": "why is the cost per lead on meta so high this week? 3 ad sets, 400 eur spent, 6 leads. which one should we pause", "should_trigger": true},
+  {"query": "Сделай отчёт по рекламе за неделю: сколько потратили в Google, Meta и TikTok, сколько заявок и по какой цене, и что из этого отключить.", "should_trigger": true},
+  {"query": "сравни гугл и мету по стоимости заявки за ноябрь, только честно, с учётом того что у меты своя атрибуция", "should_trigger": true},
+  {"query": "Which search terms wasted money in the Google campaign over the last 30 days? I want the list with cost and zero conversions.", "should_trigger": true},
+  {"query": "Pause the ad set 'de_18-65' in Meta right now.", "should_trigger": false},
+  {"query": "Analyse our organic traffic in Search Console for the last 3 months and list the pages losing clicks.", "should_trigger": false},
+  {"query": "Estimate what a click will cost before we launch the search campaign.", "should_trigger": false},
+  {"query": "Write the monthly sales report from the Stripe export: revenue by plan and churn.", "should_trigger": false},
+  {"query": "The Meta insights call returns error 100 with subcode 1487534. What is wrong?", "should_trigger": false},
+  {"query": "Спланируй бюджет на рекламу на следующий месяц исходя из 200 тысяч рублей.", "should_trigger": false}
+]

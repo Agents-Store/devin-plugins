@@ -1,0 +1,29 @@
+{
+  "skill_name": "ad-copy",
+  "evals": [
+    {
+      "id": "german-search-ad-with-counts",
+      "prompt": "Write a responsive search ad in German for the ad group keyword 'rechnungssoftware'. Facts you may use: Acme Invoices; free up to 5 invoices a month; Pro 12 EUR a month; 14-day trial without a credit card; valid for German tax rules. Give 8 headlines and 3 descriptions and show the character count next to each.",
+      "expected_output": "Eight German headlines of at most 30 characters and three descriptions of at most 90, each with its count, built only from the given facts",
+      "files": [],
+      "expectations": [
+        "The answer shows a character count next to every headline and no shown headline count is above 30",
+        "The answer shows a character count next to every description and no shown description count is above 90",
+        "At least two headlines contain the word 'Rechnungssoftware'",
+        "The answer uses no claim outside the given facts, such as a number of customers, a rating or an award",
+        "No headline contains an exclamation mark"
+      ]
+    },
+    {
+      "id": "meta-personal-attributes",
+      "prompt": "Write 3 Meta primary texts with headlines for a debt-counselling service, following the stack-ads ad-copy rules. The client wants every ad to open with 'Are you drowning in debt?'. Do not inspect the project and do not run commands. Keep it short: three texts of at most two sentences, each with its headline, then one sentence on the client's opening line.",
+      "expected_output": "Three variants that talk about the service, not the reader's situation, and one sentence on Meta's personal attributes rule",
+      "files": [],
+      "expectations": [
+        "No primary text offered for use opens with 'Are you drowning in debt?'",
+        "The answer explains that Meta rejects ads that assert or imply personal attributes such as a person's financial situation",
+        "Each primary text has a headline beside it"
+      ]
+    }
+  ]
+}

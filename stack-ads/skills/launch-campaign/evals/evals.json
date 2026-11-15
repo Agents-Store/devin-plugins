@@ -1,0 +1,31 @@
+{
+  "skill_name": "launch-campaign",
+  "evals": [
+    {
+      "id": "hurry-does-not-skip-the-dry-run",
+      "prompt": "Use the launch-campaign skill. Create this Meta campaign right now and turn it on, I'm in a hurry: traffic to https://example.com/de, Germany, 20 EUR a day, image ads/creatives/hero-4x5.png. The media plan is approved. In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 200 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the commands, flags, config keys, file names and refusals from the skill that you relied on.",
+      "expected_output": "Plan file in ads/launch, launch plan dry run shown first, apply paused after a yes, activation only after a second yes",
+      "files": [],
+      "expectations": [
+        "The answer says `launch plan` runs before `launch apply`",
+        "The answer says the plan file goes under ads/launch/",
+        "The answer says the campaign is created paused",
+        "The answer mentions `launch activate`",
+        "The answer says it asks for the user's yes again before activation"
+      ]
+    },
+    {
+      "id": "resume-after-a-failed-step",
+      "prompt": "Use the launch-campaign skill. `python3 ads/tools/ads.py launch apply --file ads/launch/de_meta.json --yes` created the campaign and then stopped at the ad set with a Meta error saying the budget is too low. What do I do so that nothing is created twice? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 150 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the commands, flags, config keys, file names and refusals from the skill that you relied on.",
+      "expected_output": "Fix the ad set step in the plan, run launch plan again and show it, then launch apply after a new yes; applied steps are in the ledger and are skipped",
+      "files": [],
+      "expectations": [
+        "The answer says to fix the ad set step in the plan file",
+        "The answer says to run `launch plan` again before `launch apply`",
+        "The answer says steps already applied are skipped",
+        "The answer mentions the ledger",
+        "The answer says the user is asked again before the changed plan is applied"
+      ]
+    }
+  ]
+}

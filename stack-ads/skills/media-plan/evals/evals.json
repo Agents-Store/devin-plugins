@@ -1,0 +1,31 @@
+{
+  "skill_name": "media-plan",
+  "evals": [
+    {
+      "id": "budget-too-thin-for-three-platforms",
+      "prompt": "Use the media-plan skill. Budget 600 EUR a month, target cost per purchase 25 EUR, a reusable bottle sold online in Germany. The client wants Google Search, Meta with three ad sets and TikTok at the same time, each optimised for purchases. Is that a sound plan, and what do you check before you write it down? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 200 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the commands, flags, config keys, file names and refusals from the skill that you relied on.",
+      "expected_output": "About 20 EUR a day buys five or six purchases a week against a learning volume of about 50 events per ad set; start on one platform, an earlier event or fewer ad sets; check the ceiling",
+      "files": [],
+      "expectations": [
+        "The answer says the budget buys about 5 or 6 purchases a week",
+        "The answer names about 50 optimisation events a week per ad set as the learning volume",
+        "The answer says to start on one platform, at most two",
+        "The answer says to optimise for an earlier, more frequent event or to cut the number of ad sets",
+        "The answer mentions guardrails.max_daily_budget"
+      ]
+    },
+    {
+      "id": "compliance-for-loans",
+      "prompt": "Use the media-plan skill. We want to advertise consumer loans to people in Germany on Meta. What does the compliance gate of the plan have to settle before launch? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 150 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the commands, flags, config keys, file names and refusals from the skill that you relied on.",
+      "expected_output": "The special ad category with its targeting limits, the legal names of advertiser and payer for EU delivery, provable claims",
+      "files": [],
+      "expectations": [
+        "The answer says to declare the special ad category on Meta",
+        "The answer says the category limits targeting",
+        "The answer says Meta needs the legal name of the advertiser for EU delivery",
+        "The answer says Meta needs the legal name of the payer for EU delivery",
+        "The answer says claims in the copy must be provable on the landing page"
+      ]
+    }
+  ]
+}

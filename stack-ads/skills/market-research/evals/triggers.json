@@ -1,0 +1,16 @@
+[
+  {"query": "What are our competitors advertising right now? Check the Meta Ad Library for the three invoicing tools we compete with in Germany and tell me which angles they push.", "should_trigger": true},
+  {"query": "I need keyword research for a Google Search campaign. Seeds: 'rechnungssoftware' and 'rechnung schreiben programm', markets DE and AT. Volumes, CPC range, and group them into ad groups with negatives.", "should_trigger": true},
+  {"query": "who should we target on Meta and TikTok for a reusable water bottle? find the interest ids and check how big the audience is in Germany", "should_trigger": true},
+  {"query": "Проведи разведку перед запуском рекламы: кто конкуренты, какие у них объявления и посадочные, по каким запросам они рекламируются в поиске и сколько стоит клик.", "should_trigger": true},
+  {"query": "собери семантику для рекламы в гугле по теме доставка воды в офис: частотность, цена клика, минус-слова, разбей по группам", "should_trigger": true},
+  {"query": "Pull our real search queries from Search Console for the last 90 days and use them as seeds to estimate what a click would cost us on Google Ads.", "should_trigger": true},
+  {"query": "Write the ad brief for this project from the repo and the website.", "should_trigger": false},
+  {"query": "Do an SEO audit of example.com: title tags, internal links, Core Web Vitals, and which pages lost rankings.", "should_trigger": false},
+  {"query": "Decide which platforms to use and how to split 2,000 EUR a month across them.", "should_trigger": false},
+  {"query": "Our Meta campaign has a cost per lead of 40 EUR. Which ad sets should we pause?", "should_trigger": false},
+  {"query": "Write 5 TikTok ad texts under 60 characters for the bottle.", "should_trigger": false},
+  {"query": "Сгенерируй баннеры 1:1 и 9:16 для рекламы бутылки в стиле нашего бренда.", "should_trigger": false},
+  {"query": "Who is our target audience? Describe the customer segments and their pains for the ads brief, from the README and the site.", "should_trigger": false},
+  {"query": "Which blog keywords should we rank for organically? Estimate search volume and keyword difficulty for content planning.", "should_trigger": false}
+]

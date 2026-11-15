@@ -1,0 +1,18 @@
+{
+  "skill_name": "product-brief",
+  "evals": [
+    {
+      "id": "sources-and-unverified-claims",
+      "prompt": "Use the product-brief skill. I have these facts for the brief. Pricing page: free up to 5 invoices a month, Pro 12 EUR a month with a 14-day trial. A case study on the site: the studio Nord gets paid 9 days faster. And I heard somewhere that we have over 10,000 happy customers. Which file do you write, how do you show where each fact comes from, and what do you do with the customer number? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 150 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the commands, flags, config keys, file names and refusals from the skill that you relied on.",
+      "expected_output": "ads/brief.md; every fact carries its source in brackets; the customer number is an open question until a source is found",
+      "files": [],
+      "expectations": [
+        "The answer names ads/brief.md as the file",
+        "The answer says each fact carries its source",
+        "The answer says the source is written in brackets after the fact",
+        "The answer does not accept 'over 10,000 happy customers' as a fact",
+        "The answer says the customer number is written as an assumption or listed under open questions"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[
+  {"query": "We have 1,500 EUR a month for ads and want trial sign-ups at 15 EUR or less. Which platforms should we use and how do we split the budget? Give me a plan I can approve.", "should_trigger": true},
+  {"query": "Build the media plan from ads/brief.md and the research: campaigns, objectives, daily budgets, structure, UTM tags, and what tracking has to be in place before launch.", "should_trigger": true},
+  {"query": "update ads/plan/media-plan.md: we only have 20 eur/day for meta and a purchase costs about 25. redo the structure and the budget split so the campaign can still leave the learning phase", "should_trigger": true},
+  {"query": "Составь медиаплан на декабрь: какие площадки берём, сколько денег на каждую в день, какая структура кампаний и что по трекингу надо доделать до запуска.", "should_trigger": true},
+  {"query": "как распределить 100 тысяч рублей в месяц между гуглом, метой и тиктоком для интернет-магазина? нужно обоснование, а не поровну", "should_trigger": true},
+  {"query": "We sell consumer loans in Germany. Add the compliance part to our media plan for Meta and TikTok: special ad categories, the EU transparency fields, and what they do to our targeting.", "should_trigger": true},
+  {"query": "Create the campaign from the approved media plan in Google Ads, paused.", "should_trigger": false},
+  {"query": "Find CPC and search volume for these 40 keywords in Germany.", "should_trigger": false},
+  {"query": "Plan next week's sprint: split the backlog between the three developers and estimate the load.", "should_trigger": false},
+  {"query": "Make an ads report for last week and tell me where to shift budget.", "should_trigger": false},
+  {"query": "Write the headlines for the campaigns listed in the media plan.", "should_trigger": false},
+  {"query": "Составь контент-план для инстаграма на месяц: темы постов и рилсов по неделям.", "should_trigger": false}
+]

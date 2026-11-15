@@ -1,0 +1,14 @@
+[
+  {"query": "I just installed the stack-ads plugin in the repo of our shop at https://example.com. Nothing is configured yet. Set up the ads workspace and tell me which API keys I need for Google Ads and Meta and where to get each one.", "should_trigger": true},
+  {"query": "where do I get the DataForSEO login and password the ads tooling keeps asking for? i only have my account password, is that the same thing? walk me through it step by step", "should_trigger": true},
+  {"query": "We want to start advertising this project. First connect Google Ads and Google Search Console: I have a normal Google Ads account but never touched the API. What do I have to create in Google Cloud and which values end up where?", "should_trigger": true},
+  {"query": "Подключи рекламные кабинеты к этому проекту: Google Ads, Meta и TikTok. Ключей пока нет никаких, подскажи по шагам, где что получить и куда вписать.", "should_trigger": true},
+  {"query": "как получить токен Meta для рекламы через API? нужен system user или обычный токен? и какой id кабинета вписывать, с act_ или без", "should_trigger": true},
+  {"query": "The Gemini and fal keys are already in ads/.env. Now set the daily budget ceiling for the ads workspace to 40 EUR and pick the image and video models we will use by default.", "should_trigger": true},
+  {"query": "The Google Ads call fails with invalid_grant since this morning, it worked last week. What happened to my refresh token?", "should_trigger": false},
+  {"query": "Write me 15 headlines and 4 descriptions for a Google Search ad for our invoicing tool, German market, from the brief.", "should_trigger": false},
+  {"query": "All keys are set. Research what our competitors run in the Meta Ad Library for 'project management software' in Germany.", "should_trigger": false},
+  {"query": "Set up a new Next.js project with Tailwind and add an .env.example with the Stripe and Postgres keys we need.", "should_trigger": false},
+  {"query": "Create the campaign in Meta from ads/launch/de_meta_trial.json, run the dry run first and show me the result.", "should_trigger": false},
+  {"query": "Сделай отчёт по рекламе за прошлую неделю: сколько потратили в Google и Meta и сколько стоила заявка.", "should_trigger": false}
+]

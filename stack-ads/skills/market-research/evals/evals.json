@@ -1,0 +1,17 @@
+{
+  "skill_name": "market-research",
+  "evals": [
+    {
+      "id": "research-plan-with-costs",
+      "prompt": "We sell invoicing software to freelancers in Germany. I have keys for Firecrawl, DataForSEO, Google Ads, Search Console and Meta, and no Apify token. Plan the competitor and keyword research with the stack-ads toolkit. Do not inspect the project and do not run commands. Answer with at most 7 numbered lines, in the order you would go: one toolkit command or one question to me per line.",
+      "expected_output": "A short ordered list: a research budget question before paid calls, the Meta Ad Library, Search Console as seeds, a keyword data step",
+      "files": [],
+      "expectations": [
+        "The answer includes a `meta ad-library` command with a `--countries` value",
+        "The answer includes a keyword step that uses `dataforseo post` or `google keyword-ideas`",
+        "The answer uses Search Console (`gsc query`) as a source of seed queries",
+        "The answer states the cost of the paid calls or asks to agree a research budget before the first paid call"
+      ]
+    }
+  ]
+}

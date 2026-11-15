@@ -1,0 +1,31 @@
+{
+  "skill_name": "init-project",
+  "evals": [
+    {
+      "id": "google-key-walkthrough",
+      "prompt": "Use the init-project skill. I want to connect my Google Ads account for this project. I have a normal Google Ads account and nothing else. Which variables do I need, and how do I finish the sign-in and verify it? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 200 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the commands, flags, config keys, file names and refusals from the skill that you relied on.",
+      "expected_output": "The Google variables for ads/.env, the google login command and a doctor check; no developer token",
+      "files": [],
+      "expectations": [
+        "The answer says no developer token is needed",
+        "The answer names GOOGLE_ADS_CLIENT_ID",
+        "The answer names GOOGLE_ADS_REFRESH_TOKEN",
+        "The answer names GOOGLE_ADS_CUSTOMER_ID",
+        "The answer mentions the command `google login`",
+        "The answer mentions `doctor --live` as the check"
+      ]
+    },
+    {
+      "id": "which-keys-for-meta-only",
+      "prompt": "We only want to run Meta ads with a few generated images, and we have no research budget. Which keys does the stack-ads plugin need for that and which can I skip? Do not run anything.",
+      "expected_output": "The three Meta variables and one creative key are needed; research, Google and TikTok keys can be skipped",
+      "files": [],
+      "expectations": [
+        "The answer lists META_ACCESS_TOKEN, META_AD_ACCOUNT_ID and META_PAGE_ID as needed",
+        "The answer says one creative key is enough and names at least one of GEMINI_API_KEY, OPENAI_API_KEY or FAL_KEY",
+        "The answer says the Firecrawl, Apify and DataForSEO keys can be skipped",
+        "The answer says META_AD_ACCOUNT_ID is written as digits without the act_ prefix"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[
+  {"query": "Before we advertise anything: read this repo and our site https://example.com and write up what we sell, who buys it and why, so the ad work has something to stand on.", "should_trigger": true},
+  {"query": "Extract our brand kit for ads from the landing page at https://example.com: colours, fonts, logo, tone of voice. Save it where the ads tooling expects it.", "should_trigger": true},
+  {"query": "for the ad brief: who exactly is the target audience for this product? go through the README, the pricing page and the testimonials and write the segments with their pains and objections into the brief", "should_trigger": true},
+  {"query": "Составь бриф для рекламы по этому проекту: что за продукт, оффер, целевая аудитория, чем отличаемся от конкурентов и какое событие считаем конверсией.", "should_trigger": true},
+  {"query": "опиши продукт для рекламы на основе кода и сайта example.com, нужен файл ads/brief.md: фактура с источниками, без воды и выдуманных цифр", "should_trigger": true},
+  {"query": "Update the ads brief: pricing changed to 12 EUR a month with a 14-day trial and Austria is a new market. Also check whether our purchase pixel still fires on Meta.", "should_trigger": true},
+  {"query": "Find the keywords our competitors bid on and their CPC in Germany for invoicing software.", "should_trigger": false},
+  {"query": "Write a product requirements document for the new recurring-invoices feature with user stories and acceptance criteria.", "should_trigger": false},
+  {"query": "Write three primary texts and headlines for a Facebook ad about our 14-day trial.", "should_trigger": false},
+  {"query": "Generate a hero image for our ads in our brand colours, 4:5, product in the middle.", "should_trigger": false},
+  {"query": "How should we split 1,500 EUR between Google and Meta next month?", "should_trigger": false},
+  {"query": "Напиши README для этого репозитория: что за продукт, как установить и как запускать локально.", "should_trigger": false}
+]

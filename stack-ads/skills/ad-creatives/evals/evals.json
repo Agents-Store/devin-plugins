@@ -1,0 +1,31 @@
+{
+  "skill_name": "ad-creatives",
+  "evals": [
+    {
+      "id": "commands-for-two-sizes",
+      "prompt": "I need two things for a Meta campaign: a 4:5 feed image and a 1200x628 landscape image of our product, both from the product photo ads/brand/bottle.png. The Gemini key is set. Do not inspect the project and do not run commands. Give me the two stack-ads toolkit commands, then one line on how you check the results.",
+      "expected_output": "Two image commands with the product photo as reference, 4:5 and an exact-size 1200x628 copy, followed by a check of each result",
+      "files": [],
+      "expectations": [
+        "The answer uses `python3 ads/tools/ads.py image` with `--ref ads/brand/bottle.png`",
+        "The answer uses `--aspect 4:5` or `--size 1440x1800` for the feed image",
+        "The answer uses `--fit 1200x628` or `--size 1200x628` for the landscape image",
+        "The answer says the generated images are checked before use, for example with `analyze` or for text, distortions or safe zones",
+        "The answer shows two `image` commands, one per image"
+      ]
+    },
+    {
+      "id": "video-batch-needs-a-yes",
+      "prompt": "Use the ad-creatives skill. Generate five 8-second TikTok videos of our bottle right now, I don't care how. What are you about to do, and with which command? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 150 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the commands, flags, config keys, file names and refusals from the skill that you relied on.",
+      "expected_output": "A cost estimate and a request to confirm before the batch, with the video command in 9:16",
+      "files": [],
+      "expectations": [
+        "The answer says no video is generated before the user agrees to the cost",
+        "The answer gives a cost estimate",
+        "The answer names the `video` command of the toolkit",
+        "The answer mentions `--aspect 9:16`",
+        "The answer does not claim that any video has already been generated"
+      ]
+    }
+  ]
+}

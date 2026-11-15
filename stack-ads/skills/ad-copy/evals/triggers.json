@@ -1,0 +1,14 @@
+[
+  {"query": "Write the responsive search ad for the ad group 'rechnungssoftware': 15 headlines of max 30 characters and 4 descriptions of max 90, in German, from ads/brief.md. Count the characters.", "should_trigger": true},
+  {"query": "I need 5 primary text and headline variants for Meta ads about our 14-day free trial. Different angles, hook in the first 40 characters, and the call-to-action value for each.", "should_trigger": true},
+  {"query": "tiktok ad texts for the bottle pls, 5 options under 60 chars, casual tone, plus which CTA button to pick", "should_trigger": true},
+  {"query": "Напиши тексты объявлений для Google и Meta по нашему брифу: заголовки, описания, быстрые ссылки. На русском, с подсчётом символов и без выдуманных цифр.", "should_trigger": true},
+  {"query": "нужно ещё 10 вариантов заголовков до 30 символов для поисковой рекламы доставки воды, чтобы ключ был минимум в трёх", "should_trigger": true},
+  {"query": "Adapt our English Meta ad copy for the DE and FR campaigns: native wording, the same three angles, still inside the character limits of each placement.", "should_trigger": true},
+  {"query": "Generate 4:5 and 9:16 images for the trial campaign.", "should_trigger": false},
+  {"query": "Write a 1,200 word SEO blog post about why freelancers get paid late.", "should_trigger": false},
+  {"query": "Create the Meta campaign with these texts in our ad account, paused.", "should_trigger": false},
+  {"query": "Generate a German voice-over audio file from this script: 'Rechnung raus, Geld da.'", "should_trigger": false},
+  {"query": "Which angle performed best last week across our Meta ads? Compare click rate and cost per trial by ad.", "should_trigger": false},
+  {"query": "Напиши текст для лендинга: первый экран, блок преимуществ и блок с ценами.", "should_trigger": false}
+]
