@@ -36,7 +36,8 @@ def login_url(ctx, port=8080, scopes="ads,gsc"):
         "response_type": "code",
         "scope": " ".join(SCOPES[s] for s in names),
         "access_type": "offline",
-        "prompt": "consent",
+        # select_account: the login that owns the ad account is often not the one the browser is signed in with
+        "prompt": "select_account consent",
     }
     return AUTH_URL + "?" + urllib.parse.urlencode(query)
 
@@ -175,6 +176,11 @@ def _ads_call(ctx, method, url, body=None):
             hint = "the Cloud project has Test access only: apply for Explorer on the Google Ads API overview page"
         elif "USER_PERMISSION_DENIED" in text:
             hint = "set GOOGLE_ADS_LOGIN_CUSTOMER_ID to the manager account, or grant this user access to the account"
+        elif "NOT_ADS_USER" in text:
+            hint = ("this Google login has no Google Ads account: run google login again and pick the login that opens "
+                    "the account at ads.google.com (it need not be the login that owns the Cloud project)")
+        elif "explorer access" in text.lower():
+            hint = "this method needs Basic access: apply for it on the Google Ads API overview page (keys guide, step 2)"
         raise AdsError("Google Ads refused the request:\n  " + "\n  ".join(lines), hint)
 
 

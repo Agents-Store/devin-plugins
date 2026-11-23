@@ -43,6 +43,10 @@ Authorize in Claude Code:
 3. Choose Authenticate; sign in to TikTok for Business in the browser and confirm the consent screen.
 4. Back in `/mcp` the server shows as connected. Repeat every 30 days.
 
+On a remote or headless machine the browser ends on a `localhost` address that does not load. That is expected: copy the whole address from the address bar and hand it to the client. `claude mcp login --no-browser tiktok-ads`, run in a terminal of your own, prints the sign-in link and takes the pasted address. The link is good for 5 minutes, so open it only when you can finish in one go.
+
+Ads on TikTok placement need a TikTok account linked to the ad account. When `identity_get` lists only a `CUSTOMIZED_USER` identity, link one first: the TikTok launch reference of the `launch-campaign` skill, section 2, has the two steps (`tiktok_identity_connect_ui`, then `bc_asset_advertiser_assign`).
+
 If the account has no ad account yet, create one first (Route 2, step 2). If tools are missing for an account type or region, availability can vary; use the toolkit instead. Whether MCP write operations are limited for some account types is unknown (unverified).
 
 ## Route 2: developer app for the toolkit
@@ -146,6 +150,7 @@ Docs: `https://business-api.tiktok.com/portal/docs/return-codes-appendix/v1.3`
 
 | Code | Meaning | Fix |
 |---|---|---|
+| "Invalid Developer Status" on **Create an App** (portal message, no code) | the developer registration of step 3 is not approved yet | wait for the approval (up to 3 business days), then create the app |
 | 40101 | app id or secret wrong, or bad `auth_code` | recheck My Apps > Basic Information; redo authorization |
 | 40102 | access token expired | authorize again and rerun `oauth-exchange --write` |
 | 40104 | access token empty | `TIKTOK_ACCESS_TOKEN` missing; run `oauth-exchange --write` |

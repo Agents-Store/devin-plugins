@@ -206,7 +206,7 @@ The plugin's MCP servers and the `meta` command-line tool can also write to ad a
 | Route | Can do | Starts spend through |
 |---|---|---|
 | `google-ads` server | reads, asset creation, video upload; it cannot create campaigns | nothing |
-| `meta-ads` server | creates paused campaigns, ad sets, creatives and ads | `ads_activate_entity`, `ads_boost_ig_post`, and `ads_update_entity` when it sets a status |
+| `meta-ads` server | creates campaigns, ad sets, creatives and ads; a new campaign arrives as a draft that would publish as active, so set it paused first | `ads_activate_entity`, `ads_boost_ig_post`, `ads_update_entity` when it sets a status, and publishing a draft that was not set paused |
 | `tiktok-ads` server | Smart+, manual flow, uploads | its status-update tools and any create without `DISABLE` |
 | `meta ads` command-line tool | creates paused objects, uploads media itself, has `validate_only` | `--status ACTIVE` on an update |
 

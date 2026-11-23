@@ -96,6 +96,14 @@ def apify_actor(ctx, actor):
     return out
 
 
+def run_cost(run):
+    """What a finished run cost. Apify fills usageTotalUsd a moment after the run ends; the charged events are there at once."""
+    prices = ((run.get("pricingInfo") or {}).get("pricingPerEvent") or {}).get("actorChargeEvents") or {}
+    charged = sum((count or 0) * ((prices.get(event) or {}).get("eventPriceUsd") or 0)
+                  for event, count in (run.get("chargedEventCounts") or {}).items())
+    return max(run.get("usageTotalUsd") or 0, round(charged, 6))
+
+
 def apify_run(ctx, actor, payload, max_usd=None, max_items=None, timeout=900):
     """Start an Actor with a spend cap, wait for it and return the dataset items."""
     if max_usd is None:
@@ -120,7 +128,7 @@ def apify_run(ctx, actor, payload, max_usd=None, max_items=None, timeout=900):
     resp = request("GET", join_url(APIFY_ROOT, "datasets", run["defaultDatasetId"], "items"),
                    headers={"Authorization": "Bearer " + ctx.key("APIFY_TOKEN")}, params=params, timeout=300)
     items = resp.json()
-    return {"run_id": run.get("id"), "usage_usd": run.get("usageTotalUsd"), "items": items}
+    return {"run_id": run.get("id"), "usage_usd": run_cost(run), "items": items}
 
 
 def check_apify(ctx):

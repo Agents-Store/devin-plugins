@@ -144,10 +144,11 @@ The plugin declares it as the `meta-ads` server (URL `https://mcp.facebook.com/a
 
 Check it after `python3 ads/tools/ads.py env sync-claude` and a restart of the session: `/mcp` shows whether `meta-ads` connected and lists its tools. Do not test the token with a hand-written `curl`: a token on a command line is visible to other processes and ends up in the transcript.
 
-- Rollout is phased and the beta or GA status is not stated on Meta's pages. Third-party reports say some accounts get `is_ads_mcp_enabled: false` (unverified). Not enabled looks like: the sign-in works but tools are missing or calls are refused for the account, or the response carries that flag.
+- Meta opens the server account by account, and the beta or GA status is not stated on its pages. `ads_get_ad_accounts` returns `is_ads_mcp_enabled` for every ad account, with `account_status` and `is_queryable`: read them first. Not enabled looks like: the sign-in works but tools are missing or calls are refused for the account.
 - Then use the toolkit's `meta` commands instead; every operation in this plugin works without the MCP server.
-- No image or video upload tool is listed: upload with `meta upload-image` and `meta upload-video`.
-- Lifecycle tools create paused objects; `ads_activate_entity` starts spend, so ask the user first.
+- The live tool list has upload tools; this plugin has not exercised them, so upload with `meta upload-image` and `meta upload-video`.
+- `ads_create_campaign` creates a draft that would publish as active: set it paused before it is published (Meta launch reference of the `launch-campaign` skill, section 6). `ads_activate_entity` starts spend, so ask the user first.
+- On a remote or headless machine the OAuth sign-in ends on an address that does not load: run `claude mcp login --no-browser meta-ads-oauth` in a terminal of your own and paste that address there within 5 minutes. If it starts with `http://127.0.0.1`, write `localhost` in its place.
 
 ## First-day errors
 
@@ -155,6 +156,8 @@ Rely on the code, not the text. Docs: `https://developers.facebook.com/documenta
 
 | Code | Meaning | Fix |
 |---|---|---|
+| "Unable to create" when you add an ad account (no code) | the ad account creation limit of the business portfolio is used up: a new portfolio may create one ad account, three once a campaign has delivered and a payment was made, and a closed account keeps counting | read the limit under Business settings > Business info (`https://www.facebook.com/business/help/1253008271714847`). Ways on: ask for access to an ad account of another portfolio (Ad accounts > Assign partner), contact support from Business Support Home, or appeal a disabled account in Account Quality. Do not open a new portfolio to get around a disabled account: Meta treats that as evasion |
+| ad account `UNSETTLED`, `DISABLED` or `CLOSED` | unpaid balance, a policy restriction, or the account was closed | pay the balance in Billing, appeal in Account Quality, or reactivate the account; work in an `ACTIVE` account meanwhile |
 | 190 | token invalid or expired | regenerate the token; check it in the debugger; was the password changed? |
 | 200 | permission missing | scope not ticked or asset not assigned to the system user: redo steps 5 to 7 |
 | 200 / 1870034 | Custom Audience terms not accepted | a normal user accepts them once in Ads Manager |

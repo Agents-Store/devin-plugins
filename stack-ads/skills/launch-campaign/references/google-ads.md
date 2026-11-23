@@ -14,7 +14,7 @@ Exact request bodies and rules for creating a Google Ads campaign (Search, Perfo
 8. The official MCP server in a launch
 9. Limits and errors
 
-Only the Search body in section 2 is the official Google sample plus geo, keywords and an extra ad group field. Every other body here was composed from the v26 field definitions and never run against a live account. Run `launch plan` on each one and rely on the validation result, not on this text.
+Only the Search body in section 2 is the official Google sample plus geo, keywords and an extra ad group field; on 2026-11-23 it was validated, applied paused, read back and removed on a production account. Every other body here was composed from the v26 field definitions and never run against a live account. Run `launch plan` on each one and rely on the validation result, not on this text.
 
 ## 1. Before you build the plan
 

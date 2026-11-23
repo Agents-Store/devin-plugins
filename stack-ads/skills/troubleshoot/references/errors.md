@@ -40,12 +40,14 @@ Reference: `https://developers.google.com/google-ads/api/docs/get-started/common
 |---|---|---|
 | `CLOUD_PROJECT_NOT_APPROVED_FOR_PRODUCTION` (`ACTION_NOT_PERMITTED` in API v24 and earlier) | project has Test access, call targets a production account | use a test account, or apply for Explorer on the API Overview page of the project that owns the OAuth client |
 | `USER_PERMISSION_DENIED` | the user has no access to the account, usually a manager id is missing | set `GOOGLE_ADS_LOGIN_CUSTOMER_ID` (10 digits, no hyphens) in `ads/.env`; check `google customers` |
+| `NOT_ADS_USER` | the Google login that gave the consent has no Google Ads account; often it is the login that owns the Cloud project | `google login` again and pick the login that opens `ads.google.com`, or add this login to the account |
+| **Publish app** greyed out on the Audience page of the OAuth app | Branding lacks the application home page, the privacy policy link or the authorized domain | Google key guide, Step 3 |
 | `CUSTOMER_NOT_ENABLED` | sign-up unfinished, or account cancelled or deactivated | finish or reactivate in the Google Ads UI; read `customer.status` with `google search` |
 | `CUSTOMER_NOT_FOUND`; `CLIENT_CUSTOMER_ID_INVALID` | account just created; hyphens in the id | wait 5 minutes, retry every 30 s; digits only in `GOOGLE_ADS_CUSTOMER_ID` |
 | `invalid_grant` | refresh token expired or revoked; a consent screen in "Testing" expires tokens after 7 days | set the consent screen to "In production", then `google login` and `google login --redirect-url URL` |
 | `ACCESS_TOKEN_SCOPE_INSUFFICIENT`; `OAUTH_TOKEN_INVALID`; `GOOGLE_ACCOUNT_COOKIE_INVALID`; `NOT_ADS_USER` | token lacks the `adwords` scope, is wrong or expired, or the Google account has no Ads access | `google login --scopes ads`, finish with `--redirect-url`; invite the account in the Ads UI under Admin, Access and security |
 | consent ends without a usable refresh token (error text not in the notes) | refresh tokens for the Ads scope need a user who signs in with a passkey; a new passkey can carry a 7-day delay | create a passkey, or use a service account |
-| `google keyword-ideas` fails on Explorer access (error text not in the notes) | Explorer cannot call the KeywordPlan services | apply for Basic (needs OAuth brand verification: consent screen External, In production) |
+| `google keyword-ideas` fails on Explorer access: "This method is not allowed for use with explorer access" (`DEVELOPER_TOKEN_NOT_APPROVED`) | Explorer cannot call the KeywordPlan services | apply for Basic (needs OAuth brand verification: consent screen External, In production) |
 | `RESOURCE_EXHAUSTED` | daily operations over the level limit (Explorer 2,880 production, Basic 15,000, Standard unlimited; a rejected request still counts), or a 64 MB response | wait for the sliding 24 h window; apply for a higher level; select fewer fields |
 | `RESOURCE_TEMPORARILY_EXHAUSTED` | QPS limit per customer id and per project; Planning services allow 1 QPS | back off 2 s, 4 s, 8 s with jitter; fewer parallel calls |
 | `TOO_MANY_MUTATE_OPERATIONS`; `DEADLINE_EXCEEDED`, `INTERNAL_ERROR`, `TRANSIENT_ERROR` | over 10,000 operations in one request; oversize request or backend | split the request. A read: retry after about 30 s with backoff. A write: it may have been applied, so check what exists before repeating it (troubleshoot skill, step 5) |
@@ -92,6 +94,7 @@ Reference: `https://developers.facebook.com/documentation/ads-commerce/marketing
 
 | What you see | Cause | Fix |
 |---|---|---|
+| "Unable to create" when you add an ad account in Business settings | the ad account creation limit of the business portfolio is used up; a closed or disabled account keeps its place | Meta key guide, first-day errors |
 | 190 | invalid or expired token; a long-lived user token lasts about 60 days | system-user token with `ads_management`, `ads_read`, `pages_show_list`, `pages_read_engagement`, `pages_manage_ads`, `business_management` in `META_ACCESS_TOKEN` |
 | 200 | permission error: scope or asset missing | regenerate the token with those scopes; assign app, ad account, Page and pixel to the system user |
 | 200 / 1870034 | Custom Audience terms not accepted | accept them in the ad account as a regular user, not a system user |
@@ -128,6 +131,8 @@ Reference: `https://business-api.tiktok.com/portal/docs/return-codes-appendix/v1
 
 | What you see | Cause | Fix |
 |---|---|---|
+| "Invalid Developer Status" in the developer portal | the developer registration is not approved yet | wait for the approval (up to 3 business days), then create the app |
+| the identity list has no `TT_USER` and no `BC_AUTH_TT` entry | no TikTok account is linked to the ad account, so no ad can be built for TikTok placement | link one: TikTok launch reference, section 2 |
 | `40000`, `40002`, `40011` | invalid or incompatible parameters; too many ids in one request | read `message`, fix the field; batch (status updates take 1-20 ids) |
 | `40001`, `40125` | no permission for the operation; missing scopes | add the scope, or use the right `advertiser_id` |
 | `40007`, `40300`, `40301` | object or advertiser not found | check `TIKTOK_ADVERTISER_ID` and the ids in the call |
@@ -259,7 +264,10 @@ Run `/mcp` in the session to see which server shows "failed" or "needs authentic
 | "command not found: pipx" (Google Ads server) | pipx missing; the server starts as `pipx run`; Python 3.10 or later, 3.12 suggested | install pipx and Python 3.12 |
 | Google Ads server starts, every call fails | `GOOGLE_APPLICATION_CREDENTIALS` must hold the full path of a credentials file and `GOOGLE_CLOUD_PROJECT` the project id | `python3 ads/tools/ads.py google export-adc` writes the file and stores its path; set `GOOGLE_CLOUD_PROJECT` in `ads/.env`; then `env sync-claude` and restart |
 | `firecrawl` or `apify` answers 401 | the key in the `Authorization` header is wrong or was revoked | `doctor --live --only firecrawl,apify` names the rejected key; replace it in `ads/.env`, `env sync-claude`, restart |
-| no tool to create or enable a campaign; Meta server has no upload tool | the Google Ads server reads, creates assets and uploads video only; Meta's tool list has no media upload | `google mutate` or `launch`; `meta upload-image`, `meta upload-video` |
+| no tool to create or enable a campaign on the Google Ads server | it reads, creates assets and uploads video only | `google mutate` or `launch` |
+| `meta-ads`: `ads_create_campaign` answers `"status": "DRAFT"` | the server creates drafts, and a campaign draft would publish as active | set the draft paused, review it at the `ads_manager_url` of the answer; discard it with `discard_draft_changes` and the returned `confirmation_token` (Meta launch reference, section 6) |
+| a TikTok tool named in the reference is missing from the tool list | on the layered server most tools run through the dispatcher | `tool_list`, `tool_get`, then `tool_execute` (TikTok launch reference, section 7) |
+| the sign-in link of a server expires, or the browser ends on a `localhost` address that does not load | remote or headless session; the link lives 5 minutes | `claude mcp login --no-browser <server>` in a terminal of your own, then paste the address the browser ended on |
 | TikTok server lists too few tools; write calls fail in bursts | a client once dropped tools above 256 (fixed 2026-07-20); 6 QPS per tool, one Smart+ ad write per 5 s per ad | refresh the tool list; space the calls. The plugin already uses the layered server, and a sign-in is valid for one server path only |
 
 ## Dated deadlines, next six months

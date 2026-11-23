@@ -133,7 +133,7 @@ The command merges the known keys into the `env` block of `.claude/settings.loca
 | `apify` | `APIFY_TOKEN` | Actors for ad libraries and social data |
 | `dataforseo` | `DATAFORSEO_USERNAME`, `DATAFORSEO_PASSWORD`, Node 20+ | keyword and SERP data |
 | `google-ads` | `GOOGLE_CLOUD_PROJECT`, `GOOGLE_APPLICATION_CREDENTIALS`, `pipx` | read reports, create assets; it cannot create campaigns |
-| `meta-ads` | `META_ACCESS_TOKEN` of an Employee-role system user with `ads_mcp_management` | read and create paused objects |
+| `meta-ads` | `META_ACCESS_TOKEN` of an Employee-role system user with `ads_mcp_management` | read and create drafts; a draft is not paused until you set it |
 | `tiktok-ads` | OAuth sign-in in `/mcp` | campaigns, uploads, reports |
 
 For the `google-ads` server, before the sync: set `GOOGLE_CLOUD_PROJECT` in `ads/.env` and run `python3 ads/tools/ads.py google export-adc`, which writes the credentials file the server reads and stores its path. An account under a manager account also needs `GOOGLE_ADS_LOGIN_CUSTOMER_ID` in the session environment; the sync copies it.

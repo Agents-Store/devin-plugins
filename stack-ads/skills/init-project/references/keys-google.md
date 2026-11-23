@@ -31,7 +31,7 @@ Developer tokens were abolished on 2026-09-09. Any guide that asks for a develop
 | Cloud project id, MCP server only | `GOOGLE_CLOUD_PROJECT` | Step 1, used in Step 8 |
 | Path of the ADC file, MCP server only | `GOOGLE_APPLICATION_CREDENTIALS` | written by `google export-adc` in Step 8 |
 
-The Google user who signs in must have access to the Google Ads account and must have a passkey set up (a passkey created in the last 7 days may be refused). Ask the user to check this before Step 5.
+The Google user who signs in must have access to the Google Ads account and must have a passkey set up (a passkey created in the last 7 days may be refused). Ask the user to check this before Step 5. It is the login that opens the account at `ads.google.com`. It need not be the login that owns the Cloud project: the project and its OAuth client only identify the app, so the console can be used with one login and the consent of Step 5 given with another.
 
 ## Step 1: Cloud project and the two APIs
 
@@ -58,6 +58,7 @@ The access level belongs to the Cloud project and replaces the developer-token l
 - Explorer is enough to create campaigns (Search, Performance Max, Demand Gen), run `validateOnly` against production, and read reports. Start there.
 - Keyword Planner (`google keyword-ideas`) needs Basic or higher. Explorer cannot call the keyword planning services, audience insights, reach planning, billing or account-creation services.
 - A Test project that targets a production account fails with `CLOUD_PROJECT_NOT_APPROVED_FOR_PRODUCTION`: apply for Explorer.
+- Right after the approval a call can answer `CLOUD_PROJECT_NOT_APPROVED_FOR_PRODUCTION` once more: repeat it before you conclude that the application failed.
 
 Basic needs brand verification: Menu > **APIs & Services** > **OAuth consent screen** > **Overview** > **Get Started**, fill the project configuration. On **Audience** the user type must be External and the status In production (see Step 3). On **Branding** fill every required field > **Save** > **Verify Branding** (takes minutes) > **Publish branding**. Then apply for Basic on the Overview page.
 
@@ -70,6 +71,8 @@ Docs: `https://developers.google.com/google-ads/api/docs/api-policy/access-level
 1. Menu > **Google Auth platform** > **Branding** > **Get Started** if it says "not configured yet". Enter the app name and the support email, choose **External**, enter the contact email, accept the policy, **Create**.
 2. **Data Access** > **Add or Remove Scopes** > add the scopes below > **Save**.
 3. **Audience** > **Publish app** > confirm "Push to Production?". The status must read **In production**.
+
+**Publish app** can be greyed out with "To publish your app, you must complete your configuration on the Branding page" while the three required fields are filled. Since autumn 2026 the button wakes up only when **Branding** also names an application home page, a privacy policy link and, under **Authorized domains**, the domain of those two links (Google's answer in its issue tracker, 2026-10-06; seen on 2026-11-23). Fill them, **Save**, then publish. Do not upload a logo: a logo starts a verification. A user with no site to name stays in **Testing**: add the Google login under **Audience** > **Test users** and repeat Step 5 every 7 days.
 
 | Scope | Gives |
 |---|---|
@@ -107,8 +110,8 @@ Route (a) is the default. The tool prints the consent URL; the user opens it in 
 python3 ads/tools/ads.py google login --scopes ads,gsc
 ```
 
-1. The command prints a consent URL. The user opens it, signs in with the Google user that has access to the Ads account, and approves both scopes.
-2. After approval the browser is sent to an address on port 8080 and shows a page that fails to load. That is expected. The user copies the full address from the address bar.
+1. The command prints a consent URL. It opens Google's account chooser: the user picks the login that opens the Ads account at `ads.google.com`, passes the "Google hasn't verified this app" page (**Advanced** > **Go to <app name> (unsafe)**) and approves both scopes.
+2. After approval the browser is sent to an address on port 8080 and shows a page that fails to load. That is expected. The user copies the full address from the address bar. An address on `accounts.google.com` is an intermediate page, the warning or the consent form, not the one to copy.
 3. Exchange it. Quote the URL: it contains `&`.
 
 ```bash
@@ -220,14 +223,17 @@ One read-only call per service. A missing key prints where to get it. Exit code 
 | "Access blocked" at sign-in | status Testing and the user is not under Test users | Publish to production (Step 3), or add the user under **Audience** > **Test users** |
 | `admin_policy_enforced` | a Workspace admin restricted third-party apps | the admin allows the OAuth client, or the user signs in with a personal Google account |
 | `ACCESS_TOKEN_SCOPE_INSUFFICIENT` | token lacks the `adwords` scope | redo Step 5 |
-| `CLOUD_PROJECT_NOT_APPROVED_FOR_PRODUCTION` | project has Test access and the account is production | apply for Explorer on the project that owns the OAuth client (Step 2) |
+| `NOT_ADS_USER` | the Google login that gave the consent has no Google Ads account; often it is the login that owns the Cloud project | repeat Step 5 and pick the login that opens `ads.google.com`, or add this login to the account (Admin > Access and security) |
+| `CLOUD_PROJECT_NOT_APPROVED_FOR_PRODUCTION` | project has Test access and the account is production | apply for Explorer on the project that owns the OAuth client (Step 2); right after the approval repeat the call once |
 | `AUTHORIZATION_ERROR` on production just after an upgrade | known issue for projects that used a Test token before 2026-09-09 | wait, or new Cloud project and apply for Explorer there |
 | Explorer or Basic application rejected | project on Free Trial or suspended billing | paid project, or another brand-verified project |
 | `USER_PERMISSION_DENIED` | the account is reached through a manager | set `GOOGLE_ADS_LOGIN_CUSTOMER_ID` to the manager id |
 | `CLIENT_CUSTOMER_ID_INVALID` | dashes in a customer id | digits only |
 | `CUSTOMER_NOT_ENABLED` | sign-up not finished, or the account is cancelled | finish sign-up or reactivate in Google Ads |
 | `RESOURCE_EXHAUSTED` | daily quota of the access level (24-hour window) | wait, or upgrade (Step 2) |
-| Keyword Planner call refused | project is on Explorer | apply for Basic (Step 2) |
+| Keyword Planner call refused: "not allowed for use with explorer access" (`DEVELOPER_TOKEN_NOT_APPROVED`) | project is on Explorer | apply for Basic (Step 2) |
+| **Publish app** greyed out | Branding lacks the home page, the privacy policy link or the authorized domain | fill the three (Step 3), or stay in Testing with the login under Test users |
+| `gsc sites` lists another site than expected, or none | the property belongs to another Google login than the one that gave the consent | add the consent login to the property (Step 7), then copy `GSC_SITE_URL` from `gsc sites` |
 | Search Console 403 "does not have sufficient permission for site" (unverified wording) | the signed-in user is not on the property, or `GSC_SITE_URL` has the wrong form | add the user (Step 7); copy the value from `gsc sites` |
 | `SERVICE_DISABLED` (unverified) | the API is not enabled in the OAuth client's project | enable it in Step 1 |
 | 429 from Search Console | per-site or project quota | wait; for the load quota 15 minutes |

@@ -62,6 +62,8 @@ A freshly generated video has no TikTok post, so it cannot be a Spark post. Choo
 1. Push it from a linked account: `identity_type` `TT_USER` or `BC_AUTH_TT` with the uploaded `video_id`. The official pages confirm this push for Smart+ only; for the manual flow it is unverified, and the sample plan of section 3 uses it. If `ad/create/` returns code 40002, use option 2.
 2. Publish the video on the TikTok account, have the account holder create an authorization code (post menu, Ad settings, Ad authorization, duration, copy), apply it, then create the ad with `AUTH_CODE` and `tiktok_item_id`.
 
+No linked account yet (the identity list holds no `TT_USER` and no `BC_AUTH_TT` entry): link one before you plan an ad for TikTok placement. On the MCP route `tiktok_identity_connect_ui` (advertiser id and Business Center id) returns an authorization address in `bc_auth_qr_code`; the owner of the TikTok account opens it on the phone that runs the TikTok app, or scans it as a QR code, and approves. The account then shows among the Business Center assets (`bc_asset_admin_get`, `asset_type` `TT_ACCOUNT`) and is still missing from the identity list until it is linked to the ad account: `bc_asset_advertiser_assign` with `bc_id`, `advertiser_id`, `asset_id` and `asset_type` `TT_ACCOUNT`, a write, so show it to the user first. After that `identity_get` with `identity_type` `BC_AUTH_TT` and `identity_authorized_bc_id` returns the account with `can_push_video` and `can_pull_video`.
+
 List identities with `tiktok get identity/get/ -p identity_type=TT_USER` (add `identity_authorized_bc_id` for `BC_AUTH_TT`). Apply a Spark Ads code (replace `+` with `%2B`) with `tiktok post tt_video/authorize/ --data @ads/launch/spark-code.json`, the file holding `{"auth_code": "<SPARK_AUTH_CODE>"}`. Without `--yes` the command only prints what it would send: show that to the user, and add `--yes` after they agree, because it binds the post to the ad account for the duration of the code.
 
 Since 2026-01-27 `dark_post_status` defaults to ON (the post is shown through ads only). An identity with `ads_only_mode` true cannot switch it off. Accounts with `is_gpppa` true (government, politician) cannot be used for Spark Ads.
@@ -70,7 +72,7 @@ Pixel (required when the goal is `CONVERT` or `VALUE`, not allowed otherwise): `
 
 ## 3. Manual flow: traffic plan
 
-Save as `ads/launch/tiktok-traffic.json`. Replace every `<...>` value and the texts. Campaign, ad group and ad carry `operation_status` `DISABLE`; the toolkit refuses anything else. `advertiser_id` is added automatically. Paths in `file` are relative to the project root.
+Save as `ads/launch/tiktok-traffic.json`. Replace every `<...>` value and the texts. The campaign and ad group bodies below were created disabled and deleted on a live ad account on 2026-11-22; the upload and ad steps were not. Campaign, ad group and ad carry `operation_status` `DISABLE`; the toolkit refuses anything else. `advertiser_id` is added automatically. Paths in `file` are relative to the project root.
 
 ```json
 {
@@ -274,14 +276,25 @@ Single status changes outside a plan go through `tiktok post` with a small body 
 
 Server `tiktok-ads` of this plugin. Authorize it from `/mcp` (OAuth with the TikTok for Business account, no developer app). The authorization lasts 30 days, then sign in again; the access token lives 24 hours, the refresh token 30 days. Tokens are scoped to one server path: the flat server (`https://business-api.tiktok.com/open_mcp/tt-ads-mcp-flat`, about 400 tools) and the layered one (`.../tt-ads-mcp-layer`, about 40 core tools, the rest on demand) need separate sign-ins. Prefer the layered one when context is tight. The server also accepts the long-term token of a developer app as `Authorization: Bearer` (no expiry, 10 requests per second on the Basic level); the plugin does not configure that, because a header with an unset variable would stop the server from loading for users who sign in through OAuth. To use it, add the server yourself with that header.
 
-| Step | Tool of the `tiktok-ads` server |
+The layered server offers its tools in two ways. About 45 core tools are called by name: the account and identity reads, `report_integrated_get`, and every `smart_plus_*` tool. All the others, the whole manual flow included, run through a dispatcher of three core tools:
+
+| Dispatcher tool | Does |
 |---|---|
-| Identities, audience size, call to action | `identity_get`, `ad_audience_size_estimate`, `creative_cta_recommend_get` |
-| Uploads | `file_name_check`, `file_video_ad_upload`, `file_image_ad_upload`, `file_video_suggestcover_get` |
-| Manual flow | `campaign_create`, `adgroup_create`, `ad_create` |
-| Smart+ | `smart_plus_campaign_create`, `smart_plus_adgroup_create`, `smart_plus_ad_create` (names follow the endpoint pattern; confirm in the tool list) |
-| GMV Max | `gmv_max_store_list_get`, `campaign_gmv_max_create`, `gmv_max_report_get` |
-| Review and status | `ad_review_info_get`, `campaign_status_update`, `adgroup_status_update`, `ad_status_update` |
+| `tool_list` | names every other tool by group, with a one-line summary |
+| `tool_get` | returns the description and the input schema of the tools you name in `tool_name_list` |
+| `tool_execute` | runs one of them: `tool_name` and `params` (put `advertiser_id` inside `params`) |
+
+| Step | Tool of the `tiktok-ads` server | Called |
+|---|---|---|
+| Identities | `identity_get` | by name |
+| Audience size, call to action | `ad_audience_size_estimate`, `creative_cta_recommend_get` | through `tool_execute` |
+| Uploads | `file_name_check`, `file_video_ad_upload`, `file_image_ad_upload`, `file_video_suggestcover_get` | through `tool_execute` |
+| Manual flow | `campaign_create`, `adgroup_create`, `ad_create` | through `tool_execute` |
+| Smart+ | `smart_plus_campaign_create`, `smart_plus_adgroup_create`, `smart_plus_ad_create` | by name |
+| GMV Max | `gmv_max_store_list_get`, `campaign_gmv_max_create`, `gmv_max_report_get` | through `tool_execute` |
+| Review and status | `ad_review_info_get`, `campaign_status_update`, `adgroup_status_update`, `ad_status_update` | through `tool_execute` |
+
+The bodies are the ones of sections 3 and 4 with `advertiser_id` added. The plugin's hook judges a `tool_execute` call by the tool it names: a read runs, a write asks first. Two tools are named like reads and still change something: `split_test_end_get` stops a split test and `creative_image_edit_get` stores an edited image in the asset library. The hook asks for both.
 
 - Create everything disabled (`operation_status` `DISABLE`, on every entry of `creatives` for a manual ad), as in the plan. The toolkit guard rails do not apply: add up the daily budgets yourself, keep the sum under `guardrails.max_daily_budget`, and write every returned id to a note in `ads/launch/` so the objects can be paused later.
 - Before each write, an upload included, show the user the full request (names, budgets, dates, targeting, files) and wait for their yes. One yes covers one call.

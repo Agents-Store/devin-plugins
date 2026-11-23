@@ -244,16 +244,24 @@ Activation is `meta ads campaign update "<CAMPAIGN_ID>" --status ACTIVE`, then `
 
 ### `meta-ads` MCP server (the plugin's server, Meta-hosted)
 
-The plugin's `meta-ads` server signs in with `META_ACCESS_TOKEN` as a bearer token: a user token, or a system-user token of the Employee role (Admin tokens are refused), with the scope `ads_mcp_management` plus `ads_read` or `ads_management`. OAuth without a token works only on a server the user adds themselves (see the Meta key guide of `init-project`). Account enablement is phased: an account may report the server as not enabled (third-party report, unconfirmed); then use the toolkit.
+The plugin's `meta-ads` server signs in with `META_ACCESS_TOKEN` as a bearer token: a user token, or a system-user token of the Employee role (Admin tokens are refused), with the scope `ads_mcp_management` plus `ads_read` or `ads_management`. OAuth without a token and without an app works on a server the user adds themselves (see the Meta key guide of `init-project`). Meta opens the server account by account: `ads_get_ad_accounts` returns `is_ads_mcp_enabled`, `account_status`, `is_queryable` and `has_payment_method` for every ad account the login reaches. Call it first and work only in an account that is `ACTIVE` and queryable. A business can also limit what an agent may do in an ad account (Business settings > Integrations > Ads MCP server), so a refused write can be such a rule.
 
 | Purpose | Tools |
 |---|---|
-| Create (all PAUSED) | `ads_create_campaign`, `ads_create_ad_set`, `ads_create_creative`, `ads_create_ad` |
-| Start or change spend | `ads_activate_entity` (starts spend), `ads_boost_ig_post`; `ads_update_entity` can change status: treat all three as spending |
-| Look up | `ads_get_ad_accounts`, `ads_get_user_pages`, `ads_get_ig_accounts`, `ads_get_datasets`, `ads_get_dataset_stats`, `ads_get_ad_entities`, `ads_get_creatives`, `ads_get_ad_images`, `ads_get_ad_videos`, `ads_get_ad_preview` |
-| Diagnose | `ads_get_errors` |
+| Create | `ads_create_campaign`, `ads_create_ad_set`, `ads_create_creative`, `ads_create_ad`: a campaign is created as a draft, see below |
+| Start or change spend | `ads_activate_entity` (starts spend), `ads_boost_ig_post`; `ads_update_entity` can change status and budget: treat all three as spending |
+| Look up | `ads_get_ad_accounts`, `ads_get_ad_account_pages`, `ads_get_user_pages`, `ads_get_ig_accounts`, `ads_get_datasets`, `ads_get_dataset_stats`, `ads_get_ad_entities`, `ads_get_creatives`, `ads_get_ad_images`, `ads_get_ad_videos`, `ads_get_ad_preview` |
+| Diagnose | `ads_get_errors`, `ads_get_help_article` (searches Meta's Business Help Center), `ads_account_get_activity_logs` |
 
-No tool uploads an image or a video: upload with the toolkit or the CLI first and reference the hash or id. `ads_create_creative` builds a single-image link ad only; placement customisation and multi-media optimisation have limited availability. Parameter schemas are not documented: read them from the server's tool list. Roll out in phases, with the user's yes before each write: one read call; then show the full request of the campaign (name, objective, budget, special ad category) and create it paused after their yes; the same for the ad set, the creative and the ad; review in `ads_get_ad_preview`; and `ads_activate_entity` only after a second, explicit go with the daily budget stated in words. Add up the daily budgets yourself and keep them under `guardrails.max_daily_budget`: the server knows no ceiling.
+**Drafts** (run of 2026-11-22). `ads_create_campaign` does not create a live campaign and does not create it paused:
+
+- The result says `"status": "DRAFT"`. Its `spec` shows the status the campaign would be published with. The tool took no status, and the `spec` said `ACTIVE`.
+- Read a draft with `ads_get_ad_entities` and `object_state` `draft`. With `live` the draft is not returned.
+- Make the draft paused before anything publishes it: `ads_update_entity` with `fields` `{"status":"PAUSED"}`, then read the draft back. A new campaign takes only active or paused: `DELETED` is stored on the draft with error 1487564. Setting `PAUSED` on a draft and publishing a draft were not exercised here.
+- Discard a draft with `ads_update_entity` and `discard_draft_changes` `true`: the first call returns a `discard_preview` and a `confirmation_token`, the second call with that token removes the draft.
+- Every result carries an `ads_manager_url` where the user reviews the draft.
+
+The live tool list has upload tools (`ads_creative_upload_media`, and `ads_create_upload_url` with `ads_finalize_upload`). They were not exercised here: the toolkit's `meta upload-image` and `meta upload-video` are the tested way. Meta's help page names four creative types for `ads_create_creative`: single image, single video, carousel and product media carousel. Parameter schemas are not documented: read them from the server's tool list. Each tool also takes context fields that describe the request (`advertiser_request` and others): they are not settings. Roll out in phases, with the user's yes before each write: one read call; then show the full request of the campaign (name, objective, budget, special ad category), create the draft after their yes and set it paused; the same for the ad set, the creative and the ad; review in `ads_get_ad_preview`; and `ads_activate_entity` only after a second, explicit go with the daily budget stated in words. Add up the daily budgets yourself and keep them under `guardrails.max_daily_budget`: the server knows no ceiling.
 
 ## 7. Limits and errors
 
