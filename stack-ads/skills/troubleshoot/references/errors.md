@@ -95,6 +95,9 @@ Reference: `https://developers.facebook.com/documentation/ads-commerce/marketing
 | What you see | Cause | Fix |
 |---|---|---|
 | "Unable to create" when you add an ad account in Business settings | the ad account creation limit of the business portfolio is used up; a closed or disabled account keeps its place | Meta key guide, first-day errors |
+| 100 / 1885183 "Ads creative post was created by an app that is in development mode" | the Meta app is not published | publish it (Meta key guide, step 3), then `launch apply` again: applied steps are skipped |
+| "No permissions available" when generating a system-user token | the system user has no role on the app | Business settings > Apps > the app > Assign people > the system user, Full control |
+| `META_PAGE_ID` missing and `{account}/promote_pages` is empty | the account has never advertised for a Page | `meta get me/accounts -p fields=id,name,tasks` lists the Pages the system user may advertise for |
 | 190 | invalid or expired token; a long-lived user token lasts about 60 days | system-user token with `ads_management`, `ads_read`, `pages_show_list`, `pages_read_engagement`, `pages_manage_ads`, `business_management` in `META_ACCESS_TOKEN` |
 | 200 | permission error: scope or asset missing | regenerate the token with those scopes; assign app, ad account, Page and pixel to the system user |
 | 200 / 1870034 | Custom Audience terms not accepted | accept them in the ad account as a regular user, not a system user |

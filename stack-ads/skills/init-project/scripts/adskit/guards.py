@@ -18,6 +18,7 @@ checked in launch.budget_check.
 """
 from __future__ import annotations
 
+import copy
 import math
 import re
 import urllib.parse
@@ -72,8 +73,37 @@ def amount(value, where):
     return number
 
 
+def for_platform(config, platform):
+    """The configuration as one platform reads it: its currency and its ceilings.
+
+    Ad accounts on different platforms can bill in different currencies. project.currencies names
+    a currency per platform and wins over project.currency. A ceiling is one number, or one number
+    per platform; either way it is read in the currency of the platform it applies to.
+    """
+    out = copy.deepcopy(config or {})
+    project = out.setdefault("project", {})
+    currencies = project.get("currencies")
+    if isinstance(currencies, dict) and currencies.get(platform):
+        project["currency"] = str(currencies[platform]).upper()
+    guard = out.setdefault("guardrails", {})
+    daily = guard.get("max_daily_budget")
+    if isinstance(daily, dict):
+        guard["max_daily_budget"] = daily.get(platform)
+        if daily.get(platform) is None:
+            guard["max_daily_budget_missing"] = platform
+    total = guard.get("max_total_budget")
+    if isinstance(total, dict):
+        guard["max_total_budget"] = total.get(platform) or 0
+    return out
+
+
 def daily_ceiling(config):
     """The user's daily ceiling. A missing or zero ceiling is not permission: nothing with a budget is sent without one."""
+    missing = config.get("guardrails", {}).get("max_daily_budget_missing")
+    if missing:
+        raise Refused("guardrails.max_daily_budget in ads/config.json gives a ceiling per platform and none for %s" % missing,
+                      "add \"%s\": <daily ceiling in that platform's currency> there before anything with a budget is sent"
+                      % missing)
     value = config.get("guardrails", {}).get("max_daily_budget")
     number = None
     if not isinstance(value, bool) and isinstance(value, (int, float, str)):
@@ -268,6 +298,11 @@ def _no_method(params, what):
         if name in ("method", "httpmethod", "methodoverride", "httpmethodoverride", "xhttpmethodoverride"):
             raise Refused("a parameter named method would turn this %s into another kind of request" % what,
                           "use the command for the request you mean: meta post or meta delete, shown to the user first")
+
+
+def meta_delete(params):
+    """A delete carries plain parameters, such as the hash of an image, and never one that turns it into another call."""
+    _no_method(params, "delete")
 
 
 def meta_read(path, params=None):

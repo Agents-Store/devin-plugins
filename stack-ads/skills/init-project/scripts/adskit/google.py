@@ -212,7 +212,7 @@ def mutate(ctx, body, customer=None, yes=False, activate=False, partial_failure=
     """
     account = customer_id(ctx, customer)
     body = guards.google_canonical(json.loads(json.dumps(body).replace("{customer}", account)))
-    summary = guards.google_mutate(body, ctx.config, activate=activate or (preview and not yes), plan=plan)
+    summary = guards.google_mutate(body, guards.for_platform(ctx.config, "google"), activate=activate or (preview and not yes), plan=plan)
     payload = {key: value for key, value in body.items() if key != "partialFailure"}
     payload["validateOnly"] = not yes
     if partial_failure:

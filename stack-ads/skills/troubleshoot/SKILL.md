@@ -76,7 +76,7 @@ Exit code 2 with one of these messages means the toolkit protected the budget. T
 | "is not a plain ... path" | parameters were written into a path, behind a `?` | move them into `-p`, `params` or the body |
 | "holds other calls or a second object" | a Meta `batch`, `adset_spec` or `campaign_spec` | send each object as its own call or step |
 | "is not a budget" | a budget that is not a plain number, or is negative | write the number |
-| "names EUR but the project currency ... is USD" or "the ad account is in ..." | plan, `ads/config.json` and ad account disagree on the currency | ask the user which is right and correct `project.currency` or the plan; budgets and ceilings are read in that currency |
+| "names EUR but project.currency ... is USD" or "the ad account is in ..." | plan, `ads/config.json` and ad account disagree on the currency | ask the user which is right and correct `project.currency` or the plan; when the accounts of the platforms bill in different currencies, name one per platform in `project.currencies`. Budgets and ceilings are read in that currency |
 | "google call sends reads and conversion uploads only" | a campaign change was sent through `google call` | send it with `google mutate`, where the guard rails apply |
 | "switched on under a campaign that already exists" | a new Google ad group, asset group or ad would serve at once | create it `PAUSED`; `launch activate` enables it |
 | "is not fully applied" | activation of a plan with missing steps | finish `launch apply` first |
@@ -84,7 +84,7 @@ Exit code 2 with one of these messages means the toolkit protected the budget. T
 | "joins a campaign this plan does not create" | an ad set, ad group or ad of the plan hangs under a campaign from elsewhere and would spend from its budget | create the campaign in the plan, or add the object with single commands after reading that campaign's budget |
 | "was applied but is no longer in the plan" | an applied step was renamed or deleted in the plan file | put it back under its id; a renamed step would be created a second time |
 | "has no budget and neither has its campaign" or "on a budget this plan does not create" | nothing in the plan limits what a new campaign may spend | put the budget on the campaign or on each ad set or ad group; on Google create the budget in the same step |
-| "max_daily_budget ... is not a positive number" | the daily ceiling is missing or zero in `ads/config.json` | ask the user for the ceiling and set it; a missing ceiling is never read as "no limit" |
+| "max_daily_budget ... is not a positive number" or "gives a ceiling per platform and none for ..." | the daily ceiling is missing or zero in `ads/config.json`, or a ceiling map lacks this platform | ask the user for the ceiling and set it; a missing ceiling is never read as "no limit" |
 | "a parameter named method" | a Meta call carried `method`, which the Graph API reads as an order to send another kind of request | remove it and use `meta post` or `meta delete` for what was meant |
 | "names ad account ... but ads/.env holds another" (or advertiser) | a path or body names an account other than the configured one | write `{account}` or leave `advertiser_id` out; switching accounts is done in `ads/.env`, with the user |
 | "an automated rule can switch ads on" | a Meta or TikTok rule that acts by itself later | it needs the user's spend approval and `--activate`, or is created in the platform's interface |

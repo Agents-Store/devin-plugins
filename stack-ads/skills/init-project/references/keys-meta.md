@@ -20,7 +20,7 @@ How to get every Meta variable of `ads/.env` for a user who has never used the M
 |---|---|---|
 | System-user access token | `META_ACCESS_TOKEN` | Business Settings > System Users > Generate token |
 | Ad account id, digits only, no `act_` prefix | `META_AD_ACCOUNT_ID` | Ads Manager > account Settings > Account overview, or `meta get me/adaccounts` |
-| Facebook Page id | `META_PAGE_ID` | `meta get {account}/promote_pages` |
+| Facebook Page id | `META_PAGE_ID` | `meta get me/accounts` (the Pages the system user may advertise for) |
 | App id | `META_APP_ID` | App Dashboard of the app you create |
 | App secret | `META_APP_SECRET` | App Dashboard > App Settings > Basic |
 | Pixel (dataset) id, optional | `META_PIXEL_ID` | `meta get {account}/adspixels` |
@@ -30,17 +30,18 @@ Pixel is needed only for conversion campaigns; the Instagram id only for Instagr
 
 ## Cheapest path: advertise from your own ad account
 
-Developer account, app, business portfolio, system user. Standard access to `ads_read` and `ads_management` is enough for your own ad account; no App Review.
+Developer account, app, business portfolio, system user. Standard access to `ads_read` and `ads_management` is enough for your own ad account; no App Review. The app must be published (Live), or Meta refuses every creative (step 3).
 
 1. Register a Meta developer account: `https://developers.facebook.com/docs/development/register`.
 2. Create an app at `https://developers.facebook.com/apps/creation/`: app name, contact e-mail, select use cases, choose or create a business portfolio (or connect it later), then Go to dashboard. Add the Marketing API product to the app (the exact use-case label for it is unverified). Use cases cannot be removed once added.
-3. Business Suite > Business Settings > Users > **System Users** > Add. Role: **Employee**.
+3. Publish the app. In the App Dashboard, **App settings** > **Basic**: Privacy Policy URL, Terms of Service URL, user data deletion (a URL with instructions; the privacy policy page will do), App icon (square, 512 to 1024 px, no Meta logos), Category, App purpose > **Save changes**. Then **Publish** in the left menu (older dashboards: the **App Mode** switch at the top) > Live. No App Review is needed. An app left in development mode creates campaigns and ad sets, and every creative fails with error 100/1885183.
+4. Business Suite > Business Settings > Users > **System Users** > Add. Role: **Employee**.
    - Employee, not Admin: the official Meta MCP server rejects tokens of Admin-role system users. The CLI and the Graph API accept both, so Employee works everywhere.
    - Limit per business at Limited access: 1 normal system user plus 1 admin system user.
-4. Business Settings > **Apps** > the app > Assign Users: add the system user with Full control.
-5. Business Settings > Accounts > **Ad Accounts** > the ad account > Add People: add the system user with full control of the ad account.
-6. Same screen, **Assign Assets**: add the Page, the pixel (dataset) and, for catalogs, the catalog. A missing asset shows up later as error 200.
-7. System Users > the user > **Generate token**: pick the app, tick the scopes below, copy the token into `META_ACCESS_TOKEN`. It is shown once.
+5. Business Settings > **Apps** > the app > Assign people: add the system user with Full control (Manage app). Without it the token dialog of step 8 says "No permissions available".
+6. Business Settings > Accounts > **Ad Accounts** > the ad account > Add People: add the system user with full control of the ad account.
+7. Same screen, **Assign Assets**: add the Page, the pixel (dataset) and, for catalogs, the catalog. A missing asset shows up later as error 200.
+8. System Users > the user > **Generate token**: pick the app, tick the scopes below, copy the token into `META_ACCESS_TOKEN`. It is shown once.
 
 | Scope | Why |
 |---|---|
@@ -75,6 +76,7 @@ Fill `META_ACCESS_TOKEN` first, then `META_AD_ACCOUNT_ID`. `{account}` in a path
 
 ```bash
 python3 ads/tools/ads.py meta get me/adaccounts -p fields=id,name,account_status,currency
+python3 ads/tools/ads.py meta get me/accounts -p fields=id,name,tasks
 python3 ads/tools/ads.py meta get {account}/promote_pages -p fields=id,name
 python3 ads/tools/ads.py meta get {account}/adspixels -p fields=id,name,last_fired_time
 python3 ads/tools/ads.py meta get {account}/instagram_accounts
@@ -83,11 +85,12 @@ python3 ads/tools/ads.py meta get {account}/instagram_accounts
 | Command | Result | Notes |
 |---|---|---|
 | `meta get me/adaccounts ...` | ids as `act_<digits>`; store only the digits | Standard Graph edge, unverified on an official page. If it fails or lists nothing, read the number in Ads Manager > Settings > Account overview |
-| `meta get {account}/promote_pages` | Page `id` for `META_PAGE_ID` | Edge exists on the ad account |
+| `meta get me/accounts -p fields=id,name,tasks` | Page `id` for `META_PAGE_ID`: a Page whose `tasks` hold `ADVERTISE` | The Pages assigned to the system user in step 7. An empty list: the Page was not assigned |
+| `meta get {account}/promote_pages` | Pages this ad account has already advertised for | Empty for an account that never ran an ad: use `me/accounts` |
 | `meta get {account}/adspixels` | pixel `id` for `META_PIXEL_ID` | `last_fired_time` empty means the pixel never received an event |
 | `meta get {account}/instagram_accounts` | Instagram id for `META_INSTAGRAM_USER_ID` | The `connected_instagram_accounts` edge also exists. The creative field is `instagram_user_id`; never send it together with `instagram_actor_id` (error 2446149) |
 
-A Page or Instagram account that does not appear is not assigned to the ad account or system user: repeat step 6. No pixel exists: create one with `meta post {account}/adspixels -p name=Pixel`: it prints what it would send, and after the user's yes add `--yes`. Errors 6200 and 6202 mean one already exists or more than one.
+A Page or Instagram account that does not appear is not assigned to the ad account or system user: repeat step 7. No pixel exists: create one with `meta post {account}/adspixels -p name=Pixel`: it prints what it would send, and after the user's yes add `--yes`. Errors 6200 and 6202 mean one already exists or more than one.
 
 ## Access tiers
 
@@ -158,8 +161,10 @@ Rely on the code, not the text. Docs: `https://developers.facebook.com/documenta
 |---|---|---|
 | "Unable to create" when you add an ad account (no code) | the ad account creation limit of the business portfolio is used up: a new portfolio may create one ad account, three once a campaign has delivered and a payment was made, and a closed account keeps counting | read the limit under Business settings > Business info (`https://www.facebook.com/business/help/1253008271714847`). Ways on: ask for access to an ad account of another portfolio (Ad accounts > Assign partner), contact support from Business Support Home, or appeal a disabled account in Account Quality. Do not open a new portfolio to get around a disabled account: Meta treats that as evasion |
 | ad account `UNSETTLED`, `DISABLED` or `CLOSED` | unpaid balance, a policy restriction, or the account was closed | pay the balance in Billing, appeal in Account Quality, or reactivate the account; work in an `ACTIVE` account meanwhile |
+| "No permissions available" in the Generate token dialog | the system user has no role on the app | step 5: Assign people on the app, Full control; reload the page and generate again |
+| 100 / 1885183 | "Ads creative post was created by an app that is in development mode": the app is not published | step 3: publish the app, then run `launch apply` again (applied steps are skipped) |
 | 190 | token invalid or expired | regenerate the token; check it in the debugger; was the password changed? |
-| 200 | permission missing | scope not ticked or asset not assigned to the system user: redo steps 5 to 7 |
+| 200 | permission missing | scope not ticked or asset not assigned to the system user: redo steps 5 to 8 |
 | 200 / 1870034 | Custom Audience terms not accepted | a normal user accepts them once in Ads Manager |
 | 200 / 5258001 to 5258009 | API access disrupted | open the app's Data Use Checkup, Data Protection Assessment or reactivate the app |
 | 294 | managing ads needs `ads_management` and an allowed app | add the scope; check the app's access tier |

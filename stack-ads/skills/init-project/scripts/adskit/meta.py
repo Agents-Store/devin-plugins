@@ -131,7 +131,7 @@ def post(ctx, path, params=None, yes=False, activate=False, preview=False, plan=
     holds a step to creating new objects under the ad account.
     """
     params = dict(params or {})
-    summary = guards.meta_request("POST", path, params, ctx.config, activate=activate or (preview and not yes), plan=plan)
+    summary = guards.meta_request("POST", path, params, guards.for_platform(ctx.config, "meta"), activate=activate or (preview and not yes), plan=plan)
     own_account(ctx, path)
     note = guards.activation_note(summary, activate)
     edge = path.strip("/").split("/")[-1]
@@ -147,12 +147,28 @@ def post(ctx, path, params=None, yes=False, activate=False, preview=False, plan=
     return out
 
 
-def delete(ctx, path, yes=False):
+def delete(ctx, path, params=None, yes=False):
+    """A delete. An image leaves the library by its hash: {account}/adimages with the parameter hash."""
     guards.meta_path(path)
+    guards.meta_delete(params)
     own_account(ctx, path)
+    params = expand_all(ctx, dict(params or {}))
     if not yes:
-        return {"dry_run": True, "would_delete": expand(ctx, path)}
-    return _call(ctx, "DELETE", url(ctx, path), params=encode(ctx, {}))
+        return {"dry_run": True, "would_delete": expand(ctx, path), "params": params}
+    return _call(ctx, "DELETE", url(ctx, path), params=encode(ctx, params))
+
+
+def image_created(ctx, image_hash):
+    """When the image with this hash entered the account's library, or None when that cannot be read."""
+    try:
+        rows = get(ctx, "{account}/adimages", {"hashes": [image_hash], "fields": "hash,created_time"}).get("data") or []
+    except AdsError:
+        return None
+    return next((row.get("created_time") for row in rows if row.get("hash") == image_hash), None)
+
+
+def delete_image(ctx, image_hash, yes=False):
+    return delete(ctx, "{account}/adimages", {"hash": image_hash}, yes=yes)
 
 
 def upload_image(ctx, file, yes=False):

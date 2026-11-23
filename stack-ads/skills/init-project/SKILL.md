@@ -150,7 +150,7 @@ python3 ads/tools/ads.py models --pick
 
 ## Step 7: Record the project facts and the budget ceiling
 
-Open `ads/config.json` and fill the `project` block: `name`, `url`, `markets` (ISO country codes), `languages`, `currency` (the currency of the ad accounts). Ask the user for the highest daily budget a single campaign may ever get and write it to `guardrails.max_daily_budget`. The toolkit refuses any campaign whose daily budgets add up to more, so this number is the user's decision, not a default to keep. Lifetime budgets stay switched off unless the user asks for them and names a ceiling for `guardrails.max_total_budget`.
+Open `ads/config.json` and fill the `project` block: `name`, `url`, `markets` (ISO country codes), `languages`, `currency` (the currency of the ad accounts). When the accounts of the platforms bill in different currencies, add `currencies` with one per platform, for example `{"meta": "USD"}`; see the toolkit reference for ceilings per platform. Ask the user for the highest daily budget a single campaign may ever get and write it to `guardrails.max_daily_budget`. The toolkit refuses any campaign whose daily budgets add up to more, so this number is the user's decision, not a default to keep. Lifetime budgets stay switched off unless the user asks for them and names a ceiling for `guardrails.max_total_budget`.
 
 If the project has a `CLAUDE.md` or `AGENTS.md`, offer to append the block from `ads/tools/assets/claude-md.template`, so later sessions know the workspace and its money rules. Ask before editing the file.
 

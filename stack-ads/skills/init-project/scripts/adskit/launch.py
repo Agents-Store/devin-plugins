@@ -17,7 +17,9 @@ import json
 import re
 import socket
 import ssl
+import time
 import urllib.error
+from datetime import datetime
 from pathlib import Path
 
 from . import google, guards, meta, tiktok
@@ -135,8 +137,16 @@ def google_body(ctx, body):
 
 # ── identity of a plan and of its steps ──────────────────────────────────
 
-def _currency(ctx):
-    return str(ctx.config.get("project", {}).get("currency", "USD")).upper()
+def _currency(ctx, platform=None):
+    """The currency budgets are read in: the platform's own when ads/config.json names one."""
+    config = guards.for_platform(ctx.config, platform) if platform else ctx.config
+    return str(config.get("project", {}).get("currency", "USD")).upper()
+
+
+def _where(ctx, platform):
+    """Where that currency is set, for the messages."""
+    named = (ctx.config.get("project", {}).get("currencies") or {})
+    return ("project.currencies.%s" % platform) if isinstance(named, dict) and named.get(platform) else "project.currency"
 
 
 def _digest(path):
@@ -190,7 +200,7 @@ def fingerprint(ctx, doc):
     return _sha({"plan": doc,
                  "files": {step["id"]: step_files(step) for step in doc["steps"]},
                  "account": {name: ctx.key(name, required=False) for name in ACCOUNT_KEYS[doc["platform"]]},
-                 "currency": _currency(ctx)})
+                 "currency": _currency(ctx, doc["platform"])})
 
 
 # ── budgets of the whole plan ────────────────────────────────────────────
@@ -208,7 +218,7 @@ def plan_budgets(ctx, doc):
     plan puts under that campaign, so theirs are not added to it. Under a campaign
     with no budget of its own, or under one this plan does not create, they add up.
     """
-    minor = 1 if _currency(ctx) in guards.ZERO_DECIMAL else 100
+    minor = 1 if _currency(ctx, doc["platform"]) in guards.ZERO_DECIMAL else 100
     tops, below, loose = {}, [], [0.0, 0.0]
     for step in doc["steps"]:
         args, where = step["with"], "step %s" % step["id"]
@@ -326,7 +336,8 @@ def budget_check(ctx, doc):
     """
     daily, total = plan_budgets(ctx, doc)
     declared = doc.get("budget") or {}
-    currency = _currency(ctx)
+    currency = _currency(ctx, doc["platform"])
+    config = guards.for_platform(ctx.config, doc["platform"])
     money = str(declared.get("currency") or currency).upper()
     lines, problems = [], []
 
@@ -335,19 +346,19 @@ def budget_check(ctx, doc):
         lines.append("  FAIL %s" % text)
 
     try:
-        ceiling = guards.daily_ceiling(ctx.config)
+        ceiling = guards.daily_ceiling(config)
     except Refused as exc:
         ceiling = 0.0
         bad(exc.message)
     try:
-        total_ceiling = max(float(ctx.config.get("guardrails", {}).get("max_total_budget") or 0), 0.0)
+        total_ceiling = max(float(config.get("guardrails", {}).get("max_total_budget") or 0), 0.0)
     except (TypeError, ValueError):
         total_ceiling = 0.0
     for text in uncapped(doc):
         bad(text)
     if money != currency:
-        bad("the plan names %s but the project currency in ads/config.json is %s: budgets and ceilings would be read "
-            "in the wrong currency" % (money, currency))
+        bad("the plan names %s but %s in ads/config.json is %s: budgets and ceilings would be read "
+            "in the wrong currency" % (money, _where(ctx, doc["platform"]), currency))
     stated = {key: guards.amount(declared[key], "budget.%s" % key) for key in ("daily", "total") if declared.get(key) is not None}
     if daily:
         if ceiling and daily > ceiling:
@@ -512,9 +523,16 @@ def run_step(ctx, step, args, yes, own=()):
         response = out["response"]
         made = [{"platform": "meta", "type": META_TYPES[edge], "id": response["id"]}] if edge in META_TYPES and response.get("id") else []
         return response, made, "created %s" % response.get("id", "")
-    if do in ("meta.upload_image", "meta.upload_video"):
-        func = meta.upload_image if do.endswith("image") else meta.upload_video
-        out = func(ctx, args["file"], yes=yes) if do.endswith("image") else func(ctx, args["file"], args.get("name"), yes=yes)
+    if do == "meta.upload_image":
+        started = time.time()
+        out = meta.upload_image(ctx, args["file"], yes=yes)
+        if not yes:
+            return {}, [], "file found, %d bytes" % out["bytes"]
+        existed = _image_existed(ctx, out.get("hash"), started)
+        made = [{"platform": "meta", "type": "image", "id": out["hash"], "existed": existed}] if out.get("hash") else []
+        return out, made, "uploaded" + (": the library held it already, so a removal keeps it" if existed else "")
+    if do == "meta.upload_video":
+        out = meta.upload_video(ctx, args["file"], args.get("name"), yes=yes)
         return ({}, [], "file found, %d bytes" % out["bytes"]) if not yes else (out, [], "uploaded")
     if do == "tiktok.post":
         route = args.get("path", "").strip("/")
@@ -537,6 +555,21 @@ def run_step(ctx, step, args, yes, own=()):
         out = tiktok.upload_image(ctx, args["file"], yes=yes)
         return ({}, [], "file found, %d bytes" % out["bytes"]) if not yes else (out, [], "uploaded %s" % out.get("image_id"))
     raise Refused("unknown step kind %s" % do)
+
+
+def _image_existed(ctx, image_hash, started):
+    """True unless the image is shown to have entered the library with this upload.
+
+    Meta keeps one image per hash: uploading a file the library already holds returns that image,
+    which other ads may use. A removal deletes only an image this upload created; when its age
+    cannot be read, the image is kept.
+    """
+    created = meta.image_created(ctx, image_hash) if image_hash else None
+    try:
+        stamp = datetime.strptime(str(created), "%Y-%m-%dT%H:%M:%S%z").timestamp()
+    except ValueError:
+        return True
+    return stamp < started - 300
 
 
 def describe(step):
@@ -583,9 +616,10 @@ def plan(ctx, path):
     try:
         info = {"google": google.account_info, "meta": meta.account_info, "tiktok": tiktok.account_info}[platform](ctx)
         lines.append("  ok   account reachable: %s" % info["note"])
-        if info.get("currency") and str(info["currency"]).upper() != _currency(ctx):
-            fail("the ad account is in %s but the project currency in ads/config.json is %s: budgets and ceilings would "
-                 "be read in the wrong currency" % (str(info["currency"]).upper(), _currency(ctx)))
+        if info.get("currency") and str(info["currency"]).upper() != _currency(ctx, platform):
+            fail("the ad account is in %s but %s in ads/config.json is %s: budgets and ceilings would be read in the "
+                 "wrong currency. When the accounts of the platforms bill in different currencies, name one per platform "
+                 "under project.currencies" % (str(info["currency"]).upper(), _where(ctx, platform), _currency(ctx, platform)))
     except AdsError as exc:
         fail("account check: %s" % exc.message)
     try:
@@ -643,7 +677,7 @@ def plan(ctx, path):
     lines.append("  every created id is written to ads/launch/ledger.jsonl")
     lines.append("IMPACT")
     lines.append("  everything that can deliver is created paused: no spend until launch activate")
-    money = str(budget.get("currency") or _currency(ctx)).upper()
+    money = str(budget.get("currency") or _currency(ctx, platform)).upper()
     if daily:
         lines.append("  after activation: up to %g %s per day, about %.0f per month" % (daily, money, daily * 30.4))
     if total:
@@ -671,12 +705,14 @@ def _local_guard(ctx, step):
     """Toolkit rules for a step whose references cannot be resolved before apply."""
     args = step["with"]
     if step["do"] == "google.mutate":
-        guards.google_mutate(args, ctx.config, plan=set())
+        guards.google_mutate(args, guards.for_platform(ctx.config, "google"), plan=set())
     elif step["do"] == "meta.post":
-        guards.meta_request("POST", args.get("path", ""), args.get("params") or {}, ctx.config, plan=True)
+        guards.meta_request("POST", args.get("path", ""), args.get("params") or {}, guards.for_platform(ctx.config, "meta"),
+                            plan=True)
         meta.own_account(ctx, args.get("path", ""))
     elif step["do"] == "tiktok.post":
-        guards.tiktok_request(args.get("path", ""), args.get("body") or {}, ctx.config, plan=True)
+        guards.tiktok_request(args.get("path", ""), args.get("body") or {}, guards.for_platform(ctx.config, "tiktok"),
+                              plan=True)
     elif args.get("file") and not Path(args["file"]).is_file():
         raise Refused("file not found: %s" % args["file"])
 
@@ -773,7 +809,7 @@ def status(ctx, path):
     for item in entities(ctx, doc["name"]):
         row = dict(item)
         try:
-            if item["platform"] == "meta" and item["type"] != "creative":
+            if item["platform"] == "meta" and item["type"] in SWITCHED["meta"]:
                 info = meta.get(ctx, item["id"], {"fields": "name,status,effective_status"})
                 row.update({"name": info.get("name"), "status": info.get("status"), "effective_status": info.get("effective_status")})
             elif item["platform"] == "google" and item["type"] == "campaigns":
@@ -830,6 +866,26 @@ def _units(ctx, platform, items, turn_on, remove, yes):
                         ctx, k, [i["id"] for i in g], target, yes=yes, smart_plus=s))
 
 
+def _leftovers(ctx, platform, items, yes):
+    """What only a removal deletes, once the objects that use it are gone: creatives, then images the plan uploaded.
+
+    Returns (units like _units yields, images that stay in the library).
+    """
+    if platform != "meta":
+        return [], []
+    units = [([item], "deleted", (lambda i=item: meta.delete(ctx, i["id"], yes=yes))) for item in items
+             if item["type"] == "creative"]
+    kept = []
+    for item in items:
+        if item["type"] != "image":
+            continue
+        if item.get("existed", True):
+            kept.append(item)
+        else:
+            units.append(([item], "deleted", (lambda i=item: meta.delete_image(ctx, i["id"], yes=yes))))
+    return units, kept
+
+
 def _gone(exc):
     """True when the platform says the object does not exist any more."""
     if getattr(exc, "platform_code", None) == 100 and getattr(exc, "platform_subcode", None) == 33:
@@ -848,7 +904,19 @@ def _switch(ctx, doc, path, turn_on, remove, yes):
     if not applied_state(ctx, name):
         raise Refused("the ledger holds nothing applied for plan %s" % name)
     log, failed = [], []
-    for group, word, call in _units(ctx, platform, _switchable(platform, entities(ctx, name)), turn_on, remove, yes):
+    found = entities(ctx, name)
+    units, kept = list(_units(ctx, platform, _switchable(platform, found), turn_on, remove, yes)), []
+    extra = []
+    if remove and not turn_on:
+        extra, kept = _leftovers(ctx, platform, found, yes)
+    for unit in units + [None] + extra:
+        if unit is None:
+            if failed and extra:
+                # an ad that is still there may use the creative: it goes when the objects above are gone
+                log.append("left for the next run: %s" % ", ".join("%s %s" % (g[0]["type"], g[0]["id"]) for g, _, _ in extra))
+                break
+            continue
+        group, word, call = unit
         label = ", ".join("%s %s" % (item["type"], item["id"]) for item in group)
         finished = list(group)
         try:
@@ -872,6 +940,9 @@ def _switch(ctx, doc, path, turn_on, remove, yes):
             for item in finished:
                 append_jsonl(ledger_file(ctx), {"ts": now(), "event": "removed", "plan": name, "platform": platform,
                                                 "type": item["type"], "id": item["id"]})
+    for item in kept:
+        log.append("kept image %s in the library: it was there before this plan, or its age could not be read. If no "
+                   "other ad uses it: %s meta delete {account}/adimages -p hash=%s --yes" % (item["id"], SELF, item["id"]))
     return log, failed
 
 
@@ -904,7 +975,7 @@ def activate(ctx, path, yes=False):
         raise Refused("the budget of plan %s does not pass now: %s" % (doc["name"], "; ".join(problems)),
                       "the ceiling, the currency or the plan changed since it was applied: settle that with the user first")
     log, _ = _switch(ctx, doc, path, turn_on=True, remove=False, yes=yes)
-    money = str((doc.get("budget") or {}).get("currency") or _currency(ctx)).upper()
+    money = str((doc.get("budget") or {}).get("currency") or _currency(ctx, doc["platform"])).upper()
     if daily:
         log.append("budget of this plan: up to %g %s per day, about %.0f per month" % (daily, money, daily * 30.4))
     if total:

@@ -89,7 +89,7 @@ def post(ctx, path, body=None, yes=False, activate=False, preview=False, plan=Fa
     route = guards.tiktok_path(path)
     body = expand_all(ctx, dict(body or {}))
     reads = route.split("/")[-1] in READ_TAILS
-    summary = guards.tiktok_request(route, body, ctx.config, activate=activate or (preview and not yes), plan=plan)
+    summary = guards.tiktok_request(route, body, guards.for_platform(ctx.config, "tiktok"), activate=activate or (preview and not yes), plan=plan)
     named = body.get("advertiser_id")
     if not reads and named not in (None, "") and str(named) != advertiser(ctx):
         # The dry run looked at the advertiser of ads/.env; a body that names another would write somewhere else.

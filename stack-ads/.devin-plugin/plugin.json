@@ -1,6 +1,6 @@
 {
   "name": "stack-ads",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Paid advertising stack for any project. Researches the product and its market, derives targeting, writes ad copy, generates images, video and voice-over, launches paused campaigns on Google Ads, Meta and TikTok from a reviewed dry-run plan with budget ceilings and a rollback ledger, and reports results. Walks the user through obtaining every key. Integrates Google Ads, Search Console, Meta, TikTok, Firecrawl, Apify, DataForSEO, OpenAI, Gemini and fal.ai via MCP and one dependency-free toolkit.",
   "author": {
     "name": "Agents Store",

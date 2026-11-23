@@ -131,6 +131,7 @@ def build_parser():
     add_write(p, activate=True)
     p = sub.add_parser("delete", help="Graph API delete")
     p.add_argument("path")
+    add_params(p)
     add_write(p)
     p = sub.add_parser("upload-image", help="upload to the ad image library")
     p.add_argument("--file", required=True)
@@ -372,7 +373,7 @@ def run(args):
             params.update(parse_pairs(args.param))
             return emit(meta.post(ctx, args.path, params, yes=args.yes, activate=args.activate, preview=True))
         if command == "delete":
-            return emit(meta.delete(ctx, args.path, yes=args.yes))
+            return emit(meta.delete(ctx, args.path, parse_pairs(args.param), yes=args.yes))
         if command == "upload-image":
             return emit(meta.upload_image(ctx, args.file, yes=args.yes))
         if command == "upload-video":
