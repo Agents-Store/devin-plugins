@@ -67,6 +67,16 @@ Registry and component search work across **every registry configured in `compon
 - Up to shadcn 4.21.4, `search_items_in_registries` and `list_items_in_registries` printed `Add command: [object Promise]` for every hit; 4.21.5 fixed it and 4.23.0 prints the real command. If you see the placeholder, the CLI is older than 4.21.5 (a pinned or cached copy) — update it, or build the command yourself (`npx shadcn@latest add @registry/item`) or call `get_add_command_for_items`.
 - A registry that is not listed in `components.json` returns `NOT_CONFIGURED` from the MCP tools (for example `@magicui` in a project with `"registries": {}`), although the CLI itself resolves `@registry/item` for any directory entry. Configure it first with `/add-registries` or `npx shadcn registry add`.
 
+### Embedding the server in your own code (shadcn 4.23.0+)
+
+Since shadcn 4.23.0 the MCP server runs on MCP TypeScript SDK v2 (`@modelcontextprotocol/server`), and `shadcn mcp` serves protocol 2026-07-28 as well as earlier versions. This matters only if you import the server instead of running `npx shadcn@latest mcp`:
+
+- The `shadcn/mcp` export is now an `McpServer`.
+- A new `createServer()` export returns a fresh instance per connection.
+- Code that called `server.setRequestHandler(...)` on the old `Server` export should call `server.registerTool(...)`, or `server.server.setRequestHandler(...)`.
+
+Source: https://github.com/shadcn-ui/ui/releases (shadcn@4.23.0).
+
 ## The community server is no longer shipped
 
 Earlier versions of this plugin also declared `@jpisnice/shadcn-ui-mcp-server`. It was removed in 1.3.0: its `get_component` returns the Radix variant (`asChild`, `Slot`) even with `--ui-library base`, `get_component_metadata` answers "Component metadata not found" for common components such as `button` and `accordion`, and its `list_components` lists outdated `form` / `sonner` entries. Use the official tools above, or the CLI:

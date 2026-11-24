@@ -12,7 +12,7 @@ Returns a JSON array — 593 registries on 2026-11-24 (538 not hidden; 484 healt
 
 **To populate components.json with the registries**, use the `/add-registries` command — it fetches this endpoint, skips `unavailable` and hidden entries, and adds the rest automatically. The CLI resolves `@registry/item` for any directory entry even without that step; it matters for MCP search.
 
-Health snapshot used by the tables below (2026-11-24): **degraded** entries are marked `(degraded)`; registries that used to be recommended here — @doras-ui, @creative-tim, @ai-blocks, @neobrutalism, @arc, @aevr — are `unavailable` (all hidden in the directory except @aevr) and were removed. @chamaac and @hextaui, removed on 2026-10-02 as unavailable, are healthy again. Re-check `health` in the live endpoint before recommending one.
+Health snapshot used by the tables below (2026-11-24): **degraded** entries are marked `(degraded)`; registries that used to be recommended here — @doras-ui, @creative-tim, @ai-blocks, @neobrutalism, @arc, @aevr — are `unavailable` (all hidden in the directory except @aevr) and were removed. @chamaac and @hextaui, removed on 2026-10-02 as unavailable, are healthy again and listed in the tables below. Re-check `health` in the live endpoint before recommending one.
 
 **Browse online**: https://ui.shadcn.com/docs/directory
 
@@ -32,6 +32,7 @@ The tables below organize notable registries by category. This is a curated subs
 | @aceternity (degraded) | `https://ui.aceternity.com/registry/{name}.json` | Motion-heavy effects — parallax scroll, moving border, spotlight, aurora background, 3D cards |
 | @animate-ui | `https://animate-ui.com/r/{name}.json` | Smooth transition components — animated accordion, fade-in, slide, reveal effects |
 | @cult-ui | `https://cult-ui.com/r/{name}.json` | Creative animations — flyout menus, hover reveals, morphing shapes |
+| @chamaac | `https://chamaac.com/r/{name}.json` | Animated components — WebGL shader backgrounds, animated icons, buttons, stat cards (about 90 items) |
 | @motion-primitives | `https://motion-primitives.com/c/{name}.json` | Motion building blocks — transition, animate-presence, gesture primitives |
 
 ## Extended UI Components
@@ -41,6 +42,7 @@ The tables below organize notable registries by category. This is a curated subs
 | @coss | `https://coss.com/ui/r/{name}.json` | COSS UI (successor to Origin UI — originui.com now redirects to coss.com/ui) — 100+ styled component variants |
 | @diceui | `https://diceui.com/r/{style}/{name}.json` | Interactive components — combobox, tags input, editable text, kanban board |
 | @basecn | `https://basecn.dev/r/{name}.json` | Base component extensions — enhanced select, multi-select, command palette |
+| @hextaui | `https://hextaui.com/r/{name}.json` | Components, hooks and AI blocks built on Base UI, with loading, error and empty states handled (about 900 items) |
 | @8bitcn | `https://www.8bitcn.com/r/{name}.json` | Retro pixel-style UI components — 8-bit buttons, pixel cards, retro badges |
 | @boldkit | `https://boldkit.dev/r/{name}.json` | Bold design system — distinctive buttons, cards, layouts |
 | @8starlabs-ui | `https://ui.8starlabs.com/r/{name}.json` | Additional UI components and variants |

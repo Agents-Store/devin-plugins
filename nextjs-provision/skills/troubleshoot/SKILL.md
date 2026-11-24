@@ -64,6 +64,18 @@ npx tsc --noEmit
 | `Component not found in registry` | Typo or wrong registry | Check component name at shadcnstudio.com/components |
 | CLI v2/v3 syntax with v4 | Using `--registry` flag or URL-based format | Use namespaced addresses: `npx shadcn@latest add @ss-components/button-01` |
 
+### Registry Authors: Zod 4 Schemas (CLI 4.22+)
+
+`shadcn/schema` and `@shadcn/registry/schema` export Zod 4 schemas since shadcn 4.22.0. Code that hands them to Zod 3's `z` (for example `z.infer<typeof registryItemSchema>` or `z.array(registryItemSchema)`) stops typechecking.
+
+| On Zod 3 | Use instead |
+|----------|-------------|
+| `z.infer<typeof registryItemSchema>` | the exported types `RegistryItem`, `RegistryItemFile`, `Config` |
+| `z.array(registryItemSchema)` | `registryItemSchema.array()` |
+| `error.errors` | `error.issues` (Zod 4 error objects have no `errors`) |
+
+Validation messages also use Zod 4's wording, so a test that matches the old text needs updating. Source: https://github.com/shadcn-ui/ui/releases (shadcn@4.22.0).
+
 ## Tailwind CSS Issues
 
 ### v3 Specific
