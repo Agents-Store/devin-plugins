@@ -383,6 +383,8 @@ email: nodemailerAdapter({
 }),
 ```
 
+Since 3.91 the adapter bundles nodemailer 10 (security advisories). If you pass your own `transport` built with nodemailer 9, upgrade `nodemailer` to `^10` and remove `@types/nodemailer`; `transportOptions` as above needs no change.
+
 Send mail programmatically:
 ```ts
 await payload.sendEmail({

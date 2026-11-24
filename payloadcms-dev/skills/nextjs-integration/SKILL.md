@@ -335,7 +335,7 @@ export async function GET(req: Request) {
 
 ## Deployment Notes
 
-- **Next.js versions** — `@payloadcms/next` 3.90.x requires `next >=16.3.3 <17` (the scaffolded templates pin 16.3.3), or one of the patched 15.x lines: `>=15.2.9 <15.3.0`, `>=15.3.9 <15.4.0`, `>=15.4.11 <15.5.0`. **15.5.x is not supported**, nor are 16.0 – 16.3.2, nor Next 14. Check the live range with `npm view @payloadcms/next@latest peerDependencies.next` before pinning, and move to 16.3.3+ when you upgrade Payload — the peer range moves with every Payload release.
+- **Next.js versions** — `@payloadcms/next` 3.94.x requires `next >=16.4.5 <17` (the scaffolded templates pin 16.4.6) and patched React 19 (`~19.0.9 || ~19.1.10 || ~19.2.9 || ^19.3.1`), or one of the patched 15.x lines: `>=15.2.9 <15.3.0`, `>=15.3.9 <15.4.0`, `>=15.4.11 <15.5.0`. **15.5.x is not supported**, nor are 16.0 – 16.4.4, nor Next 14. Check the live range with `npm view @payloadcms/next@latest peerDependencies.next` before pinning, and move to 16.4.5+ when you upgrade Payload — the peer range moves with every Payload release.
 - **Vercel** — works out of the box. Use `@payloadcms/db-vercel-postgres` and `@payloadcms/storage-vercel-blob`.
 - **Self-host (Node)** — `pnpm build && pnpm start`. Static assets from `public/` go behind your reverse proxy (Caddy / nginx).
 - **Payload Cloud** — managed hosting from the Payload team. One-click deploy from GitHub.

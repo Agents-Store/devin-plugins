@@ -9,7 +9,7 @@ Bootstrap a PayloadCMS v3 project from zero. Five steps: install Node, scaffold 
 
 ## 1. Prerequisites
 
-- **Node.js `^18.20.2 || >=20.9.0`** (the `payload` engines field — unchanged through 3.90). Node 18 and 20 are end-of-life, so use a **22 or 24 LTS** in practice.
+- **Node.js `^22.23.5 || ^24.22.3 || >=26.13.1`** (the `payload` engines field since 3.94; the floor was raised in 3.91, 3.92 and 3.94 to patched releases). Node 18 and 20 no longer satisfy it — install a current **22 or 24 LTS** patch release.
 - **pnpm 9+**, npm 10+, yarn 4+, or bun 1+ for installing dependencies. pnpm is the project default.
 - A database. Pick one before scaffolding:
   - **MongoDB** — simplest local dev (Docker, Atlas free tier, mongodb-memory-server).
@@ -40,7 +40,7 @@ pnpm create payload-app@latest --no-agent --use-pnpm \
 # --db-connection-string '<uri>' replaces --db-accept-recommended; --no-deps / --no-git skip install / git init
 ```
 
-The scaffolder writes (the templates pin Payload 3.90.x with Next 16.3.3 — see the `nextjs-integration` skill for the supported `next` ranges):
+The scaffolder writes (the templates pin Payload 3.94.x with Next 16.4.6 — see the `nextjs-integration` skill for the supported `next` ranges):
 - `src/app/(frontend)/` — your public Next.js frontend.
 - `src/app/(payload)/` — the Payload admin panel at `/admin`.
 - `src/payload.config.ts` — central Payload configuration.
