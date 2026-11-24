@@ -15,21 +15,21 @@ Confirm that a Next.js project is properly configured for modern App Router deve
 
 ## Step 1: Check Next.js Version
 
-Read `package.json` and locate the `next` dependency. The recommended range is `^16.3.8`:
+Read `package.json` and locate the `next` dependency. The recommended range is `^16.4.5`:
 
 ```json
 {
   "dependencies": {
-    "next": "^16.3.8"
+    "next": "^16.4.5"
   }
 }
 ```
 
 | Version | Status | Notes |
 |---------|--------|-------|
-| 16.3.x, at 16.3.8 or later | Current | Cache Components, Turbopack default, `proxy.ts`, built-in MCP at `/_next/mcp` |
-| 16.x below 16.3.8 | Patch now | Missing security fixes: RCE on Windows-hosted servers and via AVIF in Image Optimization (16.3.3), RCE in `next/og` `ImageResponse` (16.3.6), and in 16.3.8 an SSRF in Image Optimization, Draft Mode and root-param leaks in `use cache`, and `/_next/mcp` without an origin check |
-| 15.x | Maintenance | Backport releases only; stay on 15.5.27 or later. `middleware.ts` era, no built-in MCP |
+| 16.4.x, at 16.4.5 or later | Current (Active LTS) | Cache Components recommended and on by default in new apps, Turbopack default, `proxy.ts`, built-in MCP at `/_next/mcp` |
+| 16.x below 16.4.5 | Patch now | Missing security fixes: two critical RCEs (a `use cache` function returning typed arrays, SVG in Image Optimization) and a Server Actions DoS fixed in 16.4.1; seven medium issues in 16.4.5 (`use cache` leaks across tenants, users and root params, shell cache poisoning, SVG rejection bypass, cookie exposure in Edge routes). 16.3.x has had no patch since 16.3.8 |
+| 15.x | Maintenance LTS | Backport releases only; stay on 15.5.29 or later. `middleware.ts` era, no built-in MCP |
 | 14.x | Legacy | App Router GA, consider upgrading |
 | 13.x or below | Outdated | Upgrade required for modern patterns |
 
@@ -37,7 +37,7 @@ Verify the installed (not just the declared) version and the registry latest:
 
 ```bash
 npm ls next
-npm view next@latest version   # compare: installed must be >= 16.3.8 on the 16.3 line
+npm view next@latest version   # compare: installed must be >= 16.4.5 on the 16.4 line
 ```
 
 Next.js ships a formal monthly security-release program (since 2026-07-13), so re-run this check each month instead of leaving an old range in place.
@@ -117,7 +117,7 @@ Verify the server starts on `http://localhost:3000` without errors.
 
 ## Step 6: Verify MCP Integration (Next.js 16+)
 
-For Next.js 16+, the built-in MCP endpoint is available at `/_next/mcp` when the dev server is running. Use `next@>=16.3.8` for it: earlier dev servers did not verify the request origin, so a website the developer visits could read project data from the endpoint. Check for `.mcp.json` in the project root:
+For Next.js 16+, the built-in MCP endpoint is available at `/_next/mcp` when the dev server is running. Use `next@^16.4.5` for it (the origin check arrived in 16.3.8): earlier dev servers did not verify the request origin, so a website the developer visits could read project data from the endpoint. Check for `.mcp.json` in the project root:
 
 ```json
 {

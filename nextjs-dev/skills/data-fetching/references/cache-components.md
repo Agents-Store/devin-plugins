@@ -1,8 +1,8 @@
-# Cache Components & Instant Navigations (Next.js 16 / 16.3)
+# Cache Components & Instant Navigations (Next.js 16 / 16.4)
 
-The Cache Components model makes caching fully explicit: Next.js 16 is dynamic-by-default (implicit `fetch` caching and the `experimental.ppr`/`dynamicIO` flags are gone), and everything cached is opted in with the `use cache` directive. Next.js 16.3 completes the model with Partial Prefetching for instant navigations.
+The Cache Components model makes caching fully explicit: Next.js 16 is dynamic-by-default (implicit `fetch` caching and the `experimental.ppr`/`dynamicIO` flags are gone), and everything cached is opted in with the `use cache` directive. Next.js 16.3 completes the model with Partial Prefetching for instant navigations, and since 16.4 Next.js recommends Cache Components for every app: `create-next-app` enables it for new App Router projects, and it becomes the default in Next.js 17. Apps that have not enabled it keep the previous model (see the table below).
 
-> **Security floor:** `next@16.3.8` fixes two Cache Components leaks — a pending `use cache` fill could hand Draft Mode content to regular requests (and persist it into prerendered pages), and a nested `'use cache'` function that reads a root param could be keyed without that param. If you use `cacheComponents`, stay on `^16.3.8` or later.
+> **Security floor:** Cache Components leaks have been fixed in several releases — `16.3.8` (Draft Mode content handed to regular requests; a nested `'use cache'` function keyed without the root param it reads), `16.4.1` (unauthenticated RCE when a `use cache` function returns typed arrays) and `16.4.5` (cross-tenant results when the same `use cache` function is called directly and through `unstable_cache`; nested functions and binary arguments sharing one cache identity; shared fallback shells poisoned under `next start`). If you use `cacheComponents`, stay on `^16.4.5` or later.
 
 ## Configuration
 
@@ -193,7 +193,7 @@ The `instant` segment config tells Next.js to validate that navigating into a se
 
 ```tsx
 // layout.tsx | page.tsx
-export const instant = true     // validate this segment
+export const instant = true     // validate this segment (an object `{ level: 'warning' }` also works; `'warning'` is the only level)
 // export const instant = false // opt out: this segment is allowed to block
 ```
 
@@ -201,7 +201,7 @@ Instant Insights report each blocking read with three labelled fixes: stream it 
 
 ## Per-link Prefetching and the `prefetch` Segment Config (16.3)
 
-With `partialPrefetching`, every `<Link>` prefetches only the destination's shared App Shell. `<Link prefetch={true}>` additionally resolves cached content that depends on the link's URL (`params`, `searchParams`) before the click — use it for a few high-intent links, not a whole grid (each one can wake the server). `<Link prefetch={false}>` still disables prefetching for that link. Per segment, `export const prefetch = 'partial'` opts the destination into Partial Prefetching without the global flag, and `'force-disabled'` stops its segment data from being prefetched. Existing `prefetch={true}` links used the legacy full prefetch and change behavior when the flag is enabled; the [Adopting Partial Prefetching](https://nextjs.org/docs/app/guides/adopting-partial-prefetching) guide covers the migration (including the older `unstable_eager` option).
+With `partialPrefetching`, every `<Link>` prefetches only the destination's shared App Shell. `<Link prefetch={true}>` additionally resolves cached content that depends on the link's URL (`params`, `searchParams`) before the click — use it for a few high-intent links, not a whole grid (each one can wake the server). `<Link prefetch={false}>` still disables prefetching for that link. Per segment, `export const prefetch = 'partial'` opts the destination into Partial Prefetching without the global flag, and `'force-disabled'` stops its segment data from being prefetched. Existing `prefetch={true}` links used the legacy full prefetch and change behavior when the flag is enabled; the [Adopting Partial Prefetching](https://nextjs.org/docs/app/guides/adopting-partial-prefetching) guide covers the migration (`unstable_eager` no longer exists).
 
 ## Migration
 

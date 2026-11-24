@@ -5,7 +5,7 @@ description: Next.js 16 command-line recipes — create-next-app, next dev and n
 
 # Next.js CLI Recipes
 
-Command-line recipes for creating, developing, building, and deploying Next.js applications. Current as of Next.js 16.3; keep `next` at `^16.3.8` or later for the security fixes (`npm view next@latest version` shows the latest patch).
+Command-line recipes for creating, developing, building, and deploying Next.js applications. Current as of Next.js 16.4; keep `next` at `^16.4.5` or later for the security fixes (`npm view next@latest version` shows the latest patch).
 
 ## Create a New Project
 
@@ -13,7 +13,7 @@ Command-line recipes for creating, developing, building, and deploying Next.js a
 npx create-next-app@latest my-app
 ```
 
-The first prompt asks whether to use the recommended defaults (TypeScript, ESLint, Tailwind CSS, App Router, AGENTS.md); answering no walks through each option.
+The first prompt asks whether to use the recommended defaults (TypeScript, ESLint, Tailwind CSS, App Router, Cache Components, AGENTS.md); answering no walks through each option. Since 16.4 a new App Router project has `cacheComponents` on, so the previous-model route config (`export const revalidate`, `dynamic`) fails the build there; pass `--no-cache-components` when you need the old model.
 
 Non-interactive with the defaults:
 
@@ -27,6 +27,7 @@ Useful flags (Next.js 16):
 |------|---------|
 | `--biome` / `--no-linter` | Use Biome instead of ESLint, or skip linter setup |
 | `--react-compiler` | Enable the React Compiler in the new project |
+| `--cache-components` | Enable Cache Components in the new project (default for App Router since 16.4) |
 | `--api` | Route-handlers-only project (no UI) |
 | `--empty` | Minimal empty project |
 | `--agents-md` | Write AGENTS.md + CLAUDE.md for coding agents (default: on) |

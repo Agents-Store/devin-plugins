@@ -9,7 +9,7 @@ Diagnostics and fixes for common Next.js issues. Start with the quick diagnostic
 
 ## Quick Diagnostics Checklist
 
-1. **Check Next.js version**: `npx next --version` — ensure 14+ for stable App Router; on 16.3 be at `16.3.8` or later (security fixes)
+1. **Check Next.js version**: `npx next --version` — ensure 14+ for stable App Router; on 16.x be at `16.4.5` or later (security fixes)
 2. **Check Node.js version**: `node -v` — `>=20.9.0` is the formal minimum for Next.js 16, but use Node 22 or 24 LTS (Node 20 is end-of-life)
 3. **Check the caching model**: is `cacheComponents: true` in `next.config.ts`? It decides which fixes below apply — `export const dynamic` / `revalidate` / `dynamicParams` work only when it is off
 4. **Clear cache**: `rm -rf .next && npm run dev`

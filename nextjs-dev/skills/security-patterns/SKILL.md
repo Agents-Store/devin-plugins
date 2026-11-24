@@ -276,17 +276,17 @@ export async function getUserPosts() {
 
 ## Keep Next.js Patched
 
-Since 2026-07-13 Next.js runs a formal security-release program (advance notice roughly monthly, ad-hoc patches for urgent issues). The 16.3 line has shipped critical fixes — unauthenticated RCE on Windows-hosted servers and via AVIF in Image Optimization (16.3.3), RCE in `next/og` `ImageResponse` (16.3.6) — and the September 2026 release (16.3.8) added a high-severity SSRF in Image Optimization, SSG/ISR cache-poisoning fixes, two `use cache` leaks (Draft Mode content, nested root params) and an origin check for the dev-server `/_next/mcp` endpoint. Pin `next@^16.3.8` (15.5.x users: 15.5.27 or later) and re-check each month:
+Since 2026-07-13 Next.js runs a formal security-release program (advance notice roughly monthly, ad-hoc patches for urgent issues). The 16.3 line shipped critical fixes — unauthenticated RCE on Windows-hosted servers and via AVIF in Image Optimization (16.3.3), RCE in `next/og` `ImageResponse` (16.3.6) — and the September 2026 release (16.3.8) added a high-severity SSRF in Image Optimization, SSG/ISR cache-poisoning fixes, two `use cache` leaks (Draft Mode content, nested root params) and an origin check for the dev-server `/_next/mcp` endpoint. The out-of-band update of 2026-10-14 (16.4.1, 15.5.28) fixed two critical RCEs — a `use cache` function returning typed arrays, and SVG files in Image Optimization on glibc Linux (workaround: `sharp` 0.35.5 or later) — and a Server Actions DoS. The November release (16.4.5, 15.5.29) fixed seven medium issues: `use cache` leaks across tenants, users and root params (including binary arguments and `unstable_cache` mixed with `use cache`), shared shell cache poisoning with Cache Components under `next start`, forwarded compressed `fetch` responses behind pipelining proxies, `HttpOnly` cookie values visible in an internal header of Edge routes, and an SVG rejection bypass through AVIF. Only 16.4 (Active LTS) and 15.5 (Maintenance LTS) receive patches. Pin `next@^16.4.5` (15.5.x users: 15.5.29 or later) and re-check each month; `experimental.agentUpgrade` (default `'security'`) also reminds you during `next dev` and `next build` when your installed version has a known vulnerability:
 
 ```bash
 npm ls next && npm view next@latest version
 ```
 
-Also narrow `images.remotePatterns` to the exact hostnames (and pathnames) you load — the 16.3.8 SSRF needed an allow-listed remote URL, and apps with no `remotePatterns` were not affected.
+Also narrow `images.remotePatterns` to the exact hostnames (and pathnames) you load — the 16.3.8 SSRF needed an allow-listed remote URL (the 16.4.5 SVG bypass also needed a permitted source), and apps with no `remotePatterns` were not affected.
 
 ## Production Security Checklist
 
-- [ ] `next` on the latest patch (at least 16.3.8 on the 16.3 line, 15.5.27 on 15.5)
+- [ ] `next` on the latest patch (at least 16.4.5 on 16.x, 15.5.29 on 15.5)
 - [ ] No secrets in `NEXT_PUBLIC_*` variables
 - [ ] `server-only` package on all server modules (db, auth, secrets)
 - [ ] CSP headers with nonces for inline scripts

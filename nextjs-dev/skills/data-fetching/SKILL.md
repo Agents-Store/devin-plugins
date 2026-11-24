@@ -1,6 +1,6 @@
 ---
 name: data-fetching
-description: Next.js 16 data fetching and caching in the App Router — Server Component fetching, parallel requests and Suspense streaming, Server Action mutations, revalidation with revalidatePath, revalidateTag, updateTag and refresh, ISR, and the use cache directive with cacheLife and cacheTag under cacheComponents. Use when loading, caching or invalidating data. Forms and validation are form-handling.
+description: Next.js 16 data fetching and caching in the App Router — Server Component fetching, parallel requests and Suspense streaming, Server Action mutations, revalidation with revalidatePath, revalidateTag (profile argument, the single-argument form is deprecated), updateTag and refresh, ISR, and the use cache directive with cacheLife and cacheTag under cacheComponents. Use when loading, caching or invalidating data. Forms and validation are form-handling.
 ---
 
 # Data Fetching, Caching & Mutations
@@ -490,4 +490,4 @@ When content lives in another system (Directus, Contentful, Strapi): one content
 | Streaming | Progressive loading | `<Suspense>` boundaries or `loading.tsx` |
 | Cache Components (`use cache`, 16+) | Fine-grained cache control | Opt in via `cacheComponents: true`, then `'use cache'` + `cacheLife()` + `cacheTag()` |
 
-Next.js 16 is dynamic-by-default — implicit `fetch` caching was removed, so caching is always explicit. 16.3 adds `partialPrefetching: true` as the second flag of the Instant Navigations model (see [references/cache-components.md](references/cache-components.md)).
+Next.js 16 is dynamic-by-default — implicit `fetch` caching was removed, so caching is always explicit. 16.3 adds `partialPrefetching: true` as the second flag of the Instant Navigations model (part of the recommended Cache Components setup since 16.4) (see [references/cache-components.md](references/cache-components.md)).

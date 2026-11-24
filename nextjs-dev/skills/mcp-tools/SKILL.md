@@ -40,7 +40,7 @@ code --add-mcp '{"name":"next-devtools","command":"npx","args":["-y","next-devto
 
 Requirements:
 - Node.js v20.19+
-- For runtime tools (`nextjs_index`, `nextjs_call`): Next.js 16+ with the dev server running — use **`next@>=16.3.8`**: before it, the dev server's `/_next/mcp` endpoint did not verify which website a request came from, so a malicious page visited by the developer could read the project path, error-report source snippets, the route inventory and dev logs (GHSA-39w2-rjm5-chcv, low severity, dev server only). Update `next` before wiring this up
+- For runtime tools (`nextjs_index`, `nextjs_call`): Next.js 16+ with the dev server running — use **`next@^16.4.5`** (the origin check arrived in 16.3.8): before 16.3.8, the dev server's `/_next/mcp` endpoint did not verify which website a request came from, so a malicious page visited by the developer could read the project path, error-report source snippets, the route inventory and dev logs (GHSA-39w2-rjm5-chcv, low severity, dev server only). Update `next` before wiring this up
 
 > **Removed in 0.4.0:** the `init`, `upgrade_nextjs_16`, and `enable_cache_components` tools no longer exist. Upgrade and Cache Components workflows now live in the upgrade codemod (`npx @next/codemod@canary upgrade latest`, or the `next upgrade` command in 16.1+) and the migration guide at `/docs/app/guides/migrating-to-cache-components`.
 
@@ -92,7 +92,7 @@ Use for:
 
 ## First-party Next.js Agent Skills (16.3)
 
-Next.js 16.3 retired the old knowledge-only skills (the bundled docs now do that job) and ships four workflow skills, installed with `npx skills add vercel/next.js --skill <name>`:
+Next.js 16.3 retired the old knowledge-only skills (the bundled docs now do that job) and ships workflow skills (six as of 16.4), installed with `npx skills add vercel/next.js --skill <name>`:
 
 | Skill | Use for |
 |-------|---------|
@@ -100,6 +100,8 @@ Next.js 16.3 retired the old knowledge-only skills (the bundled docs now do that
 | `next-cache-components-adoption` | Turns Cache Components on and adopts routes one feature at a time (incremental or direct mode) |
 | `next-cache-components-optimizer` | Turns "this navigation must be instant" into a failing `instant()` test and works it to green |
 | `next-partial-prefetching-adoption` | Enables Partial Prefetching and works through links until each reuses a shared loading shell |
+| `next-partial-prefetching-optimizer` | Takes a target navigation and works toward the UI you want ready before the click |
+| `next-bundle-optimizer` (16.4, experimental) | Uses the Turbopack bundle analyzer to find and reduce large client-side bundles |
 
 Other 16.3 agent affordances: any docs page is available as Markdown by appending `.md` to the URL (index at `/docs/llms.txt`, everything in `/docs/llms-full.txt`), and `agentRules: false` in `next.config.ts` stops `next dev` from maintaining the AGENTS.md block.
 
