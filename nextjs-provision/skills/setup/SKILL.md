@@ -199,7 +199,7 @@ Check that:
 
 ## Step 6: Configure Community Registries (Optional)
 
-The official shadcn MCP only searches registries listed in `components.json`. To make every registry visible to the MCP, populate them from the official endpoint (418 entries on 2026-10-02):
+The official shadcn MCP only searches registries listed in `components.json`. To make every registry visible to the MCP, populate them from the official endpoint (593 entries on 2026-11-24):
 
 ```bash
 curl -s https://ui.shadcn.com/r/registries.json

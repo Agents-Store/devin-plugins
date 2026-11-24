@@ -5,7 +5,7 @@ description: Search and install components from the 400+ registries in the offic
 
 ## How Community Registries Work
 
-shadcn v4 supports custom registries via the `"registries"` field in `components.json`. Any registry that implements the shadcn registry protocol can be added. The official registry directory at `https://ui.shadcn.com/r/registries.json` held 418 registries on 2026-10-02 (380 not hidden; 326 healthy, 41 degraded, 39 unavailable, 12 observing) — always fetch it instead of trusting a number.
+shadcn v4 supports custom registries via the `"registries"` field in `components.json`. Any registry that implements the shadcn registry protocol can be added. The official registry directory at `https://ui.shadcn.com/r/registries.json` held 593 registries on 2026-11-24 (538 not hidden; 484 healthy, 50 degraded, 57 unavailable, 2 observing) — always fetch it instead of trusting a number.
 
 The CLI can install from any registry without configuration:
 
@@ -43,7 +43,7 @@ Returns a JSON array. Each entry has:
 
 Always fetch this endpoint instead of using a hardcoded list — it's maintained by the shadcn team and always current.
 
-**Filter by health before recommending or bulk-adding.** Skip `health.status == "unavailable"` and `health.hidden == true` (39 entries on 2026-10-02: all `unavailable`, 38 of them hidden — they would not install). Say so when you recommend a `degraded` registry (e.g. sampled items failing validation); prefer `healthy` ones with a high `ranking.score`:
+**Filter by health before recommending or bulk-adding.** Skip `health.status == "unavailable"` and `health.hidden == true` (57 entries on 2026-11-24: all `unavailable`, 55 of them hidden — they would not install). Say so when you recommend a `degraded` registry (e.g. sampled items failing validation); prefer `healthy` ones with a high `ranking.score`:
 
 ```bash
 curl -s https://ui.shadcn.com/r/registries.json | python3 -c '
@@ -152,7 +152,7 @@ This plugin's `.mcp.json` declares one MCP server: the official `shadcn` server 
 | `get_add_command_for_items` | The `npx shadcn@latest add ...` command for given `@registry/item` addresses |
 | `get_audit_checklist` | Post-install checklist after adding components |
 
-Known quirks (shadcn 4.21.1): `search_items_in_registries` prints `Add command: [object Promise]` — build the command yourself (`npx shadcn@latest add @registry/item`) or call `get_add_command_for_items`. A registry that is not in `components.json` (for example `@magicui` in a fresh project) returns `NOT_CONFIGURED` from the MCP even though the CLI installs from it — configure it first (`/add-registries` or `npx shadcn registry add`).
+Known quirks (shadcn 4.23.0): a registry that is not in `components.json` (for example `@magicui` in a fresh project) returns `NOT_CONFIGURED` from the MCP even though the CLI installs from it — configure it first (`/add-registries` or `npx shadcn registry add`).
 
 The community MCP server `@jpisnice/shadcn-ui-mcp-server` is no longer shipped with this plugin: its `get_component` returns the Radix variant even with `--ui-library base`, and `get_component_metadata` answers "not found" for common components. For component source and demos use `npx shadcn@latest view @registry/item`, `npx shadcn@latest docs <component>`, or the tools above.
 
@@ -168,16 +168,16 @@ To use the server in a user project (not through this plugin), run `npx shadcn@l
 | Extended UI | @coss (ex-Origin UI), @diceui, @basecn, @8bitcn, @boldkit, @8starlabs-ui, @cardcn | Extra components, retro/pixel style, card variants, dice rolls |
 | Blocks & Sections | @bundui, @blocks-so, @efferd (degraded) | Landing page sections, marketing blocks, dashboards |
 | E-Commerce | @commercn | Product cards, cart, checkout, reviews |
-| AI Components | @ai-elements, @assistant-ui, @tool-ui | Chat bubbles, prompt inputs, AI response streams, LLM UIs |
+| AI Components | @ai-elements (degraded), @assistant-ui, @tool-ui | Chat bubbles, prompt inputs, AI response streams, LLM UIs |
 | File Upload | @better-upload | Upload components, drag-and-drop, progress indicators |
-| Editors & misc | @plate, @shadcn-editor, @kibo-ui, @kokonutui, @reui, @intentui, @tailark (degraded), @retroui, @smoothui, @skiper-ui, @paceui (degraded), @clerk, @supabase | Rich text editors, design-system kits, auth/backend UIs |
-| Other | @arc, @abui (degraded), @aevr, @unlumen-ui (degraded), @einui, @billingsdk | Specialized UI, billing forms, misc |
+| Editors & misc | @plate, @shadcn-editor, @kibo-ui, @kokonutui, @reui, @intentui, @tailark (degraded), @retroui, @smoothui, @skiper-ui, @paceui, @clerk, @supabase | Rich text editors, design-system kits, auth/backend UIs |
+| Other | @abui (degraded), @unlumen-ui (degraded), @einui, @billingsdk | Specialized UI, billing forms, misc |
 
-Also `degraded` on 2026-10-02: @shadcnblocks. `unavailable` (do not recommend): @chamaac, @doras-ui, @creative-tim, @ai-blocks, @hextaui, @neobrutalism. Re-check `health` in the live directory before relying on this table.
+Also `degraded` on 2026-11-24: @shadcnblocks. `unavailable` (do not recommend): @doras-ui, @creative-tim, @ai-blocks, @neobrutalism, @arc, @aevr (@chamaac and @hextaui are healthy again). Re-check `health` in the live directory before relying on this table.
 
 See `references/community-registries.md` for the full list with URLs and descriptions.
 
-Full directory (418 registries on 2026-10-02): https://ui.shadcn.com/docs/directory
+Full directory (593 registries on 2026-11-24): https://ui.shadcn.com/docs/directory
 
 ## CLAUDE.md Section for User Projects
 

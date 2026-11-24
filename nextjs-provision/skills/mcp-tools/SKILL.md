@@ -48,7 +48,7 @@ Or write the server into the project's `.mcp.json` yourself — see `component-s
 
 ### Tools
 
-The server exposes seven tools (shadcn 4.21.1):
+The server exposes seven tools (checked on shadcn 4.23.0, unchanged since 4.21.1):
 
 | Tool | Description |
 |------|-------------|
@@ -62,9 +62,9 @@ The server exposes seven tools (shadcn 4.21.1):
 
 Registry and component search work across **every registry configured in `components.json`**, including shadcn studio (`@ss-*`) and any community registry you added.
 
-### Known quirks (shadcn 4.21.1)
+### Known quirks (shadcn 4.23.0)
 
-- `search_items_in_registries` prints `Add command: [object Promise]` for every hit. Do not copy it — build the command (`npx shadcn@latest add @registry/item`) or call `get_add_command_for_items`.
+- Up to shadcn 4.21.4, `search_items_in_registries` and `list_items_in_registries` printed `Add command: [object Promise]` for every hit; 4.21.5 fixed it and 4.23.0 prints the real command. If you see the placeholder, the CLI is older than 4.21.5 (a pinned or cached copy) — update it, or build the command yourself (`npx shadcn@latest add @registry/item`) or call `get_add_command_for_items`.
 - A registry that is not listed in `components.json` returns `NOT_CONFIGURED` from the MCP tools (for example `@magicui` in a project with `"registries": {}`), although the CLI itself resolves `@registry/item` for any directory entry. Configure it first with `/add-registries` or `npx shadcn registry add`.
 
 ## The community server is no longer shipped

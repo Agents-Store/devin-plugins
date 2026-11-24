@@ -317,7 +317,7 @@ See `references/shadcn-studio-components.md` and `references/shadcn-studio-block
 
 ## Community Registries (400+)
 
-Beyond the standard shadcn/ui and shadcn studio registries, the official directory (418 entries on 2026-10-02) lists registries with specialized components. Each entry carries `health.status` (`healthy`, `degraded`, `unavailable`, `observing`) and `health.hidden` — recommend only healthy ones, and mention it when a registry is degraded:
+Beyond the standard shadcn/ui and shadcn studio registries, the official directory (593 entries on 2026-11-24) lists registries with specialized components. Each entry carries `health.status` (`healthy`, `degraded`, `unavailable`, `observing`) and `health.hidden` — recommend only healthy ones, and mention it when a registry is degraded:
 
 | Category | Example Registries | Component Types |
 |----------|-------------------|-----------------|
@@ -325,7 +325,7 @@ Beyond the standard shadcn/ui and shadcn studio registries, the official directo
 | Extended Components | @coss (ex-Origin UI), @diceui, @basecn, @8bitcn, @boldkit | Multi-select, file upload, retro/pixel style, card variants |
 | Blocks & Sections | @bundui, @blocks-so, @efferd (degraded) | Landing page sections, marketing blocks, dashboards |
 | E-Commerce | @commercn | Product cards, cart, checkout, reviews |
-| AI / Chat | @ai-elements, @assistant-ui, @tool-ui | Chat bubbles, prompt inputs, AI response streams |
+| AI / Chat | @ai-elements (degraded), @assistant-ui, @tool-ui | Chat bubbles, prompt inputs, AI response streams |
 
 Install from a community registry:
 

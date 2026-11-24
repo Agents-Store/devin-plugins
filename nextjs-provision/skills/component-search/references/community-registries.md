@@ -8,11 +8,11 @@ The authoritative, always-up-to-date list of all shadcn-compatible registries:
 https://ui.shadcn.com/r/registries.json
 ```
 
-Returns a JSON array — 418 registries on 2026-10-02 (380 not hidden; 326 healthy, 41 degraded, 39 unavailable, 12 observing). Each entry: `name`, `url`, `homepage`, `description`, `health` (`status`, `hidden`, ...) and `ranking` (`score`, `itemCount`).
+Returns a JSON array — 593 registries on 2026-11-24 (538 not hidden; 484 healthy, 50 degraded, 57 unavailable, 2 observing). Each entry: `name`, `url`, `homepage`, `description`, `health` (`status`, `hidden`, ...) and `ranking` (`score`, `itemCount`).
 
 **To populate components.json with the registries**, use the `/add-registries` command — it fetches this endpoint, skips `unavailable` and hidden entries, and adds the rest automatically. The CLI resolves `@registry/item` for any directory entry even without that step; it matters for MCP search.
 
-Health snapshot used by the tables below (2026-10-02): **degraded** entries are marked `(degraded)`; the six registries that used to be recommended here — @chamaac, @doras-ui, @creative-tim, @ai-blocks, @hextaui, @neobrutalism — are `unavailable` (their directory entries are hidden except @chamaac) and were removed. Re-check `health` in the live endpoint before recommending one.
+Health snapshot used by the tables below (2026-11-24): **degraded** entries are marked `(degraded)`; registries that used to be recommended here — @doras-ui, @creative-tim, @ai-blocks, @neobrutalism, @arc, @aevr — are `unavailable` (all hidden in the directory except @aevr) and were removed. @chamaac and @hextaui, removed on 2026-10-02 as unavailable, are healthy again. Re-check `health` in the live endpoint before recommending one.
 
 **Browse online**: https://ui.shadcn.com/docs/directory
 
@@ -65,7 +65,7 @@ The tables below organize notable registries by category. This is a curated subs
 
 | Registry | URL | Description |
 |----------|-----|-------------|
-| @ai-elements | `https://ai-sdk.dev/elements/api/registry/{name}.json` | Vercel AI SDK UI elements — chat interfaces, streaming response displays |
+| @ai-elements (degraded) | `https://ai-sdk.dev/elements/api/registry/{name}.json` | Vercel AI SDK UI elements — chat interfaces, streaming response displays |
 | @assistant-ui | `https://r.assistant-ui.com/{name}.json` | AI assistant UIs — chat bubbles, thread views, suggested prompts, tool call displays |
 | @tool-ui | `https://www.tool-ui.com/r/{name}.json` | Tool/function call UIs for AI agents — tool result cards, execution status |
 
@@ -79,9 +79,7 @@ The tables below organize notable registries by category. This is a curated subs
 
 | Registry | URL | Description |
 |----------|-----|-------------|
-| @arc | `https://witharc.co/r/{name}.json` | Design system components |
 | @abui (degraded) | `https://abui.io/r/{name}.json` | Additional UI component library |
-| @aevr | `https://ui.aevr.online/r/{name}.json` | UI component variants |
 | @einui | `https://ui.eindev.ir/r/{name}.json` | Extended UI components |
 | @billingsdk | `https://billingsdk.com/r/{name}.json` | Billing and payment form components — subscription management, plan selectors |
 
@@ -95,7 +93,7 @@ Registries recently added to the directory worth knowing (exact URL templates co
 | @kokonutui | Modern animated components |
 | @reui | Extended UI component collection |
 | @plate | Rich text editor framework components |
-| @paceui (degraded) (+ @paceui-gsap) | Animated/GSAP-powered components |
+| @paceui (+ @paceui-gsap) | Animated/GSAP-powered components |
 | @intentui | Design-system component kit |
 | @skiper-ui | Animated showcase components |
 | @smoothui | Smooth micro-interaction components |

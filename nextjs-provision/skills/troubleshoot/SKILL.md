@@ -278,7 +278,7 @@ The plugin's MCP server is the official shadcn one (`npx shadcn@latest mcp`); se
 |-------|-----|
 | MCP server not connecting | Check `/mcp` or `claude mcp list`, run `npx shadcn@latest mcp` once by hand to see the error |
 | `NOT_CONFIGURED` for a registry | The registry is not in `components.json` — add it (`/add-registries`, `npx shadcn registry add`) |
-| `Add command: [object Promise]` in search results | Known shadcn 4.21.1 output bug — use `get_add_command_for_items` or write `npx shadcn@latest add @registry/item` |
+| `Add command: [object Promise]` in search results | Output bug of shadcn before 4.21.5 — run the MCP through `npx shadcn@latest mcp` (latest), or use `get_add_command_for_items` / write `npx shadcn@latest add @registry/item` |
 | No registries listed | `components.json` is missing or has an empty `registries` — run `npx shadcn@latest init` |
 
 ## When to Escalate
