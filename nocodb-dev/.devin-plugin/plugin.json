@@ -1,6 +1,6 @@
 {
   "name": "nocodb-dev",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "NocoDB schema development plugin. Meta API v3 via curl and MCP (schema tools on Cloud/licensed — listed on /mcp, behind listTools/callTool on /mcp-discovery) — tables, fields (35 types), views (9 types), filters, sorts, hooks (HookV3), comments, scripts, dashboards & widgets, workflows, documents, plus workspaces / members / teams / tokens. Bundles both Data API and Meta API OpenAPI specs.",
   "author": {
     "name": "AGENTS.STORE"

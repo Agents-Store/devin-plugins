@@ -57,6 +57,7 @@ Per the descriptions in the bundled spec:
 | Hooks, comments, workflows, documents, base collaboration | Cloud-hosted Business and above; licensed self-hosted (Business and above) |
 | Views, dashboards, widgets, scripts | Cloud-hosted Enterprise; licensed self-hosted (Business and above) |
 | API tokens | All cloud-hosted plans; licensed self-hosted |
+| Table and field permissions — set / delete | Cloud-hosted Business and above; licensed self-hosted. Listing grants works on every plan |
 | Workspaces — list / create | All plans; read / update / delete of one workspace needs Business and above |
 | Environments | Self-hosted Enterprise and cloud-hosted plans with organizations |
 
@@ -113,7 +114,9 @@ Per the descriptions in the bundled spec:
 
 **Environments** (8 ops): `/workspaces/{workspaceId}/environments[/{environmentId}]` and `/orgs/{orgId}/environments[/{environmentId}]`.
 
-**API Tokens** (4 ops): `GET`/`POST` `/tokens`, `PATCH`/`DELETE` `/tokens/{tokenId}`. `POST` needs a `title` and, on Cloud and licensed self-hosted, at least one scope. The token is returned **once** on create — store it immediately. Changing the account password deletes the account's API tokens (since 2026.10.1), so a sudden 401 after a password change means: create a new token.
+**API Tokens** (4 ops): `GET`/`POST` `/tokens`, `PATCH`/`DELETE` `/tokens/{tokenId}`. Session credential only — an API token is refused. `POST` needs a `title` and, on Cloud and licensed self-hosted, at least one scope; a fine-grained token also takes per-category permission levels, `expiry` and an `ip_allowlist` (`PATCH` replaces scopes and the allowlist wholesale; `expiry: null` clears it). The token is returned **once** on create — store it immediately. Changing the account password deletes the account's API tokens (since 2026.10.1), so a sudden 401 after a password change means: create a new token. Field list in `references/meta-api-endpoints.md`.
+
+**Permissions** (3 ops): `GET`/`PUT` `/bases/{baseId}/permissions`, `DELETE` `/bases/{baseId}/permissions/{permissionId}` — table and field grants; see the **permissions** skill.
 
 ## Reading the OpenAPI Files
 

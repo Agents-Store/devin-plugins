@@ -197,6 +197,16 @@ NocoDB validates the change against existing data:
 
 Always count records first to gauge impact — see **mcp-patterns** "Audit Scope Before a Destructive Change". Over MCP, changing `type` in `updateField` replaces the stored `options`; changing only `options` merges.
 
+### Dry run before a destructive change (MCP, 2026.10.0)
+
+`updateField` and `removeFieldOptions` take `dryRun: true`. Nothing is written; the answer reports how many cell values the change would clear (`cleared_rows`) or round (`rounded_rows`), with up to five record ids for each, and for a select field the count per removed choice (`cleared_by_choice`). For a link field converted to `SingleLineText` it also lists the text the cells would get, the reverse link field that would be deleted, and the lookup, rollup and formula fields that would break. Run it first on every type change and on every choice rewrite or removal, show the numbers to the user, then repeat the call without `dryRun`.
+
+```
+updateField  fieldId: "<fieldId>"  field: { type: "Number" }  dryRun: true
+```
+
+The counts are exact only for a type conversion on PostgreSQL. On another database, and for a conversion to a link field, they come back as `null` with a warning that says why — fall back to `countRecords` as in **mcp-patterns**. REST has no dry run (source: https://nocodb.com/docs/mcp/schema, updated 2026-11-18; the `dryRun` argument in the server's own tool schema).
+
 ## Update Field Options (select choices)
 
 Do **not** resend the whole choice list. Add or remove individual choices:
@@ -265,6 +275,13 @@ The classic CRM pattern: each Order has one Customer; surface customer name on t
 ```
 
 Each `createField` is one MCP `callTool` (`arguments: { tableId, field: {…} }`) or one REST `POST …/tables/{tableId}/fields` with the same object as the body.
+
+### Newer field options (2026.10.0)
+
+- **Rollup that counts every linked record.** `rollup_function: "countAll"` counts all linked records; `count` counts only those whose rolled-up value is not empty. Date-like targets accept `count`, `countAll`, `min`, `max` and `countDistinct`; numeric targets also take `sum`, `avg`, `sumDistinct` and `avgDistinct` (source: OpenAPI spec at tag 2026.10.2, `FieldOptions_Rollup`; release 2026.10.0).
+- **Formula shown as a colored single select.** A text formula can render its result as a single-select chip; filters and sorts still treat it as text. It is a formatting choice in the field editor (the Formatting tab): add the values the formula can return, each with a color; a result matches an option by exact, case-sensitive title, and an unmatched result shows as a gray chip unless a fallback option is chosen. Over the API the formula keeps its `display_type` / `display_column_meta` keys (see `field-types.md`) — create the formula, set the format in the UI, then read it back with `getField` to see how the server stores it (source: https://nocodb.com/docs/product/tables/fields/field-types/formula/formula-result-formatting, 2026-10-19; release 2026.10.0).
+- **Conditional links.** A link field (`Links` / `LinkToAnotherRecord`) and a rollup take `options.enable_conditions: true` to apply the configured filters when resolving linked records; `getField` on a link field returns the conditions as `options.record_selection_filter` (MCP). The release adds a dynamic condition that matches linked records sharing a link with the current record. The v3 options schema only carries the boolean — set the condition itself in the field editor (source: OpenAPI spec at tag 2026.10.2; https://nocodb.com/docs/mcp/schema; release 2026.10.0).
+- **Button that runs an automation.** The Button field's *On click* action *Run automation* starts a workflow whose trigger is *When a button is clicked*; the workflow receives the clicked record. Cloud and licensed self-hosted only; one workflow can be bound to one button; the workflow must be enabled before the button works, and each click counts as one run against the plan's limit. The v3 Button `options` schema has only `url`, `webhook`, `script`, `ai` and `formula` — there is no automation type, so create this button in the UI (*Create new automation* builds the workflow with the trigger already attached). See **workflows** (source: https://nocodb.com/docs/product/tables/fields/field-types/custom-types/button, 2026-10-21; https://nocodb.com/docs/workflows/nodes/trigger-nodes/button-clicked; the server's `getFieldOptionsSchema("Button")`).
 
 ### Formula validation
 

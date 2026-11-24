@@ -37,7 +37,21 @@ The two tokens are **distinct**. Sharing one variable across both transports is 
 | Option | How |
 |--------|-----|
 | MCP token | Cloud / licensed: Account Settings → **MCP** tab → New connection (choose Access and Tools & Permissions). Community Edition: Overview → Settings → Model Context Protocol → New MCP Endpoint. Put the token in `NOCODB_MCP_TOKEN` (header `xc-mcp-token`; `x-api-key` also works). |
-| OAuth | Cloud: connect to `https://app.nocodb.com/mcp` without a token. Self-hosted: `https://<host>/mcp`. |
+| OAuth | Cloud: connect to `https://app.nocodb.com/mcp` without a token. Licensed self-hosted: `https://<host>/mcp`. Not on Community Edition. |
+
+#### Sign in with OAuth (Cloud and licensed self-hosted)
+
+No token to copy: add the server URL to the client, sign in to NocoDB in the browser, choose the projects (*Access*) and the tools (*Tools & Permissions*), and authorize. A connected client never gets more than your own role allows. In Claude Code:
+
+```bash
+claude mcp add --transport http <server-name> https://app.nocodb.com/mcp   # self-hosted: https://<host>/mcp
+```
+
+then `/mcp` → select the server → **Authenticate**. On licensed self-hosted set `NC_SITE_URL` (or `NC_PUBLIC_URL`) to the instance's public HTTPS address first — NocoDB builds its sign-in addresses from it. Each tool section (records, schema, views, automation, apps and docs, access and security) gets a level on the authorization screen: **Read**, **Read & write**, **Read, write & delete** or **None**; every section starts at the highest, so lower the sections to *Read & write* when the client must never delete. This plugin's own `nocodb` server in `.mcp.json` keeps using `NOCODB_MCP_URL` and `NOCODB_MCP_TOKEN`; an OAuth server added with `claude mcp add` is a second, separate connection (give it another name).
+
+#### `/mcp` or `/mcp-discovery`
+
+Some clients accept at most 100 tools and cannot fetch a tool's schema later. For them NocoDB serves `/mcp-discovery`: most read tools and the record create / update / delete / link / unlink tools are listed, the rest sit behind `listTools` and `callTool`; the access you grant is the same. Use it for **Devin Desktop** (formerly Windsurf), **GitHub Copilot** and **AntiGravity**: OAuth at `https://<host>/mcp-discovery` (Devin Desktop, GitHub Copilot), or an MCP connection at `https://<host>/mcp-discovery/<connectionId>` with a token (all three). Claude, Claude Code, ChatGPT and Cursor use the full `/mcp`. Community Edition has no `/mcp-discovery`; those clients use `https://<host>/mcp/<connectionId>` and get the record tools only. The setup screen in NocoDB fills the right URL in for each client (source: https://nocodb.com/docs/mcp and https://nocodb.com/docs/mcp/claude-code, 2026-11-05 and 2026-10-21; release 2026.10.0).
 
 ## Verification Steps
 

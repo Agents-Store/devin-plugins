@@ -106,6 +106,10 @@ A workflow can be wired in the NocoDB UI to a Hook event. Programmatically you'd
 1. Create the workflow in NocoDB UI (graph + variables).
 2. Configure a hook with `notification.type: "Script"` whose script calls the `/execute` endpoint with the triggering record's data — see the **webhooks** and **api-reference** skills.
 
+### Start a workflow from a Button field
+
+A workflow whose trigger is **When a button is clicked** can be bound to a Button field with the *Run automation* action (Cloud and licensed self-hosted, since 2026.10.0). Each click starts one run with the clicked record (`record.id`, `record.fields`) plus the table, the button and the user who clicked; Editor role or above can click. One workflow binds to one button, and it must be enabled first — a human does that in the UI. The Button field's v3 `options` schema has no automation action, so the binding is made in the field editor (*Create new automation* adds the trigger for you); over MCP you can build the rest of the graph, then read the run with the execution endpoints below. A Button field with a visibility condition starts the workflow only for the records that meet it, and every click counts as a run against the plan's limit (source: https://nocodb.com/docs/workflows/nodes/trigger-nodes/button-clicked, 2026-10-21; https://nocodb.com/docs/product/tables/fields/field-types/custom-types/button).
+
 ### Poll until done
 
 ```bash

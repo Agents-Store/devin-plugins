@@ -156,6 +156,8 @@ Step 2: mcp__plugin_nocodb-dev_nocodb__countRecords  tableId: <tableId>
         → rows that hold no value in the column you are about to change
 ```
 
+For a field type change or a select-choice removal, `updateField` / `removeFieldOptions` with `dryRun: true` give the cleared and rounded counts directly, with sample record ids and no write (2026.10.0) — see **field-management** → "Dry run before a destructive change". The counts are exact for type conversions on PostgreSQL only; elsewhere they are `null`, so use the `countRecords` audit above.
+
 Deleted tables, fields and views go to the base **trash** on Cloud/licensed: `listTrash` shows the entry (with `cleanup_due_at`), `restoreFromTrash(trashId)` puts it back. Deleted records can be restored with `restoreRecords` only on a NocoDB-managed source — an external source deletes for good. Still confirm before every delete.
 
 ## Best Practices

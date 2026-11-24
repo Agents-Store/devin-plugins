@@ -268,7 +268,7 @@ Aggregates a field from linked records.
 }
 ```
 
-`rollup_function`: `count`, `min`, `max`, `avg`, `sum`, `countDistinct`, `sumDistinct`, `avgDistinct`. Other `options`: `precision`, `separator`, `enable_conditions`.
+`rollup_function`: `count` (linked records with a non-empty value), `countAll` (every linked record), `min`, `max`, `avg`, `sum`, `countDistinct`, `sumDistinct`, `avgDistinct`, `formula`; date-like targets take only `count`, `countAll`, `min`, `max`, `countDistinct`. Other `options`: `precision`, `separator`, `enable_conditions`.
 
 ## Computed
 
@@ -286,7 +286,7 @@ Other `options`: `display_type`, `display_column_meta` (how the result is render
 
 ### Button
 
-`options.type` selects the action: `url`, `webhook`, `script`, `ai` or `formula`.
+`options.type` selects the action: `url`, `webhook`, `script`, `ai` or `formula`. The *Run automation* action seen in the UI (2026.10.0) has no `options` type in the v3 schema — create that button in the UI (see **field-management**).
 
 ```jsonc
 { "title": "Open Doc", "type": "Button",

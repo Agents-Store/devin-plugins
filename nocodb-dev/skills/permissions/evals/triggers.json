@@ -1,0 +1,16 @@
+[
+  {"query": "In NocoDB, make the Invoices table so only editors and up can add records, and check the grant afterwards", "should_trigger": true},
+  {"query": "Restrict editing of the Salary field in NocoDB to two named users via the permissions API", "should_trigger": true},
+  {"query": "Disable CSV and Excel download for the Customers table in NocoDB for everyone", "should_trigger": true},
+  {"query": "Как в NocoDB через MCP выдать право на удаление записей в таблице только создателям?", "should_trigger": true},
+  {"query": "List the table and field permission grants in a NocoDB base and drop the one on the Orders table", "should_trigger": true},
+  {"query": "Запрети в NocoDB скачивать данные таблицы Клиенты всем, кроме владельцев базы, через permissions", "should_trigger": true},
+  {"query": "Hide the Internal table in NocoDB from everyone except the base owners", "should_trigger": true},
+  {"query": "Set up Postgres row-level security policies for a multi-tenant orders table", "should_trigger": false},
+  {"query": "Grant a Directus role read access to the articles collection", "should_trigger": false},
+  {"query": "Invite a new member to my NocoDB workspace with the viewer role", "should_trigger": false},
+  {"query": "Create an API token in NocoDB limited to one base with read-only records", "should_trigger": false},
+  {"query": "Create a NocoDB table called Events with a Title field", "should_trigger": false},
+  {"query": "Configure file permissions with chmod on a Linux server", "should_trigger": false},
+  {"query": "Add a Rollup field to a NocoDB table that counts linked orders", "should_trigger": false}
+]

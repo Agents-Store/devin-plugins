@@ -494,9 +494,12 @@ Bodies: `EnvironmentCreateV3Req` / `EnvironmentUpdateV3Req`. Available on self-h
 
 | Path | Method | Purpose |
 |------|--------|---------|
-| `/api/v3/meta/tokens` | `GET` | List API tokens for the calling user |
+| `/api/v3/meta/tokens` | `GET` | List API tokens for the calling user (`limit`, `offset`, or `baseId` for the tokens scoped to one base) |
 | `/api/v3/meta/tokens` | `POST` | Create an API token |
+| `/api/v3/meta/tokens/{tokenId}` | `PATCH` | Change title, scopes, expiry, enabled flag or IP allowlist |
 | `/api/v3/meta/tokens/{tokenId}` | `DELETE` | Revoke an API token |
+
+These endpoints accept a **session credential only**: an API token gets `401 ERR_API_TOKEN_NOT_ALLOWED`, an OAuth access token `403 ERR_FORBIDDEN`. They are beta.
 
 Create payload — `title` is required, and on Cloud and licensed self-hosted at least one entry in `scopes` is required too (a request without one is rejected with `400`). `{"resource_type": "all", "resource_id": "*"}` is the account-wide scope:
 
@@ -504,7 +507,38 @@ Create payload — `title` is required, and on Cloud and licensed self-hosted at
 { "title": "CI deploy token", "scopes": [ { "resource_type": "all", "resource_id": "*" } ] }
 ```
 
-Response (`ApiTokenWithTokenV3`) includes the raw token **once** — store it immediately; subsequent reads return only metadata.
+A fine-grained token (every token created through this API on Cloud / licensed; value prefix `nc_pat_`) can be narrowed:
+
+| Key | Meaning |
+|-----|---------|
+| `scopes[]` | Up to 100. `resource_type` is `base`, `workspace` or `all`; `resource_id` is the base / workspace id (`*` for `all`); the minting user must already have access to each one |
+| `scopes[].permissions` | Level per category — `records`, `tables`, `fields`, `views`, `base`, `comments`, `webhooks`, `users`, `workflows`, `agents`, `scripts`, `integrations`, `environments`, `apps`, `workspaces` — each `none`, `read`, `write` or `delete` (`delete` includes `write`); an omitted category is `none`, an unknown key is `400` |
+| `expiry` | ISO date-time in the future; the token stops working then. `PATCH` with `null` clears it. Cloud / licensed only — elsewhere ignored |
+| `ip_allowlist` | Up to 50 IPv4/IPv6 addresses or CIDR ranges the token may be used from; omit or `[]` for no restriction. Cloud / licensed only |
+| `enabled` (`PATCH`) | `false` keeps the token listed but stops it authenticating |
+
+```json
+{
+  "title": "Reporting read-only",
+  "expiry": "2027-06-30T00:00:00Z",
+  "ip_allowlist": ["203.0.113.4", "10.0.0.0/8"],
+  "scopes": [ { "resource_type": "base", "resource_id": "<baseId>", "permissions": { "records": "read", "tables": "read" } } ]
+}
+```
+
+`PATCH` changes only the keys present; `scopes` and `ip_allowlist` **replace** the stored list wholesale. If your own IP falls outside the allowlist you just set, the answer carries `self_lockout_warning` (and `caller_ip`) — the write still succeeds. Behind a proxy the server sees the proxy's address unless `NC_TRUST_PROXY` is set. Reads return `token_prefix`, `expiry`, `enabled` and `last_used_at` (batched, lags a few seconds).
+
+Response to create (`ApiTokenWithTokenV3`) includes the raw token **once** — store it immediately; subsequent reads return only metadata.
+
+## Table and Field Permissions
+
+See the **permissions** skill for the workflow.
+
+| Path | Method | Purpose |
+|------|--------|---------|
+| `/api/v3/meta/bases/{baseId}/permissions` | `GET` | List grants (`tableId`, `entity` = `table`\|`field` filters) |
+| `/api/v3/meta/bases/{baseId}/permissions` | `PUT` | Create or replace one grant (`PermissionSet`) |
+| `/api/v3/meta/bases/{baseId}/permissions/{permissionId}` | `DELETE` | Remove a grant — the table or field falls back to base roles |
 
 ## Workspace Teams
 
