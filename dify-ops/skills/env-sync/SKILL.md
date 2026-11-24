@@ -209,9 +209,23 @@ A key-by-key comparison does not catch these; check them after every update to 1
 | `PLUGIN_DAEMON_KEY`, `PLUGIN_DIFY_INNER_API_KEY` | From 1.19.0 shared by several services, so they are root `.env` inputs | If set in a service override file, move them to the root `.env`; set in one place only they cause HTTP 401 between the daemon and its clients |
 | `PASSWORD_PEPPER` | Setting a new one is not a transparent migration (1.18.0) | Never add or change it during an update |
 | `OPENAPI_ENABLED` | Default became `true` in 1.20.0, which exposes `/openapi/v1/*` | Set `false` in `.env` when personal access tokens and `difyctl` are not used |
+| `FILE_SCAN_ENABLED` | New in 1.20.0, optional: scans uploaded knowledge files for malware before they are extracted or indexed; `false` by default | Leave it alone unless the user wants scanning, then see "Optional: Knowledge-File Malware Scanning" below |
 | `SECRET_KEY` | Empty means generated and stored in `volumes/app/storage` (1.14.1) | Never change after start; keep the storage directory in the backup |
 
 Read the "Environment Variable Changes" section of every release between the old and the new version: `gh release view <tag> -R langgenius/dify --json body -q .body`.
+
+## Optional: Knowledge-File Malware Scanning
+
+Dify 1.20.0 can scan files uploaded to knowledge bases before they are extracted or indexed. It is off, and an update does not turn it on. Source: https://github.com/langgenius/dify/releases/tag/1.20.0 (section "Scan knowledge uploads for malware") and the commented block "File malware scanning" in `envs/core-services/api-worker.defaults` at that tag.
+
+| Key | Default | Meaning |
+|-----|---------|---------|
+| `FILE_SCAN_ENABLED` | `false` | Global switch. Each knowledge base must opt in as well |
+| `FILE_SCAN_REQUEST_TIMEOUT_SECONDS` | `300` | Timeout of one scanner request, for every scanner type |
+| `FILE_SCAN_MAX_ATTEMPTS` | `3` | Attempts when a scanner is temporarily unreachable |
+| `FILE_SCAN_CLEAN_VERDICT_TTL_HOURS` | `24` | How long a clean verdict for the same file content and scanner is reused |
+
+To use it, put the keys in `.env` or in `envs/core-services/api-worker.env` (copy of `api-worker.defaults`; the root `.env` wins) and run `docker compose up -d`. Then a workspace owner or admin configures a scanner once under Integrations, File Security Scan (Cloudmersive, Scanii, OPSWAT MetaDefender Cloud or a custom endpoint) and chooses the protection per knowledge base. When the scanner is unavailable or a file cannot be scanned, the file is blocked by default; the policy is set per knowledge base. Treat a scanner's credentials as secrets and never print them. The scan covers classic knowledge bases, RAG Pipeline local-file sources and Agent Knowledge Base uploads, and failures show in the document list.
 
 ## Checking Removed Variables
 

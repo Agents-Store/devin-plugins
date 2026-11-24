@@ -78,7 +78,7 @@ Requires **Docker Compose >= 2.35.0** since 1.19.0 (`docker compose version`): b
 | `db_mysql` | `mysql:8.0` | 3306 (internal) | MySQL (profile `mysql`, when `DB_TYPE=mysql`) |
 | `weaviate` | `cr.weaviate.io/semitechnologies/weaviate:1.39.13` (1.39.2 in 1.17.1) | 8080 (internal) | Default vector database, selected by `VECTOR_STORE`; one service per supported store |
 | `certbot` | `certbot/certbot` | — | Certificate renewal (profile `certbot`) |
-| `knowledge_fs`, `knowledge_fs_*_worker`, `worker_knowledge_fs_upgrade` | `langgenius/dify-knowledge-fs-api`, `langgenius/dify-api` | internal | Optional KnowledgeFS integration, profile `knowledge-fs`, off by default (since 1.18.0); needs its own database and settings from the Docker README before use |
+| `knowledge_fs`, `knowledge_fs_*_worker`, `worker_knowledge_fs_upgrade` | `langgenius/dify-knowledge-fs-api`, `langgenius/dify-api` | internal | Optional KnowledgeFS integration, profile `knowledge-fs`, off by default (since 1.18.0); needs its own database and settings before use, see `references/knowledge-fs.md` |
 
 **Notes:**
 - That is 15–16 services in a default start (the KnowledgeFS services are not part of it). Count against `docker compose ps`, not against a fixed number.
@@ -139,6 +139,23 @@ Main settings by area. Before 1.19.0 they sat in the root file; now their defaul
 | **Compose** | `COMPOSE_PROFILES` | Default `${VECTOR_STORE:-weaviate},${DB_TYPE:-postgresql},collaboration` |
 
 `COMPOSE_PROFILES` is not derived automatically: an `.env` written before 1.14.1 has the value without `collaboration`, and then `api_websocket` never starts.
+
+## Client IP Behind a Load Balancer
+
+Dify uses the resolved client IP for rate limits and audit records. The bundled nginx overwrites `X-Forwarded-For` with `$remote_addr` (`nginx/proxy.conf.template`), and the API services start with `RESPECT_XFORWARD_HEADERS_ENABLED=true` (the default is in `envs/core-services/api.defaults` at 1.20.0). Since 1.18.0 that is the default boundary: the API trusts one forwarded value, and it does not authenticate the proxy.
+
+- **nginx is the edge:** nothing to do. Keep the API port private; other containers on the shared Docker networks, the code sandbox included, can still reach the API directly and skip nginx's header rewrite.
+- **A load balancer or Cloudflare sits before nginx:** `$remote_addr` is then the upstream proxy, and every visitor shares one rate-limit bucket. Resolve the visitor address in nginx with an operator-owned `docker/nginx/conf.d/real-ip.conf` (the `conf.d` directory is already mounted and included, no entrypoint change; reload nginx afterwards):
+
+```nginx
+set_real_ip_from 192.0.2.10/32;        # the trusted proxy address or CIDR, never 0.0.0.0/0 or an untrusted network
+real_ip_header X-Forwarded-For;        # Cloudflare directly in front of nginx: CF-Connecting-IP and its published ranges
+real_ip_recursive on;
+```
+
+- **The API is exposed without nginx:** set `RESPECT_XFORWARD_HEADERS_ENABLED=false` in the root `.env`, which wins over the defaults file.
+
+For Cloudflare the address ranges alone identify its network, not your zone: restrict origin access too (a Tunnel or Authenticated Origin Pulls). Source: https://github.com/langgenius/dify/releases/tag/1.18.0 (upgrade guide step 6) and https://github.com/langgenius/dify/blob/1.20.0/docker/README.md, section "Client IP and trusted proxies".
 
 ## Database Migrations
 
