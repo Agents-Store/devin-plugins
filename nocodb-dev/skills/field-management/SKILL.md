@@ -5,7 +5,7 @@ description: Create, update and delete NocoDB fields across all 35 types, includ
 
 # Field Management — All 35 Types
 
-Field writes go through the MCP schema tools on **Cloud / licensed** self-hosted (`listTools` category `fields`, then `callTool`) and through the **REST API** (`curl` on Meta API v3) on **Community Edition** or as a fallback. Both surfaces take the same v3 keys: `title`, `type`, `description`, `default_value`, `unique`, and a type-specific `options` object. See **mcp-patterns** for the contract.
+Field writes go through the MCP schema tools on **Cloud / licensed** self-hosted (called by name on `/mcp` since 2026.10.1; `listTools` category `fields`, then `callTool` on `/mcp-discovery` and older servers) and through the **REST API** (`curl` on Meta API v3) on **Community Edition** or as a fallback. Both surfaces take the same v3 keys: `title`, `type`, `description`, `default_value`, `unique`, and a type-specific `options` object. See **mcp-patterns** for the contract.
 
 For per-type payload examples, see **`api-reference/references/field-types.md`** — that file is the authoritative catalog. This skill focuses on **the workflow**: how to plan, apply, and verify a field change.
 

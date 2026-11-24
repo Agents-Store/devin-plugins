@@ -5,7 +5,7 @@ description: Configure NocoDB webhooks (HookV3) on a table — insert, update an
 
 # Webhooks (HookV3)
 
-NocoDB webhooks fire on record events and dispatch to a notification target (URL, Email, a messaging service, or a Script). Hook APIs are available on cloud-hosted Business and above and on licensed self-hosted deployments. Hook lifecycle goes through the MCP `hooks` category on **Cloud / licensed** (`listTools category: "hooks"`, then `callTool`) or through the **REST API** (`curl` on Meta API v3) on Community Edition / as a fallback. See **mcp-patterns** for the contract.
+NocoDB webhooks fire on record events and dispatch to a notification target (URL, Email, a messaging service, or a Script). Hook APIs are available on cloud-hosted Business and above and on licensed self-hosted deployments. Hook lifecycle goes through the MCP `hooks` category on **Cloud / licensed** (called by name on `/mcp` since 2026.10.1; `listTools category: "hooks"`, then `callTool` on `/mcp-discovery` and older servers) or through the **REST API** (`curl` on Meta API v3) on Community Edition / as a fallback. See **mcp-patterns** for the contract.
 
 The schema reference is `HookV3*` in `api-reference/references/nocodb-meta-openapi.json`:
 

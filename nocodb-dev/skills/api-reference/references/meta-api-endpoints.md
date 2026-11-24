@@ -23,7 +23,7 @@ Base:    ${NOCODB_URL}
 
 Almost every Meta endpoint nests under `/api/v3/meta/bases/{baseId}/...`. The exceptions are workspace-level (`/api/v3/meta/workspaces/...`), organization-level (`/api/v3/meta/orgs/...`), global token-level (`/api/v3/meta/tokens`) and the Documents API (`/api/v3/docs/{baseId}/...`).
 
-Path parameters use snake_case (`{base_id}`, `{table_id}`) on the dashboards/scripts/workflows endpoints and camelCase (`{baseId}`, `{tableId}`) elsewhere — both refer to the same NocoDB ID.
+Path parameters are camelCase throughout (`{baseId}`, `{tableId}`, `{workflowId}`). Older revisions of the spec used snake_case (`{base_id}`) on the dashboards, scripts and workflows endpoints; the path itself is the same.
 
 ---
 
@@ -72,9 +72,9 @@ Workspace member bodies are **arrays** — one object per user (`WorkspaceUserCr
 | `/api/v3/meta/bases/{baseId}` | `PATCH` | Update base (rename, description, meta) |
 | `/api/v3/meta/bases/{baseId}` | `DELETE` | Delete base |
 | `/api/v3/meta/bases/{baseId}?include[]=members` | `GET` | List base members |
-| `/api/v3/meta/bases/{base_id}/members` | `POST` | Invite base members |
-| `/api/v3/meta/bases/{base_id}/members` | `PATCH` | Update base members |
-| `/api/v3/meta/bases/{base_id}/members` | `DELETE` | Delete base members |
+| `/api/v3/meta/bases/{baseId}/members` | `POST` | Invite base members |
+| `/api/v3/meta/bases/{baseId}/members` | `PATCH` | Update base members |
+| `/api/v3/meta/bases/{baseId}/members` | `DELETE` | Delete base members |
 
 Base update payload (`BaseUpdate`):
 
@@ -85,13 +85,13 @@ Base update payload (`BaseUpdate`):
 Base member bodies are **arrays** too (`BaseMemberCreate` / `BaseMemberUpdate` / `BaseMemberDelete`). An invite carries `user_id` **or** `email` (not both), a `base_role`, and optionally `user_name`; updates and deletes key on `user_id`:
 
 ```jsonc
-// POST   /bases/{base_id}/members
+// POST   /bases/{baseId}/members
 [ { "email": "user@example.com", "base_role": "editor" } ]
 
-// PATCH  /bases/{base_id}/members
+// PATCH  /bases/{baseId}/members
 [ { "user_id": "<userId>", "base_role": "viewer" } ]
 
-// DELETE /bases/{base_id}/members
+// DELETE /bases/{baseId}/members
 [ { "user_id": "<userId>" } ]
 ```
 
@@ -101,8 +101,8 @@ Base member bodies are **arrays** too (`BaseMemberCreate` / `BaseMemberUpdate` /
 
 | Path | Method | Purpose |
 |------|--------|---------|
-| `/api/v3/meta/bases/{base_id}/tables` | `GET` | List tables |
-| `/api/v3/meta/bases/{base_id}/tables` | `POST` | Create table |
+| `/api/v3/meta/bases/{baseId}/tables` | `GET` | List tables |
+| `/api/v3/meta/bases/{baseId}/tables` | `POST` | Create table |
 | `/api/v3/meta/bases/{baseId}/tables/{tableId}` | `GET` | Get table schema (columns + views) |
 | `/api/v3/meta/bases/{baseId}/tables/{tableId}` | `PATCH` | Update table |
 | `/api/v3/meta/bases/{baseId}/tables/{tableId}` | `DELETE` | Delete table |
@@ -241,8 +241,8 @@ Optional on create (and on `PATCH`): `sorts: []`, `filters: {...}`, `fields: [..
 | `/api/v3/meta/bases/{baseId}/views/{viewId}/filters` | `GET` | List filters on a view |
 | `/api/v3/meta/bases/{baseId}/views/{viewId}/filters` | `POST` | Create a filter |
 | `/api/v3/meta/bases/{baseId}/views/{viewId}/filters` | `PUT` | **Replace** all filters atomically |
-| `/api/v3/meta/bases/{baseId}/filters/{filterId}` | `PATCH` | Update one filter |
-| `/api/v3/meta/bases/{baseId}/filters/{filterId}` | `DELETE` | Delete one filter |
+| `/api/v3/meta/bases/{baseId}/views/{viewId}/filters` | `PATCH` | Update one filter or group — its `id` goes in the body (`FilterUpdate`) |
+| `/api/v3/meta/bases/{baseId}/views/{viewId}/filters` | `DELETE` | Delete one filter or group — body `{"id": "<filterId>"}`; `"root"` clears the view |
 
 Filter create payload (`FilterCreate`):
 
@@ -270,8 +270,8 @@ Filter group (`FilterGroup` — `group_operator` is `AND` or `OR`; groups nest u
 |------|--------|---------|
 | `/api/v3/meta/bases/{baseId}/views/{viewId}/sorts` | `GET` | List sorts on a view |
 | `/api/v3/meta/bases/{baseId}/views/{viewId}/sorts` | `POST` | Add a sort |
-| `/api/v3/meta/bases/{baseId}/sorts/{sortId}` | `PATCH` | Update a sort |
-| `/api/v3/meta/bases/{baseId}/sorts/{sortId}` | `DELETE` | Delete a sort |
+| `/api/v3/meta/bases/{baseId}/views/{viewId}/sorts` | `PATCH` | Update a sort — its `id` goes in the body (`SortUpdate`) |
+| `/api/v3/meta/bases/{baseId}/views/{viewId}/sorts` | `DELETE` | Delete a sort — body `{"id": "<sortId>"}` |
 
 Sort payload (`SortCreate`):
 
@@ -363,11 +363,11 @@ Create payload (`CommentCreateRequest`):
 
 | Path | Method | Purpose |
 |------|--------|---------|
-| `/api/v3/meta/bases/{base_id}/scripts` | `GET` | List scripts |
-| `/api/v3/meta/bases/{base_id}/scripts` | `POST` | Create script |
-| `/api/v3/meta/bases/{base_id}/scripts/{script_id}` | `GET` | Get script (incl. body) |
-| `/api/v3/meta/bases/{base_id}/scripts/{script_id}` | `PATCH` | Update script |
-| `/api/v3/meta/bases/{base_id}/scripts/{script_id}` | `DELETE` | Delete script |
+| `/api/v3/meta/bases/{baseId}/scripts` | `GET` | List scripts |
+| `/api/v3/meta/bases/{baseId}/scripts` | `POST` | Create script |
+| `/api/v3/meta/bases/{baseId}/scripts/{scriptId}` | `GET` | Get script (incl. body) |
+| `/api/v3/meta/bases/{baseId}/scripts/{scriptId}` | `PATCH` | Update script |
+| `/api/v3/meta/bases/{baseId}/scripts/{scriptId}` | `DELETE` | Delete script |
 
 Create payload (`ScriptCreateReq`):
 
@@ -390,12 +390,12 @@ Scripts are referenced by:
 
 | Path | Method | Purpose |
 |------|--------|---------|
-| `/api/v3/meta/bases/{base_id}/dashboards` | `GET` | List dashboards |
-| `/api/v3/meta/bases/{base_id}/dashboards` | `POST` | Create dashboard |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}` | `GET` | Get dashboard |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}` | `PATCH` | Update dashboard |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}` | `DELETE` | Delete dashboard |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/data` | `GET` | Fetch all widget data for the dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards` | `GET` | List dashboards |
+| `/api/v3/meta/bases/{baseId}/dashboards` | `POST` | Create dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}` | `GET` | Get dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}` | `PATCH` | Update dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}` | `DELETE` | Delete dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/data` | `GET` | Fetch all widget data for the dashboard |
 
 Create payload (`DashboardCreateReq`):
 
@@ -407,12 +407,12 @@ Create payload (`DashboardCreateReq`):
 
 | Path | Method | Purpose |
 |------|--------|---------|
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets` | `GET` | List widgets |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets` | `POST` | Create widget |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}` | `GET` | Get widget |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}` | `PATCH` | Update widget |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}` | `DELETE` | Delete widget |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}/data` | `GET` | Fetch widget data |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets` | `GET` | List widgets |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets` | `POST` | Create widget |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets/{widgetId}` | `GET` | Get widget |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets/{widgetId}` | `PATCH` | Update widget |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets/{widgetId}` | `DELETE` | Delete widget |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets/{widgetId}/data` | `GET` | Fetch widget data |
 
 Widget options schemas (`WidgetOptions*`):
 
@@ -446,11 +446,11 @@ NocoDB Workflows is the platform's built-in automation engine (separate from ext
 
 | Path | Method | Purpose |
 |------|--------|---------|
-| `/api/v3/meta/bases/{base_id}/workflows` | `GET` | List workflows |
-| `/api/v3/meta/bases/{base_id}/workflows/{workflow_id}` | `GET` | Get workflow definition |
-| `/api/v3/meta/bases/{base_id}/workflows/{workflow_id}/execute` | `POST` | Execute workflow on demand |
-| `/api/v3/meta/bases/{base_id}/workflows/{workflow_id}/executions` | `GET` | List executions |
-| `/api/v3/meta/bases/{base_id}/workflows/{workflow_id}/executions/{execution_id}` | `GET` | Get one execution (with node-by-node results) |
+| `/api/v3/meta/bases/{baseId}/workflows` | `GET` | List workflows |
+| `/api/v3/meta/bases/{baseId}/workflows/{workflowId}` | `GET` | Get workflow definition |
+| `/api/v3/meta/bases/{baseId}/workflows/{workflowId}/execute` | `POST` | Execute workflow on demand |
+| `/api/v3/meta/bases/{baseId}/workflows/{workflowId}/executions` | `GET` | List executions |
+| `/api/v3/meta/bases/{baseId}/workflows/{workflowId}/executions/{executionId}` | `GET` | Get one execution (with node-by-node results) |
 
 Execute payload (`WorkflowExecuteReq`):
 
@@ -460,7 +460,7 @@ Execute payload (`WorkflowExecuteReq`):
 }
 ```
 
-The response is `{ "id": "<execution id>" }`. Executions list as `{ "list": [...] }` (`limit`, `offset`), and `status` is `running`, `waiting`, `completed`, `error`, `cancelled` or `skipped`.
+The response is `{ "id": "<execution id>" }`. Executions list as `{ "list": [...] }` (`limit`, `offset`), and `status` is `queued`, `running`, `waiting`, `paused`, `completed`, `error`, `cancelled` or `skipped`.
 
 > Workflow **creation/editing** is not a REST operation in this spec — this API surface is for listing, executing, and inspecting executions. On Cloud / licensed self-hosted, drafts are authored through MCP (`createWorkflow`, `updateWorkflow`, node and edge tools, `validateWorkflowNode`, `publishWorkflow`; enabling and `run_as` stay in the UI). The `WorkflowDraft*`, `WorkflowNode*`, `WorkflowEdge` schemas describe the node graph for read responses.
 
@@ -498,10 +498,10 @@ Bodies: `EnvironmentCreateV3Req` / `EnvironmentUpdateV3Req`. Available on self-h
 | `/api/v3/meta/tokens` | `POST` | Create an API token |
 | `/api/v3/meta/tokens/{tokenId}` | `DELETE` | Revoke an API token |
 
-Create payload:
+Create payload — `title` is required, and on Cloud and licensed self-hosted at least one entry in `scopes` is required too (a request without one is rejected with `400`). `{"resource_type": "all", "resource_id": "*"}` is the account-wide scope:
 
 ```json
-{ "description": "CI deploy token" }
+{ "title": "CI deploy token", "scopes": [ { "resource_type": "all", "resource_id": "*" } ] }
 ```
 
 Response (`ApiTokenWithTokenV3`) includes the raw token **once** — store it immediately; subsequent reads return only metadata.
@@ -528,5 +528,5 @@ Same as the Data API — `xc-token` or `Authorization: Bearer ...`. Error bodies
 - All Meta endpoints accept either header scheme.
 - `PATCH` requests should include only the keys you're changing.
 - `DELETE` is destructive — confirm before scripting. On Cloud / licensed, deleted tables, fields, views and (on NocoDB-managed sources) records land in the base trash and can be restored until the retention window ends (`listTrash` / `restoreFromTrash` over MCP); do not count on it for external sources.
-- Path-parameter casing is inconsistent in the spec: `{baseId}` vs `{base_id}`. Both refer to the same NocoDB ID format (prefix `p`); the casing is purely a quirk of this OpenAPI document.
+- Path-parameter casing was inconsistent in older revisions of the spec (`{baseId}` vs `{base_id}`); 2026.10.2 uses camelCase everywhere. Both name the same NocoDB ID (prefix `p`).
 - v3 represents a clean break from older NocoDB Meta API versions (`/api/v1/db/meta/...`, `/api/v2/meta/...`) — older paths may still respond on legacy instances but are not documented here.

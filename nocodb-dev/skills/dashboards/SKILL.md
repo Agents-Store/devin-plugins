@@ -18,22 +18,22 @@ NocoDB v3 has a built-in dashboarding layer. A **Dashboard** is a container; **W
 
 | Path | Method | Purpose |
 |------|--------|---------|
-| `/api/v3/meta/bases/{base_id}/dashboards` | `GET` | List dashboards |
-| `/api/v3/meta/bases/{base_id}/dashboards` | `POST` | Create dashboard |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}` | `GET` | Get dashboard |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}` | `PATCH` | Update dashboard |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}` | `DELETE` | Delete dashboard |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/data` | `GET` | Fetch all widget data for the dashboard |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets` | `GET` | List widgets |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets` | `POST` | Create widget |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}` | `GET` | Get widget |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}` | `PATCH` | Update widget |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}` | `DELETE` | Delete widget |
-| `/api/v3/meta/bases/{base_id}/dashboards/{dashboard_id}/widgets/{widget_id}/data` | `GET` | Fetch widget data |
+| `/api/v3/meta/bases/{baseId}/dashboards` | `GET` | List dashboards |
+| `/api/v3/meta/bases/{baseId}/dashboards` | `POST` | Create dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}` | `GET` | Get dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}` | `PATCH` | Update dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}` | `DELETE` | Delete dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/data` | `GET` | Fetch all widget data for the dashboard |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets` | `GET` | List widgets |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets` | `POST` | Create widget |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets/{widgetId}` | `GET` | Get widget |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets/{widgetId}` | `PATCH` | Update widget |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets/{widgetId}` | `DELETE` | Delete widget |
+| `/api/v3/meta/bases/{baseId}/dashboards/{dashboardId}/widgets/{widgetId}/data` | `GET` | Fetch widget data |
 
 ## Widget Types
 
-A widget's `type` is one of `chart`, `metric`, `text`, `iframe`. Charts are selected by `options.chart_type`. Per the OpenAPI `WidgetOptions*` schemas:
+A widget's `type` is one of `chart`, `metric`, `text`, `iframe` when you create one; reading a dashboard built in the UI can also return `gauge`, `table` and `pivot` widgets. Charts are selected by `options.chart_type`. Per the OpenAPI `WidgetOptions*` schemas:
 
 | `type` | `options` schema | Use case |
 |--------|------------------|----------|

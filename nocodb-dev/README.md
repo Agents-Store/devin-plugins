@@ -1,6 +1,6 @@
 # nocodb-dev (Devin plugin)
 
-NocoDB schema development plugin. Meta API v3 via curl and MCP (schema tools on Cloud/licensed through listTools/callTool) — tables, fields (35 types), views (9 types), filters, sorts, hooks (HookV3), comments, scripts, dashboards & widgets, workflows, documents, plus workspaces / members / teams / tokens. Bundles both Data API and Meta API OpenAPI specs.
+NocoDB schema development plugin. Meta API v3 via curl and MCP (schema tools on Cloud/licensed — listed on /mcp, behind listTools/callTool on /mcp-discovery) — tables, fields (35 types), views (9 types), filters, sorts, hooks (HookV3), comments, scripts, dashboards & widgets, workflows, documents, plus workspaces / members / teams / tokens. Bundles both Data API and Meta API OpenAPI specs.
 
 ## Install
 
@@ -41,7 +41,7 @@ Copy this directory's contents into your Devin plugin directory. The manifest (`
 - "NocoDB dev scenarios"
 
 - `field-management` — Create, update and delete NocoDB fields across all 35 types, including select options, formulas, links with lookups and rollups, attachments, barcode and button fields, plus safe type changes and deletes. Use when a NocoDB table needs a new or changed column. Creating the table itself is table-management, hiding or ordering columns in a view is view-management.
-- `mcp-patterns` — NocoDB MCP for schema-development work — what the server lists directly, which schema tools hide behind listTools/callTool, and the Community vs Cloud/licensed contract. Use when:
+- `mcp-patterns` — NocoDB MCP for schema-development work — what the server lists directly, which schema tools need listTools/callTool (/mcp-discovery and servers before 2026.10.1), and the Community vs Cloud/licensed contract. Use when:
 - "what MCP tools can I use for schema?"
 - "can MCP create tables / fields / views?"
 - "listTools / callTool"

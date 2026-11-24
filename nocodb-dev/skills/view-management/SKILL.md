@@ -15,7 +15,7 @@ description: |
 
 NocoDB tables can have multiple views — different lenses on the same data. The view APIs are available on cloud-hosted Enterprise and on licensed self-hosted deployments (Business plan and above); reading views works on every plan.
 
-View writes go through the MCP schema tools on **Cloud / licensed** (`listTools` categories `views`, `filters`, `sorts`, `shared-views`, then `callTool`) and through the **REST API** (`curl` on Meta API v3) as the fallback. See **mcp-patterns** for the contract.
+View writes go through the MCP schema tools on **Cloud / licensed** (called by name on `/mcp` since 2026.10.1; `listTools` categories `views`, `filters`, `sorts`, `shared-views`, then `callTool` on `/mcp-discovery` and older servers) and through the **REST API** (`curl` on Meta API v3) as the fallback. See **mcp-patterns** for the contract.
 
 ## Nine View Types
 

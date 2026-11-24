@@ -1,16 +1,132 @@
 {
   "openapi": "3.1.0",
-  "x-stoplight": {
-    "id": "qiz1rcfqd2jy6"
-  },
   "info": {
     "title": "NocoDB v3",
-    "version": "",
-    "description": "NocoDB API Documentation"
+    "version": "3.0.0",
+    "description": "NocoDB v3 REST API.\n\n## Authentication\n\nEvery operation requires authentication. For programmatic access use an API token, sent as either `xc-token: <token>` or `Authorization: Bearer <token>`. A request succeeds only if both the token and the owning user's role allow it. See [API tokens](https://docs.nocodb.com/account-settings/api-tokens/).\n\n## Errors\n\nMost errors return `{\"error\": \"<code>\", \"message\": \"<text>\"}`, plus `details` when there is extra context. Some older paths still answer with a bare `{\"msg\": \"<text>\"}` and no `error` code. Match on `error`, not on `message`.\n\n## Conventions\n\n`PATCH` is a merge — omitted properties are left unchanged and an explicit `null` clears a nullable one. Requests are rate limited per user — all API tokens belonging to one user share a quota — and answer `429` with `Retry-After` when throttled. Limits and page sizes are configurable per deployment."
   },
+  "externalDocs": {
+    "description": "NocoDB documentation",
+    "url": "https://docs.nocodb.com"
+  },
+  "security": [
+    {
+      "xc-token": []
+    },
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Workspaces",
+      "description": "Workspace-level operations."
+    },
+    {
+      "name": "Workspace Members",
+      "description": "Manage members of a workspace and their roles."
+    },
+    {
+      "name": "Teams",
+      "description": "Groups of users that can be granted access collectively."
+    },
+    {
+      "name": "Bases",
+      "description": "Create and manage bases within a workspace."
+    },
+    {
+      "name": "Base Members",
+      "description": "Manage member access to an individual base."
+    },
+    {
+      "name": "Tables",
+      "description": "Create and manage tables within a base."
+    },
+    {
+      "name": "Fields",
+      "description": "Create and manage the fields (columns) of a table."
+    },
+    {
+      "name": "Views",
+      "description": "Create and manage views over a table."
+    },
+    {
+      "name": "View Filters",
+      "description": "Filter conditions applied to a view."
+    },
+    {
+      "name": "View Sorts",
+      "description": "Sort rules applied to a view."
+    },
+    {
+      "name": "Table Records",
+      "description": "Read and write the records of a table."
+    },
+    {
+      "name": "Linked Records",
+      "description": "Read and write the records linked through a Link field."
+    },
+    {
+      "name": "Comments",
+      "description": "Comments attached to records."
+    },
+    {
+      "name": "Documents",
+      "description": "Document pages stored in a base."
+    },
+    {
+      "name": "Dashboards",
+      "description": "Dashboards and their widgets."
+    },
+    {
+      "name": "Permissions",
+      "description": "Table and field permission grants."
+    },
+    {
+      "name": "Scripts",
+      "description": "Automation scripts."
+    },
+    {
+      "name": "Workflows",
+      "description": "Workflow definitions and their executions."
+    },
+    {
+      "name": "Hooks",
+      "description": "Webhooks triggered by record and button events."
+    },
+    {
+      "name": "Environments",
+      "description": "Environment configuration for a workspace."
+    },
+    {
+      "name": "API Tokens",
+      "description": "Create and revoke API tokens."
+    },
+    {
+      "name": "Feedback",
+      "description": "Report a bug, a missing capability or a documentation gap."
+    }
+  ],
   "servers": [
     {
-      "url": "https://app.nocodb.com"
+      "url": "https://app.nocodb.com",
+      "description": "NocoDB Cloud"
+    },
+    {
+      "url": "{protocol}://{host}",
+      "description": "Self-hosted deployment",
+      "variables": {
+        "protocol": {
+          "default": "https",
+          "enum": [
+            "https",
+            "http"
+          ]
+        },
+        "host": {
+          "default": "localhost:8080"
+        }
+      }
     }
   ],
   "paths": {
@@ -59,7 +175,7 @@
             },
             "in": "query",
             "name": "fields",
-            "description": "Allows you to specify the fields that you wish to include from the linked records in your API response. By default, only Primary Key and associated display value field is included.\n\nExample: `fields=[\"field1\",\"field2\"]` or `fields=field1,field2` will include only 'field1' and 'field2' in the API response."
+            "description": "Restricts the response to the listed fields. By default **every** field of the table is returned.\n\nA field may be named by its id or its title. An unknown name is rejected with `422 ERR_FIELD_NOT_FOUND`.\n\nExample: `fields=[\"field1\",\"field2\"]` or `fields=field1,field2`."
           },
           {
             "schema": {
@@ -81,8 +197,7 @@
                       }
                     },
                     "required": [
-                      "field",
-                      "direction"
+                      "field"
                     ]
                   }
                 },
@@ -101,8 +216,7 @@
                     }
                   },
                   "required": [
-                    "field",
-                    "direction"
+                    "field"
                   ]
                 }
               ]
@@ -117,7 +231,15 @@
             },
             "in": "query",
             "name": "where",
-            "description": "Enables you to define specific conditions for filtering records in your API response. Multiple conditions can be combined using logical operators such as 'and' and 'or'. Each condition consists of three parts: a field name, a comparison operator, and a value.\n\nExample: `where=(field1,eq,value1)~and(field2,eq,value2)` will filter records where 'field1' is equal to 'value1' AND 'field2' is equal to 'value2'. \n\nYou can also use other comparison operators like 'neq' (not equal), 'gt' (greater than), 'lt' (less than), and more, to create complex filtering rules.\n\nIf `viewId` query parameter is also included, then the filters included here will be applied over the filtering configuration defined in the view. \n\nPlease remember to maintain the specified format, for further information on this please see [the documentation](https://nocodb.com/docs/product-docs/developer-resources/rest-apis#v3-where-query-parameter)"
+            "description": "Enables you to define specific conditions for filtering records in your API response. Multiple conditions can be combined using logical operators such as 'and' and 'or'. Each condition consists of three parts: a field name, a comparison operator, and a value.\n\nExample: `where=(field1,eq,value1)~and(field2,eq,value2)` will filter records where 'field1' is equal to 'value1' AND 'field2' is equal to 'value2'. \n\nMore examples: `where=(Title,like,report)` matches records whose Title contains 'report'; `where=(Tags,anyof,urgent,bug)` matches records whose multi-select Tags has 'urgent' or 'bug'.\n\nOperators: eq, neq, gt, ge, lt, le, like, nlike, in, btw, nbtw, is, isnot, blank, notblank, checked, notchecked, anyof, allof, nanyof, nallof, isWithin (gte and lte are accepted as aliases of ge and le). Which ones apply depends on the field type, see [filtering](https://nocodb.com/docs/apis/filtering).\n\n**Date and DateTime fields** (also CreatedTime and LastModifiedTime): the operator must be followed by a sub-operator such as `exactDate`, `today` or `daysAgo`. Days are taken in the field's timezone, or UTC if it has none. `eq` matches and `neq` excludes the whole day, even when a time is given. On DateTime, CreatedTime and LastModifiedTime, `gt`, `ge`, `lt` and `le` compare to the exact instant when the value includes a time (to the millisecond on PostgreSQL and SQLite, to the second on other databases); a date-only value compares against day boundaries. Date fields always compare whole dates. A value without an offset is read in the field's timezone, so send `Z` or an explicit offset, and URL-encode `+` as `%2B`.\n\nExample: `where=(UpdatedAt,gt,exactDate,2026-01-15T10:00:00Z)` returns records updated after 10:00 UTC on 2026-01-15; `where=(UpdatedAt,gt,2026-01-15T10:00:00Z)` is rejected.\n\nIf `viewId` query parameter is also included, then the filters included here will be applied over the filtering configuration defined in the view. \n\nPlease remember to maintain the specified format; for quoting values that contain commas, parentheses or spaces, see [the `where` syntax](https://nocodb.com/docs/apis/filtering#v3-where-query-parameter)."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "whereTz",
+            "description": "IANA time zone (e.g. `Asia/Kolkata`) for date conditions in `where` and in the view's filters that have no time zone of their own. A filter's stored time zone, then the field's display time zone, take precedence. Defaults to UTC.\n\nExample: `where=(DueAt,eq,exactDate,2026-11-09)&whereTz=Asia/Kolkata`."
           },
           {
             "schema": {
@@ -126,7 +248,7 @@
             },
             "in": "query",
             "name": "page",
-            "description": "Enables you to control the pagination of your API response by specifying the page number you want to retrieve. By default, the first page is returned. If you want to retrieve the next page, you can increment the page number by one.\n\nExample: `page=2` will return the second page of records in the dataset."
+            "description": "Page of records to return, 1 by default.\n\nA page past the end of the result set returns an empty `records` list with no `next`; its `prev` points at the last page that has records, or page 1 when there are none. A `page` below 1 is rejected with `422 ERR_INVALID_OFFSET_VALUE`.\n\nExample: `page=2` returns the second page."
           },
           {
             "schema": {
@@ -144,7 +266,34 @@
             },
             "in": "query",
             "name": "pageSize",
-            "description": "Enables you to set a limit on the number of records you want to retrieve in your API response. By default, your response includes all the available records, but by using this parameter, you can control the quantity you receive.\n\nExample: `pageSize=100` will constrain your response to the first 100 records in the dataset."
+            "description": "Number of records per page. Defaults to 25.\n\nCapped per deployment (1000 by default, 100 on NocoDB Cloud). A request above the ceiling is not rejected — it is silently served at the ceiling.\n\nExample: `pageSize=100` returns at most 100 records per page."
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "Alias for `pageSize`. When both are given, `limit` wins. Note that `pageSize` is the parameter carried into the `next`/`prev` URLs."
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "in": "query",
+            "name": "offset",
+            "description": "Number of records to skip, as an alternative to `page`. Ignored when `page` is given."
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "in": "query",
+            "name": "nestedLimit",
+            "description": "Maximum number of linked records returned inside each Link or LinkToAnotherRecord field. Defaults to 1000 (`NC_DB_QUERY_LIMIT_LTAR_V3_LIMIT`). A field truncated at this limit is returned without any indication; there is currently no continuation link for nested records."
           },
           {
             "schema": {
@@ -152,7 +301,7 @@
             },
             "name": "viewId",
             "in": "query",
-            "description": "***View Identifier***. Allows you to fetch records that are currently visible within a specific view. API retrieves records in the order they are displayed if the SORT option is enabled within that view.\n\nAdditionally, if you specify a `sort` query parameter, it will take precedence over any sorting configuration defined in the view. If you specify a `where` query parameter, it will be applied over the filtering configuration defined in the view. \n\nBy default, all fields, including those that are disabled within the view, are included in the response. To explicitly specify which fields to include or exclude, you can use the `fields` query parameter to customize the output according to your requirements."
+            "description": "***View Identifier***. Returns the records visible in that view, in its order, and only the fields visible in it — fields hidden in the view are omitted. A `sort` parameter takes precedence over the view's own sort; a `where` parameter is applied in addition to the view's filters. `fields` narrows the selection further."
           },
           {
             "schema": {
@@ -164,6 +313,17 @@
             "name": "linksAsLtar",
             "in": "query",
             "description": "When set to `true`, Links fields will return full linked record data (id and display value) instead of just a count. This makes Links fields behave like LinkToAnotherRecord (LTAR) fields in the response."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "fieldIdOnResult",
+            "in": "query",
+            "description": "When set to `true`, record fields are keyed by field id instead of field title. Useful when titles may change or are not unique in the caller's model."
           },
           {
             "required": true,
@@ -233,6 +393,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "422": {
+            "description": "Unprocessable Entity — an unknown field in `fields` or `sort` (`ERR_FIELD_NOT_FOUND`), or a `page` below 1 (`ERR_INVALID_OFFSET_VALUE`)."
           }
         }
       },
@@ -274,6 +437,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "422": {
+            "description": "Unprocessable Entity — more records than the deployment's bulk cap (`ERR_MAX_PAYLOAD_LIMIT_EXCEEDED`), a value that is not valid for its field's type, or a malformed composite record id. A link id matching no row answers `404`; a property outside `fields` answers `400`; unrecognised keys inside `fields` are ignored."
           }
         },
         "tags": [
@@ -289,6 +455,7 @@
                   },
                   {
                     "type": "array",
+                    "description": "Up to 10 records per request by default; the cap is configured per deployment and exceeding it returns 422. Records are created in the order given.",
                     "items": {
                       "$ref": "#/components/schemas/DataInsertRequestV3"
                     }
@@ -349,8 +516,38 @@
             }
           }
         },
-        "description": "This API endpoint allows the creation of new records within a specified table. Records to be inserted are input as an array of key-value pair objects, where each key corresponds to a field name. Ensure that all the required fields are included in the payload, with exceptions for fields designated as auto-increment or those having default values. \n\nCertain read-only field types will be disregarded if included in the request. These field types include Look Up, Roll Up, Formula, Created By, Updated By, Created At, Updated At, Button, Barcode and QR Code.\n\nFor **Attachment** field types, this API cannot be used. Instead, utilize the storage APIs for managing attachments. Support for attachment fields in the record update API will be added soon.",
+        "description": "Create one or more records. Send a single object or an array; the array length is capped per deployment (10 by default) and a longer request answers `422`.\n\nLink fields accept the related record's id. Attachment fields replace the whole cell, so send any existing files alongside new ones. See [the NocoDB docs](https://docs.nocodb.com) for field value formats.",
         "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "view_id",
+            "in": "query",
+            "description": "**View Identifier**. Scopes the write to a view; a view that does not belong to the table is rejected with `422`."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "linksAsLtar",
+            "in": "query",
+            "description": "When set to `true`, Links fields in the response carry the linked records instead of a count."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "fieldIdOnResult",
+            "in": "query",
+            "description": "When set to `true`, record fields are keyed by field id instead of field title. Useful when titles may change or are not unique in the caller's model."
+          },
           {
             "required": true,
             "$ref": "#/components/parameters/xc-token"
@@ -387,6 +584,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "422": {
+            "description": "Unprocessable Entity — more records than the deployment's bulk cap (`ERR_MAX_PAYLOAD_LIMIT_EXCEEDED`), a value that is not valid for its field's type, or a malformed composite record id. A link id matching no row answers `404`; a property outside `fields` answers `400`; unrecognised keys inside `fields` are ignored."
           }
         },
         "tags": [
@@ -402,6 +602,7 @@
                   },
                   {
                     "type": "array",
+                    "description": "Up to 10 records per request by default; the cap is configured per deployment and exceeding it returns 422. Each entry must carry the record id.",
                     "items": {
                       "$ref": "#/components/schemas/DataUpdateRequestV3"
                     }
@@ -432,8 +633,38 @@
             }
           }
         },
-        "description": "This API endpoint allows you to update records within a specified table by their Record ID. The request payload should contain the Record ID and the fields that need to be updated.\n\nCertain read-only field types will be disregarded if included in the request. These field types include Look Up, Roll Up, Formula, Created By, Updated By, Created At, Updated At, Button, Barcode and QR Code.\n\nFor **Attachment** field types, this API cannot be used. Instead, utilize the storage APIs for managing attachments. Support for attachment fields in the record update API will be added soon.",
+        "description": "Update one or more records, addressed by `id`. Send a single object or an array; the array length is capped per deployment (10 by default) and a longer request answers `422`.\n\nOnly the fields you send are changed. Writing a link field replaces that record's link set rather than adding to it.",
         "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "view_id",
+            "in": "query",
+            "description": "**View Identifier**. Scopes the write to a view; a view that does not belong to the table is rejected with `422`."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "linksAsLtar",
+            "in": "query",
+            "description": "When set to `true`, Links fields in the response carry the linked records instead of a count."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "fieldIdOnResult",
+            "in": "query",
+            "description": "When set to `true`, record fields are keyed by field id instead of field title. Useful when titles may change or are not unique in the caller's model."
+          },
           {
             "required": true,
             "$ref": "#/components/parameters/xc-token"
@@ -472,6 +703,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "422": {
+            "description": "Unprocessable Entity — more records than the deployment's bulk cap (`ERR_MAX_PAYLOAD_LIMIT_EXCEEDED`)."
           }
         },
         "tags": [
@@ -487,6 +721,7 @@
                   },
                   {
                     "type": "array",
+                    "description": "Up to 10 records per request by default; the cap is configured per deployment and exceeding it returns 422. Ids given through the `records` query parameter are merged into this array before the count.",
                     "items": {
                       "$ref": "#/components/schemas/DataDeleteRequestV3"
                     }
@@ -508,8 +743,34 @@
             }
           }
         },
-        "description": "This API endpoint allows the deletion of records within a specified table by Record ID. The request should include the Record ID of the record(s) to be deleted.",
+        "description": "Delete one or more records, addressed by `id`. Send a single object or an array, or pass ids in the `records` query parameter. The count is capped per deployment (10 by default).",
         "parameters": [
+          {
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "records",
+            "in": "query",
+            "description": "Record ids to delete, as an alternative to the request body. They are merged into the body before the bulk cap is applied, so the two forms share one budget."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "view_id",
+            "in": "query",
+            "description": "**View Identifier**. Scopes the write to a view; a view that does not belong to the table is rejected with `422`."
+          },
           {
             "required": true,
             "$ref": "#/components/parameters/xc-token"
@@ -540,10 +801,38 @@
       ],
       "post": {
         "summary": "Upsert Table Records",
-        "operationId": "db-v3-data-table-row-upsert",
-        "description": "Find-or-create records in a single call. If a record matching the merge key exists, update it; otherwise insert a new one.",
+        "operationId": "db-data-table-row-upsert",
+        "description": "Find-or-create records in a single call. If a record matching the merge key exists it is updated, otherwise a new one is inserted.\n\nUnlike the other write operations, upsert also accepts a **display value** in place of a link target object: a bare string or number is resolved against the related table's display value and must match at least one record. A value matching none is rejected with `400`; a value matching more than one resolves to the first match.\n\nThe same per-request bulk cap applies as for create and update — 10 records by default, configured per deployment.",
         "tags": [
           "Table Records"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "linksAsLtar",
+            "in": "query",
+            "description": "When set to `true`, Links fields in the response carry the linked records instead of a count."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "fieldIdOnResult",
+            "in": "query",
+            "description": "When set to `true`, record fields are keyed by field id instead of field title. Useful when titles may change or are not unique in the caller's model."
+          },
+          {
+            "required": true,
+            "$ref": "#/components/parameters/xc-token"
+          }
         ],
         "requestBody": {
           "required": true,
@@ -621,6 +910,14 @@
         "parameters": [
           {
             "schema": {
+              "type": "string"
+            },
+            "name": "view_id",
+            "in": "query",
+            "description": "**View Identifier**. Reads the record as it appears in a view. A view that does not belong to the table is rejected with `422`."
+          },
+          {
+            "schema": {
               "oneOf": [
                 {
                   "type": "array",
@@ -635,7 +932,7 @@
             },
             "in": "query",
             "name": "fields",
-            "description": "Allows you to specify the fields that you wish to include from the linked records in your API response. By default, only Primary Key and associated display value field is included.\n\nExample: `fields=[\"field1\",\"field2\"]` or `fields=field1,field2` will include only 'field1' and 'field2' in the API response."
+            "description": "Restricts the response to the listed fields. By default **every** field of the table is returned.\n\nA field may be named by its id or its title. An unknown name is rejected with `422 ERR_FIELD_NOT_FOUND`.\n\nExample: `fields=[\"field1\",\"field2\"]` or `fields=field1,field2`."
           },
           {
             "schema": {
@@ -647,6 +944,17 @@
             "name": "linksAsLtar",
             "in": "query",
             "description": "When set to `true`, Links fields will return full linked record data (id and display value) instead of just a count. This makes Links fields behave like LinkToAnotherRecord (LTAR) fields in the response."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "fieldIdOnResult",
+            "in": "query",
+            "description": "When set to `true`, record fields are keyed by field id instead of field title. Useful when titles may change or are not unique in the caller's model."
           },
           {
             "required": true,
@@ -715,11 +1023,11 @@
         }
       }
     },
-    "/api/v3/data/{baseId}/{modelId}/records/{recordId}/fields/{fieldId}/upload": {
+    "/api/v3/data/{baseId}/{tableId}/records/{recordId}/fields/{fieldId}/upload": {
       "post": {
         "summary": "Upload Attachment to Cell",
         "operationId": "db-data-table-row-attachment-upload",
-        "description": "This API endpoint allows you to upload an attachment (base64 encoded) to a specific cell in a table. The attachment data includes content type, base64 encoded file, and filename.",
+        "description": "Upload one base64-encoded file into an Attachment cell. The file is **appended**; nothing is replaced.\n\nMaximum file size is set per deployment (20 MB by default); the number of files a cell may hold is a plan limit. An oversized file answers `400`.\n\nTo replace or remove files, write the Attachment field through the record `POST`/`PATCH` endpoints — that replaces the whole cell.",
         "tags": [
           "Table Records"
         ],
@@ -737,10 +1045,10 @@
             "schema": {
               "type": "string"
             },
-            "name": "modelId",
+            "name": "tableId",
             "in": "path",
             "required": true,
-            "description": "**Model Identifier**."
+            "description": "**Table Identifier**."
           },
           {
             "schema": {
@@ -758,7 +1066,7 @@
             "name": "fieldId",
             "in": "path",
             "required": true,
-            "description": "**Field Identifier**."
+            "description": "**Field Identifier**. Must name an Attachment field; any other field type answers `422`."
           },
           {
             "required": true,
@@ -908,9 +1216,18 @@
             },
             "in": "query",
             "name": "where",
-            "description": "Enables you to define specific conditions for filtering record count in your API response. Multiple conditions can be combined using logical operators such as 'and' and 'or'. Each condition consists of three parts: a field name, a comparison operator, and a value.\n\nExample: `where=(field1,eq,value1)~and(field2,eq,value2)` will filter records where 'field1' is equal to 'value1' AND 'field2' is equal to 'value2'. \n\nYou can also use other comparison operators like 'neq' (not equal), 'gt' (greater than), 'lt' (less than), and more, to create complex filtering rules.\n\nIf `viewId` query parameter is also included, then the filters included here will be applied over the filtering configuration defined in the view. \n\nPlease remember to maintain the specified format, for further information on this please see [the documentation](https://nocodb.com/docs/product-docs/developer-resources/rest-apis#v3-where-query-parameter)"
+            "description": "Enables you to define specific conditions for filtering record count in your API response. Multiple conditions can be combined using logical operators such as 'and' and 'or'. Each condition consists of three parts: a field name, a comparison operator, and a value.\n\nExample: `where=(field1,eq,value1)~and(field2,eq,value2)` will filter records where 'field1' is equal to 'value1' AND 'field2' is equal to 'value2'. \n\nMore examples: `where=(Title,like,report)` matches records whose Title contains 'report'; `where=(Tags,anyof,urgent,bug)` matches records whose multi-select Tags has 'urgent' or 'bug'.\n\nOperators: eq, neq, gt, ge, lt, le, like, nlike, in, btw, nbtw, is, isnot, blank, notblank, checked, notchecked, anyof, allof, nanyof, nallof, isWithin (gte and lte are accepted as aliases of ge and le). Which ones apply depends on the field type, see [filtering](https://nocodb.com/docs/apis/filtering).\n\n**Date and DateTime fields** (also CreatedTime and LastModifiedTime): the operator must be followed by a sub-operator such as `exactDate`, `today` or `daysAgo`. Days are taken in the field's timezone, or UTC if it has none. `eq` matches and `neq` excludes the whole day, even when a time is given. On DateTime, CreatedTime and LastModifiedTime, `gt`, `ge`, `lt` and `le` compare to the exact instant when the value includes a time (to the millisecond on PostgreSQL and SQLite, to the second on other databases); a date-only value compares against day boundaries. Date fields always compare whole dates. A value without an offset is read in the field's timezone, so send `Z` or an explicit offset, and URL-encode `+` as `%2B`.\n\nExample: `where=(UpdatedAt,gt,exactDate,2026-01-15T10:00:00Z)` returns records updated after 10:00 UTC on 2026-01-15; `where=(UpdatedAt,gt,2026-01-15T10:00:00Z)` is rejected.\n\nIf `viewId` query parameter is also included, then the filters included here will be applied over the filtering configuration defined in the view. \n\nPlease remember to maintain the specified format; for quoting values that contain commas, parentheses or spaces, see [the `where` syntax](https://nocodb.com/docs/apis/filtering#v3-where-query-parameter)."
           },
           {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "whereTz",
+            "description": "IANA time zone (e.g. `Asia/Kolkata`) for date conditions in `where` and in the view's filters that have no time zone of their own. A filter's stored time zone, then the field's display time zone, take precedence. Defaults to UTC.\n\nExample: `where=(DueAt,eq,exactDate,2026-11-09)&whereTz=Asia/Kolkata`."
+          },
+          {
+            "required": true,
             "$ref": "#/components/parameters/xc-token"
           }
         ],
@@ -949,6 +1266,15 @@
           "schema": {
             "type": "string"
           },
+          "name": "baseId",
+          "in": "path",
+          "required": true,
+          "description": "**Base Identifier**"
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
           "name": "tableId",
           "in": "path",
           "required": true,
@@ -967,7 +1293,7 @@
       "get": {
         "summary": "List Linked Records",
         "operationId": "db-data-table-row-nested-list",
-        "description": "This API endpoint allows you to retrieve list of linked records for a specific `Link to another record field` and `Record ID`. The response is an array of objects containing Primary Key and its corresponding display value.",
+        "description": "Retrieves the records linked to a given record through a Link field.\n\nThe response shape follows the relation type of the link field:\n\n- **has-many, many-to-many** — `records`, an array of `{ id, fields }` objects, empty when nothing is linked.\n- **belongs-to, one-to-one** — `record`, a single object, or `null` when nothing is linked. There is no `records` key in this case.\n\nThe `record` shapes carry `next`, `prev`, `nestedNext` and `nestedPrev`, all `null`; the `records` shape carries `next` and `prev` only.",
         "tags": [
           "Linked Records"
         ],
@@ -1019,8 +1345,7 @@
                       }
                     },
                     "required": [
-                      "field",
-                      "direction"
+                      "field"
                     ]
                   }
                 },
@@ -1039,8 +1364,7 @@
                     }
                   },
                   "required": [
-                    "field",
-                    "direction"
+                    "field"
                   ]
                 }
               ]
@@ -1055,16 +1379,24 @@
             },
             "in": "query",
             "name": "where",
-            "description": "Enables you to define specific conditions for filtering linked records in your API response. Multiple conditions can be combined using logical operators such as 'and' and 'or'. Each condition consists of three parts: a field name, a comparison operator, and a value.\n\nExample: `where=(field1,eq,value1)~and(field2,eq,value2)` will filter linked records where 'field1' is equal to 'value1' AND 'field2' is equal to 'value2'. \n\nYou can also use other comparison operators like 'neq' (not equal), 'gt' (greater than), 'lt' (less than), and more, to create complex filtering rules.\n\nPlease remember to maintain the specified format, for further information on this please see [the documentation](https://nocodb.com/docs/product-docs/developer-resources/rest-apis#v3-where-query-parameter)"
+            "description": "Enables you to define specific conditions for filtering linked records in your API response. Multiple conditions can be combined using logical operators such as 'and' and 'or'. Each condition consists of three parts: a field name, a comparison operator, and a value.\n\nExample: `where=(field1,eq,value1)~and(field2,eq,value2)` will filter linked records where 'field1' is equal to 'value1' AND 'field2' is equal to 'value2'. \n\nMore examples: `where=(Title,like,report)` matches records whose Title contains 'report'; `where=(Tags,anyof,urgent,bug)` matches records whose multi-select Tags has 'urgent' or 'bug'.\n\nOperators: eq, neq, gt, ge, lt, le, like, nlike, in, btw, nbtw, is, isnot, blank, notblank, checked, notchecked, anyof, allof, nanyof, nallof, isWithin (gte and lte are accepted as aliases of ge and le). Which ones apply depends on the field type, see [filtering](https://nocodb.com/docs/apis/filtering).\n\nPlease remember to maintain the specified format; for quoting values that contain commas, parentheses or spaces, see [the `where` syntax](https://nocodb.com/docs/apis/filtering#v3-where-query-parameter)."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "whereTz",
+            "description": "IANA time zone (e.g. `Asia/Kolkata`) for date conditions in `where` and in the view's filters that have no time zone of their own. A filter's stored time zone, then the field's display time zone, take precedence. Defaults to UTC.\n\nExample: `where=(DueAt,eq,exactDate,2026-11-09)&whereTz=Asia/Kolkata`."
           },
           {
             "schema": {
               "type": "integer",
-              "minimum": 0
+              "minimum": 1
             },
             "in": "query",
             "name": "page",
-            "description": "Enables you to control the pagination of your API response by specifying the page number you want to retrieve. By default, the first page is returned. If you want to retrieve the next page, you can increment the page number by one.\n\nExample: `page=2` will return the second page of linked records in the dataset."
+            "description": "Page of linked records to return, 1 by default.\n\nA page past the end returns an empty `records` list with no `next`; its `prev` points at the last page that has records, or page 1 when there are none. A `page` below 1 is rejected with `422 ERR_INVALID_OFFSET_VALUE`.\n\nExample: `page=2` returns the second page of linked records."
           },
           {
             "schema": {
@@ -1073,7 +1405,29 @@
             },
             "in": "query",
             "name": "pageSize",
-            "description": "Enables you to set a limit on the number of linked records you want to retrieve in your API response. By default, your response includes all the available linked records, but by using this parameter, you can control the quantity you receive.\n\nExample: `pageSize=100` will constrain your response to the first 100 linked records in the dataset."
+            "description": "Number of linked records per page. Defaults to 25.\n\nCapped per deployment (1000 by default, 100 on NocoDB Cloud).\n\nExample: `pageSize=100` returns at most 100 linked records per page."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "fieldIdOnResult",
+            "in": "query",
+            "description": "When set to `true`, record fields are keyed by field id instead of field title. Useful when titles may change or are not unique in the caller's model."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            },
+            "name": "linksAsLtar",
+            "in": "query",
+            "description": "When set to `true`, Links fields in the response carry the linked records instead of a count."
           },
           {
             "required": true,
@@ -1086,7 +1440,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DataListResponseV3"
+                  "$ref": "#/components/schemas/DataNestedListResponseV3"
                 },
                 "examples": {
                   "Example 1": {
@@ -1135,6 +1489,34 @@
                         }
                       ],
                       "next": "https://app.nocodb.com/api/v3/data/baseId/tableId/records?page=2"
+                    }
+                  },
+                  "Example 2": {
+                    "summary": "Belongs-to or one-to-one link",
+                    "value": {
+                      "record": {
+                        "id": 1,
+                        "id_fields": {
+                          "Id": 1
+                        },
+                        "fields": {
+                          "SingleLineText": "record #1"
+                        }
+                      },
+                      "next": null,
+                      "prev": null,
+                      "nestedNext": null,
+                      "nestedPrev": null
+                    }
+                  },
+                  "Example 3": {
+                    "summary": "Belongs-to link with nothing linked",
+                    "value": {
+                      "record": null,
+                      "next": null,
+                      "prev": null,
+                      "nestedNext": null,
+                      "nestedPrev": null
                     }
                   }
                 }
@@ -1188,7 +1570,7 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "Array of record objects to be linked, each containing an id field",
+          "description": "One record id or an array of them. Each entry may be `{ \"id\": … }`, or the id given directly as a string or a number.",
           "content": {
             "application/json": {
               "schema": {
@@ -1197,8 +1579,15 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": "string",
-                        "description": "Unique identifier for the record",
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ],
+                        "description": "Record id in the related table. For a composite primary key, the parts joined with `___`.",
                         "example": "33"
                       }
                     },
@@ -1208,23 +1597,50 @@
                     "additionalProperties": false
                   },
                   {
+                    "type": "string",
+                    "description": "Record id given directly, without the wrapper object."
+                  },
+                  {
+                    "type": "number",
+                    "description": "Numeric record id given directly, without the wrapper object."
+                  },
+                  {
                     "type": "array",
+                    "description": "Record ids to link. No per-request cap is enforced by the server.",
                     "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "oneOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ],
+                              "description": "Record id in the related table. For a composite primary key, the parts joined with `___`.",
+                              "example": "22"
+                            }
+                          },
+                          "required": [
+                            "id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
                           "type": "string",
-                          "description": "Unique identifier for the record",
-                          "example": "22"
+                          "description": "Record id given directly, without the wrapper object."
+                        },
+                        {
+                          "type": "number",
+                          "description": "Numeric record id given directly, without the wrapper object."
                         }
-                      },
-                      "required": [
-                        "id"
-                      ],
-                      "additionalProperties": false
+                      ]
                     },
-                    "minItems": 1,
-                    "maxItems": 1000
+                    "minItems": 1
                   }
                 ]
               },
@@ -1260,6 +1676,14 @@
             "in": "path",
             "required": true,
             "description": "**Record Identifier** corresponding to the record in this table for which links are being created."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "view_id",
+            "in": "query",
+            "description": "**View Identifier**. Scopes the write to a view; a view that does not belong to the table is rejected with `422`."
           },
           {
             "required": true,
@@ -1309,7 +1733,7 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "Array of record objects to be unlinked, each containing an id field",
+          "description": "One record id or an array of them. Each entry may be `{ \"id\": … }`, or the id given directly as a string or a number.",
           "content": {
             "application/json": {
               "schema": {
@@ -1318,8 +1742,15 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": "string",
-                        "description": "Unique identifier for the record",
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ],
+                        "description": "Record id in the related table. For a composite primary key, the parts joined with `___`.",
                         "example": "33"
                       }
                     },
@@ -1329,23 +1760,50 @@
                     "additionalProperties": false
                   },
                   {
+                    "type": "string",
+                    "description": "Record id given directly, without the wrapper object."
+                  },
+                  {
+                    "type": "number",
+                    "description": "Numeric record id given directly, without the wrapper object."
+                  },
+                  {
                     "type": "array",
+                    "description": "Record ids to unlink. No per-request cap is enforced by the server.",
                     "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "oneOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ],
+                              "description": "Record id in the related table. For a composite primary key, the parts joined with `___`.",
+                              "example": "33"
+                            }
+                          },
+                          "required": [
+                            "id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
                           "type": "string",
-                          "description": "Unique identifier for the record",
-                          "example": "33"
+                          "description": "Record id given directly, without the wrapper object."
+                        },
+                        {
+                          "type": "number",
+                          "description": "Numeric record id given directly, without the wrapper object."
                         }
-                      },
-                      "required": [
-                        "id"
-                      ],
-                      "additionalProperties": false
+                      ]
                     },
-                    "minItems": 1,
-                    "maxItems": 1000
+                    "minItems": 1
                   }
                 ]
               },
@@ -1381,6 +1839,14 @@
             "in": "path",
             "required": true,
             "description": "**Record Identifier** corresponding to the record in this table for which links are being removed."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "view_id",
+            "in": "query",
+            "description": "**View Identifier**. Scopes the write to a view; a view that does not belong to the table is rejected with `422`."
           },
           {
             "required": true,
@@ -1509,7 +1975,7 @@
             "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthorized"
+            "$ref": "#/components/responses/UnauthorizedV3"
           }
         },
         "parameters": [
@@ -1523,6 +1989,177 @@
   },
   "components": {
     "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Stable machine-readable error code, for example `ERR_TABLE_NOT_FOUND`. Match on this rather than on the message. Absent on an unhandled server error.",
+            "example": "ERR_TABLE_NOT_FOUND"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable description of what went wrong. Wording is not stable across releases."
+          },
+          "details": {
+            "description": "Extra context carried by some errors — the failing validation entries for an invalid request body, or the plan, limit and current count for a plan-limit refusal. Omitted when the error carries none."
+          }
+        }
+      },
+      "FeedbackSubmit": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source",
+          "type",
+          "summary",
+          "intent"
+        ],
+        "properties": {
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "origin"
+            ],
+            "properties": {
+              "origin": {
+                "type": "string",
+                "enum": [
+                  "user_request",
+                  "agent_observed"
+                ],
+                "description": "`user_request`: the user asked to send it. `agent_observed`: the agent noticed it (requires `evidence`)."
+              },
+              "agent": {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "Informational only.",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "model": {
+                    "type": "string",
+                    "maxLength": 100
+                  }
+                }
+              }
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "bug",
+              "silent_bug",
+              "missing_capability",
+              "confusing_behavior",
+              "docs_gap"
+            ],
+            "description": "`bug`: the call failed or errored wrongly. `silent_bug`: the call reported success but did the wrong thing."
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "One line."
+          },
+          "intent": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "What the caller was trying to accomplish."
+          },
+          "details": {
+            "type": "string",
+            "maxLength": 4000,
+            "description": "What happened vs what was expected."
+          },
+          "suggestion": {
+            "type": "string",
+            "maxLength": 4000,
+            "description": "Proposed fix or API shape."
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "The failed call. Required when `source.origin` is `agent_observed`.",
+            "properties": {
+              "toolName": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "MCP tool name."
+              },
+              "method": {
+                "type": "string",
+                "maxLength": 10,
+                "description": "REST method."
+              },
+              "path": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "REST path."
+              },
+              "requestId": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "`requestId` from the failed call's error response."
+              },
+              "errorMessage": {
+                "type": "string",
+                "maxLength": 2000
+              }
+            }
+          },
+          "userQuote": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "The user's own words (`user_request` only)."
+          },
+          "area": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "The section the issue falls under: `account`, `records`, `schema`, `views`, `automation`, `interfaces`, `access`, `platform` or `other`. An unrecognised value is stored as `other`."
+          },
+          "feature": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "The MCP tool family, e.g. `fields`, `filters`, `links`; `other` if none fits. An unrecognised value is stored as `other`."
+          },
+          "workspaceId": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "The workspace the issue happened in. Kept only if you can access it."
+          },
+          "baseId": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "The base the issue happened in. Kept only if you can access it."
+          }
+        }
+      },
+      "FeedbackResponse": {
+        "type": "object",
+        "required": [
+          "feedbackId",
+          "status"
+        ],
+        "properties": {
+          "feedbackId": {
+            "type": "string",
+            "description": "Receipt id for the report."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "received"
+            ]
+          },
+          "duplicateOf": {
+            "type": "string",
+            "description": "Earlier report this one matched, when known."
+          }
+        }
+      },
       "DataUpsertRecordRequest": {
         "type": "object",
         "required": [
@@ -1608,6 +2245,20 @@
             "items": {
               "$ref": "#/components/schemas/DataUpsertRecordResponse"
             }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Present when part of the write was not applied, e.g. computed fields named in the payload."
+          },
+          "ignored_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Titles of computed fields (Formula, Lookup, Rollup, ...) named in the payload. Their values are calculated, so they were not written."
           }
         }
       },
@@ -1910,10 +2561,6 @@
           },
           "meta": {
             "$ref": "#/components/schemas/TableMeta"
-          },
-          "source_id": {
-            "type": "string",
-            "description": "Unique identifier for the data source. Include this information only if the table being created is part of a data source."
           },
           "fields": {
             "type": "array",
@@ -2252,7 +2899,14 @@
               ]
             },
             "options": {
-              "$ref": "#/components/schemas/FieldOptions_Barcode"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/FieldOptions_Barcode"
+                }
+              ],
+              "required": [
+                "barcode_value_field_id"
+              ]
             }
           }
         },
@@ -2602,6 +3256,9 @@
               },
               {
                 "$ref": "#/components/schemas/FieldOptions/User"
+              },
+              {
+                "$ref": "#/components/schemas/FieldOptions/AutoNumber"
               }
             ],
             "errorMessage": {
@@ -2611,7 +3268,8 @@
           {
             "$ref": "#/components/schemas/TableFieldBaseCreate"
           }
-        ]
+        ],
+        "description": "A field declared inline while creating a table. Lookup, Rollup, Barcode and QrCode are not accepted here because each one points at another field by id, and those ids do not exist until the table has been created — add such a field afterwards with the create-field endpoint."
       },
       "Table": {
         "type": "object",
@@ -2648,7 +3306,7 @@
             "type": "array",
             "description": "List of fields associated with this table.",
             "items": {
-              "$ref": "#/components/schemas/CreateField"
+              "$ref": "#/components/schemas/Field"
             }
           },
           "views": {
@@ -2681,12 +3339,22 @@
             "format": "email",
             "description": "Email address of the user."
           },
-          "user_name": {
+          "display_name": {
             "type": "string",
             "description": "Display name of the user."
           },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when the user was added to the base."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when the membership was last updated."
+          },
           "base_role": {
-            "$ref": "#/components/schemas/BaseRoles"
+            "$ref": "#/components/schemas/BaseRolesResponse"
           }
         },
         "required": [
@@ -2709,15 +3377,25 @@
             "format": "email",
             "description": "Email address of the user."
           },
-          "user_name": {
+          "display_name": {
             "type": "string",
             "description": "Display name of the user."
           },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when the user was added to the base."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of when the membership was last updated."
+          },
           "base_role": {
-            "$ref": "#/components/schemas/BaseRoles"
+            "$ref": "#/components/schemas/BaseRolesResponse"
           },
           "workspace_role": {
-            "$ref": "#/components/schemas/WorkspaceRoles",
+            "$ref": "#/components/schemas/WorkspaceRolesResponse",
             "description": "Role assigned to the user in the workspace"
           }
         },
@@ -2741,7 +3419,7 @@
           }
         },
         "required": [
-          "users"
+          "list"
         ]
       },
       "BaseMemberCreate": {
@@ -2853,8 +3531,11 @@
             "description": "New title of the table."
           },
           "description": {
-            "type": "string",
-            "description": "Description of the table."
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Description of the table. Send `null` to clear it."
           },
           "display_field_id": {
             "type": "string",
@@ -2914,6 +3595,21 @@
               "desc"
             ],
             "description": "Sorting direction, either 'asc' (ascending) or 'desc' (descending)."
+          },
+          "order_by": {
+            "type": "string",
+            "enum": [
+              "alphabetical",
+              "option_order"
+            ],
+            "description": "How a SingleSelect field is ordered: 'alphabetical' (default, by option text) or 'option_order' (by the field's option order). Only SingleSelect fields support 'option_order'."
+          },
+          "enabled": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Whether this sort is enabled. Disabled sorts are skipped during evaluation."
           }
         },
         "required": [
@@ -2936,6 +3632,14 @@
               "desc"
             ],
             "description": "Sorting direction, either 'asc' (ascending) or 'desc' (descending)."
+          },
+          "order_by": {
+            "type": "string",
+            "enum": [
+              "alphabetical",
+              "option_order"
+            ],
+            "description": "How a SingleSelect field is ordered: 'alphabetical' (default, by option text) or 'option_order' (by the field's option order). Only SingleSelect fields support 'option_order'."
           }
         },
         "required": [
@@ -2961,9 +3665,19 @@
             ],
             "description": "Sorting direction, either 'asc' (ascending) or 'desc' (descending)."
           },
+          "order_by": {
+            "type": "string",
+            "enum": [
+              "alphabetical",
+              "option_order"
+            ],
+            "description": "How a SingleSelect field is ordered: 'alphabetical' (default, by option text) or 'option_order' (by the field's option order). Only SingleSelect fields support 'option_order'."
+          },
           "enabled": {
-            "type": "boolean",
-            "nullable": true,
+            "type": [
+              "boolean",
+              "null"
+            ],
             "description": "Whether this sort is enabled. Disabled sorts are skipped during evaluation."
           }
         },
@@ -3673,7 +4387,7 @@
             },
             "width": {
               "type": "integer",
-              "description": "Width of the field in pixels.\n\n **Applicable only for grid view.**"
+              "description": "Width of the field in pixels.\n\n **Applicable to grid views, and to list views when sent per level under `options.levels[].fields`.** Accepted but not stored on other view types."
             },
             "aggregation": {
               "$ref": "#/components/schemas/ViewAggregationEnum",
@@ -3685,7 +4399,7 @@
             "show"
           ]
         },
-        "description": "List of fields to be displayed in the view. \n\n- If not specified, all fields are displayed by default.\n- If an empty array is provided, only the display value field will be shown.\n- In case of partial list, fields not included in the list will be excluded from the view.\n- A `field_id` that does not exist on the table is rejected with `404`."
+        "description": "List of fields to be displayed in the view. \n\n- If not specified, all fields are displayed by default.\n- If an empty array is provided, only the display value field will be shown (form views hide it as well).\n- On every view type except form the display value field is pinned visible, so its position in the list is not applied.\n- In case of partial list, fields not included in the list will be excluded from the view.\n- A `field_id` that does not exist on the table is rejected with `422` (`ERR_FIELD_NOT_FOUND`)."
       },
       "ViewRowColour": {
         "type": "object",
@@ -3757,6 +4471,80 @@
           "propertyName": "mode"
         }
       },
+      "ViewRowColourResponse": {
+        "type": "object",
+        "oneOf": [
+          {
+            "type": "object",
+            "title": "conditions",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "filter"
+                ],
+                "description": "Mode of row coloring. In this mode, the color is selected based on conditions applied to the fields."
+              },
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Unique identifier for the condition.",
+                      "readOnly": true
+                    },
+                    "apply_as_row_background": {
+                      "type": "boolean"
+                    },
+                    "color": {
+                      "type": "string"
+                    },
+                    "filters": {
+                      "$ref": "#/components/schemas/FilterGroupResponse",
+                      "description": "The condition's filters, nested under a root group. Values come back as strings, as in `FilterResponse`."
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "mode",
+              "conditions"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "select",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "select"
+                ],
+                "description": "Mode of row coloring. In this mode, the color is selected based on a single select field."
+              },
+              "field_id": {
+                "type": "string",
+                "description": "Single select field ID to be used for colouring rows in the view."
+              },
+              "apply_as_row_background": {
+                "type": "boolean",
+                "description": "Whether to additionally apply the color as row background."
+              }
+            },
+            "required": [
+              "mode",
+              "field_id"
+            ]
+          }
+        ],
+        "discriminator": {
+          "propertyName": "mode"
+        },
+        "description": "Row colour configuration as returned by the API. Same shape as `ViewRowColour`, except that condition filters are `FilterGroupResponse`."
+      },
       "ViewOptionsGrid": {
         "type": "object",
         "properties": {
@@ -3783,7 +4571,8 @@
                 "field_id"
               ]
             },
-            "description": "List of groups to be applied on the grid view."
+            "maxItems": 5,
+            "description": "List of groups to be applied on the grid view. At most five grouping levels are supported."
           },
           "row_height": {
             "type": "string",
@@ -3810,7 +4599,7 @@
               },
               "stack_order": {
                 "type": "array",
-                "description": "Order of the stacks in kanban view. If not provided, the order will be determined by options listed in associated field.\n\nExample: ```stack_order: ['option1', 'option2', 'option3']```",
+                "description": "Order of the stacks in kanban view. If not provided, the order will be determined by options listed in associated field.\n\nStacks are named by option title for a SingleSelect field, by user id or email for a User field, and by linked record id for a link field.\n\nExample: ```stack_order: ['option1', 'option2', 'option3']```",
                 "items": {
                   "type": "string"
                 }
@@ -3844,6 +4633,11 @@
                 "end_date_field_id": {
                   "type": "string",
                   "description": "Date field ID to be used as end date in calendar view."
+                },
+                "label": {
+                  "type": "string",
+                  "maxLength": 40,
+                  "description": "Optional label shown on this range's cards when the view has several date ranges."
                 }
               },
               "required": [
@@ -3873,8 +4667,10 @@
                   "description": "Field ID of the start date column."
                 },
                 "end_date_field_id": {
-                  "type": "string",
-                  "nullable": true,
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Field ID of the end date column. Null means the range is a single point in time."
                 }
               },
@@ -3954,8 +4750,10 @@
             ]
           },
           "duration_field_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Optional standalone duration field; independent of the `dates` block."
           },
           "dependency": {
@@ -4056,8 +4854,10 @@
                   "description": "Table shown at this level."
                 },
                 "link_field_id": {
-                  "type": "string",
-                  "nullable": true,
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Link field connecting this level to its parent. Omitted/null for the root level."
                 },
                 "filters": {
@@ -4125,6 +4925,10 @@
           "reset_form_after_submit": {
             "type": "boolean",
             "description": "Whether to show a blank form after submission."
+          },
+          "save_draft_to_browser": {
+            "type": "boolean",
+            "description": "Whether a shared form keeps unsubmitted answers in the visitor's browser across refreshes. Set false to reset fields to their defaults on refresh."
           },
           "form_hide_banner": {
             "type": "boolean",
@@ -4228,7 +5032,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4260,7 +5064,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4292,7 +5096,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 },
                 "required": [
@@ -4327,7 +5131,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 },
                 "required": [
@@ -4362,7 +5166,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 },
                 "required": [
@@ -4397,7 +5201,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 },
                 "required": [
@@ -4432,7 +5236,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4489,11 +5293,15 @@
             "$ref": "#/components/schemas/ViewBaseInUpdate"
           },
           {
-            "oneOf": [
+            "description": "The type-specific half of the body. `anyOf`, not `oneOf`: PATCH is partial, so a body that omits `type` constrains none of these branches.",
+            "anyOf": [
               {
                 "type": "object",
                 "title": "grid",
                 "properties": {
+                  "type": {
+                    "const": "grid"
+                  },
                   "options": {
                     "$ref": "#/components/schemas/ViewOptionsGrid"
                   },
@@ -4512,7 +5320,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4520,6 +5328,9 @@
                 "type": "object",
                 "title": "gallery",
                 "properties": {
+                  "type": {
+                    "const": "gallery"
+                  },
                   "options": {
                     "$ref": "#/components/schemas/ViewOptionsGallery"
                   },
@@ -4538,7 +5349,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4546,6 +5357,9 @@
                 "type": "object",
                 "title": "kanban",
                 "properties": {
+                  "type": {
+                    "const": "kanban"
+                  },
                   "options": {
                     "$ref": "#/components/schemas/ViewOptionsKanban"
                   },
@@ -4564,7 +5378,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4572,6 +5386,9 @@
                 "type": "object",
                 "title": "calendar",
                 "properties": {
+                  "type": {
+                    "const": "calendar"
+                  },
                   "options": {
                     "$ref": "#/components/schemas/ViewOptionsCalendar"
                   },
@@ -4590,7 +5407,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4598,6 +5415,9 @@
                 "type": "object",
                 "title": "timeline",
                 "properties": {
+                  "type": {
+                    "const": "timeline"
+                  },
                   "options": {
                     "$ref": "#/components/schemas/ViewOptionsTimeline"
                   },
@@ -4616,7 +5436,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4624,6 +5444,9 @@
                 "type": "object",
                 "title": "gantt",
                 "properties": {
+                  "type": {
+                    "const": "gantt"
+                  },
                   "options": {
                     "$ref": "#/components/schemas/ViewOptionsGantt"
                   },
@@ -4642,7 +5465,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4650,6 +5473,9 @@
                 "type": "object",
                 "title": "map",
                 "properties": {
+                  "type": {
+                    "const": "map"
+                  },
                   "options": {
                     "$ref": "#/components/schemas/ViewOptionsMap"
                   },
@@ -4668,7 +5494,7 @@
                   },
                   "row_coloring": {
                     "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4676,6 +5502,9 @@
                 "type": "object",
                 "title": "form",
                 "properties": {
+                  "type": {
+                    "const": "form"
+                  },
                   "options": {
                     "$ref": "#/components/schemas/ViewOptionsForm"
                   },
@@ -4688,6 +5517,9 @@
                 "type": "object",
                 "title": "list",
                 "properties": {
+                  "type": {
+                    "const": "list"
+                  },
                   "options": {
                     "$ref": "#/components/schemas/ViewOptionsList"
                   }
@@ -4772,14 +5604,14 @@
                     "description": "List of sorts to be applied to the view."
                   },
                   "filters": {
-                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                    "$ref": "#/components/schemas/FilterCreateUpdateResponse"
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
                   },
                   "row_coloring": {
-                    "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "$ref": "#/components/schemas/ViewRowColourResponse",
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4804,14 +5636,14 @@
                     "description": "List of sorts to be applied to the view."
                   },
                   "filters": {
-                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                    "$ref": "#/components/schemas/FilterCreateUpdateResponse"
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
                   },
                   "row_coloring": {
-                    "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "$ref": "#/components/schemas/ViewRowColourResponse",
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4836,14 +5668,14 @@
                     "description": "List of sorts to be applied to the view."
                   },
                   "filters": {
-                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                    "$ref": "#/components/schemas/FilterCreateUpdateResponse"
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
                   },
                   "row_coloring": {
-                    "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "$ref": "#/components/schemas/ViewRowColourResponse",
+                    "description": "Row colour configuration for the view."
                   }
                 },
                 "required": [
@@ -4871,14 +5703,14 @@
                     "description": "List of sorts to be applied to the view."
                   },
                   "filters": {
-                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                    "$ref": "#/components/schemas/FilterCreateUpdateResponse"
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
                   },
                   "row_coloring": {
-                    "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "$ref": "#/components/schemas/ViewRowColourResponse",
+                    "description": "Row colour configuration for the view."
                   }
                 },
                 "required": [
@@ -4906,14 +5738,14 @@
                     "description": "List of sorts to be applied to the view."
                   },
                   "filters": {
-                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                    "$ref": "#/components/schemas/FilterCreateUpdateResponse"
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
                   },
                   "row_coloring": {
-                    "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "$ref": "#/components/schemas/ViewRowColourResponse",
+                    "description": "Row colour configuration for the view."
                   }
                 },
                 "required": [
@@ -4941,14 +5773,14 @@
                     "description": "List of sorts to be applied to the view."
                   },
                   "filters": {
-                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                    "$ref": "#/components/schemas/FilterCreateUpdateResponse"
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
                   },
                   "row_coloring": {
-                    "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "$ref": "#/components/schemas/ViewRowColourResponse",
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -4973,14 +5805,14 @@
                     "description": "List of sorts to be applied to the view."
                   },
                   "filters": {
-                    "$ref": "#/components/schemas/FilterCreateUpdate"
+                    "$ref": "#/components/schemas/FilterCreateUpdateResponse"
                   },
                   "fields": {
                     "$ref": "#/components/schemas/ViewFields"
                   },
                   "row_coloring": {
-                    "$ref": "#/components/schemas/ViewRowColour",
-                    "description": "Row colour configuration for the the view."
+                    "$ref": "#/components/schemas/ViewRowColourResponse",
+                    "description": "Row colour configuration for the view."
                   }
                 }
               },
@@ -5061,7 +5893,7 @@
               "JSON",
               "AutoNumber"
             ],
-            "description": "Field data type."
+            "description": "Field data type. Read responses additionally return `ID` for a table's auto-generated primary-key field; `ID` cannot be used when creating or updating a field."
           },
           "description": {
             "type": [
@@ -5076,7 +5908,7 @@
               "boolean",
               "number"
             ],
-            "description": "Default value for the field. Applicable for SingleLineText, LongText, PhoneNumber, URL, Email, Number, Decimal, Currency, Percent, Duration, Date, DateTime, Time, SingleSelect, MultiSelect, Rating, Checkbox, User and JSON fields."
+            "description": "Default value for the field. Applicable for SingleLineText, LongText, PhoneNumber, URL, Email, Number, Decimal, Currency, Percent, Duration, Date, DateTime, Time, SingleSelect, MultiSelect, Rating, Checkbox, User and JSON fields. A MultiSelect default holding several choices is given as a single comma-separated string of choice titles."
           },
           "unique": {
             "type": "boolean",
@@ -5208,6 +6040,18 @@
         "type": "object",
         "title": "Number",
         "properties": {
+          "abbreviate": {
+            "type": "string",
+            "description": "Large number abbreviation for display (1.2K, 3.4M). `auto` picks the unit by magnitude; `none` shows the full number. Defaults to `none`.",
+            "enum": [
+              "none",
+              "auto",
+              "thousand",
+              "million",
+              "billion",
+              "trillion"
+            ]
+          },
           "separator": {
             "type": "string",
             "description": "Thousand/decimal separator style. `locale` uses the runtime locale, `none_period` / `none_comma` disable thousand grouping.",
@@ -5228,11 +6072,23 @@
         "type": "object",
         "title": "Decimal",
         "properties": {
+          "abbreviate": {
+            "type": "string",
+            "description": "Large number abbreviation for display (1.2K, 3.4M). `auto` picks the unit by magnitude; `none` shows the full number. Defaults to `none`.",
+            "enum": [
+              "none",
+              "auto",
+              "thousand",
+              "million",
+              "billion",
+              "trillion"
+            ]
+          },
           "precision": {
             "type": "number",
             "description": "Decimal field precision. Defaults to 0",
             "minimum": 0,
-            "maximum": 5
+            "maximum": 8
           },
           "separator": {
             "type": "string",
@@ -5255,6 +6111,18 @@
         "title": "Currency",
         "description": "Currency settings for this column. `currency_locale` defaults to `en-US` and `currency_code` defaults to `USD`",
         "properties": {
+          "abbreviate": {
+            "type": "string",
+            "description": "Large number abbreviation for display (1.2K, 3.4M). `auto` picks the unit by magnitude; `none` shows the full number. Defaults to `none`.",
+            "enum": [
+              "none",
+              "auto",
+              "thousand",
+              "million",
+              "billion",
+              "trillion"
+            ]
+          },
           "currency_locale": {
             "type": "string",
             "description": "Locale for currency formatting. Refer https://simplelocalize.io/data/locales/"
@@ -5263,11 +6131,11 @@
             "type": "number",
             "description": "Number of decimal places. Defaults to 2.",
             "minimum": 0,
-            "maximum": 5
+            "maximum": 8
           },
           "currency_code": {
             "type": "string",
-            "description": "Currency code. Refer https://simplelocalize.io/data/locales/",
+            "description": "Currency code (ISO 4217). Refer https://simplelocalize.io/data/locales/. Withdrawn codes such as BYR or GHC are still accepted so existing columns keep validating.",
             "enum": [
               "AED",
               "AFN",
@@ -5293,6 +6161,7 @@
               "BSD",
               "BTN",
               "BWP",
+              "BYN",
               "BYR",
               "BZD",
               "CAD",
@@ -5306,6 +6175,7 @@
               "COP",
               "COU",
               "CRC",
+              "CUC",
               "CUP",
               "CVE",
               "CYP",
@@ -5324,6 +6194,7 @@
               "GBP",
               "GEL",
               "GHC",
+              "GHS",
               "GIP",
               "GMD",
               "GNF",
@@ -5368,6 +6239,7 @@
               "MNT",
               "MOP",
               "MRO",
+              "MRU",
               "MTL",
               "MUR",
               "MVR",
@@ -5400,20 +6272,26 @@
               "SBD",
               "SCR",
               "SDD",
+              "SDG",
               "SEK",
               "SGD",
               "SHP",
               "SIT",
               "SKK",
+              "SLE",
               "SLL",
               "SOS",
               "SRD",
+              "SSP",
               "STD",
+              "STN",
+              "SVC",
               "SYP",
               "SZL",
               "THB",
               "TJS",
               "TMM",
+              "TMT",
               "TND",
               "TOP",
               "TRY",
@@ -5425,9 +6303,13 @@
               "USD",
               "USN",
               "USS",
+              "UYI",
               "UYU",
+              "UYW",
               "UZS",
               "VEB",
+              "VED",
+              "VES",
               "VND",
               "VUV",
               "WST",
@@ -5446,12 +6328,17 @@
               "XPD",
               "XPF",
               "XPT",
+              "XSU",
               "XTS",
+              "XUA",
               "XXX",
               "YER",
               "ZAR",
               "ZMK",
-              "ZWD"
+              "ZMW",
+              "ZWD",
+              "ZWG",
+              "ZWL"
             ]
           }
         },
@@ -5477,7 +6364,7 @@
             "type": "number",
             "description": "Number of decimal places. Defaults to 2.",
             "minimum": 0,
-            "maximum": 5
+            "maximum": 8
           }
         },
         "additionalProperties": false
@@ -5488,7 +6375,22 @@
         "properties": {
           "duration_format": {
             "type": "string",
-            "description": "Duration format. Supported options are listed below\n- `h:mm`\n- `h:mm:ss`\n- `h:mm:ss.S`\n- `h:mm:ss.SS`\n- `h:mm:ss.SSS`"
+            "description": "Duration format.\n\n- `h:mm`\n- `h:mm:ss`\n- `h:mm:ss.s`\n- `h:mm:ss.ss`\n- `h:mm:ss.sss`\n- `d h`\n- `d h:mm`\n- `d h:mm:ss`\n- `d h m`\n- `d h m s`\n\n`h:mm:ss.S`, `h:mm:ss.SS` and `h:mm:ss.SSS` are accepted as aliases of the lowercase forms, which earlier revisions of this document named instead.",
+            "enum": [
+              "h:mm",
+              "h:mm:ss",
+              "h:mm:ss.s",
+              "h:mm:ss.ss",
+              "h:mm:ss.sss",
+              "d h",
+              "d h:mm",
+              "d h:mm:ss",
+              "d h m",
+              "d h m s",
+              "h:mm:ss.S",
+              "h:mm:ss.SS",
+              "h:mm:ss.SSS"
+            ]
           }
         },
         "additionalProperties": false
@@ -5555,6 +6457,11 @@
             "items": {
               "type": "object",
               "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Stable identifier for the choice. Returned on reads; pass it back unchanged on update so the choice and the records referencing it are preserved.",
+                  "readOnly": true
+                },
                 "title": {
                   "type": "string",
                   "description": "Choice title."
@@ -5562,7 +6469,7 @@
                 "color": {
                   "type": "string",
                   "description": "Specifies the tile color for the choice using a hexadecimal color code (e.g., `#36BFFF`).",
-                  "pattern": "^#[0-9A-Fa-f]{6}$"
+                  "pattern": "^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
                 }
               },
               "required": [
@@ -5660,7 +6567,7 @@
         "properties": {
           "formula": {
             "type": "string",
-            "description": "Formula expression."
+            "description": "Formula expression. Numeric results are returned as raw floating-point values (e.g. `468.90000000000003`), not rounded; wrap the expression in `ROUND()` for a fixed number of decimals."
           },
           "display_type": {
             "type": [
@@ -5671,7 +6578,7 @@
           },
           "display_column_meta": {
             "type": "object",
-            "description": "Field options applied to the rendered result, shaped like the `display_type` field's own options."
+            "description": "Options for the `display_type` field, nested as `{meta: {...}, custom: {}}`, e.g. `{meta: {currency_code: 'USD'}, custom: {}}`. Flat options are nested on write."
           }
         },
         "additionalProperties": false
@@ -5682,7 +6589,7 @@
         "properties": {
           "max_number_of_attachments": {
             "type": "integer",
-            "description": "Maximum number of files per cell.",
+            "description": "Maximum number of files per cell. Cannot raise the cap above the workspace plan's per-cell attachment limit (10 on the free plan), which still applies.",
             "minimum": 1
           },
           "max_attachment_size": {
@@ -5759,15 +6666,28 @@
           },
           "error": {
             "type": "string",
-            "description": "Error message when dependent field is deleted"
+            "description": "Error message recorded by the server when a field this one depends on is deleted. Server-maintained and never returned by v3 reads.",
+            "readOnly": true
           },
           "enable_conditions": {
             "type": "boolean",
             "description": "Apply the linked field's filters when resolving the lookup."
           },
           "lookup_limit": {
-            "type": "number",
-            "description": "Maximum number of linked records to resolve."
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Show only the first N linked records in this lookup (N = this number); `lookup_limit_type: 'last'` shows the last N instead. `null` or `0` removes the limit. PostgreSQL bases only (other databases reject it with a 400), and requires a plan with lookup sort and limit (otherwise the write is rejected naming that plan feature)."
+          },
+          "lookup_limit_type": {
+            "type": "string",
+            "enum": [
+              "first",
+              "last"
+            ],
+            "description": "Which end of the linked records `lookup_limit` keeps. Defaults to `first`. Only meaningful with `lookup_limit`."
           },
           "use_recursive_evaluation": {
             "type": "boolean",
@@ -5782,7 +6702,7 @@
           },
           "display_column_meta": {
             "type": "object",
-            "description": "Field options applied to the rendered value, shaped like the `display_type` field's own options."
+            "description": "Options for the `display_type` field, nested as `{meta: {...}, custom: {}}`, e.g. `{meta: {currency_code: 'USD'}, custom: {}}`. Flat options are nested on write."
           }
         },
         "required": [
@@ -5794,6 +6714,7 @@
       "FieldOptions_Rollup": {
         "type": "object",
         "title": "Rollup",
+        "description": "Plain rollups take no `display_type`. Numeric formatting is `precision` and `separator`; currency and percent come from the rolled-up field (a Currency or Percent field, or the `display_type` of a Formula or Lookup it reads). A formula rollup (`rollup_function` `formula`) can instead set `display_type` and `display_column_meta` to render its result as another field type.",
         "properties": {
           "related_field_id": {
             "type": "string",
@@ -5805,27 +6726,45 @@
           },
           "rollup_function": {
             "type": "string",
-            "description": "Rollup function.",
+            "description": "Rollup function. The accepted set depends on the target field's type — date-like targets take only `count`, `countAll`, `min`, `max` and `countDistinct`, numeric targets additionally take `sum`, `avg`, `sumDistinct` and `avgDistinct`. A function outside the target's set is rejected with `400`. `count` counts linked records whose target value is not empty; `countAll` counts every linked record. With no linked records (or only empty values), `sum` and the count functions return `0`, while `avg`, `min` and `max` return `null`. `formula` aggregates with `formula` instead, for any target type.",
             "enum": [
               "count",
+              "countAll",
               "min",
               "max",
               "avg",
               "sum",
               "countDistinct",
               "sumDistinct",
-              "avgDistinct"
+              "avgDistinct",
+              "formula"
             ]
+          },
+          "formula": {
+            "type": "string",
+            "description": "Required when `rollup_function` is `formula`: an expression over `values`, the linked records' values of the rollup field — e.g. `ROUND(SUM(values) * 1.1, 2)` or `ARRAYJOIN(ARRAYUNIQUE(values), \"; \")`. Aggregates: SUM, AVERAGE, MIN, MAX, COUNT, COUNTA, COUNTALL, AND, OR, XOR, CONCATENATE, ARRAYJOIN; set modifiers: ARRAYUNIQUE, ARRAYCOMPACT, ARRAYSLICE, ARRAYFLATTEN."
           },
           "error": {
             "type": "string",
-            "description": "Error message when dependent field is deleted"
+            "description": "Error message recorded by the server when a field this one depends on is deleted. Server-maintained and never returned by v3 reads.",
+            "readOnly": true
           },
           "precision": {
             "type": "number",
-            "description": "Number of decimal places for numeric rollups. Defaults to 0.",
+            "description": "Number of decimal places for numeric rollups. Defaults to 0; a formula rollup defaults to the digits of an outer ROUND, else 0 for a whole-number result and 2 otherwise. Display-only: the API returns the unrounded value.",
             "minimum": 0,
-            "maximum": 5
+            "maximum": 8
+          },
+          "display_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Formula rollups only: field type the result is rendered as (e.g. `Currency`, `Percent`, `Date`). Null renders the raw result."
+          },
+          "display_column_meta": {
+            "type": "object",
+            "description": "Formula rollups only: field options applied to the rendered result, shaped like the `display_type` field's own options."
           },
           "enable_conditions": {
             "type": "boolean",
@@ -6163,6 +7102,7 @@
       "FieldOptions_Links": {
         "type": "object",
         "title": "Links",
+        "description": "Creates a relation between two tables, stored with field type `Links`. `LinkToAnotherRecord` accepts the same options and creates the same kind of relation; for `relation_type: oo` the choice decides the underlying implementation (`Links` the foreign-key form, `LinkToAnotherRecord` the junction-table form). Neither type is deprecated.",
         "properties": {
           "relation_type": {
             "type": "string",
@@ -6174,11 +7114,15 @@
               "hm",
               "bt"
             ],
-            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one\n- `hm` has-many\n- `bt` belongs-to"
+            "description": "Type of relationship: `om` one-to-many, `mo` many-to-one, `mm` many-to-many, `oo` one-to-one, `hm` has-many, `bt` belongs-to.\n\nNormalised on create: when the link is backed by a junction table `hm` is stored as `om` and `bt` as `mo`, and `oo` is always stored as a `LinkToAnotherRecord` field, so a read may report a different field type than the one requested."
           },
           "related_table_id": {
             "type": "string",
             "description": "Identifier of the linked table."
+          },
+          "related_base_id": {
+            "type": "string",
+            "description": "Identifier of the base the linked table belongs to, for a link to a table in another base of the same workspace. Omit it for a link within this base. Read back only on a cross-base link."
           },
           "enable_conditions": {
             "type": "boolean",
@@ -6194,6 +7138,7 @@
       "FieldOptions_LinkToAnotherRecord": {
         "type": "object",
         "title": "LinkToAnotherRecord",
+        "description": "Creates a relation between two tables, stored with field type `LinkToAnotherRecord`. `Links` accepts the same options and creates the same kind of relation; for `relation_type: oo` the choice decides the underlying implementation (`Links` the foreign-key form, `LinkToAnotherRecord` the junction-table form). Neither type is deprecated.",
         "properties": {
           "relation_type": {
             "type": "string",
@@ -6205,11 +7150,15 @@
               "hm",
               "bt"
             ],
-            "description": "Type of relationship.\n\nSupported options are listed below\n- `om` one-to-many\n- `mo` many-to-one\n- `mm` many-to-many\n- `oo` one-to-one\n- `hm` has-many\n- `bt` belongs-to"
+            "description": "Type of relationship: `om` one-to-many, `mo` many-to-one, `mm` many-to-many, `oo` one-to-one, `hm` has-many, `bt` belongs-to.\n\nNormalised on create: when the link is backed by a junction table `hm` is stored as `om` and `bt` as `mo`, and `oo` is always stored as a `LinkToAnotherRecord` field, so a read may report a different field type than the one requested."
           },
           "related_table_id": {
             "type": "string",
             "description": "Identifier of the linked table."
+          },
+          "related_base_id": {
+            "type": "string",
+            "description": "Identifier of the base the linked table belongs to, for a link to a table in another base of the same workspace. Omit it for a link within this base. Read back only on a cross-base link."
           },
           "enable_conditions": {
             "type": "boolean",
@@ -6353,12 +7302,23 @@
                 "properties": {
                   "type": {
                     "enum": [
-                      "Rating",
-                      "Checkbox"
+                      "Rating"
                     ]
                   },
                   "options": {
                     "$ref": "#/components/schemas/FieldOptions_Rating"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "Checkbox"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_Checkbox"
                   }
                 }
               },
@@ -6433,10 +7393,106 @@
                     "$ref": "#/components/schemas/FieldOptions_LinkToAnotherRecord"
                   }
                 }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "Rollup"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_Rollup"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "Button"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_Button"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "Attachment"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_Attachment"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "QrCode"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_QrCode"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "CreatedTime",
+                      "LastModifiedTime"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_DateTime"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "CreatedBy"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_CreatedBy"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "LastModifiedBy"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_LastModifiedBy"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "Geometry",
+                      "Year",
+                      "AutoNumber"
+                    ]
+                  }
+                }
               }
             ],
             "errorMessage": {
-              "oneOf": "Invalid field options. Ensure 'uidt' is a valid field type and the options match the schema for that type."
+              "oneOf": "Invalid field options. Ensure 'type' is a valid field type and the options match the schema for that type."
             }
           }
         ]
@@ -6464,7 +7520,7 @@
           "color": {
             "type": "string",
             "description": "Tile color for the choice as a hex code (e.g. `#36BFFF`). Defaults to a palette color when omitted.",
-            "pattern": "^#[0-9A-Fa-f]{6}$"
+            "pattern": "^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$"
           }
         },
         "required": [
@@ -6526,7 +7582,8 @@
             "$ref": "#/components/schemas/FieldBase"
           },
           {
-            "oneOf": [
+            "description": "The type-specific half of the body. `anyOf`, not `oneOf`: PATCH is partial, so a body that omits `type` constrains none of these branches.",
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/FieldOptions/SingleLineText"
               },
@@ -6753,11 +7810,104 @@
                     "$ref": "#/components/schemas/FieldOptions_LinkToAnotherRecord"
                   }
                 }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "Rollup"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_Rollup"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "Button"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_Button"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "Attachment"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_Attachment"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "QrCode"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_QrCode"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "CreatedTime",
+                      "LastModifiedTime"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_DateTime"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "CreatedBy"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_CreatedBy"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "LastModifiedBy"
+                    ]
+                  },
+                  "options": {
+                    "$ref": "#/components/schemas/FieldOptions_LastModifiedBy"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "Geometry",
+                      "Year",
+                      "AutoNumber"
+                    ]
+                  }
+                }
               }
-            ],
-            "errorMessage": {
-              "oneOf": "Invalid field type or options. Ensure 'type' is a valid field type and 'options' matches the schema for that type."
-            }
+            ]
           }
         ],
         "minProperties": 1
@@ -6797,7 +7947,20 @@
               "boolean",
               "null"
             ],
-            "description": "Value for comparison."
+            "description": "Value for comparison. Numbers and booleans are accepted, but stored and returned as strings (see `FilterResponse`)."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the filter is switched on. A switched-off filter is skipped only when the plan includes toggle filters; otherwise it is still applied. Returned on reads; ignored on create, update and replace, so a recreated filter comes back switched on.",
+            "readOnly": true
+          },
+          "timezone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "IANA time zone (e.g. `Asia/Kolkata`) used to evaluate date and date-time conditions such as `today` or `exactDate`. When the filter has none, the field's display time zone is used, then the request's `whereTz` query parameter, then UTC. An unknown zone is rejected. On create, a date filter that omits it stores the request's `whereTz` when the field has no time zone of its own; `null` stores no zone. Send `null` on update to clear it.",
+            "example": "Asia/Kolkata"
           }
         },
         "required": [
@@ -6809,16 +7972,10 @@
         "type": "object",
         "properties": {
           "list": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FilterGroup"
-            },
-            "description": "List of filter groups. Initial set of filters are mapped to a default group with group-id set to **root**."
+            "$ref": "#/components/schemas/FilterGroupResponse",
+            "description": "The view's filters, nested under a single root group whose `id` is **root**. Despite the name this is one group object, not an array. Omitted when the view has no filters."
           }
-        },
-        "required": [
-          "list"
-        ]
+        }
       },
       "FilterGroupLevel3": {
         "type": "object",
@@ -6933,6 +8090,11 @@
             ],
             "description": "Logical operator for combining filters in the group."
           },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the group is switched on. A switched-off group is skipped only when the plan includes toggle filters; otherwise it is still applied. Returned on reads; ignored on create, update and replace, so a recreated group comes back switched on.",
+            "readOnly": true
+          },
           "filters": {
             "type": "array",
             "items": {
@@ -6952,6 +8114,119 @@
           "id",
           "group_operator",
           "filters"
+        ]
+      },
+      "FilterResponse": {
+        "type": "object",
+        "title": "FilterResponse",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the filter.",
+            "readOnly": true
+          },
+          "parent_id": {
+            "type": "string",
+            "description": "Parent ID of the filter, specifying this filters group association. Defaults to **root**."
+          },
+          "field_id": {
+            "type": "string",
+            "description": "Field ID to which this filter applies."
+          },
+          "operator": {
+            "type": "string",
+            "description": "Primary comparison operator (e.g., eq, gt, lt)."
+          },
+          "sub_operator": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Secondary comparison operator (if applicable)."
+          },
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Value for comparison, always returned as a string: a filter created with `100` reads back as `\"100\"`, and `true` as `\"true\"`."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the filter is switched on. A switched-off filter is skipped only when the plan includes toggle filters; otherwise it is still applied. Returned on reads; ignored on create, update and replace, so a recreated filter comes back switched on.",
+            "readOnly": true
+          },
+          "timezone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "IANA time zone (e.g. `Asia/Kolkata`) used to evaluate date and date-time conditions such as `today` or `exactDate`. When the filter has none, the field's display time zone is used, then the request's `whereTz` query parameter, then UTC. An unknown zone is rejected. On create, a date filter that omits it stores the request's `whereTz` when the field has no time zone of its own; `null` stores no zone. Send `null` on update to clear it.",
+            "example": "Asia/Kolkata"
+          }
+        },
+        "required": [
+          "field_id",
+          "operator"
+        ],
+        "description": "A filter as returned by the API. Same shape as `Filter`, except that `value` always comes back as a string (or `null`)."
+      },
+      "FilterGroupResponse": {
+        "type": "object",
+        "title": "FilterGroupResponse",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the group.",
+            "readOnly": true
+          },
+          "parent_id": {
+            "type": "string",
+            "description": "Parent ID of this filter-group."
+          },
+          "group_operator": {
+            "type": "string",
+            "enum": [
+              "AND",
+              "OR"
+            ],
+            "description": "Logical operator for combining filters in the group."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the group is switched on. A switched-off group is skipped only when the plan includes toggle filters; otherwise it is still applied. Returned on reads; ignored on create, update and replace, so a recreated group comes back switched on.",
+            "readOnly": true
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/FilterResponse"
+                },
+                {
+                  "$ref": "#/components/schemas/FilterGroupResponse"
+                }
+              ]
+            },
+            "description": "Nested filters or filter groups."
+          }
+        },
+        "required": [
+          "id",
+          "group_operator",
+          "filters"
+        ],
+        "description": "A filter group as returned by the API. Nested filters are `FilterResponse`, so their `value` is always a string (or `null`)."
+      },
+      "FilterCreateUpdateResponse": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FilterResponse"
+          },
+          {
+            "$ref": "#/components/schemas/FilterGroupResponse"
+          }
         ]
       },
       "FilterCreate": {
@@ -7035,8 +8310,15 @@
           },
           "fields": {
             "type": "object",
-            "description": "Record fields data (excluding primary key). Undefined when empty.",
+            "description": "Record fields data, excluding the primary key. Always present; an empty object when the record has no other fields.",
             "additionalProperties": true
+          },
+          "field_errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields whose value could not be computed because the field is broken (e.g. a lookup through a deleted link). Their value in `fields` is null."
           }
         },
         "required": [
@@ -7179,6 +8461,20 @@
               "$ref": "#/components/schemas/DataRecordV3"
             },
             "description": "Array of created records"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Present when part of the write was not applied, e.g. computed fields named in the payload."
+          },
+          "ignored_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Titles of computed fields (Formula, Lookup, Rollup, ...) named in the payload. Their values are calculated, so they were not written."
           }
         },
         "required": [
@@ -7210,7 +8506,7 @@
                 },
                 "fields": {
                   "type": "object",
-                  "description": "Record fields data (excluding primary key). Undefined when empty.",
+                  "description": "Record fields data, excluding the primary key. Always present; an empty object when the record has no other fields.",
                   "additionalProperties": true
                 }
               },
@@ -7219,6 +8515,20 @@
               ]
             },
             "description": "Array of updated record identifiers"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Present when part of the write was not applied, e.g. computed fields named in the payload."
+          },
+          "ignored_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Titles of computed fields (Formula, Lookup, Rollup, ...) named in the payload. Their values are calculated, so they were not written."
           }
         },
         "required": [
@@ -7283,12 +8593,26 @@
               "null"
             ],
             "description": "Pagination token for previous page"
+          },
+          "nestedNext": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Nested pagination token for next page"
+          },
+          "nestedPrev": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Nested pagination token for previous page"
           }
         }
       },
       "BaseRoles": {
         "type": "string",
-        "description": "Base roles for the user.",
+        "description": "Base roles for the user. These are the values accepted when granting a role.",
         "enum": [
           "owner",
           "creator",
@@ -7296,6 +8620,20 @@
           "viewer",
           "commenter",
           "no-access"
+        ]
+      },
+      "BaseRolesResponse": {
+        "type": "string",
+        "description": "Base role as reported on a member read. A superset of `BaseRoles`: `inherit` means the role comes from the workspace rather than the base, and `app-user` is an external app-only collaborator with no ambient base access. Neither can be assigned — they are never valid in a request body.",
+        "enum": [
+          "owner",
+          "creator",
+          "editor",
+          "viewer",
+          "commenter",
+          "no-access",
+          "inherit",
+          "app-user"
         ]
       },
       "Workspace": {
@@ -7464,7 +8802,7 @@
             "description": "Timestamp when the user was last updated in the workspace"
           },
           "workspace_role": {
-            "$ref": "#/components/schemas/WorkspaceRoles",
+            "$ref": "#/components/schemas/WorkspaceRolesResponse",
             "description": "Role assigned to the user in the workspace"
           }
         },
@@ -7500,7 +8838,7 @@
             "description": "Timestamp when the user was last updated in the workspace"
           },
           "workspace_role": {
-            "$ref": "#/components/schemas/WorkspaceRoles",
+            "$ref": "#/components/schemas/WorkspaceRolesResponse",
             "description": "Role assigned to the user in the workspace"
           }
         },
@@ -7928,7 +9266,7 @@
           },
           "order": {
             "type": "number",
-            "description": "Display position among environments; defaults to the end of the list",
+            "description": "Display position among environments; defaults to the end of the list. Write-only — it is persisted but is not returned on any environment response.",
             "example": 1
           }
         },
@@ -7960,7 +9298,7 @@
           },
           "order": {
             "type": "number",
-            "description": "Display position among environments",
+            "description": "Display position among environments. Write-only — it is persisted but is not returned on any environment response.",
             "example": 1
           }
         }
@@ -8220,7 +9558,7 @@
       },
       "WorkspaceRoles": {
         "type": "string",
-        "description": "Workspace roles for the user.",
+        "description": "Workspace roles for the user. These are the values accepted when granting a role.",
         "enum": [
           "workspace-level-owner",
           "workspace-level-creator",
@@ -8228,6 +9566,19 @@
           "workspace-level-viewer",
           "workspace-level-commenter",
           "workspace-level-no-access"
+        ]
+      },
+      "WorkspaceRolesResponse": {
+        "type": "string",
+        "description": "Workspace role as reported on a member read. A superset of `WorkspaceRoles`: `workspace-level-inherit` means the role is inherited from the organization rather than set on the workspace. It cannot be assigned — it is never valid in a request body.",
+        "enum": [
+          "workspace-level-owner",
+          "workspace-level-creator",
+          "workspace-level-editor",
+          "workspace-level-viewer",
+          "workspace-level-commenter",
+          "workspace-level-no-access",
+          "workspace-level-inherit"
         ]
       },
       "WorkspaceTeamCreate": {
@@ -8472,6 +9823,203 @@
           "teams"
         ]
       },
+      "Permission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the grant."
+          },
+          "entity": {
+            "type": "string",
+            "enum": [
+              "table",
+              "field"
+            ],
+            "description": "What the grant is attached to."
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "Table ID or field ID."
+          },
+          "permission": {
+            "type": "string",
+            "enum": [
+              "TABLE_VISIBILITY",
+              "TABLE_RECORD_ADD",
+              "TABLE_RECORD_DELETE",
+              "TABLE_DATA_DOWNLOAD",
+              "RECORD_FIELD_EDIT"
+            ],
+            "description": "`TABLE_*` keys attach to a table, `RECORD_FIELD_EDIT` to a field. `TABLE_DATA_DOWNLOAD` controls CSV, Excel and JSON downloads; with no grant, every base member can download."
+          },
+          "granted_type": {
+            "type": "string",
+            "enum": [
+              "role",
+              "user",
+              "nobody"
+            ],
+            "description": "`role`: a minimum base role. `user`: only the listed subjects. `nobody`: no one."
+          },
+          "granted_role": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Minimum role for a role grant, else null."
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "team",
+                    "appTeam",
+                    "agent"
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                },
+                "hierarchy_scope": {
+                  "type": "string",
+                  "enum": [
+                    "self_only",
+                    "self_and_descendants"
+                  ],
+                  "description": "Team subjects only: whether the grant covers just that team or its sub-teams too."
+                }
+              }
+            }
+          },
+          "enforce_for_automation": {
+            "type": "boolean"
+          },
+          "enforce_for_form": {
+            "type": "boolean"
+          },
+          "created_by": {
+            "type": "string"
+          }
+        }
+      },
+      "PermissionList": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            }
+          }
+        },
+        "required": [
+          "list"
+        ]
+      },
+      "PermissionSet": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "type": "string",
+            "enum": [
+              "table",
+              "field"
+            ],
+            "description": "What the grant is attached to."
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "Table ID for entity `table`, field ID for entity `field`."
+          },
+          "permission": {
+            "type": "string",
+            "enum": [
+              "TABLE_VISIBILITY",
+              "TABLE_RECORD_ADD",
+              "TABLE_RECORD_DELETE",
+              "TABLE_DATA_DOWNLOAD",
+              "RECORD_FIELD_EDIT"
+            ],
+            "description": "`TABLE_*` keys attach to a table, `RECORD_FIELD_EDIT` to a field. `TABLE_DATA_DOWNLOAD` controls CSV, Excel and JSON downloads; with no grant, every base member can download."
+          },
+          "granted_type": {
+            "type": "string",
+            "enum": [
+              "role",
+              "user",
+              "nobody"
+            ],
+            "description": "`role`: a minimum base role. `user`: only the listed subjects. `nobody`: no one."
+          },
+          "granted_role": {
+            "type": "string",
+            "enum": [
+              "creator",
+              "editor"
+            ],
+            "description": "Minimum role. Required with `granted_type` `role` and rejected otherwise. To restrict to owners, use `granted_type` `user`."
+          },
+          "subjects": {
+            "type": "array",
+            "description": "Users and teams allowed. Required (non-empty) with `granted_type` `user`, rejected otherwise. Give each by `id`, or a user by `email`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "team"
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "hierarchy_scope": {
+                  "type": "string",
+                  "enum": [
+                    "self_only",
+                    "self_and_descendants"
+                  ],
+                  "default": "self_and_descendants",
+                  "description": "Team subjects only: whether the grant covers just that team or its sub-teams too."
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "enforce_for_automation": {
+            "type": "boolean",
+            "default": true,
+            "description": "Also enforce for automations."
+          },
+          "enforce_for_form": {
+            "type": "boolean",
+            "default": true,
+            "description": "Also enforce for form submissions."
+          }
+        },
+        "required": [
+          "entity",
+          "entity_id",
+          "permission",
+          "granted_type"
+        ],
+        "additionalProperties": false
+      },
       "ScriptList": {
         "type": "object",
         "properties": {
@@ -8715,7 +10263,7 @@
                 "items": {
                   "$ref": "#/components/schemas/WidgetRead"
                 },
-                "description": "List of widgets. Only included when `includeWidgets=true`."
+                "description": "List of widgets. Only included when the request passes `include=widgets`."
               }
             }
           }
@@ -8726,8 +10274,28 @@
         "properties": {
           "widgets": {
             "type": "object",
-            "additionalProperties": true,
-            "description": "Map of widget IDs to their data."
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "description": "The widget's data."
+                },
+                {
+                  "type": "object",
+                  "description": "The widget failed to load; the other widgets are still returned.",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Why the widget's data could not be loaded."
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              ]
+            },
+            "description": "Map of widget IDs to their data. A widget that fails to load maps to `{ error }` instead of failing the request."
           }
         },
         "required": [
@@ -9636,14 +11204,17 @@
             "enum": [
               "chart",
               "metric",
+              "gauge",
+              "table",
+              "pivot",
               "text",
               "iframe"
             ],
-            "description": "Type of the widget."
+            "description": "Type of the widget. `gauge`, `table` and `pivot` widgets are returned here but cannot yet be created or updated through this API — create them in the dashboard editor."
           },
           "options": {
-            "description": "Widget configuration. Structure depends on widget type. See WidgetOptions* schemas.",
-            "oneOf": [
+            "description": "Widget configuration. Structure depends on widget type. The branches below cover `metric`, `text`, `iframe` and `chart` with `chart_type` pie, donut, bar, line or scatter. A `gauge`, `table` or `pivot` widget, or a chart with `chart_type: treemap`, is returned with an options shape that is not modelled here yet and matches the open branch instead.",
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/WidgetOptionsMetric"
               },
@@ -9667,6 +11238,10 @@
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsIframe"
+              },
+              {
+                "type": "object",
+                "description": "Options for a widget type whose shape is not modelled above."
               }
             ]
           },
@@ -9819,13 +11394,19 @@
               "text",
               "iframe"
             ],
-            "description": "Type of the widget."
+            "description": "Type of the widget. `gauge`, `table` and `pivot` exist and are returned by read, but are not accepted here yet."
           },
           "options": {
-            "description": "Widget configuration. Structure depends on widget type.",
-            "oneOf": [
+            "description": "Widget configuration. `anyOf`, not `oneOf`: the metric, text and iframe shapes constrain nothing, so they overlap every chart body by construction.",
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/WidgetOptionsMetric"
+              },
+              {
+                "$ref": "#/components/schemas/WidgetOptionsText"
+              },
+              {
+                "$ref": "#/components/schemas/WidgetOptionsIframe"
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsPieChart"
@@ -9841,12 +11422,6 @@
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsScatter"
-              },
-              {
-                "$ref": "#/components/schemas/WidgetOptionsText"
-              },
-              {
-                "$ref": "#/components/schemas/WidgetOptionsIframe"
               }
             ]
           },
@@ -9904,10 +11479,16 @@
             "description": "Description of the widget."
           },
           "options": {
-            "description": "Widget configuration. Structure depends on widget type.",
-            "oneOf": [
+            "description": "Widget configuration. `anyOf`, not `oneOf`: the metric, text and iframe shapes constrain nothing, so they overlap every chart body by construction.",
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/WidgetOptionsMetric"
+              },
+              {
+                "$ref": "#/components/schemas/WidgetOptionsText"
+              },
+              {
+                "$ref": "#/components/schemas/WidgetOptionsIframe"
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsPieChart"
@@ -9923,12 +11504,6 @@
               },
               {
                 "$ref": "#/components/schemas/WidgetOptionsScatter"
-              },
-              {
-                "$ref": "#/components/schemas/WidgetOptionsText"
-              },
-              {
-                "$ref": "#/components/schemas/WidgetOptionsIframe"
               }
             ]
           },
@@ -9998,6 +11573,64 @@
             "format": "date-time",
             "description": "Token last update timestamp",
             "example": "2025-12-30 15:17:24+00:00"
+          },
+          "scopes": {
+            "type": "array",
+            "description": "Access scopes attached to the token. Present on fine-grained tokens, which is every token minted through this API on Cloud and licensed self-hosted deployments.",
+            "items": {
+              "$ref": "#/components/schemas/ApiTokenScope"
+            }
+          },
+          "token_prefix": {
+            "type": "string",
+            "description": "First 12 characters of the token value, kept for display. Fine-grained tokens only — the value itself is stored hashed and is never returned again after creation.",
+            "example": "nc_pat_wxAFz"
+          },
+          "expiry": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Expiry timestamp, or null for a token that never expires. Always null outside Cloud and licensed self-hosted deployments.",
+            "example": "2026-12-30 15:17:24+00:00"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the token is currently accepted. Fine-grained tokens only.",
+            "example": true
+          },
+          "ip_allowlist": {
+            "type": "array",
+            "description": "IPv4/IPv6 addresses and CIDR ranges the token is accepted from, in canonical form. Absent when the token is unrestricted.",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "203.0.113.4",
+              "10.0.0.0/8"
+            ]
+          },
+          "self_lockout_warning": {
+            "type": "boolean",
+            "description": "Present on create / update responses when the caller's own IP is outside the allowlist just set. The write still succeeds.",
+            "example": true
+          },
+          "caller_ip": {
+            "type": "string",
+            "description": "The caller IP the server saw, returned with `self_lockout_warning`; IPv4-mapped IPv6 is given as plain IPv4. Behind a proxy it reflects `NC_TRUST_PROXY`: unset, it is the proxy's address.",
+            "example": "203.0.113.4"
+          },
+          "caller_ip_internal": {
+            "type": "boolean",
+            "description": "Present when `caller_ip` is a private or loopback address, as it is for every caller behind a proxy when `NC_TRUST_PROXY` is unset.",
+            "example": true
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the token was last used. Absent until the token has been used; updated on a 5-second batched flush, so it lags slightly behind live use.",
+            "example": "2025-12-31 09:02:11+00:00"
           }
         },
         "required": [
@@ -10017,8 +11650,8 @@
             "properties": {
               "token": {
                 "type": "string",
-                "description": "The actual API token value (only returned on creation)",
-                "example": "wxAFzFO2wwOf9ozVRjragBJ7KPWMaW2OGpklGqHh"
+                "description": "The actual API token value. Returned only on creation — it is stored hashed and cannot be retrieved again. Fine-grained tokens are prefixed `nc_pat_`.",
+                "example": "nc_pat_wxAFzFO2wwOf9ozVRjragBJ7KPWMaW2OGpklGqHh"
               }
             },
             "required": [
@@ -10027,8 +11660,103 @@
           }
         ]
       },
+      "ApiTokenPermissionLevel": {
+        "type": "string",
+        "description": "Permission level for one resource category. `delete` is the top of the ladder and includes everything `write` allows.",
+        "enum": [
+          "none",
+          "read",
+          "write",
+          "delete"
+        ]
+      },
+      "ApiTokenPermissions": {
+        "type": "object",
+        "description": "Permission level per resource category. A category that is omitted is treated as `none`. An unknown category key is rejected with `400`.",
+        "additionalProperties": false,
+        "properties": {
+          "records": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "tables": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "views": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "base": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "comments": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "webhooks": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "users": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "workflows": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "agents": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "scripts": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "integrations": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "environments": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "apps": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          },
+          "workspaces": {
+            "$ref": "#/components/schemas/ApiTokenPermissionLevel"
+          }
+        }
+      },
+      "ApiTokenScope": {
+        "type": "object",
+        "description": "One access scope on a fine-grained API token: the resource it reaches and what it may do there. A token may carry at most 100 scopes. The minting user must already have access to every base or workspace named, or the request is rejected with `400`.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Scope identifier. Returned on reads; ignored on writes."
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "What the scope names. `all` is account-wide: every resource the token's user can reach, present or future.",
+            "enum": [
+              "base",
+              "workspace",
+              "all"
+            ],
+            "example": "base"
+          },
+          "resource_id": {
+            "type": "string",
+            "description": "ID of the base or workspace the scope grants access to. Use `*` when `resource_type` is `all`.",
+            "example": "p_abc123def456"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/ApiTokenPermissions"
+          }
+        },
+        "required": [
+          "resource_type",
+          "resource_id"
+        ]
+      },
       "DocumentCreate": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Request body for creating a document.",
         "properties": {
           "title": {
@@ -10037,21 +11765,24 @@
           },
           "content": {
             "type": "object",
-            "description": "rich-text JSON document content."
+            "description": "Document body as a ProseMirror / TipTap JSON node tree. Markdown and HTML strings are not parsed. Defaults to an empty document when omitted."
           },
           "meta": {
             "type": "object",
             "description": "Arbitrary metadata (icon, cover image, settings, etc.)."
           },
           "parent_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Parent document ID. null or omitted for root-level documents."
           }
         }
       },
       "DocumentUpdate": {
         "type": "object",
+        "additionalProperties": false,
         "description": "Request body for updating a document.",
         "required": [
           "version"
@@ -10063,7 +11794,7 @@
           },
           "content": {
             "type": "object",
-            "description": "Updated rich-text JSON document content."
+            "description": "Replacement document body, as a ProseMirror / TipTap JSON node tree. Markdown and HTML strings are not parsed."
           },
           "meta": {
             "type": "object",
@@ -10071,7 +11802,7 @@
           },
           "version": {
             "type": "integer",
-            "description": "Current document version for optimistic concurrency control. Must match the server's version."
+            "description": "Current document version, for optimistic concurrency control. Always required by request validation. The server only compares it against the stored version when the body also carries `title` or `content`; a metadata-only update is last-write-wins and the value is ignored."
           }
         }
       },
@@ -10084,8 +11815,10 @@
             "description": "New sort order value (float). Compute midpoint between neighbors for fractional ordering."
           },
           "parent_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "New parent document ID. null to move to root. Omit to keep current parent."
           }
         }
@@ -10120,7 +11853,7 @@
           },
           "content": {
             "type": "object",
-            "description": "rich-text JSON document content."
+            "description": "Document body as a ProseMirror / TipTap JSON node tree."
           },
           "meta": {
             "type": "object",
@@ -10131,8 +11864,10 @@
             "description": "Sort order among siblings."
           },
           "parent_id": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Parent document ID. null for root documents."
           },
           "has_children": {
@@ -10198,8 +11933,10 @@
             "type": "number"
           },
           "parent_id": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "has_children": {
             "type": "boolean"
@@ -10728,10 +12465,13 @@
             "examples": [
               "nocodb.trigger.after_insert",
               "nocodb.trigger.after_update",
+              "nocodb.trigger.record_created_or_updated",
               "nocodb.trigger.after_delete",
               "nocodb.trigger.form_submitted",
               "nocodb.trigger.record_enters_view",
               "nocodb.trigger.record_matches_condition",
+              "nocodb.trigger.field_changed",
+              "nocodb.trigger.workflow_completed",
               "core.trigger.webhook",
               "core.trigger.manual",
               "core.trigger.cron",
@@ -11058,14 +12798,16 @@
           "status": {
             "type": "string",
             "enum": [
+              "queued",
               "running",
               "waiting",
+              "paused",
               "completed",
               "error",
               "cancelled",
               "skipped"
             ],
-            "description": "Overall execution status"
+            "description": "Execution status. A new execution starts as `queued`; `completed`, `error`, `cancelled` and `skipped` are terminal."
           },
           "startTime": {
             "type": "number",
@@ -11112,6 +12854,22 @@
           "nextNodeId": {
             "type": "string",
             "description": "ID of the node to resume execution from"
+          },
+          "skipReason": {
+            "type": "string",
+            "enum": [
+              "self_triggered",
+              "chain_depth_exceeded"
+            ],
+            "description": "Why a `skipped` execution was not run by the trigger loop guard: the event came from this workflow's own write, or the trigger chain reached its limit of 3"
+          },
+          "skippedCount": {
+            "type": "integer",
+            "description": "How many trigger events this `skipped` execution stands for, e.g. every record of a bulk change; the trigger data keeps the first"
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Plain-language reason shown with the status, e.g. why a run was not run or was stopped"
           }
         },
         "required": [
@@ -11654,10 +13412,12 @@
                 },
                 "status": {
                   "type": "string",
-                  "description": "Execution status",
+                  "description": "Execution status. A new execution starts as `queued`; `completed`, `error`, `cancelled` and `skipped` are terminal.",
                   "enum": [
+                    "queued",
                     "running",
                     "waiting",
+                    "paused",
                     "completed",
                     "error",
                     "cancelled",
@@ -11679,6 +13439,24 @@
                   ],
                   "format": "date-time",
                   "description": "Timestamp when the execution finished"
+                },
+                "parent_execution_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The execution whose record write triggered this one; null when not triggered by a workflow"
+                },
+                "execution_depth": {
+                  "type": "integer",
+                  "description": "Trigger hops (workflow or agent writes) that led to this execution; 0 when started by a person or a schedule"
+                },
+                "triggered_by": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ID of the person who started this execution: a manual run, retry, button click or record change. Null for schedules, webhooks, service accounts, agents and other workflows' writes. The execution still runs as the workflow's run-as identity. Below Creator, only executions the caller started are returned."
                 },
                 "created_at": {
                   "type": "string",
@@ -11712,10 +13490,12 @@
           },
           "status": {
             "type": "string",
-            "description": "Execution status",
+            "description": "Execution status. A new execution starts as `queued`; `completed`, `error`, `cancelled` and `skipped` are terminal.",
             "enum": [
+              "queued",
               "running",
               "waiting",
+              "paused",
               "completed",
               "error",
               "cancelled",
@@ -11742,6 +13522,24 @@
             "format": "date-time",
             "description": "Timestamp when the execution finished"
           },
+          "parent_execution_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The execution whose record write triggered this one; null when not triggered by a workflow"
+          },
+          "execution_depth": {
+            "type": "integer",
+            "description": "Trigger hops (workflow or agent writes) that led to this execution; 0 when started by a person or a schedule"
+          },
+          "triggered_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ID of the person who started this execution: a manual run, retry, button click or record change. Null for schedules, webhooks, service accounts, agents and other workflows' writes. The execution still runs as the workflow's run-as identity. Below Creator, only executions the caller started are returned."
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -11756,6 +13554,130 @@
       }
     },
     "responses": {
+      "BadRequestV3": {
+        "description": "The request body or a query parameter failed validation.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UnauthorizedV3": {
+        "description": "No credential was supplied, it was not valid, or this operation does not accept the kind of credential that was sent.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "PaymentRequiredV3": {
+        "description": "The deployment has no active licence, or the workspace has run out of credits.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ForbiddenV3": {
+        "description": "Authenticated, but not allowed: the role is too low, the token scope does not cover the operation, or the plan does not include the feature or allows no more of this resource.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "ERR_FEATURE_NOT_SUPPORTED",
+              "message": "Accessing api token api require enterprise plan"
+            }
+          }
+        }
+      },
+      "NotFoundV3": {
+        "description": "The resource does not exist. Hooks and documents answer 404; most other resources answer 422 instead.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ConflictV3": {
+        "description": "The request conflicts with the current state. A unique-constraint violation also carries `fieldName` and `value`.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UnprocessableEntityV3": {
+        "description": "The request was well formed but could not be acted on — most commonly a referenced base, table, field, view, script, dashboard, widget or workflow does not exist.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "TooManyRequestsV3": {
+        "description": "Rate limit exceeded. The token is blocked for a further cool-down period.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "ERR_TOO_MANY_REQUESTS",
+              "message": "Too many requests. Please try again later."
+            }
+          }
+        },
+        "headers": {
+          "Retry-After": {
+            "description": "How long to wait before retrying.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "X-RateLimit-Limit": {
+            "description": "Requests permitted in the current window. Sent only on API-token requests.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "X-RateLimit-Remaining": {
+            "description": "Requests left in the current window. Sent only on API-token requests.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "X-RateLimit-Reset": {
+            "description": "Time until the current window resets. Sent only on API-token requests.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "InternalServerErrorV3": {
+        "description": "Unexpected server error. The body carries `message` only — no `error` code.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
       "BadRequest": {
         "description": "BadRequest",
         "content": {
@@ -11765,9 +13687,6 @@
               "properties": {
                 "msg": {
                   "type": "string",
-                  "x-stoplight": {
-                    "id": "p9mk4oi0hbihm"
-                  },
                   "example": "BadRequest [Error]: <ERROR MESSAGE>"
                 }
               },
@@ -11787,86 +13706,18 @@
         "headers": {}
       }
     },
-    "BadRequestV3": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        }
-      }
-    },
-    "UnauthorizedV3": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        }
-      }
-    },
-    "ForbiddenV3": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string",
-          "example": "Accessing api token api require enterprise plan"
-        }
-      }
-    },
-    "NotFoundV3": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        }
-      }
-    },
-    "InternalServerErrorV3": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        }
-      }
-    },
     "securitySchemes": {
       "xc-token": {
-        "name": "Auth Token ",
+        "name": "xc-token",
         "type": "apiKey",
         "in": "header",
-        "description": "Auth Token is a JWT Token generated based on the logged-in user. By default, the token is only valid for 10 hours. However, you can change the value by defining it using environment variable `NC_JWT_EXPIRES_IN`."
+        "description": "An API token created from account or workspace settings. The value is an opaque string, not a JWT. A token may carry an expiry and may be scoped to a subset of permission categories."
       },
       "bearerAuth": {
         "name": "Authorization",
         "type": "http",
         "scheme": "bearer",
-        "description": "Bearer token authentication. Use 'Authorization: Bearer <token>' header format. This is an alternative to the xc-token header."
-      },
-      "xc-shared-base-id": {
-        "name": "Shared Base ID",
-        "type": "apiKey",
-        "in": "header",
-        "description": "Shared base uuid"
-      },
-      "xc-shared-erd-id": {
-        "name": "Shared ERD ID",
-        "type": "apiKey",
-        "in": "header",
-        "description": "Shared ERD uuid"
+        "description": "`Authorization: Bearer <token>`, carrying the same API token as the `xc-token` header. `xc-token` wins when both are sent."
       }
     },
     "parameters": {

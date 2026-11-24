@@ -13,7 +13,7 @@ description: |
 
 `nocodb-dev` uses two NocoDB surfaces:
 
-- **MCP** — discovery on every edition; on Cloud / licensed self-hosted also schema writes through `listTools(category)` → `callTool` (Community Edition has record tools only). Authenticated by an MCP token or OAuth.
+- **MCP** — discovery on every edition; on Cloud / licensed self-hosted also schema writes — listed directly since 2026.10.1, through `listTools(category)` → `callTool` on `/mcp-discovery` and older servers (Community Edition has record tools only). Authenticated by an MCP token or OAuth.
 - **REST (Meta API v3, `curl`)** — every schema write on Community Edition, and the fallback everywhere else. Authenticated by an API token.
 
 Both should work before you plan and apply schema changes.
@@ -22,8 +22,8 @@ Both should work before you plan and apply schema changes.
 
 | Variable | Required | Surface | Description |
 |----------|----------|---------|-------------|
-| `NOCODB_MCP_URL` | Yes (MCP) | MCP | Full MCP endpoint URL. Cloud/licensed: `https://<host>/mcp`. Community Edition: the per-endpoint URL `https://<host>/mcp/<ncId>` from the base's MCP settings. |
-| `NOCODB_MCP_TOKEN` | Yes (MCP) | MCP | MCP token, sent as the `xc-mcp-token` header (still accepted; `x-api-key` is the newer primary header). |
+| `NOCODB_MCP_URL` | Yes (MCP) | MCP | Full MCP endpoint URL. Cloud/licensed: `https://<host>/mcp` (lists every tool; `https://<host>/mcp-discovery` only for a client that caps the tool list at 100). Community Edition: the per-endpoint URL `https://<host>/mcp/<ncId>` from the base's MCP settings. |
+| `NOCODB_MCP_TOKEN` | Yes (MCP) | MCP | MCP token, sent as the `xc-mcp-token` header (still accepted; `x-api-key` is the newer primary header). The server stores the secret hashed and shows it once (2026.10.1) — copy it when you create it. |
 | `NOCODB_URL` | Yes (REST) | REST | Base instance URL without a trailing slash, e.g. `https://<host>` (`https://app.nocodb.com` on NocoDB Cloud). |
 | `NOCODB_TOKEN` | Yes (REST) | REST | API token — NocoDB → Team & Settings → API Tokens → Add New Token. Sent as the `xc-token` header. |
 | `NOCODB_VERBOSE` | No | official CLI script | Set to `1` to print resolved IDs from the optional `nocodb.sh` script. |
@@ -57,14 +57,16 @@ Pick any table ID from Step 1. Call `mcp__plugin_nocodb-dev_nocodb__getTableSche
 - **Pass:** returns fields + views.
 - **Fail:** the token may lack base-level access.
 
-### Step 3 — Which edition? (`listTools`)
+### Step 3 — Which edition? (tool list, then `listTools`)
+
+If `createTable` is already in the tool list, this is Cloud / licensed on the full endpoint: use **MCP-first** and skip the call below. Otherwise:
 
 ```
 mcp__plugin_nocodb-dev_nocodb__listTools  category: "tables"
 ```
 
-- **Pass (Cloud / licensed):** the answer names `createTable`, `updateTable`, `deleteTable`. Use **MCP-first** for schema writes (see **mcp-patterns**).
-- **Community Edition:** `listTools` is absent or empty for `tables`. Schema writes use REST (Steps 4-5).
+- **Pass (Cloud / licensed):** `createTable` is listed, or the answer names `createTable`, `updateTable`, `deleteTable`. Use **MCP-first** for schema writes (see **mcp-patterns**).
+- **Community Edition:** `createTable` is not listed, and `listTools` is absent or empty for `tables`. Schema writes use REST (Steps 4-5).
 
 ### Step 4 — REST: list workspaces and the base's tables
 
@@ -99,11 +101,11 @@ curl -sS -H "xc-token: ${NOCODB_TOKEN}" "${NOCODB_URL}/api/v3/data/<baseId>/<tab
 |---------|---------|--------------|-----|
 | "Protected resource does not match" | MCP | `NOCODB_MCP_URL` does not match the endpoint the server expects | Cloud/licensed: `https://<host>/mcp`. Community Edition: use the full `/mcp/<ncId>` URL from the MCP settings |
 | 401 Unauthorized | MCP | `NOCODB_MCP_TOKEN` invalid/expired | Regenerate the connection token (see MCP connection options) |
-| 401 Unauthorized | REST | `NOCODB_TOKEN` invalid/expired | Regenerate in NocoDB → Team & Settings → API Tokens |
+| 401 Unauthorized | REST | `NOCODB_TOKEN` invalid/expired, or deleted when the account password was changed (2026.10.1 and later) | Regenerate in NocoDB → Team & Settings → API Tokens |
 | 403 Forbidden | Either | Token lacks permission for the base | Share the base with the token's user, or use a higher-privilege token |
 | `NOCODB_TOKEN` empty in curl (`401`, `xc-token:` header blank) | REST | Variable not exported into the shell | `export NOCODB_TOKEN=…`; check with `[ -n "$NOCODB_TOKEN" ] && echo set` |
-| "Tool not found" for `mcp__plugin_nocodb-dev_nocodb__<tool>` | MCP | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the tool is a hidden schema tool | Confirm both variables are set and restart the session; for schema tools call `listTools(category)` then `callTool` |
-| `listTools` missing, or `createTable` not in its answer | MCP | Community Edition (record tools only) | Use the REST recipes in **api-reference** |
+| "Tool not found" for `mcp__plugin_nocodb-dev_nocodb__<tool>` | MCP | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the tool is a hidden schema tool (`/mcp-discovery`, or a server older than 2026.10.1) | Confirm both variables are set and restart the session; for hidden schema tools call `listTools(category)` then `callTool` |
+| `createTable` neither listed nor in the `listTools` answer | MCP | Community Edition (record tools only) | Use the REST recipes in **api-reference** |
 | Connection refused | Either | Server down or wrong host | `curl -sSI "$NOCODB_URL"` to confirm reachability |
 | Empty table list | REST | Token has no shared bases | Have an admin share at least one base with the token's user |
 

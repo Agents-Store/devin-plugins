@@ -87,15 +87,15 @@ Paths are relative to `${NOCODB_URL}/api/v3`.
 | | `view:get` / `view:update` / `view:delete` | `GET` / `PATCH` / `DELETE /meta/bases/{baseId}/views/{viewId}` |
 | | *(none)* show / hide / order fields | `PATCH …/views/{viewId}` with the complete ordered `fields` list |
 | Filters | `filter:list` / `filter:create` | `GET` / `POST /meta/bases/{baseId}/views/{viewId}/filters` (`PUT` replaces the set) |
-| | *(update / delete)* | `PATCH` / `DELETE /meta/bases/{baseId}/filters/{filterId}` |
+| | *(update / delete)* | `PATCH` / `DELETE /meta/bases/{baseId}/views/{viewId}/filters` (filter `id` in the body) |
 | Sorts | `sort:list` / `sort:create` | `GET` / `POST /meta/bases/{baseId}/views/{viewId}/sorts` |
-| | *(update / delete)* | `PATCH` / `DELETE /meta/bases/{baseId}/sorts/{sortId}` |
+| | *(update / delete)* | `PATCH` / `DELETE /meta/bases/{baseId}/views/{viewId}/sorts` (sort `id` in the body) |
 | Hooks | *(none)* | `GET` / `POST /meta/bases/{baseId}/tables/{tableId}/hooks`; `GET` / `PATCH` / `DELETE /meta/bases/{baseId}/hooks/{hookId}` |
 | Scripts | `script:list` / `script:create` | `GET` / `POST /meta/bases/{baseId}/scripts` |
 | Teams | `team:list` / `team:create` | `GET` / `POST /meta/workspaces/{workspaceId}/teams` |
-| Tokens | `token:list` / `token:create` / `token:delete` | `GET` / `POST /meta/tokens`, `DELETE /meta/tokens/{tokenId}` |
+| Tokens | `token:list` / `token:create` / `token:delete` | `GET` / `POST /meta/tokens` (body `title` + `scopes`), `DELETE /meta/tokens/{tokenId}` |
 | Links | `link:list` / `link:add` / `link:remove` | `GET` / `POST` / `DELETE /data/{baseId}/{tableId}/links/{linkFieldId}/{recordId}` |
-| Attachments | `attachment:upload` | `POST /data/{baseId}/{modelId}/records/{recordId}/fields/{fieldId}/upload` |
+| Attachments | `attachment:upload` | `POST /data/{baseId}/{tableId}/records/{recordId}/fields/{fieldId}/upload` |
 | Public view links | *(none)* | not in the REST spec — MCP `shareView` on Cloud / licensed, or the UI |
 
 ## Schema Quick Reference (curl)

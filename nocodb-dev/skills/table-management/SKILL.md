@@ -5,7 +5,7 @@ description: Create, rename, duplicate and delete NocoDB tables, set the display
 
 # Table Management
 
-Table writes go through the MCP schema tools on **Cloud / licensed** self-hosted (`listTools` category `tables`, then `callTool`) and through the **REST API** (`curl` on Meta API v3) on **Community Edition** or as a fallback. See **mcp-patterns** for the contract and **api-reference** for the REST surface.
+Table writes go through the MCP schema tools on **Cloud / licensed** self-hosted (called by name on `/mcp` since 2026.10.1; `listTools` category `tables`, then `callTool` on `/mcp-discovery` and older servers) and through the **REST API** (`curl` on Meta API v3) on **Community Edition** or as a fallback. See **mcp-patterns** for the contract and **api-reference** for the REST surface.
 
 ## Discover First
 
@@ -177,4 +177,4 @@ Before creating:
 | Display field not what you expected | NocoDB picked the first non-system column | Set `display_field_id` explicitly |
 | Delete returns 200 but table still visible | Schema cache | Force-refresh in NocoDB UI or wait ~30s |
 | Cannot delete table | A link field on another table points to it | Delete the link field on the other side first |
-| `createTable` is not offered by `listTools` | Community Edition | Use the REST recipes above |
+| `createTable` is neither listed nor offered by `listTools` | Community Edition | Use the REST recipes above |

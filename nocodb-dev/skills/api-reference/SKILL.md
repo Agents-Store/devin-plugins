@@ -22,7 +22,7 @@ Two bundled OpenAPI specs (taken from NocoDB's `swagger-v3.json`):
 | File | Surface | Path prefix | Purpose |
 |------|---------|-------------|---------|
 | `references/nocodb-openapi.json` | **Data API v3** (7 paths, 12 operations) | `/api/v3/data/...` | Records, links, attachments, count, button actions |
-| `references/nocodb-meta-openapi.json` | **Meta API v3** + Docs API (49 paths, 100 operations) | `/api/v3/meta/...`, `/api/v3/docs/...` | Schema CRUD — tables, fields, field options, views, hooks, comments, scripts, dashboards, workflows, documents, environments, workspaces, members, teams, tokens |
+| `references/nocodb-meta-openapi.json` | **Meta API v3** + Docs API (50 paths, 105 operations) | `/api/v3/meta/...`, `/api/v3/docs/...` | Schema CRUD — tables, fields, field options, views, hooks, comments, scripts, dashboards, workflows, documents, environments, workspaces, members, teams, tokens |
 
 For full payload shapes and per-endpoint details, see the bundled JSON files. Domain-grouped quick reference for the Meta API is in `references/meta-api-endpoints.md`. Per-type field config is in `references/field-types.md`.
 
@@ -77,7 +77,7 @@ Per the descriptions in the bundled spec:
 | `/api/v3/data/{baseId}/{tableId}/count` | `GET` | Count Table Records |
 | `/api/v3/data/{baseId}/{tableId}/links/{linkFieldId}/{recordId}` | `GET`/`POST`/`DELETE` | List/Link/Unlink |
 | `/api/v3/data/{baseId}/{tableId}/actions/{columnId}` | `POST` | Trigger Button Action |
-| `/api/v3/data/{baseId}/{modelId}/records/{recordId}/fields/{fieldId}/upload` | `POST` | Upload Attachment to Cell |
+| `/api/v3/data/{baseId}/{tableId}/records/{recordId}/fields/{fieldId}/upload` | `POST` | Upload Attachment to Cell |
 
 ### Meta API v3 — Quick Index (by domain)
 
@@ -85,27 +85,27 @@ Per the descriptions in the bundled spec:
 
 **Workspaces** (5 ops): `GET`/`POST` `/workspaces`, `GET`/`PATCH`/`DELETE` `/workspaces/{workspaceId}`, plus `?include[]=members` and member endpoints.
 
-**Bases** (3 + 4 ops): `GET`/`PATCH`/`DELETE` `/bases/{baseId}`; member invite/update/delete under `/bases/{base_id}/members`; list bases via `/workspaces/{workspaceId}/bases`.
+**Bases** (3 + 4 ops): `GET`/`PATCH`/`DELETE` `/bases/{baseId}`; member invite/update/delete under `/bases/{baseId}/members`; list bases via `/workspaces/{workspaceId}/bases`.
 
-**Tables** (5 ops): `GET`/`POST` `/bases/{base_id}/tables`, `GET`/`PATCH`/`DELETE` `/bases/{baseId}/tables/{tableId}`.
+**Tables** (5 ops): `GET`/`POST` `/bases/{baseId}/tables`, `GET`/`PATCH`/`DELETE` `/bases/{baseId}/tables/{tableId}`.
 
 **Fields** (4 ops + 2 option ops): `POST` `/bases/{baseId}/tables/{tableId}/fields`, `GET`/`PATCH`/`DELETE` `/bases/{baseId}/fields/{fieldId}`; `POST`/`DELETE` `/bases/{baseId}/fields/{fieldId}/options` add or remove select choices without resending the whole list.
 
 **Views** (5 ops, single endpoint with `type` discriminator — **nine** types: grid, gallery, kanban, calendar, map, form, gantt, timeline, list): `GET`/`POST` `/bases/{baseId}/tables/{tableId}/views`, `GET`/`PATCH`/`DELETE` `/bases/{baseId}/views/{viewId}`.
 
-**Filters** (5 ops): per-view `GET`/`POST`/`PUT` `/views/{viewId}/filters`, `PATCH`/`DELETE` `/filters/{filterId}`. Groups use `group_operator` (`AND`/`OR`).
+**Filters** (5 ops): per-view `GET`/`POST`/`PUT`/`PATCH`/`DELETE` `/views/{viewId}/filters` — `PATCH` and `DELETE` carry the filter `id` in the body. Groups use `group_operator` (`AND`/`OR`).
 
-**Sorts** (4 ops): per-view `GET`/`POST` `/views/{viewId}/sorts`, `PATCH`/`DELETE` `/sorts/{sortId}`. Sorts use `field_id` + `direction`.
+**Sorts** (4 ops): per-view `GET`/`POST`/`PATCH`/`DELETE` `/views/{viewId}/sorts` — `PATCH` and `DELETE` carry the sort `id` in the body. Sorts use `field_id` + `direction`.
 
 **Hooks** (5 ops, V3 shape): `GET`/`POST` `/tables/{tableId}/hooks`, `GET`/`PATCH`/`DELETE` `/hooks/{hookId}`. `event` is `record`|`manual`; `operation` is an array of `insert`/`update`/`delete`; uses `trigger_fields` (not a top-level `condition`).
 
 **Comments** (5 ops): `GET`/`POST` `/records/{recordId}/comments`, `PATCH`/`DELETE` `/comments/{commentId}`, `POST` `/comments/{commentId}/resolve`.
 
-**Scripts** (5 ops): `GET`/`POST` `/scripts`, `GET`/`PATCH`/`DELETE` `/scripts/{script_id}`. Referenced by Button fields and Script hook notifications.
+**Scripts** (5 ops): `GET`/`POST` `/scripts`, `GET`/`PATCH`/`DELETE` `/scripts/{scriptId}`. Referenced by Button fields and Script hook notifications.
 
 **Dashboards + Widgets** (3 + 5 ops + 2 data endpoints): full `/dashboards` and per-dashboard `/widgets` CRUD plus `/data` GET on both.
 
-**Workflows + Executions** (5 ops, read-and-execute over REST): `GET` `/workflows`, `GET` `/workflows/{workflow_id}`, `POST` `/execute`, list/get executions. Workflow **authoring** is not a REST operation — on Cloud/licensed it is available through MCP (`createWorkflow`, `updateWorkflow`, node tools, `publishWorkflow`).
+**Workflows + Executions** (5 ops, read-and-execute over REST): `GET` `/workflows`, `GET` `/workflows/{workflowId}`, `POST` `/execute`, list/get executions. Workflow **authoring** is not a REST operation — on Cloud/licensed it is available through MCP (`createWorkflow`, `updateWorkflow`, node tools, `publishWorkflow`).
 
 **Documents** (6 ops, `/api/v3/docs/...`): `GET`/`POST` `/docs/{baseId}`, `GET`/`PATCH`/`DELETE` `/docs/{baseId}/{docId}`, `PATCH` `/docs/{baseId}/{docId}/reorder`.
 
@@ -113,7 +113,7 @@ Per the descriptions in the bundled spec:
 
 **Environments** (8 ops): `/workspaces/{workspaceId}/environments[/{environmentId}]` and `/orgs/{orgId}/environments[/{environmentId}]`.
 
-**API Tokens** (3 ops): `GET`/`POST` `/tokens`, `DELETE` `/tokens/{tokenId}`. The token is returned **once** on create — store it immediately.
+**API Tokens** (4 ops): `GET`/`POST` `/tokens`, `PATCH`/`DELETE` `/tokens/{tokenId}`. `POST` needs a `title` and, on Cloud and licensed self-hosted, at least one scope. The token is returned **once** on create — store it immediately. Changing the account password deletes the account's API tokens (since 2026.10.1), so a sudden 401 after a password change means: create a new token.
 
 ## Reading the OpenAPI Files
 
@@ -284,7 +284,7 @@ For schema-specific symptoms, see the **troubleshoot** skill.
 
 ## See Also
 
-- `references/nocodb-meta-openapi.json` — full Meta API + Docs API spec (49 paths, 100 operations)
+- `references/nocodb-meta-openapi.json` — full Meta API + Docs API spec (50 paths, 105 operations)
 - `references/nocodb-openapi.json` — full Data API spec (7 paths, 12 operations)
 - `references/meta-api-endpoints.md` — domain-grouped Meta API reference with payload shapes
 - `references/field-types.md` — every field type with a minimal payload example

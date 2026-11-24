@@ -13,7 +13,7 @@ description: |
 
 NocoDB Workflows is the platform's built-in automation engine — a node-graph editor inside the NocoDB UI. The **REST** surface (Meta API v3) for Workflows is **read + execute only**: you can list workflows, fetch their definitions, run them on demand, list executions, and read execution details. REST does not expose workflow **authoring**.
 
-**Authoring over MCP (Cloud / licensed self-hosted).** The MCP server can write **drafts**: `listTools category: "workflows"` (and `"workflow-nodes"`) reveals `createWorkflow`, `updateWorkflow`, `duplicateWorkflow`, `deleteWorkflow`, `publishWorkflow`, the single-node tools (`addWorkflowNode`, `updateWorkflowNode`, `deleteWorkflowNode`, `connectWorkflowNodes`, `disconnectWorkflowNodes`) and `validateWorkflowNode`. Read `getWorkflowAuthoringInstructions` and `listWorkflowNodeTypes` before writing a draft. Only the draft is writable; every node must be tested (`validateWorkflowNode`) before `publishWorkflow` puts it live, and **enabling an automation and its `run_as` identity stay in the UI** — a human sets those. Writes replace the whole draft graph (last write wins against anyone editing in the UI), so `getWorkflow` first, change the graph it returns, and send it back. Community Edition has no workflow tools: author in the UI.
+**Authoring over MCP (Cloud / licensed self-hosted).** The MCP server can write **drafts**: the tools are listed on `/mcp` since 2026.10.1, and on `/mcp-discovery` or an older server `listTools category: "workflows"` (and `"workflow-nodes"`) reveals them: `createWorkflow`, `updateWorkflow`, `duplicateWorkflow`, `deleteWorkflow`, `publishWorkflow`, the single-node tools (`addWorkflowNode`, `updateWorkflowNode`, `deleteWorkflowNode`, `connectWorkflowNodes`, `disconnectWorkflowNodes`) and `validateWorkflowNode`. Read `getWorkflowAuthoringInstructions` and `listWorkflowNodeTypes` before writing a draft. Only the draft is writable; every node must be tested (`validateWorkflowNode`) before `publishWorkflow` puts it live, and **enabling an automation and its `run_as` identity stay in the UI** — a human sets those. Writes replace the whole draft graph (last write wins against anyone editing in the UI), so `getWorkflow` first, change the graph it returns, and send it back. Community Edition has no workflow tools: author in the UI.
 
 > For automations that must run across several systems, an external orchestrator (n8n, Trigger.dev) is still the better fit — see the related plugins.
 
@@ -21,11 +21,11 @@ NocoDB Workflows is the platform's built-in automation engine — a node-graph e
 
 | Path | Method | Purpose |
 |------|--------|---------|
-| `/api/v3/meta/bases/{base_id}/workflows` | `GET` | List workflows in a base |
-| `/api/v3/meta/bases/{base_id}/workflows/{workflow_id}` | `GET` | Get one workflow definition (nodes + edges) |
-| `/api/v3/meta/bases/{base_id}/workflows/{workflow_id}/execute` | `POST` | Execute the workflow on demand |
-| `/api/v3/meta/bases/{base_id}/workflows/{workflow_id}/executions` | `GET` | List recent executions |
-| `/api/v3/meta/bases/{base_id}/workflows/{workflow_id}/executions/{execution_id}` | `GET` | Get one execution (per-node results) |
+| `/api/v3/meta/bases/{baseId}/workflows` | `GET` | List workflows in a base |
+| `/api/v3/meta/bases/{baseId}/workflows/{workflowId}` | `GET` | Get one workflow definition (nodes + edges) |
+| `/api/v3/meta/bases/{baseId}/workflows/{workflowId}/execute` | `POST` | Execute the workflow on demand |
+| `/api/v3/meta/bases/{baseId}/workflows/{workflowId}/executions` | `GET` | List recent executions |
+| `/api/v3/meta/bases/{baseId}/workflows/{workflowId}/executions/{executionId}` | `GET` | Get one execution (per-node results) |
 
 ## List Workflows
 
@@ -77,7 +77,7 @@ curl -sS -H "xc-token: ${NOCODB_TOKEN}" \
   "${NOCODB_URL}/api/v3/meta/bases/$BASE_ID/workflows/$WORKFLOW_ID/executions"
 ```
 
-Returns a `WorkflowExecutionList`: `{ "list": [ { id, workflow_id, status, started_at, finished_at, created_at } ] }`, paged with the `limit` (default 25) and `offset` query parameters. `status` is one of `running`, `waiting`, `completed`, `error`, `cancelled`, `skipped`; `completed`, `error`, `cancelled` and `skipped` are final, and `waiting` is a run paused by a delay or wait-until node.
+Returns a `WorkflowExecutionList`: `{ "list": [ { id, workflow_id, status, started_at, finished_at, created_at } ] }`, paged with the `limit` (default 25) and `offset` query parameters. `status` is one of `queued`, `running`, `waiting`, `paused`, `completed`, `error`, `cancelled`, `skipped`; `completed`, `error`, `cancelled` and `skipped` are final, `waiting` is a run held by a delay or wait-until node, and `queued` and `paused` are runs that have not finished (a run can be paused, resumed and retried since 2026.10.0).
 
 ## Inspect One Execution
 
@@ -117,7 +117,7 @@ while :; do
   STATUS=$(curl -sS -H "xc-token: ${NOCODB_TOKEN}" \
     "${NOCODB_URL}/api/v3/meta/bases/$BASE_ID/workflows/$WORKFLOW_ID/executions/$EXEC_ID" | jq -r '.status')
   case "$STATUS" in
-    completed|error|cancelled|skipped) echo "Done: $STATUS"; break ;;   # running and waiting are not final
+    completed|error|cancelled|skipped) echo "Done: $STATUS"; break ;;   # queued, running, waiting and paused are not final
     *) sleep 2 ;;
   esac
 done
@@ -140,7 +140,7 @@ curl -sS -H "xc-token: ${NOCODB_TOKEN}" \
 | Execution stuck `running` | A node is awaiting an external callback | Check that node's expected callback URL; cancel via NocoDB UI |
 | Execution `waiting` | A delay or wait-until node paused it | `execution_data.resumeAt` says when it continues; keep polling |
 | `error` set on an `execution_data.nodeResults` entry | The named node failed | Open the workflow in NocoDB UI, inspect that node's config |
-| Race: `/execute` returns before result is available | Async by design | Poll `/executions/{execution_id}`, or rely on workflow callbacks |
+| Race: `/execute` returns before result is available | Async by design | Poll `/executions/{executionId}`, or rely on workflow callbacks |
 
 ## What This Skill Does NOT Cover
 

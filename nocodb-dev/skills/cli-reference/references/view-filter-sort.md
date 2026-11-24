@@ -116,9 +116,13 @@ nocodb_api POST   /meta/bases/$BASE_ID/views/$VIEW_ID/filters '{
   "operator": "eq",
   "value": "Active"
 }'
-nocodb_api PATCH  /meta/bases/$BASE_ID/filters/$FILTER_ID '{"value":"Archived"}'
-nocodb_api DELETE /meta/bases/$BASE_ID/filters/$FILTER_ID
+# update / delete address the filter by `id` in the body, on the view's own path;
+# an update sends the whole condition (`field_id` and `operator` stay required)
+nocodb_api PATCH  /meta/bases/$BASE_ID/views/$VIEW_ID/filters '{"id":"'"$FILTER_ID"'","field_id":"c_status_id","operator":"eq","value":"Archived"}'
+nocodb_api DELETE /meta/bases/$BASE_ID/views/$VIEW_ID/filters '{"id":"'"$FILTER_ID"'"}'
 ```
+
+`DELETE` with `"id": "root"` removes every filter on the view.
 
 Logical groups — `group_operator` is `AND` or `OR`; members may be conditions or nested groups:
 
@@ -150,8 +154,8 @@ nocodb_api POST   /meta/bases/$BASE_ID/views/$VIEW_ID/sorts '{
   "field_id": "c_created_at_id",
   "direction": "desc"
 }'
-nocodb_api PATCH  /meta/bases/$BASE_ID/sorts/$SORT_ID '{"direction":"asc"}'
-nocodb_api DELETE /meta/bases/$BASE_ID/sorts/$SORT_ID
+nocodb_api PATCH  /meta/bases/$BASE_ID/views/$VIEW_ID/sorts '{"id":"'"$SORT_ID"'","direction":"asc"}'
+nocodb_api DELETE /meta/bases/$BASE_ID/views/$VIEW_ID/sorts '{"id":"'"$SORT_ID"'"}'
 ```
 
 `direction`: `asc` | `desc` (default `asc`).
