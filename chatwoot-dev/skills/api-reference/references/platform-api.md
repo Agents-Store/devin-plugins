@@ -4,7 +4,7 @@ Installation-level super-admin API for multi-account provisioning. Auth: `api-ac
 
 Authoritative schemas: `openapi/platform_swagger.json` (9 paths, 18 operations). Grep it for request bodies, query params, and response shapes.
 
-Spec source: `chatwoot/chatwoot` `develop` at commit `843385f` (2026-10-02), `swagger/tag_groups/platform_swagger.json`. The latest release, v4.20.1, ships all 18 operations; `POST /users/{id}/token` arrived in v4.19.0 (v4.18.0 has 17 and lacks it).
+Spec source: `chatwoot/chatwoot` release tag v4.20.1 (the latest release on 2026-11-24), `swagger/tag_groups/platform_swagger.json`, 18 operations; `POST /users/{id}/token` arrived in v4.19.0 (v4.18.0 has 17 and lacks it).
 
 ```bash
 jq -r '.paths | keys[]' openapi/platform_swagger.json

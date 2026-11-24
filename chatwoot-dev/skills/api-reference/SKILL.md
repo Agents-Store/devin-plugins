@@ -24,11 +24,10 @@ enums, attachments) live in `references/pagination-errors.md`. The CSAT survey p
 
 ## Bundled specs
 
-Vendored from `chatwoot/chatwoot` `develop` at commit `843385f` (2026-10-02, `swagger/tag_groups/`):
-Application 124 operations, Platform 18, Client 12, CSAT page 1. The latest release, v4.20.1, has
-125 / 18 / 12 / 1: it contains all three operations that were `develop`-only when the snapshot was
-taken (v4.19.0), plus `POST /data_exports`, which the snapshot lacks, and it renames the portal path
-parameter to `{portal_slug}`. See `references/application-api.md` and `references/platform-api.md`, which also carry the
+Vendored from the `chatwoot/chatwoot` release tag v4.20.1 (`swagger/tag_groups/`, the latest release on
+2026-11-24): Application 125 operations, Platform 18, Client 12, CSAT page 1. It includes the three
+operations that were `develop`-only before v4.19.0, `POST /data_exports` (v4.20.0) and the portal path
+parameter `{portal_slug}`. See `references/application-api.md` and `references/platform-api.md`, which also carry the
 "Recent additions" write-ups for **campaigns**, **WhatsApp message templates**, the branded email
 layout and message-status updates.
 

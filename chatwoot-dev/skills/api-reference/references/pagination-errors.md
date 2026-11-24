@@ -95,6 +95,20 @@ Chatwoot Cloud applies per-account and per-IP rate limiting; limits are not guar
 OpenAPI spec and differ on self-hosted. Treat `429` as a signal to add exponential backoff,
 and batch work rather than firing unbounded parallel requests.
 
+What the server code does (`config/initializers/rack_attack.rb` at v4.20.1; a self-hosted admin can
+change the values with the named environment variables):
+
+- **One bucket per token, whatever the header.** Per-user limits key on the token, so
+  `Authorization: Bearer <token>` and `api-access-token: <token>` share one counter. Switching the
+  header spelling does not buy extra quota.
+- **`GET /conversations` has its own limit**, per token and account: 1000 requests per minute by
+  default (`RATE_LIMIT_CONVERSATIONS_LIST`). `GET /conversations/meta` is stricter, 30 per minute
+  (`RATE_LIMIT_CONVERSATIONS_META`), and `GET .../contacts/search` is 100 per minute per account
+  (`RATE_LIMIT_CONTACT_SEARCH`).
+- **A per-IP ceiling sits over everything**: 3000 requests per minute by default in the code
+  (`RACK_ATTACK_LIMIT`; the commented example in `.env.example` says 300).
+  `RACK_ATTACK_ALLOWED_IPS` exempts listed addresses.
+
 ## Message types and content types
 
 Messages carry a numeric `message_type` and a `content_type`:

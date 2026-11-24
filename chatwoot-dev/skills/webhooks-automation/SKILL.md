@@ -34,6 +34,17 @@ checked 2026-11-24) also accepts `inbox_created` and `inbox_updated`. They are *
 OpenAPI spec**: verify them on your instance before depending on them (a version that predates
 them rejects the subscription in validation). Any name outside the allow-list is rejected.
 
+### Receivers on a private network
+
+Chatwoot sends webhook deliveries through an SSRF filter (`SafeFetch` over the `ssrf_filter` gem;
+`lib/webhooks/trigger.rb` and `lib/safe_fetch.rb` in v4.18.0 and v4.20.1). A receiver that resolves
+to a local or private-network address (`localhost`, `10.x`, `192.168.x`, a Docker network name) is
+refused: the delivery does not arrive and the server only logs a warning (`Invalid webhook URL`), so
+the webhook looks fine in the account. A public URL is unaffected. On a **self-hosted** instance set
+`SAFE_FETCH_ALLOW_PRIVATE_NETWORK=true` in the environment of the web and worker processes and
+restart them; it is off by default (`.env.example`, v4.20.1). It is an instance setting, so on
+Chatwoot Cloud expose the receiver on a public URL instead.
+
 ### Verifying webhook signatures
 
 When the webhook has a `secret`, signed deliveries include headers:

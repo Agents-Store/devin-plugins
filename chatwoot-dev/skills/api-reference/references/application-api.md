@@ -2,9 +2,9 @@
 
 Account-scoped agent/admin API. Auth: `api-access-token` header (user access token; upstream's OpenAPI spells it `api_access_token`, see `pagination-errors.md` → Authentication for why to send the hyphen form). Base: `${CHATWOOT_BASE_URL}/api/v1/accounts/${CHATWOOT_ACCOUNT_ID}`.
 
-Authoritative schemas: `openapi/application_swagger.json` (75 paths, 124 operations). Grep it for request bodies, query params, and response shapes.
+Authoritative schemas: `openapi/application_swagger.json` (76 paths, 125 operations). Grep it for request bodies, query params, and response shapes.
 
-Spec source: `chatwoot/chatwoot` `develop` at commit `843385f` (2026-10-02), `swagger/tag_groups/application_swagger.json`. The latest release, v4.20.1, ships 125 operations: the two that were `develop`-only at snapshot time (`GET /portals/{portal_slug}`, `POST /conversations/{id}/update_last_seen`) arrived in v4.19.0, and `POST /data_exports` (v4.20.0) is not in the snapshot — read its schema from the v4.20.1 swagger upstream. Match the operation to your instance version before relying on it.
+Spec source: `chatwoot/chatwoot` release tag v4.20.1 (the latest release on 2026-11-24), `swagger/tag_groups/application_swagger.json`, 125 operations. The two that were `develop`-only before v4.19.0 (`GET /portals/{portal_slug}`, `POST /conversations/{id}/update_last_seen`) arrived in v4.19.0, and `POST /data_exports` in v4.20.0. Match the operation to your instance version before relying on it.
 
 ```bash
 jq -r '.paths | keys[]' openapi/application_swagger.json
@@ -22,6 +22,7 @@ jq -r '.paths | keys[]' openapi/application_swagger.json
 | v4.18.0 | GET, PATCH, DELETE | `/campaigns/{id}` | `get-campaign`, `update-campaign`, `delete-campaign` | Read, change or remove one campaign |
 | v4.19.0 | GET | `/portals/{portal_slug}` | `get-details-of-a-single-portal` | Details of one Help Center portal |
 | v4.19.0 | POST | `/conversations/{conversation_id}/update_last_seen` | `conversationUpdateLastSeen` | Mark a conversation as seen so the unread bubble clears in the agent UI |
+| v4.20.0 | POST | `/data_exports` | `contactExportCreate` | Queue a CSV export of contacts |
 
 The "In spec since" column was derived by diffing the upstream swagger at each release tag (v4.15.0 to v4.20.1).
 
@@ -70,6 +71,33 @@ curl -s -H "api-access-token: ${CHATWOOT_API_KEY}" \
 ```
 
 To send one, post a message to the conversation with `template_params` (`name`, `category`, `language`, `processed_params`; schema `conversation_message_create_payload` in the spec). For a campaign, put the same name and language into `campaign.template_params`.
+
+### Contact export
+
+`POST /data_exports` queues a tracked CSV export of contacts (v4.20.0, operation `contactExportCreate`, `swagger/tag_groups/application_swagger.json` at v4.20.1). It needs an administrator or a user with the `contact_manage` permission; without one the spec answers `401`. The body is optional JSON; options in the query string are ignored, and an unknown option or invalid value returns `422` (`{"message": "..."}`) without creating an export. An empty body exports every contact in the account with the default columns `id`, `name`, `email`, `phone_number`, `labels`.
+
+| Body field | Rule |
+|------------|------|
+| `column_names` | Array of contact column names; omitted or empty uses the defaults |
+| `payload` | Contact filters in the same format as `POST /contacts/filter` (`attribute_key`, `filter_operator`, `values`, optional `query_operator`, `attribute_model`, `custom_attribute_type`, `timezone` for date filters, UTC when omitted). A non-empty `payload` wins over `label` |
+| `label` | An existing account label to select contacts when `payload` is absent or empty |
+| `scope_name` | Display name for the selection only; it does not filter |
+
+The `200` response is the export record, not the file: `id`, `name`, `status` (`pending`, `processing`, `completed`, `failed`), `export_options` (the validated options with defaults filled in), `processed_records`, `total_records`, `error_message`, timestamps, and the booleans `stalled`, `downloadable`, `can_rerun`. The CSV becomes available only after processing, so poll the export until `status` is `completed` and `downloadable` is true.
+
+```bash
+# Export contacts whose email contains example.com (confirm first: it writes a file that holds customer data)
+curl -s -X POST \
+  -H "api-access-token: ${CHATWOOT_API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{"column_names":["name","email","phone_number"],
+       "payload":[{"attribute_key":"email","filter_operator":"contains",
+                   "values":["example.com"],"query_operator":null}],
+       "scope_name":"Example customers"}' \
+  "${CHATWOOT_BASE_URL}/api/v1/accounts/${CHATWOOT_ACCOUNT_ID}/data_exports" | jq '{id, status, downloadable}'
+```
+
+The spec documents only the create call. The v4.20.1 routes and controller also expose `GET /data_exports` (history, cursor `before_id`, 25 per page), `GET /data_exports/{id}`, `GET /data_exports/{id}/download` (returns a `download_url` that expires after 5 minutes) and `POST /data_exports/{id}/rerun` (`config/routes.rb`, `data_exports_controller.rb`). They are not in the OpenAPI spec, so verify them on your instance before depending on them.
 
 ### Smaller additions
 
@@ -153,6 +181,7 @@ To send one, post a message to the conversation with `template_params` (`name`, 
 | GET | `/contacts` | `contactList` | List Contacts |
 | POST | `/contacts` | `contactCreate` | Create Contact |
 | POST | `/contacts/filter` | `contactFilter` | Contact Filter |
+| POST | `/data_exports` | `contactExportCreate` | Create Contact Export |
 | GET | `/contacts/search` | `contactSearch` | Search Contacts |
 | DELETE | `/contacts/{id}` | `contactDelete` | Delete Contact |
 | GET | `/contacts/{id}` | `contactDetails` | Show Contact |
@@ -218,7 +247,7 @@ To send one, post a message to the conversation with `template_params` (`name`, 
 | POST | `/portals/{portal_slug}/articles` | `add-new-article-to-account` | Add a new article |
 | POST | `/portals/{portal_slug}/categories` | `add-new-category-to-account` | Add a new category |
 
-`{portal_slug}` is the portal's **slug**, not its numeric id: the server looks the portal up by slug (`find_by!(slug: …)`) in v4.18.0 and v4.20.1 alike. The bundled snapshot still names the parameter `{id}`; v4.20.0 renamed it in the spec only.
+`{portal_slug}` is the portal's **slug**, not its numeric id: the server looks the portal up by slug (`find_by!(slug: …)`) in v4.18.0 and v4.20.1 alike. Releases before v4.20.0 name the parameter `{id}` in their spec; only the spec changed.
 
 ## Inboxes
 

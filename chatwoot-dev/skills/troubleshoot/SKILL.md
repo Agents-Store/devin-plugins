@@ -85,6 +85,7 @@ block (for another proxy, look for its setting on underscore headers).
 |---------|-------|-----|
 | Signature never matches | HMAC over parsed JSON | Compute HMAC-SHA256 over the **raw** body as `"{timestamp}.{raw_body}"`, compare to `X-Chatwoot-Signature` (`sha256=...`) |
 | No deliveries arrive | URL unreachable / not subscribed | Verify the endpoint is public + returns `2xx`; check `subscriptions` includes the event |
+| No deliveries to a local or private-network receiver (`localhost`, `10.x`, `192.168.x`) | Chatwoot's SSRF filter refuses private addresses; the server only logs `Invalid webhook URL` | Use a public URL, or on self-hosted set `SAFE_FETCH_ALLOW_PRIVATE_NETWORK=true` and restart web and worker (see `webhooks-automation`) |
 | Bot replies in a loop | Reacting to its own messages | Only act on `message_type == "incoming"` |
 | Duplicate handling | Retried deliveries | De-duplicate on `X-Chatwoot-Delivery` |
 
@@ -92,7 +93,25 @@ block (for another proxy, look for its setting on underscore headers).
 
 `429 Too Many Requests` → add exponential backoff, reduce concurrency, and batch reads with
 pagination instead of firing unbounded parallel requests. Limits differ between Cloud and
-self-hosted.
+self-hosted. Bearer and `api-access-token` share one bucket per token, and `GET /conversations`
+and `/conversations/meta` have their own lower limits (details in `pagination-errors.md` → Rate
+limits).
+
+## Upgrading a self-hosted instance
+
+Breaking requirements of the v4.20 line (source: release notes v4.20.0 and v4.20.1,
+github.com/chatwoot/chatwoot/releases). Check them before upgrading from v4.19 or older:
+
+| Requirement | Applies to | Release note says |
+|-------------|------------|-------------------|
+| Facebook app secret (Super Admin → Settings → Messenger, or `FB_APP_SECRET`) | Self-hosted instances with Messenger inboxes, from v4.20.0 | Messenger webhook events are rejected while the secret is blank |
+| Meta app secret | Manual WhatsApp Cloud inboxes, from v4.20.0 | New inboxes require it; existing ones keep working and show a prompt in inbox settings, and signature checks start once the secret is saved |
+| libvips 8.13 or newer | Every web and worker host, from v4.20.0 | Required on all of them |
+| Ruby 3.4.13 | Non-Docker installs, from v4.20.1 | Required |
+
+Docker installs get the Ruby version with the image. v4.20.0 is described as a security release
+(30+ fixes) and v4.20.1 as the recommended target, so upgrade to v4.20.1 rather than stopping at
+v4.20.0.
 
 ## When to escalate
 
