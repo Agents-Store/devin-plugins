@@ -105,6 +105,8 @@ Next.js 16.3 retired the old knowledge-only skills (the bundled docs now do that
 
 Other 16.3 agent affordances: any docs page is available as Markdown by appending `.md` to the URL (index at `/docs/llms.txt`, everything in `/docs/llms-full.txt`), and `agentRules: false` in `next.config.ts` stops `next dev` from maintaining the AGENTS.md block.
 
+16.4 adds two **experimental** agent features (details in the `cli-recipes` skill): `next upgrade --agent` (policies `security`, `latest`, `experimental-future`) has a coding agent upgrade the app, with `experimental.agentUpgrade` setting the default policy and enabling upgrade reminders during `next dev` and `next build` (`false` disables them); `experimental.agentFeedback: true` lets a detected agent collect Next.js problems and open anonymized report drafts in your browser for review, sending nothing until you confirm, and only with Next.js Telemetry on and outside CI. Source: [Next.js 16.4](https://nextjs.org/blog/next-16-4), [Upgrade with a coding agent](https://nextjs.org/docs/app/guides/upgrading/agent-upgrade).
+
 ## Typical Workflow
 
 1. **Start dev server** — `npm run dev`

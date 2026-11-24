@@ -185,6 +185,15 @@ next experimental-analyze --output
 
 The analyzer filters by route, shows import chains, and provides separate client/server views.
 
+In 16.4 the command is `next analyze` (`experimental-analyze` still works as an alias) and the analyzer keeps snapshots you can compare over time. Name a snapshot when you write output, then stream it as JSON Lines for scripts or coding agents without rebuilding or starting a server:
+
+```bash
+next analyze --output --snapshot before     # saves under .next/diagnostics/analyze
+next analyze export --snapshot before > bundle-graph.jsonl
+```
+
+`next analyze export` also takes `--route <route>` to restrict the export to one route. Source: [next CLI reference](https://nextjs.org/docs/app/api-reference/cli/next), [Next.js 16.4](https://nextjs.org/blog/next-16-4). The 16.4 Turbopack experiments (`turbopackGc`, lazy dynamic imports, worker threads, additional roots) are in the `performance-optimization` skill.
+
 > `@next/bundle-analyzer` (`ANALYZE=true`) is webpack-based and only works with `next build --webpack`.
 
 ## Docker Deployment
@@ -246,3 +255,35 @@ Key codemods for Next.js 16:
 - `middleware-to-proxy` — rename `middleware.ts` to `proxy.ts` with the `proxy` export
 - `next-lint-to-eslint-cli` — migrate from the removed `next lint` to the ESLint CLI
 - Async API migrations (`params`, `cookies`, `headers`), configuration changes, and deprecated API removals
+
+### Agent-guided Upgrades (16.4, experimental)
+
+`next upgrade --agent` has a coding agent upgrade and verify the app: the command picks the target from a policy, copies the relevant migration guides and Skills into a temporary directory and hands the task to the agent (Claude Code or Codex in an interactive terminal, or it prints the task for another agent). It supports App Router and Pages Router projects, and cannot be combined with `--revision`.
+
+```bash
+# Run the newest upgrade tooling even when the app is on an older Next.js
+npx next@canary upgrade --agent=latest
+npx next@canary upgrade apps/web --agent=security   # from a workspace root, pass the app directory
+```
+
+| Policy | Behavior |
+|--------|----------|
+| `security` (default) | For an affected stable version, picks the latest safe release in the earliest eligible major |
+| `latest` | Moves stable, RC, beta and preview apps to npm's `latest`; a canary app to `canary` |
+| `experimental-future` | `latest`, then adopts applicable future defaults (currently the Cache Components guide and adoption Skill for App Router apps on 16.3+) |
+
+Two experimental `next.config` options go with it:
+
+```ts
+const nextConfig: NextConfig = {
+  experimental: {
+    agentUpgrade: 'security',   // 'security' (default) | 'latest' | 'experimental-future' | false
+    agentFeedback: true,        // opt-in; off by default, on in apps from the recommended create-next-app settings
+  },
+}
+```
+
+- `agentUpgrade` sets the policy used when `--agent` has no value and turns on upgrade reminders during `next dev` and `next build`. It never upgrades by itself: an interactive reminder offers **Upgrade now**, **Skip** and **Skip until next version** (it skips on its own after ten seconds), and a coding agent that hits one reports the available upgrade first. Set `false` to disable reminders. Reminders only exist in versions that support the option, so running the canary CLI does not add them to an older install.
+- `agentFeedback` makes `next dev` maintain a managed block in `AGENTS.md` that tells a detected coding agent to collect Next.js problems and, at the end of the task, open anonymized report drafts in your browser. Nothing is sent until you press **Send feedback**; it needs Next.js Telemetry on and does not run in CI.
+
+Source: [Upgrade with a coding agent](https://nextjs.org/docs/app/guides/upgrading/agent-upgrade), [`agentUpgrade`](https://nextjs.org/docs/app/api-reference/config/next-config-js/agentUpgrade), [`agentFeedback`](https://nextjs.org/docs/app/api-reference/config/next-config-js/agentFeedback).

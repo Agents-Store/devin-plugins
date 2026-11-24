@@ -204,6 +204,67 @@ export default function Page() {
 }
 ```
 
+## Browser-only Components: `use(browser())` (React 19.3)
+
+React 19.3, bundled with Next.js 16.4, adds `browser()` from `react-dom` for a Client Component whose first browser render cannot match the server HTML (it reads `localStorage` or the device time zone). Pass it to `use` instead of a `typeof window` check, a `mounted` flag set in an effect, or `dynamic(..., { ssr: false })`:
+
+```tsx
+// app/saved-draft.tsx
+'use client'
+import { use, useState } from 'react'
+import { browser } from 'react-dom'
+
+export default function SavedDraft() {
+  use(browser('The draft is stored in localStorage.'))   // optional reason, for server-side reporting
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '')
+  return <textarea value={draft} onChange={(e) => setDraft(e.target.value)} />
+}
+```
+
+```tsx
+// app/page.tsx — Server Component
+import { Suspense } from 'react'
+import SavedDraft from './saved-draft'
+
+export default function Page() {
+  return (
+    <Suspense fallback={<p>Loading draft...</p>}>
+      <SavedDraft />
+    </Suspense>
+  )
+}
+```
+
+- On the server (and during prerender) the call suspends, so the nearest `<Suspense>` fallback becomes the HTML; in the browser `use(browser())` returns `undefined` and the component renders normally.
+- It must run in a Client Component and inside a `<Suspense>` boundary; without a boundary the server render fails.
+- Crawlers that do not run JavaScript see only the fallback, so keep indexable content outside the browser-only boundary. Use it only when the first browser render truly cannot match the server output; prefer ordinary rendering otherwise.
+- Like any `use` call it can sit behind a condition, so a hook can opt out of server rendering only when it lacks initial data: `if (initialData === undefined) use(browser())`.
+
+Source: [React 19.3](https://react.dev/blog/2026/09/09/react-19-3), [`browser`](https://react.dev/reference/react-dom/browser), [Next.js single-page applications guide](https://nextjs.org/docs/app/guides/single-page-applications#rendering-components-only-in-the-browser).
+
+## Fragment Refs (React 19.3)
+
+A ref on `<Fragment>` (stable in 19.3) gives a `FragmentInstance` that works on the fragment's DOM children as a group, with no wrapper element and without the child components forwarding a `ref`. It is for attaching behavior to a list of siblings or to a component you cannot change. Because it needs `useRef` and effects, use it in a Client Component:
+
+```tsx
+'use client'
+import { Fragment, useEffect, useRef } from 'react'
+import type { FragmentInstance } from 'react'
+
+// @types/react 19.3.0 declares FragmentInstance as an empty interface, so add the methods you call
+type FocusableFragment = FragmentInstance & { focus(): void }
+
+export function FocusFirst({ children }: { children: React.ReactNode }) {
+  const ref = useRef<FocusableFragment>(null)
+  useEffect(() => {
+    ref.current?.focus()   // focuses the first focusable child, depth-first
+  }, [])
+  return <Fragment ref={ref}>{children}</Fragment>
+}
+```
+
+The instance offers `addEventListener` / `removeEventListener` / `dispatchEvent` (first-level children), `focus` / `focusLast` / `blur`, `observeUsing` / `unobserveUsing` (attach an `IntersectionObserver` or `ResizeObserver`), and `getClientRects`, `getRootNode`, `compareDocumentPosition`, `scrollIntoView`. Source: [React 19.3](https://react.dev/blog/2026/09/09/react-19-3#fragment-refs), [`<Fragment>`](https://react.dev/reference/react/Fragment).
+
 ## Environment Poisoning Prevention
 
 Every data-access module that touches databases, API keys, or secrets should start with `import 'server-only'`. This causes a build-time error if the module is accidentally imported in a Client Component — catching the leak before it reaches production:

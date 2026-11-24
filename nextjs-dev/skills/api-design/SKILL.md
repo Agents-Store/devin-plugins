@@ -174,6 +174,12 @@ export async function GET(request: NextRequest) {
 }
 ```
 
+### Compression (16.4.6)
+
+Since 16.4.6, `next start` compresses Route Handler responses that are not already compressed (gzip, like rendered pages). Before that, a self-hosted Route Handler sent its body uncompressed, including prerendered ones. Nothing to configure; set `compress: false` in `next.config.ts` only when a reverse proxy or CDN compresses for you (the same option that already controls page compression). Do not `return fetch(url)` from a handler as a proxy: Next.js strips `Content-Encoding` and `Content-Length` from handler responses, and `fetch()` already decompressed the body, so the pass-through costs CPU for nothing; process the body first, or use a dedicated proxy library.
+
+Source: [v16.4.6 release](https://github.com/vercel/next.js/releases/tag/v16.4.6), [PR #101220](https://github.com/vercel/next.js/pull/101220) (backported in [#101280](https://github.com/vercel/next.js/pull/101280)), [`compress`](https://nextjs.org/docs/app/api-reference/config/next-config-js/compress).
+
 ## Streaming Responses
 
 ### Server-Sent Events (SSE)

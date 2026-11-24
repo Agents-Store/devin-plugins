@@ -132,7 +132,7 @@ With `cacheComponents: true`, the previous-model route segment options are remov
 | `export const dynamicParams = false` (`cacheComponents` off) | Delete it — the build fails with `Route segment config "dynamicParams" is not compatible with nextConfig.cacheComponents`. Call `notFound()` when the param does not resolve to real data |
 | `export const experimental_ppr = true` (`cacheComponents` off) | Removed in 16.0 — Partial Prerendering is part of Cache Components |
 
-Still valid under Cache Components: `runtime`, `preferredRegion`, `maxDuration`, and the new `instant` and `prefetch` options. Two more rules change with the flag:
+Still valid under Cache Components: `runtime`, `preferredRegion`, `maxDuration`, and the new `instant`, `prefetch` and `ensureStatic` options. Two more rules change with the flag:
 
 - `generateStaticParams` must return at least one param (an empty array raises `empty-generate-static-params`); params you do not return still get a static shell and stream the rest.
 - Await `params` / `searchParams` inside a `<Suspense>` boundary (pass the promise down) so the shell can prerender.
@@ -202,6 +202,75 @@ Instant Insights report each blocking read with three labelled fixes: stream it 
 ## Per-link Prefetching and the `prefetch` Segment Config (16.3)
 
 With `partialPrefetching`, every `<Link>` prefetches only the destination's shared App Shell. `<Link prefetch={true}>` additionally resolves cached content that depends on the link's URL (`params`, `searchParams`) before the click — use it for a few high-intent links, not a whole grid (each one can wake the server). `<Link prefetch={false}>` still disables prefetching for that link. Per segment, `export const prefetch = 'partial'` opts the destination into Partial Prefetching without the global flag, and `'force-disabled'` stops its segment data from being prefetched. Existing `prefetch={true}` links used the legacy full prefetch and change behavior when the flag is enabled; the [Adopting Partial Prefetching](https://nextjs.org/docs/app/guides/adopting-partial-prefetching) guide covers the migration (`unstable_eager` no longer exists).
+
+## Guaranteeing Static Output: `ensureStatic` (16.4)
+
+`ensureStatic` is a segment config for a `page` or `layout` that fails the build when request-time work enters a navigation stage that must stay static, so a later change cannot quietly add per-request rendering. It works only with `cacheComponents` (the build fails otherwise) and cannot be exported from a Client Component.
+
+```tsx
+// app/blog/layout.tsx — every page under /blog must prerender completely
+export const ensureStatic = 'navigation'
+```
+
+| Value | Output that must be static |
+|---|---|
+| `'auto'` (default) | Nothing extra; same as omitting the export |
+| `'shell'` | The App Shell a default `<Link>` loads. Needs `partialPrefetching`; without it the value does nothing and Next.js logs a warning |
+| `'prefetch'` | The App Shell and per-link prefetches (`<Link prefetch={true}>`). Without `partialPrefetching` it adds no requirement |
+| `'navigation'` | The complete server-rendered route, so initial loads and client navigations use static output. Works with Cache Components alone |
+| `false` | Normal rendering; with Partial Prefetching the build fails if another segment sets `'shell'`, `'prefetch'` or `'navigation'` for the route |
+
+- **Levels nest.** A level on the root layout covers the whole app; a layout's level covers every route that renders it. A descendant may be stricter but never weaker (a weaker child fails the build, and so do mixing `false` with a static level and parallel slots with different values).
+- **`'navigation'` is validated in `next dev` and `next build`.** Even inside `<Suspense>` it rejects uncached data, `connection()`, `cookies()`, `headers()`, server-side `searchParams`, a `use cache` scope with `expire` under 5 minutes, `stale` under 30 seconds or `revalidate: 0`, and a request-dependent promise passed to a Client Component. `'use cache'` data, `prefetch()`, `navigation()` and, inside `<Suspense>`, `use(browser())` / `use(io())` in Client Components are allowed. `generateMetadata` and `generateViewport` follow the same rules.
+- **A dynamic route under `'navigation'`** must export `generateStaticParams()` returning at least one complete parameter set (every dynamic parameter, even an unused one). Under `'shell'` or `'prefetch'` an unprerendered value serves the fallback shell while the page is generated in the background.
+- **`'shell'` and `'prefetch'` add no build validation of their own.** Pair them with Instant Navigation validation to catch request-specific work outside `<Suspense>`.
+- **Not the same as `instant`.** `instant` validates that a navigation can update the UI immediately (cached UI plus streamed holes pass); `ensureStatic` forbids request-time work in the chosen stage. `instant = false` does not relax `'navigation'`.
+
+Source: [ensureStatic](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config/ensureStatic) (added in 16.4.0), [Next.js 16.4](https://nextjs.org/blog/next-16-4).
+
+## Deferring Work Out of Prefetches: `navigation()` and `prefetch()` (16.4)
+
+With `cacheComponents` and `partialPrefetching`, a route loads in stages: a default `<Link>` loads the App Shell, `<Link prefetch={true}>` can add content that depends on the link's URL, and the navigation renders the rest. `await prefetch()` and `await navigation()` from `next/cache` keep the code below them out of an earlier stage, so expensive reusable work is not generated for every link. Unlike `connection()`, they do not make the work request-dependent, so a function called below them can still use `'use cache'` and keep its cache lifetime.
+
+| Call | Code below it stays out of | Runs on |
+|---|---|---|
+| `await prefetch()` | The App Shell | A per-link prefetch or the navigation |
+| `await navigation()` | The App Shell and per-link prefetches | The navigation only |
+
+```tsx
+import { Suspense } from 'react'
+import { cacheLife, navigation } from 'next/cache'
+
+export default function Page({ params }: PageProps<'/post/[slug]'>) {
+  return (
+    <Suspense fallback={<p>Loading comments...</p>}>
+      <Comments params={params} />
+    </Suspense>
+  )
+}
+
+async function Comments({ params }: { params: Promise<{ slug: string }> }) {
+  await navigation()              // everything below waits for the navigation
+  const { slug } = await params
+  return <CommentList items={await getComments(slug)} />
+}
+
+async function getComments(slug: string) {
+  'use cache'                     // directive on a function called below the stage call
+  cacheLife('hours')
+  return db.comments.list({ slug })
+}
+```
+
+- Put the call in an async component wrapped in `<Suspense>`: the fallback ships in the earlier stage. Deferral covers that component and its subtree; siblings are unchanged.
+- Put `'use cache'` on a function called below the stage call. Awaiting either function inside `use cache`, `use cache: private`, `unstable_cache()`, `after()`, `generateStaticParams` or a Client Component throws, and so does calling them without `cacheComponents`.
+- Neither function affects the initial page load, and static prerenders still include the content.
+- Without `partialPrefetching` a route has no App Shell, so `prefetch()` does nothing; `navigation()` still defers content for a default `<Link>`, but `<Link prefetch={true}>` then fetches the whole route.
+- Give `navigation()` content a `stale` time of 5 minutes or more so the client router reuses it after the first navigation; a shorter lifetime is fetched again on every navigation.
+- In a `page` or `layout` that also sets the `prefetch` segment config, import the function under another name (`import { prefetch as prefetchStage } from 'next/cache'`).
+- `navigation()` and `prefetch()` defer one subtree. To enforce a static shell or static per-link prefetches across a whole route use `ensureStatic = 'shell'` / `'prefetch'` (above).
+
+Source: [navigation](https://nextjs.org/docs/app/api-reference/functions/navigation) and [prefetch](https://nextjs.org/docs/app/api-reference/functions/prefetch) (both added in 16.4.0), [Next.js 16.4](https://nextjs.org/blog/next-16-4).
 
 ## Migration
 

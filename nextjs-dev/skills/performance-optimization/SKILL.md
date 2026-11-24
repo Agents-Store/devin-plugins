@@ -159,7 +159,7 @@ next experimental-analyze
 next experimental-analyze --output
 ```
 
-The analyzer filters by route, shows import chains, and provides separate client/server views. The older `@next/bundle-analyzer` (`ANALYZE=true`) is webpack-based and only works with `next build --webpack`.
+The analyzer filters by route, shows import chains, and provides separate client/server views. In 16.4 it adds a route summary, a sortable table view, marking of modules on the critical render path, automatic snapshots of your runs and bundle diffs as the app changes ([Next.js 16.4](https://nextjs.org/blog/next-16-4)); `next analyze --output --snapshot before` saves a named snapshot and `next analyze export --snapshot before > graph.jsonl` streams it as JSON Lines (see `cli-recipes`). The older `@next/bundle-analyzer` (`ANALYZE=true`) is webpack-based and only works with `next build --webpack`.
 
 ### Common Bundle Bloaters
 
@@ -201,6 +201,38 @@ const nextConfig = {
 Constraints: it requires `reactCompiler: true`, works only with Turbopack (using it with `--webpack` throws an error), and `babel-plugin-react-compiler` is not needed.
 
 `create-next-app` offers a `--react-compiler` flag for new projects.
+
+## Turbopack Experiments (16.4, experimental)
+
+Four opt-in options arrived in 16.4. All sit under `experimental`, default to off and may change; try them in development first and do not enable them for production builds without testing. Source: [Next.js 16.4](https://nextjs.org/blog/next-16-4) and the linked option pages.
+
+| Option | Effect | Watch out for |
+|--------|--------|---------------|
+| `turbopackGc: true` | Garbage-collects unreachable work from Turbopack's in-memory and persistent caches in `next dev` and `next build`; the object form `{ minProgressMs, rootTtlMs }` tunes timings ([docs](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopackGc)) | Needs the Turbopack filesystem cache; no effect when it is off for the command |
+| `turbopackLazyDynamicImports: true` | `next dev` only: compiles client-side `import()` targets when the browser first requests them ([docs](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopackLazyDynamicImports)) | Some `next/dynamic` targets still compile eagerly; an error in a deferred module appears on its first compile; production builds are unchanged |
+| `turbopackPluginRuntimeStrategy: 'workerThreads'` | Runs webpack loaders, Babel and PostCSS in worker threads instead of child processes, to cut memory and CPU ([docs](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopackPluginRuntimeStrategy)) | On Node.js 24.13.1 and newer a Node worker-teardown bug makes Next.js warn and fall back to child processes; `'forceWorkerThreads'` skips the fallback and can abort the process |
+| `turbopackAdditionalRoots` | Lets Turbopack follow symlinks whose targets live outside the project root: linked local packages, or a pnpm / Bun global virtual store ([docs](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#additional-roots-experimental)) | See below |
+
+```ts
+// next.config.ts
+import path from 'node:path'
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  experimental: {
+    turbopackGc: true,
+    turbopackLazyDynamicImports: true,
+    turbopackPluginRuntimeStrategy: 'workerThreads',
+    turbopackAdditionalRoots: {
+      linkedPackages: { path: path.join(__dirname, '../packages') },
+    },
+  },
+}
+
+export default nextConfig
+```
+
+`turbopackAdditionalRoots` is crossed only at symlink boundaries (a relative import that escapes a root is unsupported), each key names one root (1 to 40 characters from `A-Z a-z 0-9 _ -`), and roots must not overlap `turbopack.root` or each other. The symlink and its target must exist on the build machine before `next dev` or `next build` starts, which CI that copies the repository may not guarantee; a root with `ignoreIfMissing: true` no longer warns when its path is absent. For pnpm's global virtual store, add the directory printed by `pnpm store path`. With `output: 'standalone'`, unbundled files from an additional root are copied into a subdirectory named after the root.
 
 ## Core Web Vitals
 
