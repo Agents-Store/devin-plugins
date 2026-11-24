@@ -4,13 +4,13 @@ Installation-level super-admin API for multi-account provisioning. Auth: `api-ac
 
 Authoritative schemas: `openapi/platform_swagger.json` (9 paths, 18 operations). Grep it for request bodies, query params, and response shapes.
 
-Spec source: `chatwoot/chatwoot` `develop` at commit `843385f` (2026-10-02), `swagger/tag_groups/platform_swagger.json`. The latest release, v4.18.0, ships 17 operations; `POST /users/{id}/token` exists only on `develop` until the next release.
+Spec source: `chatwoot/chatwoot` `develop` at commit `843385f` (2026-10-02), `swagger/tag_groups/platform_swagger.json`. The latest release, v4.20.1, ships all 18 operations; `POST /users/{id}/token` arrived in v4.19.0 (v4.18.0 has 17 and lacks it).
 
 ```bash
 jq -r '.paths | keys[]' openapi/platform_swagger.json
 ```
 
-## Recent addition: user access token (`develop` only)
+## Recent addition: user access token (v4.19.0+)
 
 `POST /users/{id}/token` (`post-user-token`) returns the access token of a user, so provisioning code can then call the Application API as that user. Response: `{"access_token": "...", "expiry": <timestamp or null>, "user": {id, name, display_name, email, pubsub_token}}`; `401` bad platform token, `404` unknown user. The spec documents no further rules (`expiry` is nullable), so treat the response as a secret credential: capture it in a variable, never print or log it.
 

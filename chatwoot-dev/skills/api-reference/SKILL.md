@@ -25,9 +25,10 @@ enums, attachments) live in `references/pagination-errors.md`. The CSAT survey p
 ## Bundled specs
 
 Vendored from `chatwoot/chatwoot` `develop` at commit `843385f` (2026-10-02, `swagger/tag_groups/`):
-Application 124 operations, Platform 18, Client 12, CSAT page 1. The latest release, v4.18.0, has
-122 / 17 / 12 / 1; the three newer operations are marked `develop` only in
-`references/application-api.md` and `references/platform-api.md`, which also carry the
+Application 124 operations, Platform 18, Client 12, CSAT page 1. The latest release, v4.20.1, has
+125 / 18 / 12 / 1: it contains all three operations that were `develop`-only when the snapshot was
+taken (v4.19.0), plus `POST /data_exports`, which the snapshot lacks, and it renames the portal path
+parameter to `{portal_slug}`. See `references/application-api.md` and `references/platform-api.md`, which also carry the
 "Recent additions" write-ups for **campaigns**, **WhatsApp message templates**, the branded email
 layout and message-status updates.
 
@@ -35,7 +36,7 @@ layout and message-status updates.
 
 Send the token in the **`api-access-token`** header (hyphens; the upstream OpenAPI spells it
 `api_access_token`, which is the same header but gets dropped by nginx and Caddy 2.6.4+ unless the
-proxy is told otherwise). `Authorization: Bearer` works only on Chatwoot v4.19.0 and later. Why and
+proxy is told otherwise). `Authorization: Bearer` works on Chatwoot v4.19.0 and later (older instances answer `401`). Why and
 how to check: `references/pagination-errors.md` → Authentication.
 
 ```bash

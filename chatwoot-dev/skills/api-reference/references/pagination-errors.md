@@ -41,9 +41,9 @@ If you must keep the underscore spelling behind nginx, set `underscores_in_heade
 
 From v4.19.0 Chatwoot also accepts `Authorization: Bearer <token>` with the same user,
 agent-bot and platform tokens, and the upstream OpenAPI says the custom header "will be
-deprecated in a future release" (no date given). v4.18.0, the latest release as of 2026-10-03,
-reads only the custom header, so a Bearer request to it returns `401`. Use `api-access-token`
-until every instance you target runs v4.19.0 or later.
+deprecated in a future release" (no date given). v4.18.0 and older read only the custom header,
+so a Bearer request to them returns `401`; v4.20.1 (the latest release on 2026-11-24) accepts both.
+Use `api-access-token` until every instance you target runs v4.19.0 or later.
 
 ## Response envelopes
 

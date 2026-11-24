@@ -1,6 +1,6 @@
 ---
 name: troubleshoot
-description: Use when a Chatwoot API call, CLI command or webhook fails or misbehaves - 401 or 403 with a valid token, 404 or an HTML page instead of JSON, 422 request errors, 429 rate limits, a webhook signature that never matches, or a CLI that works locally but not in CI. It maps the symptom to the cause and the fix. For building bots and webhooks use webhooks-automation, for CLI usage cli-recipes.
+description: Use when a Chatwoot API call, CLI command or webhook fails or misbehaves - 401 or 403 with a valid token, 404 or 502 or an HTML page instead of JSON from a self-hosted instance, 422 request errors, 429 rate limits, a webhook signature that never matches, or a CLI that works locally but not in CI. It maps the symptom to the cause and the fix. For building bots and webhooks use webhooks-automation, for CLI usage cli-recipes.
 ---
 
 # Chatwoot Troubleshooting
@@ -28,7 +28,7 @@ curl -s -o /dev/null -w "%{http_code}\n" -H "api-access-token: ${CHATWOOT_API_KE
 |---------|-------|-----|
 | `401 Unauthorized` | Missing/typo'd `api-access-token` header | Send `-H "api-access-token: ${CHATWOOT_API_KEY}"` |
 | `401` with a valid token, only behind a reverse proxy | Proxy drops request headers with underscores (nginx default `underscores_in_headers off`; Caddy 2.6.4+) so `api_access_token` never arrives | Send the hyphenated `api-access-token` (same header for Chatwoot). The CLI needs v0.7.0+. See "Header check behind a proxy" below |
-| `401` with `Authorization: Bearer <token>` | Bearer is accepted only by Chatwoot v4.19.0+ (v4.18.0 is the latest release as of 2026-10-03) | Use `api-access-token` until the instance runs v4.19.0 or later |
+| `401` with `Authorization: Bearer <token>` | Bearer is accepted only by Chatwoot v4.19.0+; an older instance reads just the custom header | Check the instance version; use `api-access-token` until it runs v4.19.0 or later |
 | `401` with a valid token | Right token, **wrong API family** | User token works on `/api/v1/...`, not `/platform/...`. Use the platform app token for Platform endpoints |
 | `403 Forbidden` | Token role too low | The action needs admin/agent permission the token lacks — use a token with the right role |
 | Platform calls all `401` | Platform API not enabled / wrong token | Platform token comes from the installation Super Admin, not Profile Settings |

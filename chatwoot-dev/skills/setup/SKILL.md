@@ -56,8 +56,9 @@ names contain underscores unless `underscores_in_headers on;` is set (default `o
 Caddy 2.6.4+ strips them too, so `api_access_token` reaches Chatwoot as *no token* and the
 call fails with `401`. The official CLI sends `api-access-token` since v0.7.0.
 
-`Authorization: Bearer <token>` is accepted only by Chatwoot v4.19.0 and later (v4.18.0 is the
-latest release as of 2026-10-03), so do not rely on it yet. Details:
+`Authorization: Bearer <token>` is accepted by Chatwoot v4.19.0 and later (checked against v4.20.1,
+2026-11-24); an older instance answers `401`, so keep `api-access-token` unless every instance you
+target is on v4.19.0 or newer. Details:
 `api-reference/references/pagination-errors.md` → Authentication.
 
 ## 4. Install the CLI (optional)

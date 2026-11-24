@@ -29,8 +29,8 @@ Subscribable events documented in the OpenAPI spec:
 `contact_created`, `contact_updated`, `message_created`, `message_updated`,
 `webwidget_triggered`, `conversation_typing_on`, `conversation_typing_off`.
 
-The server's allow-list (`Webhook::ALLOWED_WEBHOOK_EVENTS`, `app/models/webhook.rb` on `develop`,
-checked 2026-10-02) also accepts `inbox_created` and `inbox_updated`. They are **not in the
+The server's allow-list (`Webhook::ALLOWED_WEBHOOK_EVENTS`, `app/models/webhook.rb` in v4.18.0 and v4.20.1,
+checked 2026-11-24) also accepts `inbox_created` and `inbox_updated`. They are **not in the
 OpenAPI spec**: verify them on your instance before depending on them (a version that predates
 them rejects the subscription in validation). Any name outside the allow-list is rejected.
 

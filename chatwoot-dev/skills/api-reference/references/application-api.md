@@ -4,7 +4,7 @@ Account-scoped agent/admin API. Auth: `api-access-token` header (user access tok
 
 Authoritative schemas: `openapi/application_swagger.json` (75 paths, 124 operations). Grep it for request bodies, query params, and response shapes.
 
-Spec source: `chatwoot/chatwoot` `develop` at commit `843385f` (2026-10-02), `swagger/tag_groups/application_swagger.json`. The latest release, v4.18.0, ships 122 operations; the two extra ones (`GET /portals/{id}`, `POST /conversations/{id}/update_last_seen`) exist only on `develop` until the next release. Match the operation to your instance version before relying on it.
+Spec source: `chatwoot/chatwoot` `develop` at commit `843385f` (2026-10-02), `swagger/tag_groups/application_swagger.json`. The latest release, v4.20.1, ships 125 operations: the two that were `develop`-only at snapshot time (`GET /portals/{portal_slug}`, `POST /conversations/{id}/update_last_seen`) arrived in v4.19.0, and `POST /data_exports` (v4.20.0) is not in the snapshot — read its schema from the v4.20.1 swagger upstream. Match the operation to your instance version before relying on it.
 
 ```bash
 jq -r '.paths | keys[]' openapi/application_swagger.json
@@ -20,10 +20,10 @@ jq -r '.paths | keys[]' openapi/application_swagger.json
 | v4.17.1 | PATCH | `/conversations/{conversation_id}/messages/{message_id}` | `update-message-status` | Report `sent` / `delivered` / `read` / `failed` for a message in an API channel inbox |
 | v4.18.0 | GET, POST | `/campaigns` | `list-campaigns`, `create-campaign` | List and create campaigns |
 | v4.18.0 | GET, PATCH, DELETE | `/campaigns/{id}` | `get-campaign`, `update-campaign`, `delete-campaign` | Read, change or remove one campaign |
-| `develop` only | GET | `/portals/{id}` | `get-details-of-a-single-portal` | Details of one Help Center portal |
-| `develop` only | POST | `/conversations/{conversation_id}/update_last_seen` | `conversationUpdateLastSeen` | Mark a conversation as seen so the unread bubble clears in the agent UI |
+| v4.19.0 | GET | `/portals/{portal_slug}` | `get-details-of-a-single-portal` | Details of one Help Center portal |
+| v4.19.0 | POST | `/conversations/{conversation_id}/update_last_seen` | `conversationUpdateLastSeen` | Mark a conversation as seen so the unread bubble clears in the agent UI |
 
-The "In spec since" column was derived by diffing the upstream swagger at each release tag (v4.15.0 to v4.18.0) against `develop`.
+The "In spec since" column was derived by diffing the upstream swagger at each release tag (v4.15.0 to v4.20.1).
 
 ### Campaigns
 
@@ -213,10 +213,12 @@ To send one, post a message to the conversation with `template_params` (`name`, 
 |--------|------|-----------|---------|
 | GET | `/portals` | `get-portal` | List all portals in an account |
 | POST | `/portals` | `add-new-portal-to-account` | Add a new portal |
-| GET | `/portals/{id}` | `get-details-of-a-single-portal` | Get a portal details |
-| PATCH | `/portals/{id}` | `update-portal-to-account` | Update a portal |
-| POST | `/portals/{id}/articles` | `add-new-article-to-account` | Add a new article |
-| POST | `/portals/{id}/categories` | `add-new-category-to-account` | Add a new category |
+| GET | `/portals/{portal_slug}` | `get-details-of-a-single-portal` | Get a portal details |
+| PATCH | `/portals/{portal_slug}` | `update-portal-to-account` | Update a portal |
+| POST | `/portals/{portal_slug}/articles` | `add-new-article-to-account` | Add a new article |
+| POST | `/portals/{portal_slug}/categories` | `add-new-category-to-account` | Add a new category |
+
+`{portal_slug}` is the portal's **slug**, not its numeric id: the server looks the portal up by slug (`find_by!(slug: …)`) in v4.18.0 and v4.20.1 alike. The bundled snapshot still names the parameter `{id}`; v4.20.0 renamed it in the spec only.
 
 ## Inboxes
 
