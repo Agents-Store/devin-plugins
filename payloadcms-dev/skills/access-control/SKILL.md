@@ -86,9 +86,31 @@ export const Posts: CollectionConfig = {
 }
 ```
 
+### Admin-panel users only: `defaultAdminPanelUserAccess` (3.94+)
+
+A plain `Boolean(user)` check lets in any logged-in user from **any** auth collection — an admin `users` collection and a storefront `customers` collection both pass. `payload` exports a ready-made check for the case where only users of the collection named in `admin.user` should get through:
+
+```ts
+import { defaultAdminPanelUserAccess } from 'payload'
+import type { CollectionConfig } from 'payload'
+
+export const Settings: CollectionConfig = {
+  slug: 'settings',
+  access: {
+    admin: defaultAdminPanelUserAccess,   // who may open it in the admin panel
+    read: defaultAdminPanelUserAccess,
+    update: defaultAdminPanelUserAccess,
+  },
+  fields: [/* … */],
+}
+```
+
+It returns `true` only when there is a user and `user.collection === config.admin.user`; it never returns a `Where`. Use it instead of hand-writing that comparison in each project or plugin; combine it with a role check when you need more than collection membership. Sources: release v3.94.0, `payload@3.94.1` (`dist/auth/defaultAdminPanelUserAccess.js`).
+
 If `access` is omitted on a collection, the defaults are:
-- `read` — `() => true` (public).
-- `create / update / delete` — `({ req: { user } }) => Boolean(user)` (logged-in users).
+- `read / create / update / delete` — `({ req: { user } }) => Boolean(user)` (logged-in users only). Nothing is public by
+  default: a collection the site reads anonymously needs an explicit `read: () => true` (or a `Where`). Source:
+  `payload@3.94.1` (`dist/collections/config/defaults.js`, `dist/auth/defaultAccess.js`).
 - `admin` — same as `update`.
 
 ## Field Access
@@ -109,6 +131,36 @@ Field access returns boolean only — no Where filtering:
 
 If `read` returns false, the field is stripped from the response (the document is still returned).
 If `update`/`create` returns false, attempts to write the field are silently ignored.
+
+### Field access knows the document `id` (3.92+)
+
+Field access functions receive `id` (the document being read or updated; `undefined` on `create`), alongside `req`, `data`, `doc`, `siblingData` and `blockData`. The argument was always in the types, but document-level permission evaluation did not fill it in; 3.92.0 does, so you can authorize against the current document without reaching into `doc.id`:
+
+```ts
+{
+  name: 'internalNotes',
+  type: 'textarea',
+  access: {
+    // owner of this very document, or an admin
+    read: async ({ req, id }) => {
+      if (!req.user) return false
+      if (req.user.roles?.includes('admin')) return true
+      if (!id) return false
+      const doc = await req.payload.findByID({
+        collection: 'projects',
+        id,
+        depth: 0,
+        select: { owner: true },
+        req,                      // same transaction as the request
+      })
+      return doc.owner === req.user.id
+    },
+    update: ({ req }) => req.user?.roles?.includes('admin') ?? false,
+  },
+}
+```
+
+Field access runs per field and per document, so keep the lookup cheap (`select`, `depth: 0`) or compare against `doc`/`siblingData` when they already hold what you need. Sources: release v3.92.0 (PR "pass document id to field access"), [Field-level access docs](https://payloadcms.com/docs/access-control/fields).
 
 ## Global Access
 
@@ -252,6 +304,18 @@ auth: {
   },
 }
 ```
+
+## Security Checklist After 3.93
+
+3.93.0 (2026-11-04) is a security release. Three of its fixes touch access control and change what a config can rely on. Upgrade, then check each against your collections:
+
+| Check | Since 3.93 | What to review |
+| --- | --- | --- |
+| Field read access inside `blocks` | Queries now check field-level `read` access on fields inside a `blocks` field before running; before, a query on a restricted block field could leak limited information while the field was still removed from the response | Any `blocks` field whose blocks carry fields with `access.read`; expect queries filtering on those fields to be refused for users who cannot read them (advisory GHSA-j4q6-g29w-5cmg) |
+| Block rows limited to the field's own block types | A row whose `blockType` is not among the blocks configured for that field is rejected as invalid, and hooks run only for configured block types | Code or imports that write blocks across fields (a `blockType` valid on one field, not on the other) now fail validation with `The following field is invalid: <field label>` |
+| `pasteURL` restrictions on remote uploads | Remote-URL uploads now honor the collection's `upload.pasteURL` (`false`, or `{ allowList }`) consistently; before, the restriction could be skipped under some configurations and let a user with create/update access make the server fetch URLs it should not reach (advisory GHSA-wc63-5fg7-7r49) | Upload collections writable by untrusted users: set `pasteURL: false` or a tight `allowList` — see the `collections` skill (upload hardening) |
+
+Until you can upgrade, the advisories advise limiting query access on affected collections to users who may read the restricted block fields, restricting create/update on upload collections to trusted users, or rejecting the `url` field in a `beforeOperation` hook. Sources: release v3.93.0, GitHub security advisories of `payloadcms/payload` (published 2026-11-09).
 
 ## Where to Put Access Functions
 

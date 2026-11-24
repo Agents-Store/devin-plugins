@@ -121,6 +121,8 @@ export const Users: CollectionConfig = {
 
 Payload auto-generates `email`, `password`, `resetPasswordToken`, `resetPasswordRequestedAt` (3.90+), `loginAttempts`, `lockUntil`, etc. Set `admin.user: 'users'` in `payload.config.ts` so the admin panel signs in against this collection.
 
+With more than one auth collection (say `users` for the admin panel and `customers` for a storefront), the default `Boolean(user)` access lets customers through too. From 3.94 `import { defaultAdminPanelUserAccess } from 'payload'` is a ready-made access function that admits only users of the `admin.user` collection — use it for `access.admin` or other rules; details and example in the `access-control` skill (source: release v3.94.0).
+
 ## Upload Collections
 
 Setting `upload: true` (or a config object) makes the collection store files:
@@ -167,6 +169,7 @@ export const Media: CollectionConfig = {
 
 - Multipart requests are capped by default and oversize ones get HTTP 413: 50 MiB per request (`upload.requestSizeLimit`) **and** 20 MiB per file (`upload.limits.fileSize`; also `files: 3`, `fields: 20`, `fieldSize` 1 MiB). Raise both in the root `buildConfig` — `upload: { requestSizeLimit, limits: { fileSize } }` — if you accept larger files through Payload.
 - External files (pasted URLs, `disableLocalStorage`) need a trusted origin: set `serverURL` or add the app origin to CORS/CSRF. `externalFileHeaderFilter(headers, context)` receives `context.isSameOrigin` — strip cookies for foreign hosts.
+- `upload.pasteURL` limits "paste a URL" uploads: `false` turns remote fetching off, `{ allowList: [{ hostname: 'cdn.example.com', protocol: 'https' }] }` enables server-side fetching for those hosts only (entries take `hostname`, optional `pathname`, `port`, `protocol`, `search`). Since 3.93.0 the restriction is applied consistently to remote-URL uploads; on an upload collection that untrusted users can write to, set it explicitly (source: release v3.93.0, `payload@3.94.1` types).
 - `prefix` on an upload collection is a storage field now; a custom top-level field named `prefix` can no longer carry ordinary data — rename it.
 
 ## Versions & Drafts

@@ -110,6 +110,8 @@ db: sqliteD1Adapter({
 
 For running Payload on **Cloudflare Workers** with a D1 database — see the official `with-cloudflare-d1` template (pairs with the `r2Storage` upload adapter below).
 
+Workers also cap PBKDF2 at 100,000 iterations, below Payload's 600,000 default for password hashes. If creating a user or changing a password fails with an error about unsupported PBKDF2 iterations, set `auth: { passwordHashIterations: 100000 }` in the root config (3.93+) — and read the sign-in trade-off for existing users in the `authentication` skill first (source: release v3.93.0).
+
 ## Transactions
 
 Postgres, SQLite (with `transactionOptions`), and MongoDB-with-replica-set provide all-or-nothing transactions. Payload uses them automatically per HTTP request. **You must thread `req` through nested ops** to keep the transaction alive:

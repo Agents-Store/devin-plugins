@@ -202,6 +202,7 @@ req.payload.logger.error('Failed')
 | `QueryError` on a polymorphic join | Unsupported `where` (localized fields, arrays/blocks, paths through relationship/upload/json, `near/within/intersects/all`) | Rewrite the filter / the read access rule to use direct, compatible fields |
 | Custom Lexical feature fails to compile | Lexical 0.50 removed old APIs; direct `lexical` dependency | Drop `lexical` / `@lexical/*` deps, import from `@payloadcms/richtext-lexical/lexical` |
 | `peer dependency` error on `next` or `react` | `@payloadcms/next` 3.94 needs `next >=16.4.5 <17` (or a patched 15.2–15.4 line) and patched React 19 (`~19.0.9 || ~19.1.10 || ~19.2.9 || ^19.3.1`); 3.90 only needed `next >=16.3.3` | Upgrade Next and React — see `nextjs-integration` |
+| `The following field is invalid: <blocks field>` on write after 3.93; or a query on a block's restricted field is refused | 3.93 rejects block rows whose `blockType` is not configured on that field, and checks field `read` access inside blocks before queries | Use only block types listed on the field; grant read on the block field to the querying role — see `access-control` (Security Checklist After 3.93) |
 | `Unsupported engine` / install refuses on Node 20 | Since 3.92 (patch floor raised again in 3.94) the engines field is `^22.23.5 || ^24.22.3 || >=26.13.1` | Move to a patched Node 22/24 LTS |
 
 ## Upload: "Cannot read file" after deploy

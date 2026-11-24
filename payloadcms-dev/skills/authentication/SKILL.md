@@ -147,6 +147,28 @@ What changes for authentication:
 - **`schedulePublish` jobs now record the scheduling user's auth collection** — re-create any publish/unpublish events that were pending at upgrade time, and pass `user: { relationTo, value }` (value is the user ID) from custom queue code.
 - **Form Builder, uploads, jobs** also changed defaults — see the `official-plugins`, `adapters` and `jobs-queue` skills.
 
+## Password Hashing on Runtimes That Cap PBKDF2 (3.93+)
+
+The local strategy hashes new passwords with PBKDF2-SHA256 at 600,000 iterations by default. Some runtimes, Cloudflare Workers among them, refuse more than 100,000. Without a setting, creating or changing a password there fails with an `InvalidConfiguration` error that names the iteration count. Since 3.93.0 the root config can lower it — the option accepts exactly `100000` or `600000`:
+
+```ts
+// payload.config.ts
+export default buildConfig({
+  auth: {
+    passwordHashIterations: 100000,   // only 100000 | 600000; default 600000
+  },
+  // ...
+})
+```
+
+Trade-offs to state before applying it:
+
+- A deployment limited to 100,000 iterations **cannot verify existing 600,000-iteration hashes**. Those users cannot sign in there until they reset their password, or sign in once through a Node.js deployment that also sets `passwordHashIterations: 100000` — that login re-hashes the password into a form the restricted runtime can verify.
+- A stored hash with a different count is re-hashed on the next successful login, so mixed deployments converge on whatever the running config says.
+- 100,000 is the weaker setting. Use it only where the runtime forces it; on Node hosts leave the default.
+
+Sources: release v3.93.0, `payload@3.94.1` config types, [Authentication docs](https://payloadcms.com/docs/authentication/overview). The adapter side of Workers deployments is in the `adapters` skill (Cloudflare D1).
+
 ## Auth Emails: Verify & Forgot-Password
 
 Customize the verification and reset emails inside `auth`. Both objects accept `generateEmailHTML` and `generateEmailSubject`. `generateEmailHTML` receives `{ req, token, user }`; `generateEmailSubject` receives `{ req, user }`. Point the link at your own frontend route — not Payload's API.
