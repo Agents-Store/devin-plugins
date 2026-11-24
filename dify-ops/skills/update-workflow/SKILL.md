@@ -44,10 +44,10 @@ START_COMMIT=$(git rev-parse HEAD)
 DEV_TIP=$(git rev-parse -q --verify refs/heads/dev || echo "$START_COMMIT")   # dev's tip before the merge
 echo "Branch: ${START_BRANCH:-detached HEAD}   Commit: $START_COMMIT   dev tip: $DEV_TIP"
 git status --short                                # anything listed = dirty tree
-docker compose version --short                    # must be >= 2.24.0
+docker compose version --short                    # must be >= 2.35.0
 ```
 
-**Docker Compose >= 2.24.0** is required (`env_file … required: false`).
+**Docker Compose >= 2.35.0** is required since 1.19.0: below it a value in the root `.env` does not override the defaults files of a service.
 
 Record `DEV_TIP` and `START_BRANCH`, not just `HEAD`: the merge happens on `dev`, so a rollback has to put **`dev`** back where it was and then return to the branch the update started on. Resetting `dev` to a `HEAD` captured on `main` would discard the user's customization commits.
 
@@ -78,14 +78,14 @@ git tag --list | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1
 
 ```bash
 git tag --list | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -10
-gh release view <tag> -R langgenius/dify --json body -q .body   # sections: Environment Variable Changes, Database Migrations, Upgrade Guide
+gh release view <tag> -R langgenius/dify --json body -q .body   # sections vary by release: Environment Variable (or Configuration and Integration) Changes, Database Migrations, Upgrade Guide
 ```
 
 Read the upgrade notes of **every** release between the running version and the target. Upgrade steps differ per release.
 
-## Weaviate Migration Path (Dify 1.17.1)
+## Weaviate Migration Path (Dify 1.17.1 and newer)
 
-From Dify 1.17.1 the bundled Weaviate server moves from `semitechnologies/weaviate:1.27.0` to `cr.weaviate.io/semitechnologies/weaviate:1.39.2` (a different registry). An existing data volume cannot cross 12 minor versions in one step. Pulling and restarting on top of the old volume can **silently and permanently** break vector search.
+From Dify 1.17.1 the bundled Weaviate server moves from `semitechnologies/weaviate:1.27.0` to `cr.weaviate.io/semitechnologies/weaviate:1.39.2` (a different registry); 1.18.0 and newer pin `1.39.13`, a patch step inside 1.39 that needs no staging from 1.17.1. An existing data volume cannot cross 12 minor versions in one step. Pulling and restarting on top of the old volume can **silently and permanently** break vector search.
 
 **The gate** — STOP before any change when all of these hold:
 
@@ -101,7 +101,7 @@ A fresh install, an external Weaviate server and every other `VECTOR_STORE` are 
 1. Check the current server version (`/v1/meta`). Below 1.27 start with the Weaviate v4 migration guide of Dify.
 2. Stop Dify's request and worker services: `docker compose stop -t 120 nginx api api_websocket worker worker_beat` (omit `api_websocket` if the compose file has none) and keep them stopped until the last rung passes.
 3. Record the object count, stop Weaviate with `docker compose stop -t -1 weaviate`, copy `volumes/weaviate` with `cp -a` (ownership preserved). In production prefer Weaviate's own backup module.
-4. Step through every minor in order, `1.27` → `1.28` → … → `1.38`, each time the latest patch of that minor from the runbook's table, then exactly the version your `docker-compose.yaml` pins (`1.39.2`) as the last rung. Per rung: edit the `weaviate` image tag, `docker compose stop -t -1 weaviate`, `docker compose up -d weaviate`, wait at least 10 seconds (collections mount 4–9 s after `/v1/meta` answers from 1.31 on), verify version, collection list, object count and cluster synchronization.
+4. Step through every minor in order, `1.27` → `1.28` → … → `1.38`, each time the latest patch of that minor from the runbook's table, then exactly the version the target release's `docker-compose.yaml` pins as the last rung (`1.39.2` for 1.17.1, `1.39.13` for 1.18.0 and newer — the runbook has a row per release; a newer patch would be a downgrade when the pin is applied). Per rung: edit the `weaviate` image tag, `docker compose stop -t -1 weaviate`, `docker compose up -d weaviate`, wait at least 10 seconds (collections mount 4–9 s after `/v1/meta` answers from 1.31 on), verify version, collection list, object count and cluster synchronization.
 5. Revert only the temporary image edit, then continue with the normal update below. Run a test retrieval before returning the stack to service.
 
 Never `docker kill`, `docker rm -f` or a stop that falls back to SIGKILL: Weaviate keeps its vector index in memory and persists it through a commit log, a hard kill leaves it incomplete, and `near_vector` then misses objects without a single log line. Object count, listing and BM25 look healthy. The only repair is re-indexing the knowledge base.
@@ -170,7 +170,7 @@ echo "$CONFLICTS"
 | `docker/.env.example` | Accept theirs | `.env` is synced separately; the example must match upstream |
 | `docker/docker-compose.yaml` | Accept theirs | Generated by `generate_docker_compose` ("do not modify"); a release can add services Dify needs |
 | `docker/docker-compose-template.yaml` | Accept theirs | The source the compose file is generated from |
-| `docker/envs/**/*.env.example` | Accept theirs | Templates; the user's own `*.env` files are untracked |
+| `docker/envs/**/*.defaults`, `docker/envs/**/*.env.example` | Accept theirs | Tracked defaults and templates; the user's own `*.env` override files are untracked |
 | Other files | Show diff, let user decide | Context-dependent |
 
 Accepting theirs: `git checkout --theirs <path> && git add <path>`.
@@ -182,7 +182,7 @@ Customizations no longer live in `docker-compose.yaml`:
 - **Ports and settings** → `.env`. Host ports are `EXPOSE_NGINX_PORT` and `EXPOSE_NGINX_SSL_PORT`; `NGINX_PORT` is the container-internal port. Example: `EXPOSE_NGINX_PORT=8081`, `EXPOSE_NGINX_SSL_PORT=8444`.
 - **Extra volumes, services, labels, limits** → `docker/docker-compose.override.yaml`. Compose reads it automatically next to `docker-compose.yaml`, and upstream git ignores it, so it never conflicts. List fields such as `ports` are appended, not replaced, so prefer `.env` for ports.
 - **Template-level changes** → edit `docker-compose-template.yaml`, then run `./generate_docker_compose` inside `docker/`.
-- **Optional settings** → copy `envs/<group>/<name>.env.example` to `envs/<group>/<name>.env`; `.env` still wins.
+- **Service settings** → copy `envs/<group>/<name>.defaults` to `envs/<group>/<name>.env` (the file's first lines name the override path) and edit the copy; Compose loads the tracked `.defaults` itself and the `.env` copy on top. Optional integrations still ship as `<name>.env.example` templates that you copy without the suffix. Root `.env` wins over both. Since 1.20.0 the common API and worker settings live in `envs/core-services/api-worker.env` (the retired `shared.env` is no longer loaded) and public URLs in `envs/core-services/urls.env`.
 
 Example override that caps the memory of the Celery worker:
 
@@ -211,9 +211,19 @@ docker compose pull
 docker compose up -d
 ```
 
+Apply every env-file change with `docker compose up -d`; `docker compose restart` does not reload env files.
+
 Database migrations run at start-up: with `MIGRATION_ENABLED=true` the entrypoint runs `flask upgrade-db`. Run it by hand with `docker compose exec -T api flask upgrade-db`. Some migrations are slow on large tables (the conversation cleanup index in 1.17.0) and some cannot be reversed (the model-type migration in 1.17.1).
 
 One manual step exists for targets from 1.15 up to 1.17.0 on an install that was upgraded from before 1.15: `docker compose exec -T api flask data-migrate legacy-model-types` (a dry run), review the output, then rerun it with `--apply` and send the output to a file in the backup directory. Targets from 1.17.1 on do it inside the automatic migration and need no command.
+
+## Upgrade Notes Worth Knowing (1.18.0 to 1.20.0)
+
+Dify's release notes decide; these are the points that bite an install that follows this workflow (read the notes of every release in between, see above):
+
+- **1.18.0** — `DIFY_AGENT_LOCAL_SANDBOX_AUTH_TOKEN` must be set and non-empty: the local Agent sandbox of 1.18.0 requires an authentication token. Generate it with `openssl rand -hex 32`, keep it in the root `.env`, keep it unchanged afterwards. The API, workers, agent backend and sandbox images must all move to the same release. Leave `PASSWORD_PEPPER` as it was (empty stays empty; a new pepper is not a transparent migration and needs a password-reset plan). The bundled nginx now overwrites `X-Forwarded-For`: behind a load balancer configure its trusted real-IP handling, or all visitors share one rate-limit bucket.
+- **1.19.0** — Docker Compose >= 2.35.0. `.env.example` shrank to the settings that need a human; defaults moved into tracked `envs/**/*.defaults`. `PLUGIN_DAEMON_KEY` and `PLUGIN_DIFY_INNER_API_KEY` belong in the root `.env`. New tracing tasks use the queue `ops_trace_v2`: a custom `CELERY_QUEUES` or `CELERY_WORKER_QUEUES` list must include it, and a rolling upgrade (old and new workers side by side) must keep old consumers on `ops_trace` until their work is done; a single-stack update with the stack down needs no more.
+- **1.20.0** — `envs/core-services/shared.env` is no longer loaded (rename it to `api-worker.env`). New `urls.defaults` / `urls.env` for the public URLs. `OPENAPI_ENABLED` defaults to `true`. `init_permissions` now also prepares `volumes/plugin_daemon`, so recreate the stack with `docker compose up -d` and let it exit with 0 first. Custom reverse proxies need the `/callbacks/human-input/v2/im/` route and custom Celery queue lists need `human_input_delivery` and `human_input_contact_sync`.
 
 ## Post-update Verification
 

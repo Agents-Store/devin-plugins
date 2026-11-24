@@ -4,6 +4,8 @@
 
 User runs Dify 1.16.1 with the bundled Weaviate (the default `VECTOR_STORE=weaviate`, knowledge bases already indexed) and wants version `1.17.1` specifically. The folder was renamed, so the Docker project is `dify-prod`. 1.17.1 moves the bundled Weaviate server from 1.27.0 to 1.39.2, which the old data volume cannot survive in one step: the update must stop at the pre-flight, send the user through the official runbook, and only then continue.
 
+> The walkthrough targets 1.17.1, so the env sync behaves as the script of that release does (it rebuilds `.env` and drops keys). With a target of 1.18.0 or newer the Weaviate runbook's last rung is the version that release pins (`1.39.13`), not `1.39.2`; with 1.19.0 or newer the script only appends and nothing is dropped, and Compose must be >= 2.35.0.
+
 ## Starting State
 
 - Branch: `dev`
@@ -80,7 +82,7 @@ The stash runs in Step 5 of the command, right before the merge, after the backu
 ```
 DIFY UPDATE PLAN   1.16.1 -> 1.17.1
 TARGET    <DIFY_DIR> · compose project dify-prod · merge 1.17.1 into dev
-PRECHECK  Compose 2.29.7 · Weaviate gate: lifted (--weaviate-staged) · release notes read
+PRECHECK  Compose 2.40.3 · Weaviate gate: lifted (--weaviate-staged) · release notes read
 CHANGE    git merge 1.17.1 · env sync · docker compose pull && docker compose up -d
 BACKUP    <backup-dir>/20261003-142000: docker-compose.yaml, .env, volumes.tgz — stack down first
 IMPACT    downtime from down to up · 3 DB migrations at start-up, one is irreversible

@@ -41,8 +41,9 @@ git merge "$TARGET"
 
 # Sync environment: official script, secrets masked (see the env-sync skill)
 cd docker/
-bash dify-env-sync.sh   # run it through the masking filter; it DROPS keys that are not in the new .env.example
+bash dify-env-sync.sh   # run it through the masking filter; a script of 1.18.0 or older DROPS keys that are not in the new .env.example, 1.19.0 and newer only appends
 # then list dropped key names against <backup-dir>/.env and restore the ones you need (env-sync skill)
+# 1.18.0 and newer: DIFY_AGENT_LOCAL_SANDBOX_AUTH_TOKEN must be set; 1.20.0: rename envs/core-services/shared.env to api-worker.env
 
 # Pull and start
 docker compose pull

@@ -4,6 +4,8 @@
 
 User runs Dify 1.16.1. The repository is checked out on `main` (the branch that tracks upstream) while the customizations live on `dev`; a custom host port is set in `.env`. The vector store is Qdrant (`VECTOR_STORE=qdrant`), so the Weaviate migration gate does not apply. They want the latest stable release.
 
+> The walkthrough was recorded when 1.17.1 was the latest tag, so the env sync behaves as the script of that release does (it rebuilds `.env` and drops keys). With a target of 1.19.0 or newer the script only appends, nothing is dropped, and the "dropped keys" step finds nothing; the same update also needs Compose >= 2.35.0, a non-empty `DIFY_AGENT_LOCAL_SANDBOX_AUTH_TOKEN` (1.18.0) and, on 1.20.0, `shared.env` renamed to `api-worker.env`.
+
 ## Starting State
 
 - Branch: `main` at `fed9876`; `dev` at `abc1234` (their customization commits)
@@ -38,7 +40,7 @@ Branch: main   Commit: fed9876...   dev tip: abc1234...
                 (the rollback resets dev to abc1234 — not to HEAD — and returns to main)
 
 $ docker compose version --short
-2.29.7                      (>= 2.24.0: OK)
+2.40.3                      (>= 2.35.0: OK)
 
 Docker project: docker      (from the labels of the running api container)
 
@@ -70,7 +72,7 @@ Claude summarises: nothing blocks this instance; the model-type migration is one
 ```
 DIFY UPDATE PLAN   1.16.1 -> 1.17.1
 TARGET    <DIFY_DIR> · compose project docker · merge 1.17.1 into dev
-PRECHECK  tree clean · Compose 2.29.7 · Weaviate gate: n/a (qdrant) · release notes read
+PRECHECK  tree clean · Compose 2.40.3 · Weaviate gate: n/a (qdrant) · release notes read
 CHANGE    git merge 1.17.1 · env sync · docker compose pull && docker compose up -d
 BACKUP    <backup-dir>/20261003-101500: docker-compose.yaml, .env, volumes.tgz — stack down first
 IMPACT    downtime from down to up · start-up runs 3 DB migrations, one is irreversible
@@ -153,8 +155,8 @@ Claude then compares the key **names** of `<backup-dir>/20261003-101500/.env` wi
 
 ```
 DIFY_AGENT_RUN_RETENTION_SECONDS -> envs/core-services/dify-agent.env
-DIFY_AGENT_SHELLCTL_AUTH_TOKEN -> .env   (no template declares it: custom, or removed upstream)
-DIFY_AGENT_SHELLCTL_ENTRYPOINT -> .env   (no template declares it: custom, or removed upstream)
+DIFY_AGENT_SHELLCTL_AUTH_TOKEN -> .env   (nothing declares it: custom, or removed upstream)
+DIFY_AGENT_SHELLCTL_ENTRYPOINT -> .env   (nothing declares it: custom, or removed upstream)
 SMTP_PASSWORD -> envs/core-services/shared.env envs/security.env
 ```
 

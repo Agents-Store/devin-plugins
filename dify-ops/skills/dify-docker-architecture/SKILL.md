@@ -8,7 +8,7 @@ description: >
   "dify architecture", "dify compose".
 ---
 
-Layout and service names below follow Dify 1.17.x (checked against the `1.17.1` tag). Older releases have fewer services and a monolithic `.env.example`; read the target release's own files when in doubt.
+Layout and service names below follow Dify 1.20.x (checked against the `1.20.0` tag). Older releases have fewer services, a monolithic `.env.example` (before 1.14.1) and no `.defaults` files (before 1.19.0); read the target release's own files when in doubt.
 
 ## Directory Layout
 
@@ -25,9 +25,9 @@ dify/                              # Git repo root (DIFY_ROOT)
 │   ├── docker-compose.override.yaml   # Optional, yours: Compose reads it, upstream git ignores it
 │   ├── docker-compose.middleware.yaml # Middleware only, for developing Dify from source
 │   ├── docker-compose.e2b.yaml    # E2B sandbox variant (since 1.17.0)
-│   ├── .env.example               # Essential startup settings (about 240 keys)
-│   ├── .env                       # User's configuration (gitignored), read last — wins
-│   ├── envs/                      # Optional settings, grouped (see below)
+│   ├── .env.example               # Short template: the settings that need a human (2 keys since 1.19.0)
+│   ├── .env                       # User's deployment inputs and overrides (gitignored), wins over envs/
+│   ├── envs/                      # Tracked *.defaults, optional *.env overrides and templates (see below)
 │   ├── dify-env-sync.sh           # Official env sync script (also dify-env-sync.py)
 │   ├── env-backup/                # Timestamped .env backups (gitignored)
 │   ├── nginx/                     # nginx.conf.template, proxy.conf.template, https.conf.template,
@@ -56,7 +56,7 @@ Customizations belong in `.env`, `envs/*.env` and `docker-compose.override.yaml`
 
 ## Docker Compose Services
 
-Requires **Docker Compose >= 2.24.0** (`docker compose version`); the compose files use `env_file … required: false`.
+Requires **Docker Compose >= 2.35.0** since 1.19.0 (`docker compose version`): below it a root `.env` value does not take precedence over the defaults files of a service. The compose files also use `env_file … required: false`.
 
 | Service | Image | Port | Purpose |
 |---------|-------|------|---------|
@@ -66,7 +66,7 @@ Requires **Docker Compose >= 2.24.0** (`docker compose version`); the compose fi
 | `worker` | `langgenius/dify-api` | — | Celery async task worker |
 | `worker_beat` | `langgenius/dify-api` | — | Celery Beat scheduler |
 | `web` | `langgenius/dify-web` | 3000 (internal) | Next.js frontend UI |
-| `plugin_daemon` | `langgenius/dify-plugin-daemon` (`-local` tag) | 5002 (internal) | Plugin execution service |
+| `plugin_daemon` | `langgenius/dify-plugin-daemon` (`-local` tag, `0.6.15-local` in 1.20.0) | 5002 (internal) | Plugin execution service |
 | `agent_backend` | `langgenius/dify-agent-backend` | internal | Agent runs (since 1.16.0) |
 | `local_sandbox` | `langgenius/dify-agent-local-sandbox` | 5004 (internal) | Agent shell sandbox (since 1.16.0) |
 | `agent_ssrf_proxy` | `ubuntu/squid` | 3128 (internal) | Forward proxy for the agent sandbox (since 1.16.1) |
@@ -76,16 +76,17 @@ Requires **Docker Compose >= 2.24.0** (`docker compose version`); the compose fi
 | `redis` | `redis:6-alpine` | 6379 (internal) | Cache + Celery broker |
 | `db_postgres` | `postgres:15-alpine` | 5432 (internal) | PostgreSQL (profile `postgresql`, default) |
 | `db_mysql` | `mysql:8.0` | 3306 (internal) | MySQL (profile `mysql`, when `DB_TYPE=mysql`) |
-| `weaviate` | `cr.weaviate.io/semitechnologies/weaviate:1.39.2` | 8080 (internal) | Default vector database, selected by `VECTOR_STORE`; one service per supported store |
+| `weaviate` | `cr.weaviate.io/semitechnologies/weaviate:1.39.13` (1.39.2 in 1.17.1) | 8080 (internal) | Default vector database, selected by `VECTOR_STORE`; one service per supported store |
 | `certbot` | `certbot/certbot` | — | Certificate renewal (profile `certbot`) |
+| `knowledge_fs`, `knowledge_fs_*_worker`, `worker_knowledge_fs_upgrade` | `langgenius/dify-knowledge-fs-api`, `langgenius/dify-api` | internal | Optional KnowledgeFS integration, profile `knowledge-fs`, off by default (since 1.18.0); needs its own database and settings from the Docker README before use |
 
 **Notes:**
-- That is 15–16 services in a default start. Count against `docker compose ps`, not against a fixed number.
+- That is 15–16 services in a default start (the KnowledgeFS services are not part of it). Count against `docker compose ps`, not against a fixed number.
 - `api`, `api_websocket` and `worker` use the **same image** — different startup mode
 - The plugin daemon service listens on 5002 (`PLUGIN_DAEMON_PORT`, `PLUGIN_DAEMON_URL`)
 - Port 5003 is the plugin remote-debugging port, published on the host through `EXPOSE_PLUGIN_DEBUGGING_PORT`
 - `COMPOSE_PROFILES` controls which database, vector store and optional services start
-- Weaviate: before 1.17.1 the image was `semitechnologies/weaviate:1.27.0`. The 1.17.1 move to 1.39.2 needs a staged volume upgrade — see the `update-workflow` skill, "Weaviate Migration Path"
+- Weaviate: before 1.17.1 the image was `semitechnologies/weaviate:1.27.0`. The 1.17.1 move to 1.39.2 needs a staged volume upgrade (1.18.0 and newer pin 1.39.13, a patch step from there) — see the `update-workflow` skill, "Weaviate Migration Path"
 - `db_postgres` has a health check enabled
 
 ## Container Naming Convention
@@ -108,20 +109,20 @@ Add `--filter "label=com.docker.compose.project.working_dir=<docker-dir>"` when 
 
 ## .env.example and envs/ Structure
 
-Since 1.14.1 the configuration is split. The root `.env.example` carries only what a default deployment needs to start (about 240 keys). Optional, provider-specific and service-specific settings live in templates under `envs/`:
+The root `.env.example` carries only what a default deployment cannot guess: `COMPOSE_PROFILES` and `DIFY_AGENT_LOCAL_SANDBOX_AUTH_TOKEN` (generate with `openssl rand -hex 32`). Before 1.19.0 it held about 240 keys. Everything else has a default in a tracked file under `envs/`:
 
 | Path | Holds |
 |------|-------|
-| `envs/core-services/` | `shared.env.example` (the largest, 500+ keys), `api`, `web`, `worker`, `worker-beat`, `sandbox`, `plugin-daemon`, `dify-agent`, `local-sandbox` |
+| `envs/core-services/` | `api-worker.defaults` (common API, worker and Beat settings; `shared.env.example` before 1.19.0), `api`, `web`, `worker`, `worker-beat`, `sandbox`, `plugin-daemon`, `dify-agent`, `urls` (public URLs, 1.20.0), `local-sandbox`, `knowledge-fs*` |
 | `envs/databases/` | `db-postgres`, `db-mysql`, `redis` |
 | `envs/infrastructure/` | `nginx`, `ssrf-proxy`, `certbot`, `etcd`, `minio`, `milvus-standalone` |
 | `envs/vectorstores/` | One file per vector store (`weaviate`, `qdrant`, `milvus`, `pgvector`, …) |
 | `envs/security.env.example` | Credentials and tokens of optional integrations |
 | `envs/middleware.env.example` | For `docker-compose.middleware.yaml` |
 
-To use one, copy it without the `.example` suffix (`cp envs/vectorstores/milvus.env.example envs/vectorstores/milvus.env`). Compose loads `envs/**/*.env` when present (`required: false`) and reads `.env` **last**, so a value in `.env` beats the same key in `envs/`. `*.env` files are gitignored.
+`*.defaults` files are loaded automatically and replaced by every release. To change a service setting copy the file to the same name ending in `.env` (`cp envs/infrastructure/nginx.defaults envs/infrastructure/nginx.env`; the file's first comment lines name the override path), edit the copy, and run `docker compose up -d`. `*.env.example` files are templates for optional integrations: copy them without the `.example` suffix. Precedence: root `.env`, then the service's `envs/**/*.env`, then the `.defaults`. `*.env` files are gitignored. `envs/core-services/shared.env` is retired: from 1.20.0 no service loads it (rename it to `api-worker.env`).
 
-Main sections of the root file:
+Main settings by area. Before 1.19.0 they sat in the root file; now their defaults live under `envs/` and a key is in the root `.env` only when you set it:
 
 | Section | Key Variables | Notes |
 |---------|--------------|-------|
@@ -131,9 +132,9 @@ Main sections of the root file:
 | **Redis** | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD` | DB 0: cache, DB 1: Celery |
 | **Storage** | `STORAGE_TYPE`, `OPENDAL_SCHEME`, `OPENDAL_FS_ROOT` | Default: `STORAGE_TYPE=opendal`, `OPENDAL_SCHEME=fs`. S3/Azure and others are in `envs/` |
 | **Vector DB** | `VECTOR_STORE`, `WEAVIATE_ENDPOINT`, `WEAVIATE_API_KEY` | Default: weaviate. Other stores in `envs/vectorstores/` |
-| **URLs** | `CONSOLE_API_URL`, `CONSOLE_WEB_URL`, `SERVICE_API_URL` | Leave empty for same-domain |
-| **Plugin Daemon** | `PLUGIN_DAEMON_PORT`, `PLUGIN_DAEMON_URL`, `EXPOSE_PLUGIN_DEBUGGING_PORT` | Daemon 5002, debugging 5003 |
-| **Agent** | `DIFY_AGENT_API_TOKEN`, `DIFY_AGENT_SERVER_SECRET_KEY` | Development defaults — change them in production |
+| **URLs** | `CONSOLE_API_URL`, `CONSOLE_WEB_URL`, `SERVICE_API_URL`, `APP_API_URL`, `APP_WEB_URL` | Shared by web, API and workers through `envs/core-services/urls.env` (copy of `urls.defaults`, 1.20.0), base URLs without `/console/api`, `/api` or `/v1`; empty means the current origin |
+| **Plugin Daemon** | `PLUGIN_DAEMON_PORT`, `PLUGIN_DAEMON_URL`, `EXPOSE_PLUGIN_DEBUGGING_PORT`, `PLUGIN_DAEMON_KEY`, `PLUGIN_DIFY_INNER_API_KEY` | Daemon 5002, debugging 5003; the two keys are shared by several services, so they go in the root `.env` (1.19.0) |
+| **Agent** | `DIFY_AGENT_LOCAL_SANDBOX_AUTH_TOKEN`, `DIFY_AGENT_API_TOKEN`, `DIFY_AGENT_SERVER_SECRET_KEY` | The sandbox token is required and non-empty from 1.18.0 (root `.env`); the other two ship development defaults — change them in production |
 | **Nginx** | `EXPOSE_NGINX_PORT`, `EXPOSE_NGINX_SSL_PORT`, `NGINX_PORT` | Host ports are the `EXPOSE_*` pair; `NGINX_PORT` is the container-internal port |
 | **Compose** | `COMPOSE_PROFILES` | Default `${VECTOR_STORE:-weaviate},${DB_TYPE:-postgresql},collaboration` |
 
@@ -151,6 +152,6 @@ Main sections of the root file:
 1. **Forward-only updates** — Dify does not support version downgrades due to migration incompatibilities
 2. **Volume mounts** — `api`, `api_websocket` and `worker` share `volumes/app/storage` for file uploads
 3. **COMPOSE_PROFILES** — controls which services start; a missing profile silently skips its services (`collaboration`, the vector store, the database)
-4. **Weaviate** — Python client v4 needs server 1.27+. The bundled server image is `cr.weaviate.io/semitechnologies/weaviate:1.39.2` from Dify 1.17.1; always stop it with `docker compose stop -t -1 weaviate`, never `docker kill` or `docker rm -f`
+4. **Weaviate** — Python client v4 needs server 1.27+. The bundled server image is `cr.weaviate.io/semitechnologies/weaviate:1.39.2` from Dify 1.17.1 and `1.39.13` from 1.18.0; always stop it with `docker compose stop -t -1 weaviate`, never `docker kill` or `docker rm -f`
 5. **Nginx** — the server config is generated from `default.conf.template` when the container starts; change the template or the `NGINX_*` variables, not the generated file
 6. **Generated compose file** — `docker-compose.yaml` is overwritten by every release; keep customizations in `.env`, `envs/` and `docker-compose.override.yaml`
