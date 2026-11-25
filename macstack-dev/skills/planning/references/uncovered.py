@@ -24,7 +24,7 @@ bullets — no anchor names the kind of a heading the way v2's `<!-- macstack:ca
 did, so `mdblocks.entities(blocks, 'case')` saw an empty document and this script reported
 all 78 live cases as unplanned, silently. They now read through `v3` instead. A case is
 identified by its HEADING ID (`^[A-Z]-\\d{2}$`), never by its pointer: the comment above a
-case reads `<!-- macstack:ref=roles[id=coach].cases -->` — the OWNING ROLE's glob-covered
+case reads `<!-- macstack:ref=roles[id=customer].cases -->` — the OWNING ROLE's glob-covered
 case list in macstack.json — and repeats no case id, so matching cases by pointer target
 finds zero of them on the live corpus. 27 cases (`X-`, `S-`, `Z-` — cross-cutting, end-to-end
 scenarios, prohibitions) carry no such pointer at all and belong to no single role; they are

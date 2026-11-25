@@ -231,8 +231,8 @@ class ValueSplitting(unittest.TestCase):
 
     def test_ids_still_split(self):
         self.assertEqual(
-            self._field('- **Экраны:** `kalender`, `coach-portal`'),
-            {'screens': ['kalender', 'coach-portal']})
+            self._field('- **Экраны:** `my-orders`, `customer-portal`'),
+            {'screens': ['my-orders', 'customer-portal']})
 
     def test_cron_with_a_comma_is_not_a_list(self):
         # Регрессия, ради которой предикат вообще существует.

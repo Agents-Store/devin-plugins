@@ -1,6 +1,6 @@
 [
   {"query": "The client sent edits to the user cases as a PDF. Merge them into the macstack folder properly: delta, rulings, apply, log.", "should_trigger": true},
-  {"query": "клиент прислал правки: надо убрать геолокацию из кейса C-04 и поменять приоритет на «важно». Разбери и внеси.", "should_trigger": true},
+  {"query": "клиент прислал правки: надо убрать проверку срока возврата из кейса C-04 и поменять приоритет на «важно». Разбери и внеси.", "should_trigger": true},
   {"query": "merge client feedback: they returned the review package with comments on three statements, process the inbox", "should_trigger": true},
   {"query": "The client emailed this: \"Cancel within 12 hours before pickup, not 24.\" Apply it through the proper loop and log the ruling.", "should_trigger": true},
   {"query": "What changed in the client's document since last time? Compute the delta against USER-CASES.md and show me the contradictions before applying anything.", "should_trigger": true},

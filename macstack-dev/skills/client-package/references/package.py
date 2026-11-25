@@ -12,7 +12,7 @@ and gives every checkable claim a place to answer: confirm, correct, or ask. v1 
 four documents and read two, which is the same failure with a smaller number.
 
 IDS ARE STABLE. Every acceptance bullet carries `C-04.a3`, every screen prohibition
-`coach-today.f2`, allocated from the document's own order and unchanged by a rebuild. v1
+`my-orders.f2`, allocated from the document's own order and unchanged by a rebuild. v1
 numbered bullets positionally per package, which only worked because handoffs/ is
 immutable and broke the moment a bullet was inserted above another. A client's comment
 has to survive the next round.
@@ -571,8 +571,8 @@ def _md_block(lines):
 
     Строки абзаца склеиваются ДО преобразования. В документе жирный текст
     свободно переносится на следующую строку, и построчное преобразование
-    оставляло от него половину: «**центр» на одной строке и «подтверждает
-    часы**» на другой — ни одна не пара сама себе.
+    оставляло от него половину: «**заказ» на одной строке и «подтверждает
+    оплату**» на другой — ни одна не пара сама себе.
     """
     out, ul, para = [], False, []
 

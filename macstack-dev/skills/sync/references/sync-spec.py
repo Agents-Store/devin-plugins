@@ -151,7 +151,7 @@ def is_screen(iface):
 # v3 fields the schema declares an ARRAY: v3._value() returns a bare string when the
 # document names exactly one id and a list only for several (comma is a list
 # separator, not a marker of arrayness), so a screen naming one role would otherwise
-# hand jsonedit a string where interfaces[].roles wants ["coach"]. Coercing at the
+# hand jsonedit a string where interfaces[].roles wants ["customer"]. Coercing at the
 # read boundary means every caller downstream — comparison and apply alike — already
 # sees the shape the schema expects.
 ARRAY_FIELDS = frozenset((
@@ -208,7 +208,7 @@ def doc_case(it):
     """Кейс из USER-CASES.md.
 
     Роль читается из УКАЗАТЕЛЯ, а не из пункта: на живом корпусе у кейса нет
-    пункта «Кто» — принадлежность роли несёт `roles[id=coach].cases`, и до схемы
+    пункта «Кто» — принадлежность роли несёт `roles[id=customer].cases`, и до схемы
     rev 13 это был единственный её адрес. Сквозные `X-`, сценарии `S-` и запреты
     `Z-` не принадлежат роли по существу и указателя не несут вовсе.
     """
@@ -225,8 +225,8 @@ def doc_case(it):
 
 
 def screen_target(it):
-    """The interface AREA the pointer names — `interfaces[id=coach-portal]` ->
-    'coach-portal'. NOT it.id: UX-UI.md writes one heading per screen, macstack.json
+    """The interface AREA the pointer names — `interfaces[id=customer-portal]` ->
+    'customer-portal'. NOT it.id: UX-UI.md writes one heading per screen, macstack.json
     keeps one record per area, and matching on the screen's own heading id would
     report every non-entry screen `add` forever, since no screen slug is ever an
     interfaces[].id.

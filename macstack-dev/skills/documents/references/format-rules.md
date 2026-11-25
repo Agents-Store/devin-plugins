@@ -29,7 +29,7 @@ is read.
 ### 2. The pointer — one above each entity heading
 
 ```markdown
-<!-- macstack:ref=triggers[id=trg-week-close] -->
+<!-- macstack:ref=triggers[id=trg-report-close] -->
 ```
 
 It names where the same data lives in `macstack.json`. It is a comment, so the client
@@ -43,8 +43,8 @@ Two forms, and which one you use depends on whether the id is something people s
 loud:
 
 ```markdown
-### C-04 · Отметиться на занятии (check-in)
-### Закрытие полумесячного периода — `trg-week-close`
+### C-04 · Оформить возврат заказа (return)
+### Закрытие отчётного периода — `trg-report-close`
 ```
 
 A short spoken id (`C-04`, `A5`, `Z-03`) goes first, before the title. A technical slug
@@ -54,7 +54,7 @@ goes last, in backticks, after an em dash. Both are ids; neither is decoration.
 
 ```markdown
 - **Насколько важно:** критично
-- **Экраны:** `kalender`, `coach-portal`
+- **Экраны:** `my-orders`, `customer-portal`
 ```
 
 The label is in the document's language and is declared in `doc-contracts.json`. The
@@ -71,8 +71,8 @@ reports undeclared labels; the parser never guesses.
 
 ```markdown
 **Готово, если:**
-- на первом экране видна кнопка «Начать занятие» — без поиска и переходов;
-- если коуч не в центре — отказ, который называет центр и расстояние до него;
+- на первом экране видна кнопка «Вернуть заказ» — без поиска и переходов;
+- если срок возврата истёк — отказ, который называет заказ и дату окончания срока;
 ```
 
 Free prose between entities needs no label at all and is preserved exactly as written.
@@ -130,7 +130,7 @@ HANDBOOK.md               0           0         0        0            0
 |---|---|---|
 | `identity` | the last `[id=…]` equals the heading id | triggers, tasks, roles, goals, results, integrations, open items |
 | `container` | the pointed entry exists; the heading id is unique in the document | screens — 37 of them onto 9 `interfaces[]` entries |
-| `member` | the heading id satisfies the glob at the pointed path | cases — `roles[id=coach].cases` holds `["C-*"]`, not objects |
+| `member` | the heading id satisfies the glob at the pointed path | cases — `roles[id=customer].cases` holds `["C-*"]`, not objects |
 | `none` | no pointer, and the id prefix is reserved | `X-`, `S-`, `Z-` cases belong to every role, so to none |
 
 `interfaces[]` staying at AREA level is a recorded decision, not an omission: nine
@@ -139,24 +139,24 @@ carries the area. Never conflate them.
 
 ---
 
-## Worked examples, taken from the live project
+## Worked examples on a demo project
 
 ### A case — `client/USER-CASES.md`
 
 ```markdown
-<!-- macstack:ref=roles[id=coach].cases -->
-### C-04 · Отметиться на занятии (check-in)
+<!-- macstack:ref=roles[id=customer].cases -->
+### C-04 · Оформить возврат заказа (return)
 
 - **Насколько важно:** критично
 
-Коуч пришёл в центр и за две секунды отмечает начало занятия — одной кнопкой,
+Покупатель открыл заказ в магазине Acme Corp и за две секунды оформляет возврат — одной кнопкой,
 ничего не выбирая.
 
 **Готово, если:**
-- на первом экране видна кнопка «Начать занятие» для ближайшего занятия;
-- геолокация запрашивается и проверяется сама;
-- если коуч не в центре — отказ, который называет центр и расстояние до него;
-- после отметки экран показывает время check-in, а кнопка меняется на «Закончить».
+- на первом экране видна кнопка «Вернуть заказ» для последнего доставленного заказа;
+- срок возврата запрашивается и проверяется сам;
+- если срок возврата истёк — отказ, который называет заказ и дату окончания срока;
+- после оформления экран показывает номер возврата, а кнопка меняется на «Отменить возврат».
 ```
 
 The role is **not** a bullet. It is the pointer, one line above. A second copy of a
@@ -176,17 +176,17 @@ is the behaviour.
 ### A trigger — `client/AUTOMATION.md`
 
 ```markdown
-<!-- macstack:ref=triggers[id=trg-week-close] -->
-### Закрытие полумесячного периода — `trg-week-close`
+<!-- macstack:ref=triggers[id=trg-report-close] -->
+### Закрытие отчётного периода — `trg-report-close`
 
 - **Что это за событие:** расписание
 - **Кто его создаёт:** часы, по расписанию
 - **Когда срабатывает:** `0 6 1,16 * *`
-- **Что поднимает:** workflow `wf-week-close-prompt`
-- **Чьи задачи двигает:** Коуч, Контактное лицо тренинг-центра
+- **Что поднимает:** workflow `wf-report-close-prompt`
+- **Чьи задачи двигает:** Покупатель, Менеджер магазина
 
-**Что происходит.** 1-го и 16-го числа платформа собирает период, который только что
-закончился, и создаёт проекцию к подтверждению — только непустую.
+**Что происходит.** 1-го и 16-го числа магазин собирает период, который только что
+закончился, и создаёт черновик отчёта к подтверждению — только непустой.
 ```
 
 Two fields are required, `type` and `source`, and the client asks the second question
@@ -197,13 +197,13 @@ trigger (4 of 13), `За чем следит` only on a data-event one (3 of 13)
 ### A task — `client/AUTOMATION.md`
 
 ```markdown
-<!-- macstack:ref=processes[id=time-tracking].tasks[id=log-hours] -->
-#### Запросить исправление посчитанного времени — `log-hours`
+<!-- macstack:ref=processes[id=stock-control].tasks[id=fix-stock] -->
+#### Запросить исправление посчитанного остатка — `fix-stock`
 
-- **Кто делает:** Коуч (`coach`)
+- **Кто делает:** Менеджер магазина (`manager`)
 - **Что от человека требуется:** внести данные
 
-**Что происходит.** Коуч видит, что платформа посчитала не то время, и открывает
+**Что происходит.** Менеджер видит, что магазин посчитал не тот остаток на складе, и открывает
 запрос на исправление. Комментарий обязателен — без него запрос не отправляется.
 ```
 
@@ -218,24 +218,24 @@ grouping, and the pointer says the same thing again for the machine.
 ### A screen — `client/UX-UI.md`
 
 ```markdown
-<!-- macstack:ref=interfaces[id=coach-portal] -->
-### Календарь коуча — `kalender`
+<!-- macstack:ref=interfaces[id=customer-portal] -->
+### Мои заказы — `my-orders`
 
-- **Адрес:** `/kalender`
-- **Кто видит:** `coach`
+- **Адрес:** `/my-orders`
+- **Кто видит:** `customer`
 
 **Что на экране**
-- Тот же месяц отдельной страницей, назначения по дням с местом и ролью
+- Те же заказы отдельной страницей, по дням, со статусом и суммой
 
 **Что можно сделать**
-- Листать месяцы; открыть день
+- Листать страницы; открыть заказ
 
 **Чего здесь быть не должно**
-- Данных других коучей
-- Сумм тренинг-центра — коуч видит только свою сторону
+- Данных других покупателей
+- Закупочных цен магазина — покупатель видит только свою сторону
 ```
 
-Look at the two ids: the heading says `kalender`, the pointer says `coach-portal`. This
+Look at the two ids: the heading says `my-orders`, the pointer says `customer-portal`. This
 is the `container` binding, and it is why "heading id equals pointer id" cannot be the
 rule — here the pointer names the area the screen lives in, not the screen.
 
@@ -255,7 +255,7 @@ not an omission.
 - **Цель:** 10 человек
 
 MVP в боевой эксплуатации — **без обучения**. Это и есть проверка: если человеку
-нужно объяснять, как отметить занятие, платформа не готова.
+нужно объяснять, как оформить возврат, магазин не готов.
 ```
 
 A goal without a date and a number is a wish. All three fields are required.
@@ -269,10 +269,10 @@ every bullet that used the other one.
 
 ```markdown
 <!-- macstack:ref=lifecycle.needs_from_client[id=A5] -->
-### A5 · Точные формулировки об освобождении и о §19 Kleinunternehmer
+### A5 · Точные формулировки о сроке возврата и о гарантии
 
-- **Куда пойдёт:** `company.vat_note_exempt_4nr21` / `company.vat_note_kleinunternehmer`,
-  заполняются на `/settings/firma`
+- **Куда пойдёт:** `shop.return_policy_text` / `shop.warranty_note`,
+  заполняются на `/settings/shop`
 
 **Что будет, если этого нет или оно неверно**
 - Отрендерить можно любое предложение; ручаться за него мы не можем
@@ -288,15 +288,15 @@ something the client owes.
 ### A task and its milestone — `history/TASKS.md`
 
 ```markdown
-### M16-T3 · Половина дневной ставки при работе меньше 4,5 часов
+### M16-T3 · Платная доставка при заказе дешевле 50 долларов
 
 - **Состояние:** todo
 - **Заведена:** 2026-08-29
 - **Закрывает:** `CC-08`
 - **Документы:** `docs/superpowers/plans/2026-08-29-m16.md` → Задача 3
 
-**Готово, если:** день на 3 ч даёт `quantity 0.5` в обе стороны; замена `<` на `<=`
-краснит случай «ровно 4,5 — полный день».
+**Готово, если:** заказ на 30 долларов даёт `shipping 5.00` в обе стороны; замена `<` на `<=`
+краснит случай «ровно 50 — доставка бесплатна».
 ```
 
 `Документы` is where a plan written by another tool is named — `superpowers`, a design
@@ -340,7 +340,7 @@ a Russian document and a German one.
 
 `macstack.json` is always Latin script. The sync refuses to carry Cyrillic into it, and
 that guard stays: a spec half in one alphabet is a spec no external tool can read.
-Domain terms that are already Latin — `Einsatz`, `Gutschrift`, `Vorsteuerabzug` — pass
+Domain terms that are already Latin — `Retoure`, `Gutschrift`, `Lieferschein` — pass
 untouched, because translating a term from a contract makes it less precise, not more.
 
 ---

@@ -62,7 +62,7 @@ def run(root):
 
     # ── документ -> спека
     def ref_target(item):
-        """id, на который указывает метка: `interfaces[id=coach-portal]` -> coach-portal.
+        """id, на который указывает метка: `interfaces[id=customer-portal]` -> customer-portal.
 
         Сверять надо АДРЕС В МЕТКЕ, а не id сущности документа. Экранов в UX-UI.md
         тридцать семь, а interfaces[] намеренно держится на уровне областей: у двадцати

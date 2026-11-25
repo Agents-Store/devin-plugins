@@ -64,13 +64,13 @@ If your framework isn't in the list, the `"http"` adapter works for any Node HTT
 After deploying, tell Telegram where to call you:
 
 ```bash
-curl "https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://your-domain.com/<BOT_TOKEN>&drop_pending_updates=true"
+curl "https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://bot.example.com/<BOT_TOKEN>&drop_pending_updates=true"
 ```
 
 Or from code:
 
 ```typescript
-await bot.api.setWebhook("https://your-domain.com/<BOT_TOKEN>", {
+await bot.api.setWebhook("https://bot.example.com/<BOT_TOKEN>", {
   drop_pending_updates: true,
   secret_token: process.env.WEBHOOK_SECRET,
 });

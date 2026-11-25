@@ -193,7 +193,7 @@ MISC = {
 # form='slug' on every entity here, never form='id'. v3 takes the id from the
 # HEADING, not from the pointer, and _split_heading's id-first branch only
 # accepts a spoken id — CC-04, QA5, M3-T1, CZ-03. software/entities/workflows are
-# technical slugs (payload, coach, wf-entry-capture), so '### payload · Payload'
+# technical slugs (payload, customer, wf-order-capture), so '### payload · Payload'
 # parses as a titled heading with NO id: 39 pointers, 39 headings, 0 entities,
 # and not one error. The em-dash form '### Payload — `payload`' is what
 # format-rules §3 declares for a slug, and it is the only one v3 can read back.
@@ -542,7 +542,7 @@ def render_test_cases(root, lang):
 
     Первая версия считала по пунктам: 384 обещания — 384 связи. Это неверная
     единица. Пункт приёмки не тест, а строка чек-листа ВНУТРИ кейса: «кнопка
-    видна», «геолокация проверяется», «отказ называет расстояние» — человек
+    видна», «срок возврата проверяется», «отказ называет дату» — человек
     проходит это одним сценарием, а не пятью.
 
     Поэтому здесь два разных слоя, и путать их нельзя:

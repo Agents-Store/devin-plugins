@@ -14,7 +14,7 @@ Pointer binding is not one relation (v3.py's own docstring has the census): a ro
 a trigger points at itself (identity), a screen points at the interface it belongs to
 even before it has siblings there (container), and a procedure seeded from a critical
 user case points at the role's case glob, because a procedure has no entry of its own
-in macstack.json — container too, since `coach-c-04` is not a member of the glob `C-*`
+in macstack.json — container too, since `customer-c-04` is not a member of the glob `C-*`
 that lives there; it is one of many procedures filed under it, exactly as many screens
 are filed under one interface. Where the id a pointer needs is missing, this writes
 `TODO reason=...` rather than a pointer that merely LOOKS resolved — every downstream
@@ -38,7 +38,7 @@ CASE_ROLE_REF = re.compile(r'^roles\[id=([^\]]+)\]')
 def case_role(c):
     """The role a USER-CASES.md case belongs to. On the live corpus a case has no
     'role' bullet of its own — role is carried entirely by the case's own pointer,
-    `roles[id=coach].cases` — so that is read first; a bare `role` field is only a
+    `roles[id=customer].cases` — so that is read first; a bare `role` field is only a
     fallback for a document that happens to declare one anyway. A cross-cutting case
     (X-/S-/Z-) has neither and comes back ''."""
     m = CASE_ROLE_REF.match(c.ref or '')
@@ -408,7 +408,7 @@ def seed_handbook(spec, root, lang):
                 # container binding, not member: a procedure has no entry of its
                 # own in macstack.json, so it points at the case glob on its role — the
                 # same target the source case uses. The case `C-04` IS a member of that
-                # glob; the procedure `coach-c-04` is not, it is one of many filed under
+                # glob; the procedure `customer-c-04` is not, it is one of many filed under
                 # it. Calling this member is what would make a later binding check fail.
                 pointer = ('roles[id=%s].cases' % role if role
                            else 'TODO reason=no-role')

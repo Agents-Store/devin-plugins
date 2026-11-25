@@ -109,7 +109,7 @@ Earlier versions of this plugin also declared `@jpisnice/shadcn-ui-mcp-server`. 
 The official MCP only searches registries listed in `components.json`. To search the community directory:
 
 1. Add registries to `components.json` (`/add-registries` fetches the directory, skips `unavailable` and hidden entries, and merges the rest; see the `component-search` skill)
-2. Or add a handful with `npx shadcn registry add @name=https://domain.com/r/{name}.json`
+2. Or add a handful with `npx shadcn registry add @name=https://registry.example.com/r/{name}.json`
 
 Registries can also be declared in `package.json#registries` (CLI 4.18+; merged with `components.json`).
 

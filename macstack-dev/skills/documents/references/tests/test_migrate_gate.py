@@ -20,7 +20,7 @@ DOCS = os.path.dirname(HERE)
 sys.path.insert(0, DOCS)
 import migrate                                                 # noqa: E402
 
-TASKS = u"""### Coach — `coach`
+TASKS = u"""### Customer — `customer`
 
 | Task | Starts | Gate | Workflow |
 |---|---|---|---|
@@ -53,7 +53,7 @@ class GateNone(unittest.TestCase):
     def test_the_rest_of_the_row_survives(self):
         tasks = self.convert()
         self.assertRegex(tasks['cleanup-nightly'], r'(?m)^workflow: wf-b$')
-        self.assertRegex(tasks['cleanup-nightly'], r'(?m)^role: coach$')
+        self.assertRegex(tasks['cleanup-nightly'], r'(?m)^role: customer$')
 
     def test_an_unrecognised_gate_word_is_not_guessed(self):
         # «whatever» — не гейт и не пустота: не `none`, не любое другое слово.

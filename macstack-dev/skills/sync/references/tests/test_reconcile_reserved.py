@@ -54,7 +54,7 @@ class Reconcile(unittest.TestCase):
     def run_on(self, role_globs, *case_ids):
         write(os.path.join(self.root, 'macstack.json'), json.dumps({
             'docs': {'language': 'en'},
-            'roles': [{'id': 'coach', 'name': 'Coach', 'cases': role_globs}],
+            'roles': [{'id': 'customer', 'name': 'Customer', 'cases': role_globs}],
             'lifecycle': {'needs_from_client': []}}))
         write(os.path.join(self.root, 'client', 'USER-CASES.md'), cases_doc(*case_ids))
         for name in ('AUTOMATION', 'UX-UI'):

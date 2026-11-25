@@ -13,7 +13,7 @@ Only variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. All othe
 # .env.local
 DATABASE_URL="postgresql://..."          # Server only — NEVER sent to browser
 API_SECRET="sk-..."                      # Server only
-NEXT_PUBLIC_APP_URL="https://myapp.com"  # Available in browser code
+NEXT_PUBLIC_APP_URL="https://example.com"  # Available in browser code
 ```
 
 **Prevent accidental server code in client bundles** with the `server-only` package:
@@ -174,7 +174,7 @@ export async function POST(request: Request) {
 
 ```typescript
 // app/api/data/route.ts
-const ALLOWED_ORIGINS = ['https://myapp.com', 'https://admin.myapp.com']
+const ALLOWED_ORIGINS = ['https://example.com', 'https://admin.example.com']
 
 export async function GET(request: Request) {
   const origin = request.headers.get('origin') ?? ''

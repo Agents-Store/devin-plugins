@@ -9,7 +9,7 @@
 
 И он ничего не решает. Каждая строка на выходе — КАНДИДАТ: файл, вид, имя, путь.
 Сопоставляет их с документами агент, потому что «коллекция Sessions — это entity
-session или часть entity einsatz» — вопрос предметный, а не файловый.
+session или часть entity buch» — вопрос предметный, а не файловый.
 
 Правило, которое здесь дороже остальных: **выдуманный id хуже пустого поля.**
 Пустое поле видно и его спросят. Выдуманный id пройдёт вниз по течению, и каждая
@@ -32,7 +32,7 @@ import sys
 # `glob` — от корня проекта. `id_from` — как получить имя кандидата:
 #   stem  — имя файла без расширения
 #   slug  — поле slug: '...' внутри файла, иначе stem
-#   route — путь как URL: src/app/(group)/coach/today/page.tsx -> /coach/today
+#   route — путь как URL: src/app/(group)/customer/orders/page.tsx -> /customer/orders
 PROBES = {
     'cms:payload': [
         ('entity',      'src/collections/*.ts',        'slug'),

@@ -59,7 +59,7 @@ spec entirely has the same effect for the same reason.
 **An invented id is worse than an empty field.** An empty field is visible and somebody
 asks about it. An invented id passes downstream and every check below it reports green.
 When a candidate does not obviously map to an entity, say so and ask — the matching of
-`Sessions.ts` to `session` or to part of `einsatz` is a domain question, not a file one.
+`Sessions.ts` to `session` or to part of `buch` is a domain question, not a file one.
 
 ## Matching, and where it fails — measured
 
@@ -71,15 +71,15 @@ for some kinds and not at all for others. On a live 33-collection project:
 | entities | 18 of 18 | Collections and spec ids use one vocabulary. Reliable. |
 | workflows | 3 of 17 | Two different vocabularies. Useless. |
 
-Entities matched once plurals were handled — `coaches`↔`coach`, `time-entries`↔
-`time-entry`, and the German `einsaetze`↔`einsatz`, which no regular rule produces. A
+Entities matched once plurals were handled — `customers`↔`customer`, `order-items`↔
+`order-item`, and the German `buecher`↔`buch`, which no regular rule produces. A
 first pass without them reported 22 collections "missing from the documents" and 6 spec
 entities "missing from the code": **28 findings, all false, and every one of them
 plausible enough to act on.** Check the plural rules before believing a name-based list.
 
 Workflows cannot be matched this way at all. The code names them for their domain
-(`attendance`, `coach-confirm`); the spec names them for their step
-(`wf-entry-capture`, `wf-mark-verified`). Both are right, and no normalisation bridges
+(`checkout`, `order-confirm`); the spec names them for their step
+(`wf-order-capture`, `wf-mark-paid`). Both are right, and no normalisation bridges
 them. So do not guess:
 
 - record the mapping in the spec — `workflows[].source`, the path where it lives

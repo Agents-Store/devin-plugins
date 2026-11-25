@@ -162,7 +162,7 @@ bot.on("callback_query:game_short_name", async (ctx) => {
   const game = ctx.callbackQuery.game_short_name;
   // Return the URL of your game (with the user id signed into a token)
   await ctx.answerCallbackQuery({
-    url: `https://yourgame.com/play?u=${signUser(ctx.from.id)}`,
+    url: `https://game.example.com/play?u=${signUser(ctx.from.id)}`,
   });
 });
 ```

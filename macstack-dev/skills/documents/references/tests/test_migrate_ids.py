@@ -44,7 +44,7 @@ class MigrateIds(unittest.TestCase):
         self.root = tempfile.mkdtemp(prefix='macstack-migrate-')
         ms = os.path.join(self.root, 'macstack')
         write(os.path.join(ms, 'client', 'USER-CASES.md'),
-              u'### C-14 · Сообщить о проблеме\n\n### T-19 · Табель\n')
+              u'### C-14 · Сообщить о проблеме\n\n### T-19 · Инвентаризация склада\n')
         write(os.path.join(ms, 'client', 'OPEN-QUESTIONS.md'),
               u'### A27 · Роли на смене\n\n### A2 · Реквизиты\n\n### B1 · Отложенное\n')
         write(os.path.join(ms, 'history', 'TASKS.md'),
@@ -139,8 +139,8 @@ class MigrateIds(unittest.TestCase):
         молча теряет свои кейсы, а документы выглядят исправными.
         """
         spec = os.path.join(self.root, 'macstack', 'macstack.json')
-        write(spec, u'{"roles": [{"id": "coach", "cases": ["C-*"]},'
-                    u' {"id": "centre", "cases": ["T-*"]}]}\n')
+        write(spec, u'{"roles": [{"id": "customer", "cases": ["C-*"]},'
+                    u' {"id": "team", "cases": ["T-*"]}]}\n')
         self.run_script('--apply')
         got = read(spec)
         self.assertIn(u'"CC-*"', got)

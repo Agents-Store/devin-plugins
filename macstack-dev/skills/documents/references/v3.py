@@ -11,13 +11,13 @@ v3 has none of it. A client document is headings and bullet lists, plus ONE comm
 above the document and one above each entity naming where the same data sits in
 macstack.json:
 
-    <!-- macstack:ref=triggers[id=trg-week-close] -->
-    ### Закрытие полумесячного периода — `trg-week-close`
+    <!-- macstack:ref=triggers[id=trg-report-close] -->
+    ### Закрытие отчётного периода — `trg-report-close`
 
     - **Что это за событие:** расписание
     - **Кто его создаёт:** часы, по расписанию
 
-    **Что происходит.** 1-го и 16-го платформа собирает период…
+    **Что происходит.** 1-го и 16-го магазин собирает период…
 
 So the reader matches bullet labels through a per-language table. That is the price of
 a document a human will actually correct, and it is the right price: the labels are
@@ -124,7 +124,7 @@ IDENT = re.compile(r'^[A-Za-z0-9][A-Za-z0-9._*-]*$')
 # `a/b.md`, `c/d.pdf`» возвращался ОДНОЙ строкой с кавычками внутри, а `screens`
 # рядом честно становился списком. Требование «без пробелов и есть `/`» узкое
 # нарочно: cron `0 6 1,16 * *` содержит пробелы и остаётся текстом, а
-# `einsaetze.rate_unit` в «Куда пойдёт» не содержит слэша и остаётся скаляром.
+# `buecher.price_unit` в «Куда пойдёт» не содержит слэша и остаётся скаляром.
 PATHISH = re.compile(r'^[A-Za-z0-9._-]+(?:/[A-Za-z0-9._#-]+)+$')
 
 
@@ -390,7 +390,7 @@ def set_field(doc, item, key, value):
 
     ПРАВИЛО ХОЛОСТОГО ХОДА: если поле уже есть и разобранное значение совпадает
     — не трогать ничего. Сравнение по РАЗОБРАННОМУ значению, не по байтам:
-    «коуч.» остаётся «коуч.», cron `0 6 1,16 * *`, написанный без обратных
+    «заказ.» остаётся «заказ.», cron `0 6 1,16 * *`, написанный без обратных
     кавычек, их не получает, а пункт, переставленный человеком, остаётся там,
     куда его поставили. Это то свойство, которое делает `sync --write`
     безопасным.

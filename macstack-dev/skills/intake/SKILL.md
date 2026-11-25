@@ -19,7 +19,7 @@ section keys and ID regexes first — this skill assumes both and does not repea
 2. **A stray file in `client/`** — anything there that is not one of the six documents
    is incoming material, not a document. Move it to `inbox/` first, then Step 1. Lint
    rule 12.22 already refuses to let it sit there.
-3. **Text in chat** — "надо убрать геолокацию", "improve X". Write it to
+3. **Text in chat** — "надо убрать проверку срока возврата", "improve X". Write it to
    `inbox/<date>-<slug>.md` FIRST, then Step 1 like any other file.
 
 The third is the one people skip, and it is the one that costs most. A correction that

@@ -277,8 +277,8 @@ def r_12_11(c):
 
     Первая версия считала по пунктам и требовала теста на каждый из 369. Это
     неверная единица: пункт приёмки — строка чек-листа внутри кейса, а не
-    отдельный тест. «Кнопка видна», «геолокация проверяется», «отказ называет
-    расстояние» — человек проходит это одним сценарием.
+    отдельный тест. «Кнопка видна», «срок возврата проверяется», «отказ называет
+    дату» — человек проходит это одним сценарием.
 
     Читает то же, что печатает генератор, поэтому «покрыто» здесь и «покрыто»
     в документе не могут разойтись.
@@ -530,7 +530,7 @@ def _index_runs(c, doc, min_run=3):
     rather than a guess: the cited ids are DISTINCT (an index lists each entity
     once) and they come in the SAME ORDER as the headings they point at (an index
     mirrors the document). Without them three ordinary cross-reference bullets —
-    "геолокация разобрана в C-06 / спор по часам — в C-14 / счёт за месяц — в C-10",
+    "возврат разобран в C-06 / спор по оплате — в C-14 / счёт за месяц — в C-10",
     which is prose a client writes — were reported as a hand-written index.
     A cross-reference list that happens to run in document order still trips this;
     there is nothing in the data that separates that case from a real index.

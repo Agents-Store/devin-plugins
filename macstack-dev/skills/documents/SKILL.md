@@ -129,7 +129,7 @@ question is always "which file is that in". So the prefix answers it:
 | `R-2026-08-28` | release | `history/CHANGELOG.md` |
 
 The **first** letter names the file; the **second** narrows the kind — the role a
-case belongs to (`C` coach, `T` training centre, `O` admin, plus the reserved
+case belongs to (`C` customer, `T` shop team, `O` admin, plus the reserved
 `X` cross-cutting, `S` scenario, `Z` prohibition), or who owes an open item (`A`
 the client, `B` us, deferred).
 
@@ -142,7 +142,7 @@ MILESTONE and `T` names the task inside it, so the id reads "task 11 of mileston
 `A27` are still accepted so that projects already under way keep linting, and
 every reader of an old document keeps finding what it cites. They are not written
 any more. The old form had two defects a reader hit immediately: nothing in `A27`
-said which file to open, and `T` meant a training-centre case in `T-19` and a task
+said which file to open, and `T` meant a shop-team case in `T-19` and a task
 in `M15-T11` — the same letter, two spaces, no way to tell them apart by looking.
 
 To convert a project: `python3 references/migrate_ids.py <root>` shows the change,

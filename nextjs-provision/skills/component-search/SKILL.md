@@ -115,7 +115,7 @@ Or manually:
 ```json
 {
   "registries": {
-    "@registryname": "https://domain.com/r/{name}.json"
+    "@registryname": "https://registry.example.com/r/{name}.json"
   }
 }
 ```
@@ -195,7 +195,7 @@ npx shadcn@latest add @magicui/shimmer-button
 # If it fails, check the registry's documentation for the correct URL pattern
 ```
 
-The standard URL convention is `https://domain.com/r/{name}` but some registries may differ. The CLI auto-resolves known registry names — if `@registryname/component` works, the URL is valid.
+The standard URL convention is `https://registry.example.com/r/{name}` but some registries may differ. The CLI auto-resolves known registry names — if `@registryname/component` works, the URL is valid.
 
 ## What This Skill Does NOT Cover
 

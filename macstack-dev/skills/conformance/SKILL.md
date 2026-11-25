@@ -68,7 +68,7 @@ One row per case, keyed by its id:
 
 ```json
 {"date":"2026-08-27","doc":"client/USER-CASES.md","item":"C-04","kind":"audit",
- "now":"implemented","why":"src/workflows/attendance.ts + entry.double-checkin.spec.ts",
+ "now":"implemented","why":"src/workflows/returns.ts + return.double-request.spec.ts",
  "by":"claude"}
 ```
 

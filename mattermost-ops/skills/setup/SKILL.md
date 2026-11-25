@@ -13,7 +13,7 @@ The user sets these in their shell or repo `.env`. Read them — never hardcode 
 
 | Variable | Required | Meaning |
 |----------|----------|---------|
-| `MATTERMOST_API_URL` | yes | Server root URL, e.g. `https://mattermost.mycompany.com`. The API lives under `${MATTERMOST_API_URL}/api/v4`. |
+| `MATTERMOST_API_URL` | yes | Server root URL, e.g. `https://mattermost.example.com`. The API lives under `${MATTERMOST_API_URL}/api/v4`. |
 | `MATTERMOST_ADMIN_USERNAME` | yes | Username **or** email used to obtain a token. |
 | `MATTERMOST_ADMIN_PASSWORD` | yes | Password for that account. For system administration it must hold the **System Admin** role. |
 | `MATTERMOST_TOKEN` | derived | Session token obtained at runtime from the login call below; reused for the rest of the session. |

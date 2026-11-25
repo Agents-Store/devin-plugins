@@ -113,4 +113,4 @@ The script creates `package.json` (grammY `^1.46.0`, Node 22+), `tsconfig.json`,
 
 - Webhook deployment (use `deployment-hosting`).
 - Sessions, conversations, or any plugin (use `plugins-catalog`, `sessions`, `conversations`).
-- Telegram account automation (different concept — see the `tg-client` plugin).
+- Telegram account automation (different concept — use a separate MTProto user-account client, for example Telethon or GramJS).
