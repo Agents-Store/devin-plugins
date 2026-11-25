@@ -103,7 +103,7 @@ export default buildConfig({
     formBuilderPlugin({
       fields: { text: true, textarea: true, email: true, select: true },
       redirectRelationships: ['pages'],   // collections offered in the redirect field
-      defaultToEmail: 'leads@acme.com',
+      defaultToEmail: 'leads@example.com',
     }),
   ],
 })

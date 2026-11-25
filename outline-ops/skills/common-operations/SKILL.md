@@ -88,7 +88,7 @@ Revoke with `shares.revoke` `{"id"}`. (→ `sharing-access.md`)
 
 ## Workflow: manage people & permissions
 
-1. **Invite** — `users.invite` `{"invites":[{"email":"alice@acme.com","name":"Alice","role":"member"}]}`. (→ `users-groups.md`)
+1. **Invite** — `users.invite` `{"invites":[{"email":"alice@example.com","name":"Alice","role":"member"}]}`. (→ `users-groups.md`)
 2. **Find / list** — `users.list` `{"query":"alice"}` or with the structured filter `{"filters":[{"field":"suspendedAt","operator":"isNull"}]}` (the older `{"filter":"active"}` still works but is deprecated). Re-send a pending invite with `users.resendInvite` `{"id"}`.
 3. **Change role** — `users.update_role` `{"id","role":"admin|member|viewer|guest"}` (admin only).
 4. **Suspend** (reversible, preferred over delete) — `users.suspend` `{"id"}`; reverse with `users.activate`. Confirm first.

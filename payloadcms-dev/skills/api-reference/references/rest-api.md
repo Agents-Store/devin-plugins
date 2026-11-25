@@ -236,8 +236,8 @@ Body:
 
 Set via `payload.config.ts`:
 ```ts
-cors: ['https://my-frontend.com'],         // Array of origins, or '*' for any
-csrf: ['https://my-frontend.com'],
+cors: ['https://frontend.example.com'],         // Array of origins, or '*' for any
+csrf: ['https://frontend.example.com'],
 ```
 
 By default the admin URL is allowed. Add public frontends explicitly.

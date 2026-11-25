@@ -13,7 +13,7 @@ The user sets these in their shell or repo `.env`. Read them — never hardcode 
 
 | Variable | Required | Meaning |
 |----------|----------|---------|
-| `OUTLINE_API_URL` | yes | API base **including `/api`**. Cloud: `https://app.getoutline.com/api`. Self-hosted: `https://wiki.mycompany.com/api`. |
+| `OUTLINE_API_URL` | yes | API base **including `/api`**. Cloud: `https://app.getoutline.com/api`. Self-hosted: `https://wiki.example.com/api`. |
 | `OUTLINE_API_KEY` | yes | Personal API key. Always begins with `ol_api_` followed by a random string. Sent as `Authorization: Bearer ${OUTLINE_API_KEY}`. |
 
 If `OUTLINE_API_URL` is missing, ask the user for it. Normalize the trailing slash with `${OUTLINE_API_URL%/}` and build every endpoint as `${OUTLINE_API_URL%/}/<method>`. The URL already ends in `/api` — do **not** append `/api` yourself, and do not pass a URL that ends in a method name.

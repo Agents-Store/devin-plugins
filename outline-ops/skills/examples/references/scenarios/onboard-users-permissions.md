@@ -14,8 +14,8 @@ ACC="Accept: application/json"
 ```bash
 curl -s -X POST "${OUT}/users.invite" -H "$H_AUTH" -H "$JSON" -H "$ACC" \
   -d '{"invites":[
-        {"email":"alice@acme.com","name":"Alice","role":"member"},
-        {"email":"bob@acme.com","name":"Bob","role":"viewer"}
+        {"email":"alice@example.com","name":"Alice","role":"member"},
+        {"email":"bob@example.com","name":"Bob","role":"viewer"}
       ]}' \
   | jq '.data | {sent: (.sent|length), users: [.users[].email]}'
 ```

@@ -70,7 +70,7 @@ Match the symptom, apply the fix. Most Outline API failures come from a bad base
 
 ## Self-hosted: connection / URL / SSL problems
 
-- `OUTLINE_API_URL` must include `/api` (e.g. `https://wiki.acme.com/api`) and must **not** end in a method name. Endpoints are `${OUTLINE_API_URL%/}/<method>`.
+- `OUTLINE_API_URL` must include `/api` (e.g. `https://wiki.example.com/api`) and must **not** end in a method name. Endpoints are `${OUTLINE_API_URL%/}/<method>`.
 - A `404` on every call usually means the `/api` segment is missing or doubled.
 - Self-signed certificate? curl will refuse by default. Verify the cert is valid; only as a last resort for a trusted internal host use `curl -k` (insecure — don't use against cloud).
 - Wrong scheme/host returns connection errors, not JSON — confirm the workspace is reachable in a browser first.

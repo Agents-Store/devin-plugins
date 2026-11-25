@@ -70,7 +70,7 @@ export default buildConfig({
         payment: false,
       },
       redirectRelationships: ['pages'],   // collections selectable in the redirect field
-      defaultToEmail: 'leads@acme.com',
+      defaultToEmail: 'leads@example.com',
       beforeEmail: (emails) =>
         emails.map((e) => ({ ...e, html: wrapBrandTemplate(e.html) })),
       formOverrides: {

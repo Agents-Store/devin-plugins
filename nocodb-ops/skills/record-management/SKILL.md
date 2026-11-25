@@ -111,7 +111,7 @@ records: [
   {
     "fields": {
       "Name": "Acme Corp",
-      "Email": "info@acme.com",
+      "Email": "info@example.com",
       "Status": "Active"
     }
   }
