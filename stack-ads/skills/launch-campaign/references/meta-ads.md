@@ -144,13 +144,16 @@ Change only the named steps; every other step stays as in section 2.
 
 ```jsonc
 {"id": "vid", "do": "meta.upload_video", "with": {"file": "ads/creatives/spot-9x16.mp4", "name": "Spot spring"}},
+{"id": "thumb", "do": "meta.upload_image", "with": {"file": "ads/creatives/spot-9x16-thumb.jpg"}},
 // creative params
-"object_story_spec": {"page_id": "{page}", "video_data": {"video_id": "{{vid.id}}",
-  "image_url": "https://example.com/thumb.jpg",
+"object_story_spec": {"page_id": "{page}", "video_data": {"video_id": "{{vid.id}}", "image_hash": "{{thumb.hash}}",
+  "message": "Primary text", "title": "Headline",
   "call_to_action": {"type": "LEARN_MORE", "value": {"link": "https://example.com/"}}}}
 ```
 
-`video_data` keys confirmed: `video_id`, `image_url`, `call_to_action`; text keys (`message`, `title`) are unverified. A video may still be processing when the creative step runs (unverified for this route). Safe choice: upload the video on its own before the plan. Run `meta upload-video --file FILE`, which only prints the file and its size; show that to the user, and after their yes run it again with `--yes`. Poll `meta get <VIDEO_ID> -p fields=status` until ready, put the id into the creative and drop the upload step. Uploading with a system-user token is unverified: test with a small file. MP4, 24-60 fps, H.264 or H.265, AAC, width at least 1200 px.
+This body ran live on 2026-11-25 with a system-user token: a 5-second 720x1280 clip of 2.4 MB (H.264, AAC, 24 fps), its thumbnail, creative and ad in one plan. The creative was accepted about ten seconds after the upload, without waiting. The thumbnail is a frame of the clip uploaded as an image; `image_url` in place of `image_hash` comes from Meta's pages and was not run. A longer or larger file may still be processing when the creative step runs (unverified). Safe choice for those: upload the video on its own before the plan. Run `meta upload-video --file FILE`, which only prints the file and its size; show that to the user, and after their yes run it again with `--yes`. Poll `meta get <VIDEO_ID> -p fields=status` until ready, put the id into the creative and drop the upload step. MP4, 24-60 fps, H.264 or H.265, AAC; Meta's pages say a width of at least 1200 px, yet the 720-pixel clip was accepted.
+
+A removal leaves the video in the account's library. `meta delete "{account}/advideos" -p video_id=VIDEO_ID` shows what would go, and with `--yes` takes it out (run live). `meta delete VIDEO_ID` is refused with code 200: it asks for `pages_manage_posts`, which ads do not need. Read `meta get "{account}/adimages" -p fields=name,status` again some time after a removal as well: one deleted image was back in the library two days later and had to be deleted again.
 
 **Campaign budget (CBO)**: campaign params get `"daily_budget": 2000` and `"bid_strategy": "LOWEST_COST_WITHOUT_CAP"` and no `is_adset_budget_sharing_enabled`; ad set params drop `daily_budget` and `bid_strategy`.
 

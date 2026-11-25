@@ -153,7 +153,7 @@ Rules: opting in to automation without `enableAiMax` gives `AI_MAX_MUST_BE_ENABL
 
 ## 4. Performance Max
 
-Not run against a live account: this body was composed from the v26 field definitions, so the `launch plan` validation is its test.
+Validated, not launched: on 2026-11-25 Google accepted a plan of this shape in the dry run (`maximizeConversions`, one location, one search theme, no audience signal). Nothing was created from it, so the `launch plan` validation stays its test.
 
 Docs: https://developers.google.com/google-ads/api/performance-max/getting-started and https://developers.google.com/google-ads/api/performance-max/create-campaign. A plan step is applied whole or not at all. Aspect ratios are checked when an asset is linked (`ASPECT_RATIO_NOT_ALLOWED`), not when it is created.
 
@@ -177,16 +177,20 @@ Docs: https://developers.google.com/google-ads/api/performance-max/getting-start
 
 An image asset carries its file through the toolkit: `{"@base64": "ads/creatives/<file>.png"}` inside `imageAsset.data` is replaced by the base64 content before sending. To reuse an asset that already exists (for example one made with the MCP server in section 8), pass its resource name, `customers/{customer}/assets/111`, in place of a temporary one.
 
+An `imageAsset` needs a `name` beside its `resourceName`; a `textAsset` and a `youtubeVideoAsset` do not. Without it Google answers `NAME_REQUIRED_FOR_ASSET_TYPE` and, in the same reply, fails whatever leans on an asset of the request: `RESOURCE_NOT_FOUND`, `REQUIRED_LOGO_ASSET_NOT_LINKED`, even `NOT_ENOUGH_HEADLINE_ASSET` with all headlines in place. Add the name, run the dry run again, and only then read what is left. Give every image its own name: Google documents `DUPLICATE_ASSET_NAME`, although its validation let a repeated name pass (a real create with one was not tried).
+
+An asset cannot be deleted: the API has `create` and `update` for it and no `remove`. After `launch rollback --remove` the campaign and its budget are `REMOVED` and the assets stay in the account's library, unused and free of charge.
+
 ```jsonc
 // inside "with": {"partialFailure": false, "mutateOperations": [ ... ]}; ids -10 to -19 are assets
 [
   {"campaignBudgetOperation": {"create": {"resourceName": "customers/{customer}/campaignBudgets/-1", "name": "Example PMax budget", "deliveryMethod": "STANDARD", "amountMicros": "30000000", "explicitlyShared": false}}},
   {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-10", "textAsset": {"text": "Example Brand"}}}},
-  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-11", "imageAsset": {"data": {"@base64": "ads/creatives/logo-1x1.png"}}}}},
+  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-11", "name": "Example logo 1x1", "imageAsset": {"data": {"@base64": "ads/creatives/logo-1x1.png"}}}}},
   {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-12", "textAsset": {"text": "Headline one"}}}},
   // same shape: -13, -14 headlines; -15 long headline; -16, -17 descriptions (textAsset)
-  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-18", "imageAsset": {"data": {"@base64": "ads/creatives/landscape-1200x628.png"}}}}},
-  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-19", "imageAsset": {"data": {"@base64": "ads/creatives/square-1200x1200.png"}}}}},
+  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-18", "name": "Example landscape 1200x628", "imageAsset": {"data": {"@base64": "ads/creatives/landscape-1200x628.png"}}}}},
+  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-19", "name": "Example square 1200x1200", "imageAsset": {"data": {"@base64": "ads/creatives/square-1200x1200.png"}}}}},
   {"campaignOperation": {"create": {"resourceName": "customers/{customer}/campaigns/-2", "name": "Example PMax US", "status": "PAUSED", "advertisingChannelType": "PERFORMANCE_MAX",
     "campaignBudget": "customers/{customer}/campaignBudgets/-1", "maximizeConversionValue": {}, "brandGuidelinesEnabled": true,
     "containsEuPoliticalAdvertising": "DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING"}}},
@@ -207,7 +211,7 @@ If a validation error names the geo operation or the campaign assets, move that 
 
 ## 5. Demand Gen
 
-Not run against a live account: this body was composed from the v26 field definitions, so the `launch plan` validation is its test.
+Run live on 2026-11-25 with the multi-asset image ad, the second sample of this section: created paused, read back, removed. The video ad, the first sample, passed Google's validation the same day and was not created.
 
 Docs: https://developers.google.com/google-ads/api/docs/demand-gen/create-campaign
 
@@ -220,7 +224,7 @@ Docs: https://developers.google.com/google-ads/api/docs/demand-gen/create-campai
 | Ad group | Do not set `type`. Channels go in `demandGenAdGroupSettings.channelControls.selectedChannels`. |
 | Video ad | `videos`, `logoImages` and `businessName` (an object `{"text": "..."}`) are all required; plus headlines, long headlines and descriptions. |
 | Multi-asset ad | `businessName` (a plain string, 25 characters), 1 to 5 headlines (30), 1 to 5 descriptions (90), 1 to 5 `logoImages` (1:1, 128x128 minimum), and at least one marketing image (1.91:1) or square image. |
-| Images, videos | Reference an asset as `{"asset": "customers/{customer}/assets/-11"}`. A video asset needs an existing YouTube video: `youtubeVideoAsset.youtubeVideoId`, 11 characters. |
+| Images, videos | Reference an asset as `{"asset": "customers/{customer}/assets/-11"}`. A video asset needs an existing YouTube video: `youtubeVideoAsset.youtubeVideoId`, 11 characters. An image asset needs a `name` (section 4). |
 | Location and language | Campaign level only if you create the campaign with `demandGenCampaignSettings.upgradedTargeting` (immutable); otherwise on the ad group. |
 
 ```jsonc
@@ -235,7 +239,7 @@ Docs: https://developers.google.com/google-ads/api/docs/demand-gen/create-campai
   {"adGroupCriterionOperation": {"create": {"adGroup": "customers/{customer}/adGroups/-3", "location": {"geoTargetConstant": "geoTargetConstants/2840"}}}},
   {"adGroupCriterionOperation": {"create": {"adGroup": "customers/{customer}/adGroups/-3", "language": {"languageConstant": "languageConstants/1000"}}}},
   {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-10", "youtubeVideoAsset": {"youtubeVideoId": "YOUTUBE_ID_11CH"}}}},
-  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-11", "imageAsset": {"data": {"@base64": "ads/creatives/logo-1x1.png"}}}}},
+  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-11", "name": "Example logo 1x1", "imageAsset": {"data": {"@base64": "ads/creatives/logo-1x1.png"}}}}},
   {"adGroupAdOperation": {"create": {"adGroup": "customers/{customer}/adGroups/-3", "status": "ENABLED",
     "ad": {"name": "Example video ad", "finalUrls": ["https://example.com/"], "demandGenVideoResponsiveAd": {
       "businessName": {"text": "Example Brand"}, "videos": [{"asset": "customers/{customer}/assets/-10"}], "logoImages": [{"asset": "customers/{customer}/assets/-11"}],
@@ -244,7 +248,31 @@ Docs: https://developers.google.com/google-ads/api/docs/demand-gen/create-campai
 ]
 ```
 
-Audience targeting needs `audienceSetting.useAudienceGrouped: true` on the ad group (immutable) and an `adGroupCriterionOperation` with `audience` set to an audience resource name (unverified in a live run). The campaign stays PAUSED until activation, even though the ad is created ENABLED. The EU declaration in the sample is a placeholder for the user's answer, as in section 2.
+The multi-asset image ad, in the shape that ran live: channels that show images, image assets in place of the video.
+
+```jsonc
+// inside "with": {"partialFailure": false, "mutateOperations": [ ... ]}
+[
+  {"campaignBudgetOperation": {"create": {"resourceName": "customers/{customer}/campaignBudgets/-1", "name": "Example DG image budget", "deliveryMethod": "STANDARD", "amountMicros": "20000000", "explicitlyShared": false}}},
+  {"campaignOperation": {"create": {"resourceName": "customers/{customer}/campaigns/-2", "name": "Example Demand Gen images UK", "status": "PAUSED", "advertisingChannelType": "DEMAND_GEN",
+    "campaignBudget": "customers/{customer}/campaignBudgets/-1", "maximizeConversions": {}, "containsEuPoliticalAdvertising": "DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING"}}},
+  {"adGroupOperation": {"create": {"resourceName": "customers/{customer}/adGroups/-3", "campaign": "customers/{customer}/campaigns/-2", "name": "Example DG image ad group", "status": "ENABLED",
+    "demandGenAdGroupSettings": {"channelControls": {"selectedChannels": {"gmail": true, "discover": true, "display": false, "youtubeInFeed": false, "youtubeInStream": false, "youtubeShorts": false}}}}}},
+  {"adGroupCriterionOperation": {"create": {"adGroup": "customers/{customer}/adGroups/-3", "location": {"geoTargetConstant": "geoTargetConstants/2826"}}}},
+  {"adGroupCriterionOperation": {"create": {"adGroup": "customers/{customer}/adGroups/-3", "language": {"languageConstant": "languageConstants/1000"}}}},
+  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-10", "name": "Example landscape 1200x628", "imageAsset": {"data": {"@base64": "ads/creatives/landscape-1200x628.png"}}}}},
+  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-11", "name": "Example square 1200x1200", "imageAsset": {"data": {"@base64": "ads/creatives/square-1200x1200.png"}}}}},
+  {"assetOperation": {"create": {"resourceName": "customers/{customer}/assets/-12", "name": "Example logo 1x1", "imageAsset": {"data": {"@base64": "ads/creatives/logo-1x1.png"}}}}},
+  {"adGroupAdOperation": {"create": {"adGroup": "customers/{customer}/adGroups/-3", "status": "ENABLED",
+    "ad": {"name": "Example image ad", "finalUrls": ["https://example.com/"], "demandGenMultiAssetAd": {
+      "businessName": "Example Brand", "headlines": [{"text": "Shoes built to run"}, {"text": "Made for long distances"}],
+      "descriptions": [{"text": "Free returns for 30 days"}, {"text": "Find your size in a minute"}],
+      "marketingImages": [{"asset": "customers/{customer}/assets/-10"}], "squareMarketingImages": [{"asset": "customers/{customer}/assets/-11"}],
+      "logoImages": [{"asset": "customers/{customer}/assets/-12"}]}}}}}
+]
+```
+
+Audience targeting needs `audienceSetting.useAudienceGrouped: true` on the ad group (immutable) and an `adGroupCriterionOperation` with `audience` set to an audience resource name (unverified in a live run). The campaign stays PAUSED until activation, even though the ad is created ENABLED. The EU declaration in the samples is a placeholder for the user's answer, as in section 2.
 
 ## 6. Look-ups
 
@@ -331,6 +359,7 @@ Use it for: a video for Demand Gen or Performance Max (otherwise the user upload
 | `MISSING_EU_POLITICAL_ADVERTISING_SELF_DECLARATION` | Add `containsEuPoliticalAdvertising` to the campaign. |
 | `DUPLICATE_TEMP_IDS`, `TEMP_ID_RESOURCE_HAD_ERRORS` | Reused negative id, or a parent failed. Use unique ids; fix the first error. |
 | `REQUIRED_FIELD_MISSING`, `TOO_LONG`, `LINE_TOO_WIDE` | See the field path; check the character limits in sections 2 and 4. |
+| `NAME_REQUIRED_FOR_ASSET_TYPE` | An image asset without a `name`. Add it first (section 4): the other errors of the same reply usually follow from it. |
 | `DUPLICATE_CAMPAIGN_NAME`, `DUPLICATE_ADGROUP_NAME`, `BID_TOO_MANY_FRACTIONAL_DIGITS`, `NON_MULTIPLE_OF_MINIMUM_CURRENCY_UNIT` | Unique names; round micros to the currency's minimum unit. |
 | `BUDGET_BELOW_PER_DAY_MINIMUM` | Demand Gen budget under the minimum: query it (section 6). |
 | `AI_MAX_MUST_BE_ENABLED`, `CANNOT_SET_CAMPAIGN_KEYWORD_MATCH_TYPE` | Enable AI Max first; drop `keywordMatchType`. |

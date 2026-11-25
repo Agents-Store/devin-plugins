@@ -183,7 +183,7 @@ python3 ads/tools/ads.py launch rollback --file ads/launch/de_meta_trial_202612.
 
 The first pauses everything the plan created, children first. When the user says stop, run it at once and discuss afterwards: pausing only ever reduces spend.
 
-The second deletes what the plan created (Google marks campaigns removed) and clears the plan from the ledger, so a new launch of that plan starts with a dry run; run it only when the user asks for removal. Uploaded media, Meta creatives and Google budgets and assets stay in the account library.
+The second deletes what the plan created (Google marks campaigns removed) and clears the plan from the ledger, so a new launch of that plan starts with a dry run; run it only when the user asks for removal. On Meta the creatives and the images the plan uploaded go too. Videos, TikTok uploads and Google assets stay in the account library; how to take a Meta video out is in `references/meta-ads.md`, section 3.
 
 Both go on past an object that fails and end with an error naming what is left. That list may still be live: tell the user at once, check it in the platform's interface, and run the same command again to finish. A rollback reaches only what the ledger holds: for a step that ended without a clear answer it says so, and that object has to be looked for by hand.
 

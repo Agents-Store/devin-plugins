@@ -64,6 +64,7 @@ Run `google mutate --file FILE` without `--yes` first: it sends `validateOnly`. 
 | `ContextError.OPERATION_NOT_PERMITTED_FOR_CONTEXT` | language criterion on a Search campaign (rejected since Sept 2026); or AI Max final-URL expansion without text automation | remove the language criterion; opt in to text automation first |
 | missing EU political advertising declaration | EU targeting without a declaration | ask the user for the declaration (it is a legal statement, recorded in the media plan) and set `containsEuPoliticalAdvertising` on the campaign to their answer |
 | `CampaignError.AI_MAX_MUST_BE_ENABLED`, `CANNOT_SET_CAMPAIGN_KEYWORD_MATCH_TYPE` | AI Max rules | enable AI Max first; use the ad-group `disable_search_term_matching` |
+| `AssetError.NAME_REQUIRED_FOR_ASSET_TYPE`, often beside `RESOURCE_NOT_FOUND` and `NOT_ENOUGH_..._ASSET` | an image asset without a `name` | give every image asset its own `name`, run the dry run again, then read what is left |
 | `ASPECT_RATIO_NOT_ALLOWED`; asset group missing assets; `DUPLICATE_ASSET` | wrong image ratio; asset group below its minimums; same image bytes twice in a request | fix the ratio; send all required `AssetGroupAsset` links in the same request; create the asset once, link it by temp id |
 | `AdGroupAdError.AD_SHARING_NOT_ALLOWED`; `CUSTOMER_NOT_ALLOWLISTED_FOR_THIS_FEATURE` | one ad linked to several ad groups (v23 and later); offline conversions, Customer Match, session attributes moved to the Data Manager API | create separate ads; do not use those services here |
 | `PolicyFindingError` (ad), `PolicyViolationError` (keyword) | policy violation on create | exemption request below |
@@ -99,6 +100,7 @@ Reference: `https://developers.facebook.com/documentation/ads-commerce/marketing
 | "No permissions available" when generating a system-user token | the system user has no role on the app | Business settings > Apps > the app > Assign people > the system user, Full control |
 | `META_PAGE_ID` missing and `{account}/promote_pages` is empty | the account has never advertised for a Page | `meta get me/accounts -p fields=id,name,tasks` lists the Pages the system user may advertise for |
 | 190 | invalid or expired token; a long-lived user token lasts about 60 days | system-user token with `ads_management`, `ads_read`, `pages_show_list`, `pages_read_engagement`, `pages_manage_ads`, `business_management` in `META_ACCESS_TOKEN` |
+| 200 naming `pages_manage_posts` when deleting a video | `meta delete VIDEO_ID` acts on the video object and asks for a Page permission that ads do not need | `meta delete "{account}/advideos" -p video_id=ID --yes` takes it out of the ad account's library |
 | 200 | permission error: scope or asset missing | regenerate the token with those scopes; assign app, ad account, Page and pixel to the system user |
 | 200 / 1870034 | Custom Audience terms not accepted | accept them in the ad account as a regular user, not a system user |
 | 200 / 5258001-5258009 | API access disrupted or deactivated | complete Data Use Checkup, Data Protection Assessment, developer registration; reactivate the app |
