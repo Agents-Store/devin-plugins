@@ -12,7 +12,7 @@ NocoDB MCP tools take a filter in one of two forms. **Pass only one of the two**
 | **Structured** (preferred) | `filter` | Everything -- names and values are quoted for you, so commas, parentheses and quotes in values are safe |
 | **String** (fallback) | `where` | Short one-liners, and the REST `where=` query parameter |
 
-Both forms work on `queryRecords`, `countRecords`, `groupByRecords`, `updateRecordsByCondition` and on each `aggregate.filterGroups[]` entry (`{ "alias": "...", "filter": ... }` or `{ "alias": "...", "where": "..." }`).
+Both forms work on `queryRecords`, `countRecords`, `groupByRecords`, `updateRecordsByCondition`, `aggregate_single` (Community) and on each `aggregate.filterGroups[]` entry (`{ "alias": "...", "filter": ... }` or `{ "alias": "...", "where": "..." }`).
 
 ## Structured `filter`
 

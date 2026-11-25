@@ -79,11 +79,12 @@ Receiver rules:
 - Loop over `data.rows`; never read only `rows[0]`
 - Look the record up by its `Id` and skip what is already done — treat the receiver as one that may see the same change twice
 - Answer with a quick `2xx` and do slow work afterwards (hand long jobs to a background task runner)
+- Expect milliseconds in timestamps (`12:34:56.000+00:00`) on PostgreSQL and SQLite since 2026.10.1, and a receiver address on a private network to be refused (2026.10.0 hardening) -- give NocoDB a public HTTPS URL
 - Log `type` and `id` while debugging
 
 ## Conditions
 
-Record events can carry conditions (AND/OR groups of field comparisons, for example *Status = Complete* AND *Priority = High*). A condition fires **on the transition**: the webhook runs only when the record goes from "condition not met" to "condition met" during the event, not on every later edit of a record that already matches. Conditions do not apply to Button webhooks.
+Record events can carry conditions (AND/OR groups of field comparisons, for example *Status = Complete* AND *Priority = High*). A condition fires **on the transition**: the webhook runs only when the record goes from "condition not met" to "condition met" during the event, not on every later edit of a record that already matches. Conditions do not apply to Button webhooks. *After Update* also fires when records are linked or unlinked (2026.10.1), on both sides of the link and counting the link field as the changed field; a webhook set to watch specific fields fires only when one of those fields changes.
 
 **Mind the loop.** An automation that writes its status or result back to the same table fires *After Update* again. Gate the webhook with a condition on the status transition (for example `status` = `pending`, set by whoever requests a run, while the automation only writes `processing`, `completed`, `failed`), watch only the business fields on paid plans, or keep job state in a separate table.
 
@@ -96,7 +97,7 @@ A Button field can start a webhook, which makes a record a remote control for an
 | Edition | What works |
 |---------|------------|
 | **Community** | No hook tools — use the UI (or the REST API, see `nocodb-dev:webhooks`) |
-| **Cloud / licensed** | `listHooks` (`tableId`) and `getHook` (`hookId`) are listed directly; `createHook`, `updateHook` and `deleteHook` sit behind `listTools` with `category: "hooks"` and run through `callTool` |
+| **Cloud / licensed** | `listHooks` (`tableId`) and `getHook` (`hookId`) read hooks; `createHook`, `updateHook` and `deleteHook` change them. All are listed directly on `/mcp`; on `/mcp-discovery` the last three sit behind `listTools` with `category: "hooks"` and run through `callTool` |
 
 ```
 mcp__plugin_nocodb-ops_nocodb__listHooks   { "tableId": "<tableId>" }

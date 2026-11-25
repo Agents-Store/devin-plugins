@@ -79,14 +79,14 @@ Repeat for each batch until all records are imported.
 
 ### CSV Text in One Call (`importCsv`)
 
-On Cloud / licensed servers the `data-io` category has `importCsv`, which takes the CSV text itself and writes the rows server-side, without 100-record batching:
+On Cloud / licensed servers `importCsv` takes the CSV text itself and writes the rows server-side, without 100-record batching:
 
 ```
-mcp__plugin_nocodb-ops_nocodb__listTools  category: "data-io"       <- read the argument schema first
-
-mcp__plugin_nocodb-ops_nocodb__callTool   name: "importCsv"
-  arguments: { csv: "<header row + data rows>", tableId: "<existing table id>" }
+Tool: importCsv
+Arguments: { csv: "<header row + data rows>", tableId: "<existing table id>" }
 ```
+
+(On a `/mcp-discovery` URL it sits in the `data-io` category: `listTools` for the argument schema, then `callTool` with `name: "importCsv"`.) A CSV appended to an existing table may fill at most 5,000 links across all its Links cells; a larger one is refused before any row is written, so split it.
 
 - With `tableId` the rows are **appended** to that table: headers are matched to fields by title, unmatched headers are skipped and reported, and values are coerced to the destination field type.
 - With `tableName` instead a **new table** is created in which every field is `SingleLineText` (type detection is off) -- creating a typed table first (a provision / dev task, see `nocodb-dev`) and importing with `tableId` is preferred.
@@ -142,7 +142,7 @@ To export records from a NocoDB table:
 |------|------|
 | Read rows in the conversation | `queryRecords` (pages of up to 200) |
 | CSV text inline | `exportCsv` -- shaped by a view (its fields, filters, sorts), capped by `maxRows` (default 1000, max 10000); narrow with a filtered view instead of raising the cap |
-| A spreadsheet to hand to a person | `exportExcel` (Cloud / licensed, `data-io` category) -- returns a download link signed for 3 hours; the bytes are not returned |
+| A spreadsheet to hand to a person | `exportExcel` (Cloud / licensed) -- returns a download link signed for 3 hours; the bytes are not returned |
 
 ### Export All Records
 
@@ -193,7 +193,7 @@ Always state the total record count. Use `mcp__plugin_nocodb-ops_nocodb__countRe
 
 ## Deduplication Before Import
 
-If a business key (email, SKU, order number -- at most 3 fields) identifies each row, the simplest route on Cloud / licensed servers is `upsertRecords` (category `records`, via `callTool`): it inserts new rows and updates existing ones in one call of up to 100 records and reports `inserted` or `updated` per row. Merge fields cannot be computed, link or attachment fields, and the record `fields` must not name a primary key.
+If a business key (email, SKU, order number -- at most 3 fields) identifies each row, the simplest route on Cloud / licensed servers is `upsertRecords`: it inserts new rows and updates existing ones in one call of up to 100 records and reports `inserted` or `updated` per row. Merge fields cannot be computed, link or attachment fields, and the record `fields` must not name a primary key.
 
 On Community Edition, or when you must review matches before writing, check for duplicates yourself:
 

@@ -18,10 +18,12 @@ All tools use the `mcp__plugin_nocodb-ops_nocodb__` prefix (the server is declar
 
 | Edition | What the MCP server offers |
 |---------|----------------------------|
-| **Community Edition** | The record tools only -- the original eleven: `getBaseInfo`, `getTablesList`, `getTableSchema`, `queryRecords`, `getRecord`, `countRecords`, `aggregate`, `createRecords`, `updateRecords`, `deleteRecords`, `readAttachment`. No `listTools`, no hidden tools. The connection is created per base. |
-| **Cloud / licensed self-hosted** | The same tools plus many more (about 200 in 2026.09). Read tools and record create/update/delete are **listed directly**; schema, view, automation, permission and interface *write* tools stay out of the tool list and are reached with `listTools(category)` then `callTool(name, arguments)`. |
+| **Community Edition** | The record tools only -- `getBaseInfo`, `getTablesList`, `getTableSchema`, `queryRecords`, `getRecord`, `countRecords`, `readAttachment`, `aggregate_single`, `createRecords`, `updateRecords`, `linkRecords`, `unlinkRecords`, `deleteRecords`. No `listTools`, no hidden tools, no `aggregate`. The connection is created per base. |
+| **Cloud / licensed self-hosted** | The same tools plus many more (more than 200 since 2026.10). The `/mcp` endpoint **lists every tool** the connection allows, so each one is called by its own name -- there is no `listTools` / `callTool` on it. `aggregate` replaces `aggregate_single`. |
 
-Rule of thumb: use the listed tools for everything in this plugin; when a capability seems missing, check `listTools` before concluding it is unsupported. If `listTools` is absent, errors, or does not name the tool, the instance does not offer it.
+Rule of thumb: call the tool you need directly; if it is not in the tool list, the instance, plan or connection does not offer it (an allowlist in the connection's Tools & Permissions hides tools too).
+
+**The `/mcp-discovery` endpoint.** Clients that accept at most 100 tools (Devin Desktop / Windsurf, GitHub Copilot, AntiGravity) are pointed at `https://<host>/mcp-discovery` instead. There the schema, automation and configuration write tools are unlisted, and `listTools(category)` then `callTool(name, arguments)` reach them. If this plugin's `NOCODB_MCP_URL` ends in `/mcp-discovery`, use that two-step form for any tool that is not in the list; on `/mcp` skip it.
 
 Start every session with `whoami`: it names the user and base the MCP credential is pinned to and which permissions it carries. Effective authority is the intersection of that grant and the user's role on each resource, so a 403 on a write usually means a read-only role, not a missing tool.
 
@@ -31,7 +33,7 @@ Use these first to understand what data is available.
 
 | Tool | Purpose | Key Parameters |
 |------|---------|---------------|
-| `whoami` | Who the credential acts as, which base it is pinned to, what it may do (Cloud / licensed) | None |
+| `whoami` | Who the credential acts as and which projects it reaches (Cloud / licensed) | None |
 | `getBaseInfo` | Base name, ID, and metadata | None |
 | `getTablesList` | List all tables you can access | None |
 | `getTableSchema` | Columns, types, and views for one table | `tableId` |
@@ -64,21 +66,20 @@ Create, change, or remove data. **Every record-array tool takes at most 100 reco
 | `deleteRecords` | Remove records (up to 100 per call) | `tableId`, `records[{id}]` |
 | `linkRecords` / `unlinkRecords` | Add or remove individual links without restating the set (up to 100 records, 100 links per record) | `tableId`, `fieldId`, `records[{id, links:[{id}]}]` |
 
-## Record Tools Behind `listTools` (Cloud / licensed)
+## More Record Tools (Cloud / licensed)
 
-Call `listTools` with a category, read the argument schemas it returns, then run the tool with `callTool`:
+On `/mcp` these are listed and called directly, for example:
 
 ```
-mcp__plugin_nocodb-ops_nocodb__listTools  category: "records"
-   -> upsertRecords, updateRecordsByCondition, linkRecordsByDisplayValue
-
-mcp__plugin_nocodb-ops_nocodb__callTool   name: "upsertRecords"
-   arguments: { tableId: "<tableId>",
-                fieldsToMergeOn: ["Email"],
-                records: [ { "fields": { "Email": "jane@example.com", "Status": "Active" } } ] }
+Tool: upsertRecords
+Arguments: { tableId: "<tableId>",
+             fieldsToMergeOn: ["Email"],
+             records: [ { "fields": { "Email": "jane@example.com", "Status": "Active" } } ] }
 ```
 
-| Category | Tools | Use for |
+On `/mcp-discovery` the same tool is reached with `listTools` (`category: "records"`, which returns the argument schemas) and then `callTool` (`name: "upsertRecords"`, `arguments: { ... }`).
+
+| Category (on `/mcp-discovery`) | Tools | Use for |
 |----------|-------|---------|
 | `records` | `upsertRecords` | Insert-or-update on a business key -- up to 100 records and 3 merge fields per call, each result says `inserted` or `updated`. Replaces "query, then create or update" |
 | | `updateRecordsByCondition` | Set the same field values on **every** record matching a condition -- **not** capped at 100, the condition is required, answers with a count only. Run `countRecords` with the same condition first |
@@ -87,7 +88,7 @@ mcp__plugin_nocodb-ops_nocodb__callTool   name: "upsertRecords"
 | | `importCsv` | Load CSV text into an existing table (`tableId`) or a new one (`tableName` -- every field becomes `SingleLineText`) |
 | `trash` | `listTrash`, `restoreFromTrash`, `restoreRecords` | Undo a delete (see **record-management**) |
 
-`callTool` validates `arguments` against the same schema `listTools` returned -- read the names there, do not guess.
+`callTool` validates `arguments` against the same schema `listTools` returned -- read the names there, do not guess. `uploadAttachment` (files from an http(s) or `data:` URL, at most 10 per call) and `listRecordTemplates` / `createRecordFromTemplate` are further record tools on the same servers.
 
 ## Analytics Tools
 
@@ -95,9 +96,10 @@ Run calculations across your data.
 
 | Tool | Purpose | Key Parameters |
 |------|---------|---------------|
-| `aggregate` | Sum, count, average, min, max, median, std_dev, and more | `tableId`, `aggregations[{field, type}]`, `filterGroups[{alias, filter or where}]` -- **both arrays are required** |
+| `aggregate` (Cloud / licensed) | Sum, count, average, min, max, median, std_dev, and more | `tableId`, `aggregations[{field, type}]` (required), `filterGroups[{alias, filter or where}]` (optional) |
+| `aggregate_single` (Community) | The same calculations on one filtered set | `tableId`, `aggregations[{field, type}]`, `filter` or `where`, `viewId` |
 
-`aggregate` does not group by a field: each `filterGroups` entry produces one result block keyed by its `alias`. For one overall number use `filterGroups: [{ "alias": "All" }]`. To count per distinct value use `groupByRecords`.
+`aggregate` does not group by a field: without `filterGroups` it gives one overall result; each `filterGroups` entry adds one result block keyed by its `alias`. To count per distinct value use `groupByRecords`. On Community there are no groups -- call `aggregate_single` once per segment, each with its own `filter`.
 
 ## File Tools
 
@@ -109,7 +111,7 @@ Run calculations across your data.
 
 ## Filters: `filter` (preferred) and `where` (fallback)
 
-`queryRecords`, `countRecords`, `groupByRecords`, `updateRecordsByCondition` and each `aggregate.filterGroups[]` entry accept the same two forms. **Pass only one of the two.**
+`queryRecords`, `countRecords`, `groupByRecords`, `updateRecordsByCondition`, `aggregate_single` and each `aggregate.filterGroups[]` entry accept the same two forms. **Pass only one of the two.**
 
 **Structured `filter`** -- field names and values are quoted for you, so commas, parentheses and quotes in values are safe:
 

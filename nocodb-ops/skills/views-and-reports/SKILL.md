@@ -67,7 +67,7 @@ The `mcp__plugin_nocodb-ops_nocodb__aggregate` tool is the primary way to build 
 
 ### Basic Aggregation
 
-Calculate a single number across the whole table. Both `aggregations` and `filterGroups` are **required**; for one overall result use a single group with no filter:
+Calculate a single number across the whole table. `aggregations` is required; leave `filterGroups` out for one overall result (a single group with no filter, `filterGroups: [ { "alias": "All" } ]`, gives the same numbers keyed by `All`). On Community Edition call `aggregate_single` with the same `aggregations` and an optional `filter` -- it has no `filterGroups`:
 
 ```
 mcp__plugin_nocodb-ops_nocodb__aggregate
@@ -240,7 +240,7 @@ mcp__plugin_nocodb-ops_nocodb__queryRecords  (top 5 by value, sorted descending)
 
 - **Use aggregate for numbers.** When the user asks "how much" or "how many," reach for `aggregate` first. It is faster and more accurate than fetching all records and counting manually.
 - **Use queryRecords for detail.** When the user wants to see specific records, names, or lists, use `queryRecords` with field selection and sorting.
-- **Use filter groups for segmentation.** Instead of making separate aggregate calls for each category, put all segments into one call using `filterGroups`. This is faster and keeps the results together. For plain counts per value, `groupByRecords` is shorter.
+- **Use filter groups for segmentation.** Instead of making separate aggregate calls for each category, put all segments into one call using `filterGroups` (Cloud / licensed; on Community call `aggregate_single` once per segment). This is faster and keeps the results together. For plain counts per value, `groupByRecords` is shorter.
 - **Select only needed fields.** When querying records for a report, specify the `fields` parameter to return only the columns that matter. This keeps the output clean and readable.
 - **Combine calls for dashboards.** A good dashboard is 2-4 calls: one aggregate for the big numbers, one or two queries for detail lists, and optionally a count for a headline figure.
 - **Format results for readability.** Always present report data in tables, bullet lists, or structured summaries. Raw tool output is hard to read.

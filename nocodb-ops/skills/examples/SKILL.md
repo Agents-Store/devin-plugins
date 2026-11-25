@@ -71,7 +71,7 @@ Parameters:
   filterGroups: [{ "alias": "Closed Won", "filter": { "field": "Stage", "operator": "eq", "value": "Closed Won" } }]
 ```
 
-Returns the total value of all closed-won deals as `{ "Closed Won": { "Value": ... } }`. Both `aggregations` and `filterGroups` are required.
+Returns the total value of all closed-won deals as `{ "Closed Won": { "Value": ... } }`. `aggregations` is required; `filterGroups` is optional and splits the result by alias.
 
 ### Get a table schema
 

@@ -207,7 +207,7 @@ records: [
 
 **Can a delete be undone?** It depends on where the table lives:
 
-- **NocoDB-managed table:** deleted rows go to the base trash and can be restored until the retention window ends. On Cloud / licensed servers, `listTools` category `trash` offers `listTrash`, `restoreRecords` (inverse of `deleteRecords`, by row id) and `restoreFromTrash`. A restore can collide with the table as it stands now (a unique value taken since, a linked row gone); without `force` / `partial` the call refuses and names the conflicts. After the window the entry is purged for good.
+- **NocoDB-managed table:** deleted rows go to the base trash and can be restored until the retention window ends. On Cloud / licensed servers, `listTrash`, `restoreRecords` (inverse of `deleteRecords`, by row id) and `restoreFromTrash` are available. A restore can collide with the table as it stands now (a unique value taken since, a linked row gone); without `force` / `partial` the call refuses and names the conflicts. After the window the entry is purged for good.
 - **Table on an external source** (for example a connected database): the delete is **permanent**, and `restoreRecords` refuses.
 - **Community Edition:** the MCP server has no trash tools -- treat every delete as permanent from the agent's side.
 
@@ -257,7 +257,7 @@ Use this before large operations to understand the scope (e.g., "how many record
 4. Call `createRecords` for each batch.
 5. Call `countRecords` to verify the total matches expectations.
 
-For a records-already-keyed import (an external ID or email identifies each row), use `upsertRecords` through `listTools` / `callTool` instead -- see **mcp-patterns**.
+For a records-already-keyed import (an external ID or email identifies each row), use `upsertRecords` instead -- see **mcp-patterns**.
 
 ### Search and update
 
@@ -272,7 +272,7 @@ For a records-already-keyed import (an external ID or email identifies each row)
 Update all records matching a condition (e.g., mark all overdue tasks as "Escalated"):
 
 1. Call `countRecords` with the filter to know the scope, and show the number to the user.
-2. **Cloud / licensed:** call `updateRecordsByCondition` through `callTool` (category `records`) with the same `filter` and the `fields` to set. It is not capped at 100, the condition is required, and it answers with a count only.
+2. **Cloud / licensed:** call `updateRecordsByCondition` with the same `filter` and the `fields` to set. It is not capped at 100, the condition is required, and it answers with a count only.
 3. **Community Edition or per-record values:** call `queryRecords` with the same filter, paginate through all results, collect the record IDs, then call `updateRecords` in batches of up to 100.
 4. Call `countRecords` with a filter for the new value to confirm.
 

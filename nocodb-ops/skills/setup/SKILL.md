@@ -81,14 +81,12 @@ Call `mcp__plugin_nocodb-ops_nocodb__getBaseInfo` with no parameters.
 - **Pass:** Returns base name, ID, and metadata.
 - **Fail:** The connection may lack base-level access.
 
-### Step 6 -- Which edition? (`listTools`)
+### Step 6 -- Which edition?
 
-```
-mcp__plugin_nocodb-ops_nocodb__listTools  category: "records"
-```
+Look at the tool list the server gave this session (or call `whoami`).
 
-- **Cloud / licensed:** the answer names `upsertRecords`, `updateRecordsByCondition` and `linkRecordsByDisplayValue` -- the extra record tools are available through `callTool` (see **mcp-patterns**).
-- **Community Edition:** `listTools` is absent or errors. The server offers the original record tools only; everything in this plugin still works, with batches of up to 100 records via `createRecords` / `updateRecords`.
+- **Cloud / licensed:** `whoami`, `upsertRecords`, `updateRecordsByCondition` and `linkRecordsByDisplayValue` are in the list (see **mcp-patterns**). If only a short list plus `listTools` / `callTool` shows, the URL points at `/mcp-discovery`; the extra tools then go through `listTools(category)` and `callTool`.
+- **Community Edition:** none of those exist and `aggregate_single` stands in for `aggregate`. The server offers the record tools only; everything in this plugin still works, with batches of up to 100 records via `createRecords` / `updateRecords`.
 
 ## Troubleshooting
 
@@ -100,8 +98,8 @@ mcp__plugin_nocodb-ops_nocodb__listTools  category: "records"
 | 403 Forbidden | The connection's user lacks permission for this base | Share the base with the user, or use a connection with a higher role |
 | Timeout | Network issue or server overloaded | Check server status, try again |
 | Empty table list | No tables in the base, or wrong base | Ask `whoami` which base the connection is pinned to |
-| "Tool not found" for `mcp__plugin_nocodb-ops_nocodb__<tool>` | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the tool is a hidden one | Confirm both variables are set in the shell that launched Claude Code, then restart the session. For `upsertRecords`, `importCsv`, `listTrash` and the like call `listTools(category)` then `callTool` |
-| `listTools` missing | Community Edition (record tools only) | Use the listed record tools; hidden tools do not exist on this edition |
+| "Tool not found" for `mcp__plugin_nocodb-ops_nocodb__<tool>` | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the instance does not offer the tool (Community Edition, or the connection's Tools & Permissions leave it out) | Confirm both variables are set in the shell that launched Claude Code, then restart the session. On a `/mcp-discovery` URL, reach `upsertRecords`, `importCsv`, `listTrash` and the like with `listTools(category)` then `callTool` |
+| `listTools` missing | Normal on `/mcp` (every tool is listed) and on Community Edition | Call the listed tools directly; Community Edition has the record tools only |
 
 ## What This Skill Does NOT Cover
 

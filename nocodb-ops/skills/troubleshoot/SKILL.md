@@ -34,7 +34,7 @@ Run these checks first to isolate the problem:
 1. **Test MCP connection** -- call `mcp__plugin_nocodb-ops_nocodb__getTablesList` with no parameters. If it returns tables, the connection is healthy.
 2. **Test authentication** -- a 401 response from MCP means `NOCODB_MCP_TOKEN` is wrong, **revoked**, or the connection was restricted (its Tools & Permissions allowlist) — recreate or re-open the connection where it was created (see **setup**). A 401 from the REST API means `NOCODB_TOKEN` is invalid (regenerate in NocoDB → Team & Settings → API Tokens).
 3. **Ask the server who you are** -- `whoami` names the user, the pinned base and the permissions of the credential (Cloud / licensed). A 403 is usually the intersection of that grant with the user's role, not a bug.
-4. **Check the edition** -- `listTools category: "records"` working means Cloud / licensed; if it is absent the server is Community Edition and offers the record tools only. View, filter and sort management through MCP exists only on Cloud / licensed (see **nocodb-dev**).
+4. **Check the edition** -- `whoami` or `upsertRecords` in the tool list means Cloud / licensed; if they are absent the server is Community Edition and offers the record tools only (`aggregate_single`, no `aggregate`). View, filter and sort management through MCP exists only on Cloud / licensed (see **nocodb-dev**).
 
 ## Connection Errors
 
@@ -79,12 +79,13 @@ Run these checks first to isolate the problem:
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
-| "Tool not found" for `mcp__plugin_nocodb-ops_nocodb__<tool>` | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the tool is a hidden one | Set both variables in the shell that launched Claude Code and restart; for hidden tools (`upsertRecords`, `importCsv`, `listTrash`, …) call `listTools(category)` then `callTool` |
+| "Tool not found" for `mcp__plugin_nocodb-ops_nocodb__<tool>` | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the instance does not offer the tool (Community Edition, or the connection's Tools & Permissions leave it out) | Set both variables in the shell that launched Claude Code and restart; on a `/mcp-discovery` URL reach `upsertRecords`, `importCsv`, `listTrash`, … with `listTools(category)` then `callTool` |
+| MCP call refused with a wait time | The per-account MCP rate limit (2026.10.1) | Wait the time the server names, batch the calls, then retry |
 | Input validation error on `records` | More than 100 records in one write call | Split into batches of 100 or fewer; the whole call was rejected, nothing was written |
 | `Expected object, received string at sort[0]` | `sort` sent as strings (`"-Date"`, `["Name"]`) | `sort: [{ "field": "Date", "direction": "desc" }]` |
 | `'<date>' is not supported` | Bare date after the operator in a `where` string | `(Date,gte,exactDate,2026-06-01)`; structured: `sub_operator: "exactDate"` |
 | `Operation btw is not supported for type <T>` | `btw` / `nbtw` on a number, rating, duration, date or checkbox field | Two bounds: `(F,gte,A)~and(F,lte,B)` |
-| Aggregate: `Required at aggregations` / `Required at filterGroups` | Wrong parameter names, or `filterGroups` missing | `aggregations: [{field, type}]` and `filterGroups: [{ "alias": "All" }]` — both required |
+| Aggregate: `Required at aggregations` (older servers also `Required at filterGroups`) | Wrong parameter names, or an older server that still requires `filterGroups` | `aggregations: [{field, type}]`; add `filterGroups: [{ "alias": "All" }]` on a server that asks for it. Community Edition: `aggregate_single`, no `filterGroups` |
 | Wrong parameter format | Passing string instead of object | Check parameter types in the MCP tool schema |
 | Filter returns no results | Incorrect where syntax, or a trailing space in a name or value | Use `(Field,operator,value)` with exact field names, or the structured `filter` |
 | Filter syntax error | Missing parentheses or wrong operator | Wrap each condition in `()` and use valid operators like `eq`, `gt`, `like` |
