@@ -15,7 +15,7 @@ companyInfo:
   name: "Your Company Name"
   address: "100 Main Street, City, Country"
   reg: "Company Registration No"
-  email: "contact@company.com"
+  email: "contact@example.com"
   # Optional: logoBase64 (PNG base64 string) or logoUrl
 
 party1:
@@ -29,7 +29,7 @@ party2:
   name: "Customer Corp."
   address: "Full legal address"
   reg: "Registration number"
-  representative: "Jane Smith"
+  representative: "Jane Doe"
   title: "CEO"
 
 clauses:
@@ -80,7 +80,7 @@ clauses:
       "name": "Your Company Name",
       "address": "100 Main Street, San Francisco, CA 94105",
       "reg": "UA12345678",
-      "email": "contact@yourcompany.com"
+      "email": "contact@example.com"
     },
     "party1": {
       "name": "Contractor Ltd.",
@@ -93,7 +93,7 @@ clauses:
       "name": "Customer Corp.",
       "address": "789 Customer Blvd, London, UK",
       "reg": "UK12345",
-      "representative": "Jane Smith",
+      "representative": "Jane Doe",
       "title": "CEO"
     },
     "clauses": [

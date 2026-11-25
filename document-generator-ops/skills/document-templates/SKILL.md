@@ -17,7 +17,7 @@ Reference for document structures, required fields, and content guidelines for e
 |-------|------------|---------|
 | title | Proposal title | "Cloud Migration Proposal" |
 | recipient | Client name/company | "Acme Corporation" |
-| author | Your name/company | "TechCo Solutions" |
+| author | Your name/company | "Example Inc" |
 | date | Proposal date | "2026-03-17" |
 | sections.executive_summary | Brief overview | 2-3 paragraphs |
 | sections.problem_statement | Client's challenge | What problem are we solving? |
@@ -50,7 +50,7 @@ Reference for document structures, required fields, and content guidelines for e
 | invoiceNumber | Unique identifier | "INV-2026-001" |
 | date | Invoice date | "2026-03-17" |
 | dueDate | Payment due date | "2026-04-17" |
-| companyInfo.name | Your company name | "TechCo Solutions" |
+| companyInfo.name | Your company name | "Example Inc" |
 | companyInfo.address | Your address | "123 Main St, City" |
 | recipient.name | Client name | "Acme Corporation" |
 | items[] | Line items array | See below |
@@ -185,7 +185,7 @@ total = subtotal + tax - discount
 |-------|------------|---------|
 | title | Contract title | "Service Agreement" |
 | date | Agreement date | "2026-03-17" |
-| parties.party1.name | First party name | "TechCo Solutions LLC" |
+| parties.party1.name | First party name | "Example Inc" |
 | parties.party2.name | Second party name | "Acme Corporation" |
 | clauses[] | Array of clauses | See below |
 
@@ -239,8 +239,8 @@ Each paragraph within `content` (separated by `\n\n`) gets auto-numbered as sub-
 | Field | Description | Example |
 |-------|------------|---------|
 | contractor.name | Contractor (service provider) | "Acme Consulting LLC" |
-| contractor.representative | Signatory name | "John Smith" |
-| customer.name | Customer (client) | "Global Corp Inc." |
+| contractor.representative | Signatory name | "John Doe" |
+| customer.name | Customer (client) | "Example Inc" |
 | customer.representative | Signatory name | "Jane Doe" |
 | services[] | Array of service rows | See below |
 | services[].description | Service or work description | "Web development" |
@@ -290,10 +290,10 @@ grandTotal = totalAmount + vatAmount
 | Field | Description | Example |
 |-------|------------|---------|
 | date | Agreement date | "April 7, 2026" |
-| disclosingParty.name | First party name | "TechCo Solutions LLC" |
-| disclosingParty.representative | Signatory name | "Alex Morgan" |
+| disclosingParty.name | First party name | "Example Inc" |
+| disclosingParty.representative | Signatory name | "Alex Example" |
 | receivingParty.name | Second party name | "Acme Corporation" |
-| receivingParty.representative | Signatory name | "Sarah Chen" |
+| receivingParty.representative | Signatory name | "Jane Doe" |
 
 ### Optional Fields
 
@@ -329,7 +329,7 @@ grandTotal = totalAmount + vatAmount
 |-------|------------|---------|
 | estimateNumber | Reference number | "EST-2026-019" |
 | date | Estimate date | "April 7, 2026" |
-| companyInfo.name | Your company | "Northwind Studio" |
+| companyInfo.name | Your company | "Example Inc" |
 | recipient.name | Client company | "Acme Corporation" |
 | executiveSummary | 2-4 sentence overview | "This estimate covers..." |
 | scope.description | What the project is | "End-to-end redesign..." |

@@ -4,7 +4,7 @@ End-to-end workflow for generating a service agreement contract.
 
 ## User Request
 
-> "Create a service agreement contract between our company TechFlow Solutions and client DataVault Corp. 6-month engagement, $120,000 total, monthly payments. Ukrainian law."
+> "Create a service agreement contract between our company Example Inc and client Acme Corp. 6-month engagement, $120,000 total, monthly payments. Ukrainian law."
 
 ## Step 1: CLASSIFY
 
@@ -18,8 +18,8 @@ Agent collects:
 - Title: "Service Agreement"
 - Contract number: SA-2026-015
 - Date: 2026-03-18
-- Party 1: TechFlow Solutions LLC (service provider)
-- Party 2: DataVault Corp (client)
+- Party 1: Example Inc (service provider)
+- Party 2: Acme Corp (client)
 - Key terms: 6 months, $120K, monthly payments of $20K
 - Governing law: Ukraine
 
@@ -52,13 +52,13 @@ Script: `generate_docx.js`
     "date": "March 18, 2026",
     "party1": {
       "role": "Service Provider",
-      "name": "TechFlow Solutions LLC",
+      "name": "Example Inc",
       "address": "12 Innovation Street, Kyiv, Ukraine, 01001",
       "reg": "UA-44521890"
     },
     "party2": {
       "role": "Client",
-      "name": "DataVault Corp",
+      "name": "Acme Corp",
       "address": "500 Enterprise Blvd, Suite 300, Kyiv, Ukraine, 02002",
       "reg": "UA-33198450"
     },
@@ -101,13 +101,13 @@ Script: `generate_docx.js`
     ],
     "signatureBlock": {
       "party1": {
-        "label": "TechFlow Solutions LLC",
+        "label": "Example Inc",
         "name": true,
         "title": true,
         "date": true
       },
       "party2": {
-        "label": "DataVault Corp",
+        "label": "Acme Corp",
         "name": true,
         "title": true,
         "date": true

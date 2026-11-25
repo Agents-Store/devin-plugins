@@ -52,7 +52,7 @@ logoBase64: "<base64>"   # company logo
     "subtitle": "Custom E-Commerce Platform",
     "author": "Acme Digital Agency",
     "date": "March 19, 2026",
-    "recipient": "Global Client Corp.",
+    "recipient": "Example Inc",
     "sections": [
       {
         "level": 1,

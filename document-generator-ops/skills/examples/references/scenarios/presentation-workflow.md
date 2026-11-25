@@ -43,7 +43,7 @@ Script: `generate_pptx.js`
   "data": {
     "title": "AI Analytics Feature Launch",
     "subtitle": "Transforming Data Into Decisions",
-    "author": "Product Team — CloudMetrics",
+    "author": "Product Team — Example Inc",
     "date": "March 2026",
     "slides": [
       {
@@ -132,9 +132,9 @@ Script: `generate_pptx.js`
       },
       {
         "type": "contact",
-        "name": "Product Team — CloudMetrics",
-        "email": "product@cloudmetrics.io",
-        "website": "cloudmetrics.io/ai-analytics"
+        "name": "Product Team — Example Inc",
+        "email": "product@example.com",
+        "website": "example.com/ai-analytics"
       }
     ]
   }

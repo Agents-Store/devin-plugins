@@ -48,14 +48,14 @@ Script: `generate_docx.js`
     "subtitle": "SaaS Platform Quarterly Review",
     "author": "Analytics Team",
     "date": "March 31, 2026",
-    "companyName": "CloudMetrics Inc.",
-    "footer": "CloudMetrics Inc. | Confidential",
+    "companyName": "Example Inc",
+    "footer": "Example Inc | Confidential",
     "headerText": "Q1 2026 Performance Report",
     "sections": [
       {
         "heading": "Introduction",
         "level": 1,
-        "content": "This report presents a comprehensive analysis of CloudMetrics SaaS platform performance during Q1 2026 (January-March). The review covers revenue metrics, customer retention, product usage, and user satisfaction."
+        "content": "This report presents a comprehensive analysis of Example Inc SaaS platform performance during Q1 2026 (January-March). The review covers revenue metrics, customer retention, product usage, and user satisfaction."
       },
       {
         "heading": "Methodology",

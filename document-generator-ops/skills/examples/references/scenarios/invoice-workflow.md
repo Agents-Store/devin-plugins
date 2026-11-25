@@ -50,15 +50,15 @@ Script: `generate_pdf.js`
     "date": "2026-03-17",
     "dueDate": "2026-04-17",
     "companyInfo": {
-      "name": "TechCo Solutions LLC",
+      "name": "Example Inc",
       "address": "456 Tech Avenue, Suite 200, San Francisco, CA 94102",
-      "phone": "+1 (555) 123-4567",
-      "email": "billing@techco.com"
+      "phone": "+1-555-0123",
+      "email": "billing@example.com"
     },
     "recipientInfo": {
       "name": "Acme Corporation",
       "address": "789 Enterprise Blvd, New York, NY 10001",
-      "email": "ap@acme.com"
+      "email": "ap@example.com"
     },
     "items": [
       {
@@ -75,7 +75,7 @@ Script: `generate_pdf.js`
       "bank": "First National Bank",
       "iban": "US12 3456 7890 1234 5678 90",
       "swift": "FNBKUS33",
-      "accountName": "TechCo Solutions LLC"
+      "accountName": "Example Inc"
     },
     "notes": "Payment due within 30 days. Late payments subject to 1.5% monthly interest."
   }

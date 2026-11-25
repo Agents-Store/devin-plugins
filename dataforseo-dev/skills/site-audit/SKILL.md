@@ -149,13 +149,13 @@ When interpreting content analysis search results:
 - **WHOIS shows expiring competitor domains**: monitor with periodic checks
 
 <example>
-User: "Run a full technical audit on our homepage at https://acme.co"
+User: "Run a full technical audit on our homepage at https://example.com"
 
 1. docs_search for the four paths below; show the plan (4 calls); get the user's budget
-2. api_request POST /v3/on_page/lighthouse/live/json with url "https://acme.co", for_mobile true
-3. POST /v3/on_page/instant_pages with url "https://acme.co"
-4. POST /v3/on_page/content_parsing/live with url "https://acme.co"
-5. POST /v3/domain_analytics/technologies/domain_technologies/live with target "acme.co"
+2. api_request POST /v3/on_page/lighthouse/live/json with url "https://example.com", for_mobile true
+3. POST /v3/on_page/instant_pages with url "https://example.com"
+4. POST /v3/on_page/content_parsing/live with url "https://example.com"
+5. POST /v3/domain_analytics/technologies/domain_technologies/live with target "example.com"
 6. Compile the findings: Lighthouse scores, missing meta tags, heading hierarchy issues, technology stack
 7. Present prioritized recommendations: critical (performance), important (SEO), nice-to-have (best practices)
 </example>

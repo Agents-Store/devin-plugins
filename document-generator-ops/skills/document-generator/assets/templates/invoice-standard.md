@@ -12,13 +12,13 @@ dueDate: "2026-04-02"
 companyInfo:
   name: "Your Company Name"
   address: "123 Business St, City, Country"
-  phone: "+1 (555) 000-0000"
-  email: "billing@company.com"
+  phone: "+1-555-0100"
+  email: "billing@example.com"
 
 recipientInfo:
   name: "Client Name or Company"
   address: "456 Client Ave, City, Country"
-  email: "accounts@client.com"   # optional
+  email: "accounts@example.com"   # optional
 
 items:
   - description: "Service or product name"
@@ -66,13 +66,13 @@ notes: "Thank you for your business."
     "companyInfo": {
       "name": "Acme Services Ltd.",
       "address": "123 Business St, Kyiv, Ukraine",
-      "phone": "+380 44 000 0000",
-      "email": "billing@acme.ua"
+      "phone": "+1-555-0101",
+      "email": "billing@example.com"
     },
     "recipientInfo": {
-      "name": "Global Client Corp.",
+      "name": "Example Inc",
       "address": "456 Client Ave, London, UK",
-      "email": "accounts@globalclient.com"
+      "email": "accounts@example.com"
     },
     "items": [
       {

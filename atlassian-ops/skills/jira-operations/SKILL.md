@@ -80,7 +80,7 @@ curl -s "${AUTH[@]}" "${JSON[@]}" -X POST "${JIRA}/issue/PROJ-123/transitions" \
 
 ```bash
 # Resolve the person to an accountId
-ACCT=$(curl -s "${AUTH[@]}" "${JIRA}/user/search?query=alice@acme.com" | jq -r '.[0].accountId')
+ACCT=$(curl -s "${AUTH[@]}" "${JIRA}/user/search?query=jane.doe@example.com" | jq -r '.[0].accountId')
 curl -s "${AUTH[@]}" "${JSON[@]}" -X PUT "${JIRA}/issue/PROJ-123/assignee" -d "{\"accountId\":\"${ACCT}\"}"
 ```
 `{"accountId":null}` unassigns. (→ `users-groups.md`, `issues.md`)

@@ -55,13 +55,13 @@ Complete example of JSON input for `generate_docx.js` to create a professional c
     "date": "March 18, 2026",
     "party1": {
       "role": "Service Provider",
-      "name": "TechFlow Solutions LLC",
+      "name": "Example Inc",
       "address": "12 Innovation Street, Kyiv, Ukraine, 01001",
       "reg": "UA-44521890"
     },
     "party2": {
       "role": "Client",
-      "name": "DataVault Corp",
+      "name": "Acme Corp",
       "address": "500 Enterprise Blvd, Suite 300, Kyiv, Ukraine, 02002",
       "reg": "UA-33198450"
     },
@@ -109,10 +109,10 @@ Complete example of JSON input for `generate_docx.js` to create a professional c
     ],
     "signatureBlock": {
       "party1": {
-        "label": "TechFlow Solutions LLC"
+        "label": "Example Inc"
       },
       "party2": {
-        "label": "DataVault Corp"
+        "label": "Acme Corp"
       }
     }
   }
@@ -130,8 +130,8 @@ Complete example of JSON input for `generate_docx.js` to create a professional c
     "contractNumber": "EMP-2026-042",
     "date": "2026-03-18",
     "parties": {
-      "employer": { "label": "Employer", "name": "CloudMetrics Inc.", "address": "100 Tech Park, Kyiv" },
-      "employee": { "label": "Employee", "name": "Maria Kovalenko", "address": "25 Shevchenko Blvd, Kyiv" }
+      "employer": { "label": "Employer", "name": "Example Inc", "address": "100 Tech Park, Kyiv" },
+      "employee": { "label": "Employee", "name": "Jane Doe", "address": "25 Shevchenko Blvd, Kyiv" }
     },
     "clauses": [
       {

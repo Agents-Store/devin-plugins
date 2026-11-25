@@ -61,7 +61,7 @@ Returns metrics for up to 700 keywords in a single call.
 ```bash
 POST /v3/dataforseo_labs/google/ranked_keywords/live
 Body: [{
-  "target": "ahrefs.com",
+  "target": "competitor.com",
   "location_name": "United States",
   "language_code": "en",
   "limit": 100,

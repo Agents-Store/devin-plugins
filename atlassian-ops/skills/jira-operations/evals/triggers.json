@@ -1,6 +1,6 @@
 [
   {"query": "ok so our sprint is ending and I need to move DEV-482, DEV-483 and DEV-490 to Done in Jira Cloud - we're on the standard software workflow. can you do it with curl, the token is already in my env", "should_trigger": true},
-  {"query": "Create a Jira bug in project PAY: summary 'Refund webhook returns 500 on partial refunds', description with steps to reproduce, assign it to maria.k@acme-example.com and set priority High", "should_trigger": true},
+  {"query": "Create a Jira bug in project PAY: summary 'Refund webhook returns 500 on partial refunds', description with steps to reproduce, assign it to jane.doe@example.com and set priority High", "should_trigger": true},
   {"query": "I need a JQL query for all unresolved bugs in project WEB assigned to me, created in the last 30 days, sorted by priority - then run it against our Jira site and show me key, summary and status", "should_trigger": true},
   {"query": "Log 2h 30m of work on INFRA-77 with the comment 'rotated the TLS certs', started yesterday at 14:00", "should_trigger": true},
   {"query": "Создай в Jira версию релиза 2.4.0 в проекте MOBILE с датой выпуска 2026-11-15 и привяжи к ней задачи MOBILE-310 и MOBILE-311 через fixVersions", "should_trigger": true},

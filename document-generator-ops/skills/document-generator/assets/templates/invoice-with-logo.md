@@ -18,7 +18,7 @@ Two ways to provide a logo:
 ```jsonc
 "companyInfo": {
   "name": "Acme Ltd.",
-  "logoUrl": "https://yoursite.com/logo.png"
+  "logoUrl": "https://example.com/logo.png"
 }
 ```
 
@@ -54,14 +54,14 @@ Same as `invoice-standard.md`, plus one of:
     "companyInfo": {
       "name": "Acme Services Ltd.",
       "address": "123 Business St, Kyiv, Ukraine",
-      "phone": "+380 67 000 0000",
-      "email": "info@acme.com",
+      "phone": "+1-555-0100",
+      "email": "info@example.com",
       "logoBase64": "<base64 string here>"
     },
     "recipientInfo": {
-      "name": "Global Client Corp.",
+      "name": "Example Inc",
       "address": "456 Client Ave, London, UK",
-      "email": "accounts@globalclient.com"
+      "email": "accounts@example.com"
     },
     "items": [
       {

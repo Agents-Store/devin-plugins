@@ -59,11 +59,11 @@ Complete example of JSON input for `generate_docx.js` to create a business propo
   "data": {
     "title": "Digital Transformation Strategy",
     "subtitle": "A Comprehensive Modernization Plan",
-    "author": "DigitalFirst Consulting",
-    "recipient": "GlobalRetail Inc.",
+    "author": "Example Inc",
+    "recipient": "Acme Corp",
     "date": "March 17, 2026",
-    "companyName": "DigitalFirst Consulting",
-    "footer": "DigitalFirst Consulting | Confidential",
+    "companyName": "Example Inc",
+    "footer": "Example Inc | Confidential",
     "headerText": "Digital Transformation Proposal",
     "tableOfContents": true,
     "sections": [
@@ -121,7 +121,7 @@ Complete example of JSON input for `generate_docx.js` to create a business propo
         ]
       },
       {
-        "heading": "About DigitalFirst Consulting",
+        "heading": "About Example Inc",
         "level": 1,
         "content": "15 years of retail digital transformation experience. 200+ successful projects. Certified partners with Salesforce, AWS, and Shopify."
       }

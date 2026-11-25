@@ -14,11 +14,11 @@
     "city": "New York",
     "contractor": {
       "name": "Acme Consulting LLC",
-      "representative": "John Smith",
+      "representative": "John Doe",
       "title": "Managing Director"
     },
     "customer": {
-      "name": "Global Corp Inc.",
+      "name": "Example Inc",
       "representative": "Jane Doe",
       "title": "Director"
     },
@@ -61,15 +61,15 @@
     "currencySymbol": "$",
     "vatRate": 20,
     "contractor": {
-      "name": "DevStudio Ltd.",
-      "representative": "Alex Johnson",
+      "name": "Example Inc",
+      "representative": "Alex Example",
       "title": "Director",
       "reg": "Company No.: 12345678",
       "address": "10 Innovation Street, London, EC2A 4BX"
     },
     "customer": {
-      "name": "Enterprise Solutions Corp.",
-      "representative": "Michael Brown",
+      "name": "Acme Corp",
+      "representative": "Jane Doe",
       "title": "CEO",
       "reg": "Company No.: 87654321",
       "address": "500 Business Park, London, SW1A 1AA"

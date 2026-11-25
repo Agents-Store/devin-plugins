@@ -17,8 +17,8 @@ Agent asks the user for required fields:
 
 - Title: "Cloud Migration Strategy & Implementation Proposal"
 - Recipient: "Acme Corporation"
-- Author: "CloudTech Solutions"
-- Company: "CloudTech Solutions"
+- Author: "Example Inc"
+- Company: "Example Inc"
 - Date: "2026-03-17"
 
 Then collects section content through Q&A:
@@ -54,11 +54,11 @@ Script: `generate_docx.js`
   "data": {
     "title": "Cloud Migration Strategy & Implementation Proposal",
     "subtitle": "Prepared for Acme Corporation",
-    "author": "CloudTech Solutions",
+    "author": "Example Inc",
     "recipient": "Acme Corporation",
     "date": "March 17, 2026",
-    "companyName": "CloudTech Solutions",
-    "footer": "CloudTech Solutions | Confidential",
+    "companyName": "Example Inc",
+    "footer": "Example Inc | Confidential",
     "headerText": "Cloud Migration Proposal",
     "sections": [
       {
@@ -105,7 +105,7 @@ Script: `generate_docx.js`
       {
         "heading": "About Us",
         "level": 1,
-        "content": "CloudTech Solutions is a certified AWS Advanced Consulting Partner with 10+ years of cloud migration experience. We have successfully migrated over 200 enterprises to the cloud."
+        "content": "Example Inc is a certified AWS Advanced Consulting Partner with 10+ years of cloud migration experience. We have successfully migrated over 200 enterprises to the cloud."
       }
     ]
   }

@@ -12,24 +12,24 @@ city: "San Francisco, CA"
 governingLaw: "the State of California"
 
 companyInfo:
-  name: "TechCo Solutions LLC"
+  name: "Example Inc"
   address: "100 Main Street, Suite 200, San Francisco, CA 94105"
   reg: "EIN: 12-3456789"
-  email: "info@techco.com"
+  email: "info@example.com"
   # Optional: logoBase64 (base64 PNG) or logoUrl
 
 party1:                                # Service Provider
-  name: "TechCo Solutions LLC"
+  name: "Example Inc"
   address: "100 Main Street, Suite 200, San Francisco, CA 94105"
   reg: "EIN: 12-3456789"
-  representative: "Alex Morgan"
+  representative: "Alex Example"
   title: "Managing Director"
 
 party2:                                # Client
   name: "Acme Corporation"
   address: "500 Enterprise Avenue, New York, NY 10001"
   reg: "EIN: 98-7654321"
-  representative: "Sarah Chen"
+  representative: "Jane Doe"
   title: "Chief Technology Officer"
 
 clauses:
@@ -86,23 +86,23 @@ clauses:
     "city": "San Francisco, CA",
     "governingLaw": "the State of California",
     "companyInfo": {
-      "name": "TechCo Solutions LLC",
+      "name": "Example Inc",
       "address": "100 Main Street, Suite 200, San Francisco, CA 94105",
       "reg": "EIN: 12-3456789",
-      "email": "info@techco.com"
+      "email": "info@example.com"
     },
     "party1": {
-      "name": "TechCo Solutions LLC",
+      "name": "Example Inc",
       "address": "100 Main Street, Suite 200, San Francisco, CA 94105",
       "reg": "EIN: 12-3456789",
-      "representative": "Alex Morgan",
+      "representative": "Alex Example",
       "title": "Managing Director"
     },
     "party2": {
       "name": "Acme Corporation",
       "address": "500 Enterprise Avenue, New York, NY 10001",
       "reg": "EIN: 98-7654321",
-      "representative": "Sarah Chen",
+      "representative": "Jane Doe",
       "title": "Chief Technology Officer"
     },
     "clauses": []

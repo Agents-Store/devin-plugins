@@ -97,8 +97,8 @@ Write `~/.document-generator/preferences.json`:
       "name": "Acme Corp",
       "address": "123 Main St, City, Country",
       "phone": "+1 555-0100",
-      "email": "billing@acme.com",
-      "website": "acme.com",
+      "email": "billing@example.com",
+      "website": "example.com",
       "reg": "12345678",
       "logoFile": "acme-logo.png"
     }
@@ -304,7 +304,7 @@ When the user provides company info that does NOT match any stored profile:
 
 1. Use the provided data for the current document
 2. After generation, offer to save:
-   > "I noticed this is a new company (TechFlow LLC). Want me to save it as a company profile for future documents?"
+   > "I noticed this is a new company (Example Inc). Want me to save it as a company profile for future documents?"
 3. If yes → generate a key from the name (e.g., "techflow-llc"), save to `companies`, optionally ask for logo
 4. If no → use it for this document only, do not persist
 

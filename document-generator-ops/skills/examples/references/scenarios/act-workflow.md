@@ -6,7 +6,7 @@ Step-by-step walkthrough: user requests an act of completed works → classify �
 
 ## User Request
 
-> "Generate an act of completed works for March. Contractor — FOP Ivanenko, customer — Client LLC."
+> "Generate an act of completed works for March. Contractor — Alex Example (sole proprietor), customer — Acme Corp."
 
 ---
 
@@ -29,14 +29,14 @@ Collecting data for the act:
 4. Contract reference: Contract No. 001/2026 dated January 1, 2026
 
 Contractor:
-- Name: FOP Ivanenko Ivan Ivanovych
-- Representative: Ivanenko I.I.
+- Name: Alex Example (sole proprietor)
+- Representative: Example A.
 - Role: Individual Entrepreneur
 - Tax ID: 1234567890
 
 Customer:
-- Name: Client LLC
-- Representative: Petrenko P.P.
+- Name: Acme Corp
+- Representative: Doe J.
 - Role: Director
 - Registration No.: 98765432
 
@@ -86,14 +86,14 @@ Build `.doc_input.json`:
     "currencySymbol": "$",
     "vatRate": 0,
     "contractor": {
-      "name": "FOP Ivanenko Ivan Ivanovych",
-      "representative": "Ivanenko I.I.",
+      "name": "Alex Example (sole proprietor)",
+      "representative": "Example A.",
       "title": "Individual Entrepreneur",
       "reg": "Tax ID: 1234567890"
     },
     "customer": {
-      "name": "Client LLC",
-      "representative": "Petrenko P.P.",
+      "name": "Acme Corp",
+      "representative": "Doe J.",
       "title": "Director",
       "reg": "Reg. No.: 98765432"
     },

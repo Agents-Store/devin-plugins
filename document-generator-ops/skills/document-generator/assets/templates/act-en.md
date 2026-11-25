@@ -10,15 +10,15 @@ date: "April 7, 2026"
 city: "San Francisco"
 
 contractor:               # Service provider
-  name: "TechCo Solutions LLC"
-  representative: "Alex Morgan"
+  name: "Example Inc"
+  representative: "Alex Example"
   title: "Managing Director"
   reg: "EIN: 12-3456789"
   address: "100 Main Street, Suite 200, San Francisco, CA 94105"
 
 customer:                 # Client
   name: "Acme Corporation"
-  representative: "Sarah Chen"
+  representative: "Jane Doe"
   title: "Chief Technology Officer"
   reg: "EIN: 98-7654321"
   address: "500 Enterprise Avenue, New York, NY 10001"
@@ -64,15 +64,15 @@ notes: "Additional notes or conditions."
     "currencySymbol": "$",
     "vatRate": 0,
     "contractor": {
-      "name": "TechCo Solutions LLC",
-      "representative": "Alex Morgan",
+      "name": "Example Inc",
+      "representative": "Alex Example",
       "title": "Managing Director",
       "reg": "EIN: 12-3456789",
       "address": "100 Main Street, Suite 200, San Francisco, CA 94105"
     },
     "customer": {
       "name": "Acme Corporation",
-      "representative": "Sarah Chen",
+      "representative": "Jane Doe",
       "title": "Chief Technology Officer",
       "reg": "EIN: 98-7654321",
       "address": "500 Enterprise Avenue, New York, NY 10001"

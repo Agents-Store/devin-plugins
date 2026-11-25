@@ -167,11 +167,11 @@ Workflow:
 </example>
 
 <example>
-User: "What keywords does ahrefs.com rank for that we don't?"
+User: "What keywords does competitor.com rank for that we don't?"
 
 Workflow:
 1. docs_search for /v3/dataforseo_labs/google/domain_intersection/live; get the user's budget
-2. api_request POST that path with target1 "ahrefs.com", target2 "yourdomain.com", intersections false, location_code 2840, language_code "en", limit 300
+2. api_request POST that path with target1 "competitor.com", target2 "yourdomain.com", intersections false, location_code 2840, language_code "en", limit 300
 3. Pass the keyword list to /v3/dataforseo_labs/google/bulk_keyword_difficulty/live
 4. Keep keyword_difficulty < 50 and search_volume > 500
 5. For the top 10, read the live SERP at /v3/serp/google/organic/live/advanced

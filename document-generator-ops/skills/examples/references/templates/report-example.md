@@ -61,8 +61,8 @@ Complete example of JSON input for `generate_docx.js` to create a professional r
     "subtitle": "Web Application Penetration Test Results",
     "author": "Security Team",
     "date": "March 31, 2026",
-    "companyName": "CyberShield Consulting",
-    "footer": "CyberShield Consulting | Confidential",
+    "companyName": "Example Inc",
+    "footer": "Example Inc | Confidential",
     "headerText": "Security Audit Report",
     "sections": [
       {

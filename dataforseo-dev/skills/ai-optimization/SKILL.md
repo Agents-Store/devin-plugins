@@ -151,13 +151,13 @@ Up to 1000 keywords per call. Rank the list by AI search volume, then check the 
 6. **Measure**: Workflow 1 again next month; compare with the historical and delta endpoints.
 
 <example>
-User: "How visible is acme.io in AI search? Compare us with competitor1.com and competitor2.com."
+User: "How visible is example.com in AI search? Compare us with competitor1.com and competitor2.com."
 
 1. docs_search for llm_mentions/multi_target_metrics/live and llm_mentions/target_metrics/live; read the Pricing links.
 2. Show the plan: one target_metrics call, one multi_target_metrics call, one top_mentioned_domains call; ask the user for a ceiling.
-3. After approval, call api_request on `/v3/ai_optimization/llm_mentions/target_metrics/live` for acme.io, then on `/v3/ai_optimization/llm_mentions/multi_target_metrics/live` with the three keyed targets.
+3. After approval, call api_request on `/v3/ai_optimization/llm_mentions/target_metrics/live` for example.com, then on `/v3/ai_optimization/llm_mentions/multi_target_metrics/live` with the three keyed targets.
 4. Compare the keyed results: mention counts, cited source domains, platform split.
-5. Report where competitors are mentioned and acme.io is not, and which queries to cover with new content.
+5. Report where competitors are mentioned and example.com is not, and which queries to cover with new content.
 </example>
 
 <example>

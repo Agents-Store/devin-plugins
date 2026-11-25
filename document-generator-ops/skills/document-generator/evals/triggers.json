@@ -1,10 +1,10 @@
 [
-  {"query": "Generate an invoice PDF for Acme Corp: INV-2026-017, three line items (design 12h at $90, hosting $240, domain $15), due in 30 days. My company is Northwind Studio, 100 Main Street, San Francisco.", "should_trigger": true},
+  {"query": "Generate an invoice PDF for Acme Corp: INV-2026-017, three line items (design 12h at $90, hosting $240, domain $15), due in 30 days. My company is Example Inc, 100 Main Street, San Francisco.", "should_trigger": true},
   {"query": "I need a commercial proposal as a Word document for a website redesign for Brightpath Dental. Three phases, total $18,500, valid 30 days. Which engine will be used for the DOCX and where will the file be saved?", "should_trigger": true},
   {"query": "Convert this markdown report to PDF and DOCX please, keep the headings and tables. The file is quarterly-report.md in the current folder.", "should_trigger": true},
-  {"query": "create an NDA between Orbit Labs and Zeta Consulting, mutual, 2 years, governed by California law, output as PDF", "should_trigger": true},
+  {"query": "create an NDA between Example Inc and Acme Corp, mutual, 2 years, governed by California law, output as PDF", "should_trigger": true},
   {"query": "Make a 7-slide PPTX pitch deck for our seed round: title, problem, solution, market, traction, team, ask.", "should_trigger": true},
-  {"query": "Prepare a certificate of completion (act of completed works) for web development services delivered to Digital Service LLC, dated April 3, in Ukrainian, as a PDF.", "should_trigger": true},
+  {"query": "Prepare a certificate of completion (act of completed works) for web development services delivered to Acme Corp, dated April 3, in Ukrainian, as a PDF.", "should_trigger": true},
   {"query": "Сформируй счёт на оплату для ООО «Ромашка» на три позиции и сохрани в PDF в текущую папку", "should_trigger": true},
   {"query": "Сделай коммерческое предложение на разработку мобильного приложения: три этапа, итоговая сумма 24 000 евро, формат DOCX", "should_trigger": true},
   {"query": "Write the text of a cover letter for a marketing manager job at a fintech startup", "should_trigger": false},

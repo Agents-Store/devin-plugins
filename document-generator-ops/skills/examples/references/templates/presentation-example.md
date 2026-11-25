@@ -36,13 +36,13 @@ Complete example of JSON input for `generate_pptx.js` to create a professional p
   },
   "data": {
     "title": "Series A Investor Pitch",
-    "subtitle": "CloudMetrics — AI-Powered Analytics",
-    "author": "Alex Chen, CEO",
+    "subtitle": "Example Inc — AI-Powered Analytics",
+    "author": "Alex Example, CEO",
     "date": "March 2026",
     "slides": [
       {
         "type": "title",
-        "title": "CloudMetrics",
+        "title": "Example Inc",
         "subtitle": "AI-Powered Analytics for Modern Teams",
         "date": "Series A — March 2026"
       },
@@ -128,10 +128,10 @@ Complete example of JSON input for `generate_pptx.js` to create a professional p
       },
       {
         "type": "contact",
-        "name": "Alex Chen, CEO",
-        "email": "alex@cloudmetrics.io",
-        "phone": "+1 (415) 555-0192",
-        "website": "cloudmetrics.io"
+        "name": "Alex Example, CEO",
+        "email": "alex@example.com",
+        "phone": "+1-555-0192",
+        "website": "example.com"
       }
     ]
   }

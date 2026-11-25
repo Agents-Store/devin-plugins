@@ -50,15 +50,15 @@ Complete example of JSON input for `generate_pdf.js` to create a professional in
     "date": "March 17, 2026",
     "dueDate": "April 17, 2026",
     "companyInfo": {
-      "name": "Apex Development Studio",
+      "name": "Example Inc",
       "address": "100 Innovation Drive, Austin, TX 78701",
-      "phone": "+1 (512) 555-0190",
-      "email": "billing@apexdev.io"
+      "phone": "+1-555-0190",
+      "email": "billing@example.com"
     },
     "recipient": {
-      "name": "NovaTech Industries",
+      "name": "Acme Corp",
       "address": "500 Corporate Park, Chicago, IL 60601",
-      "email": "accounts@novatech.com"
+      "email": "accounts@example.com"
     },
     "items": [
       {
@@ -100,7 +100,7 @@ Complete example of JSON input for `generate_pdf.js` to create a professional in
       "bank": "Silicon Valley Bank",
       "iban": "US64 1234 5678 9012 3456 78",
       "swift": "SVBKUS6S",
-      "accountName": "Apex Development Studio LLC"
+      "accountName": "Example Inc"
     },
     "notes": "Payment terms: Net 30. Early payment discount: 5% if paid within 10 days. Late payments subject to 1.5% monthly interest. Please reference invoice number in payment."
   }
