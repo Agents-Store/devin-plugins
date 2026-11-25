@@ -29,9 +29,9 @@ curl -s -H "Authorization: Bearer ${TAIGA_AUTH_TOKEN}" \
 | GET | `/resolver?project=<slug>&ref=<ref>` | auto-detect US/task/issue by ref (do not combine with `us`/`task`/`issue`) |
 
 ```bash
-# What numeric IDs back project "apollo" and its story #42?
+# What numeric IDs back project "demo-project" and its story #42?
 curl -s -H "Authorization: Bearer ${TAIGA_AUTH_TOKEN}" \
-  "${TAIGA_API_URL%/}/api/v1/resolver?project=apollo&us=42" | jq .
+  "${TAIGA_API_URL%/}/api/v1/resolver?project=demo-project&us=42" | jq .
 ```
 
 ## Stats

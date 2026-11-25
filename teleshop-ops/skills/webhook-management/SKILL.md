@@ -54,7 +54,7 @@ payload fields with `get_webhook_sample_payload`.
 ```
 Tool: create_webhook
 Input: {
-  "url": "https://your-server.com/webhooks/teleshop",
+  "url": "https://your-server.example.com/webhooks/teleshop",
   "events": ["order.created", "order.updated"]
 }
 ```
@@ -87,7 +87,7 @@ Input: {"id": 1}
 Tool: update_webhook
 Input: {
   "id": 1,
-  "url": "https://new-server.com/webhooks",
+  "url": "https://new-server.example.com/webhooks",
   "events": ["order.created", "order.updated", "order.completed"]
 }
 ```
@@ -171,7 +171,7 @@ Use this to verify incoming webhook payloads are authentic.
 2. get_webhook_stats(id) -> Check success/failure rates
 3. get_webhook_logs(id) -> Find failed deliveries and error codes
 4. test_webhook(id) -> Test with fresh request
-5. If URL changed: update_webhook(id, url="https://new-url.com")
+5. If URL changed: update_webhook(id, url="https://new-url.example.com")
 ```
 
 ### Temporarily Disable Webhook

@@ -114,7 +114,7 @@ Option B — Catalog import (recommended for many products):
 
 2. Create order webhook:
    create_webhook(
-     url="https://merchant-crm.com/api/teleshop-orders",
+     url="https://crm.example.com/api/teleshop-orders",
      events=["order.created", "order.updated"]
    )
 
@@ -136,7 +136,7 @@ Option B — Catalog import (recommended for many products):
 2. Configure data sync (if supplier feed available):
    get_workflow_variables(id=syncId)
    set_workflow_variables(id=syncId, variables={
-     source_url: "https://supplier.com/catalog.xml",
+     source_url: "https://supplier.example.com/catalog.xml",
      auto_publish: "true"
    })
    set_workflow_schedule(id=syncId, schedule="0 6 * * *")  // Daily at 6 AM

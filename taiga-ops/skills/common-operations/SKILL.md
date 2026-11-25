@@ -13,7 +13,7 @@ If `TAIGA_AUTH_TOKEN` is not already set this session, run the `setup` skill's l
 
 ## The golden rules (why workflows look the way they do)
 
-1. **Resolve names to IDs once.** Users say "project apollo, story #42"; the API wants numbers. Hit `/resolver` first and keep the IDs. (→ `search-import.md`)
+1. **Resolve names to IDs once.** Users say "project demo-project, story #42"; the API wants numbers. Hit `/resolver` first and keep the IDs. (→ `search-import.md`)
 2. **Read before you write.** Editing an item requires its current `version`. Always `GET` it, take `.version`, then `PATCH` with that version. (→ `setup`)
 3. **Discover valid values per project.** Status/type/priority IDs differ per project. Use the resource's `.../filters_data?project=<id>` or list the `*-statuses` endpoint to pick the right ID instead of guessing.
 4. **Confirm before deleting.** `DELETE` is irreversible; ask the user first.
@@ -23,7 +23,7 @@ If `TAIGA_AUTH_TOKEN` is not already set this session, run the `setup` skill's l
 ```bash
 # Slug -> project id
 PID=$(curl -s -H "Authorization: Bearer ${TAIGA_AUTH_TOKEN}" \
-  "${TAIGA_API_URL%/}/api/v1/resolver?project=apollo" | jq -r .project)
+  "${TAIGA_API_URL%/}/api/v1/resolver?project=demo-project" | jq -r .project)
 # Story statuses (id + name) for that project
 curl -s -H "Authorization: Bearer ${TAIGA_AUTH_TOKEN}" \
   "${TAIGA_API_URL%/}/api/v1/userstory-statuses?project=${PID}" | jq -r '.[] | "\(.id)\t\(.name)"'

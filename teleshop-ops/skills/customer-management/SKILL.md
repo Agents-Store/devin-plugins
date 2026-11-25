@@ -68,7 +68,7 @@ Returns: {
 
 ### Find Customer by Phone
 ```
-1. list_customers(search="+380991234567") -> Find customer
+1. list_customers(search="+1-555-0123") -> Find customer
 2. get_customer(id) -> View full profile with orders
 ```
 

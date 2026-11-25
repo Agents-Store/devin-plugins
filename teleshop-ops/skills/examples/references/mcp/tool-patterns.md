@@ -124,8 +124,8 @@ Reference patterns for all 50 Teleshop MCP tools with exact parameter formats.
   "ttn": "20450123456789",
   "comment": "Express delivery requested",
   "email": "john@example.com",
-  "fullName": "John Smith",
-  "phoneNumber": "+380991234567",
+  "fullName": "John Doe",
+  "phoneNumber": "+1-555-0123",
   "skipConfirmationCall": true
 }
 ```
@@ -273,12 +273,12 @@ Reference patterns for all 50 Teleshop MCP tools with exact parameter formats.
 
 ### create_webhook
 ```json
-{ "url": "https://my-server.com/webhooks", "events": ["order.created", "order.updated"] }
+{ "url": "https://my-server.example.com/webhooks", "events": ["order.created", "order.updated"] }
 ```
 
 ### update_webhook
 ```json
-{ "id": 1, "url": "https://new-server.com/webhooks", "events": ["order.created"] }
+{ "id": 1, "url": "https://new-server.example.com/webhooks", "events": ["order.created"] }
 ```
 
 ### delete_webhook

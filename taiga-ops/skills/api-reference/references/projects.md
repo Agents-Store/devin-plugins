@@ -42,7 +42,7 @@ All paths under `${TAIGA_API_URL%/}/api/v1`, header `Authorization: Bearer ${TAI
 ```bash
 # Create a private project from a template
 curl -s -X POST -H "Authorization: Bearer ${TAIGA_AUTH_TOKEN}" -H "Content-Type: application/json" \
-  -d '{"name":"Apollo","description":"Launch project","is_private":true}' \
+  -d '{"name":"Demo Project","description":"Launch project","is_private":true}' \
   "${TAIGA_API_URL%/}/api/v1/projects" | jq '{id, slug, name}'
 ```
 

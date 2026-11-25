@@ -5,7 +5,7 @@ Pull the numbers a status update needs, then take a full backup. Assumes `setup`
 ```bash
 BASE="${TAIGA_API_URL%/}/api/v1"
 AUTH=(-H "Authorization: Bearer ${TAIGA_AUTH_TOKEN}")
-PID=$(curl -s "${AUTH[@]}" "${BASE}/resolver?project=apollo" | jq -r .project)
+PID=$(curl -s "${AUTH[@]}" "${BASE}/resolver?project=demo-project" | jq -r .project)
 ```
 
 ## 1. Search across the project

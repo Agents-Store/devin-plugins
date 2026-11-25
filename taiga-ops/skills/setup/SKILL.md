@@ -13,7 +13,7 @@ The user sets these in their shell or repo `.env`. Read them — never hardcode 
 
 | Variable | Required | Meaning |
 |----------|----------|---------|
-| `TAIGA_API_URL` | yes | Base instance URL, e.g. `https://api.taiga.io` (hosted Taiga Cloud — has plans with project and storage limits, see the note below) or `https://taiga.mycompany.com` (self-hosted). The API lives under `${TAIGA_API_URL}/api/v1`. |
+| `TAIGA_API_URL` | yes | Base instance URL, e.g. `https://api.taiga.io` (hosted Taiga Cloud — has plans with project and storage limits, see the note below) or `https://taiga.example.com` (self-hosted). The API lives under `${TAIGA_API_URL}/api/v1`. |
 | `TAIGA_ADMIN_USERNAME` | yes | Username or email used to obtain a token. |
 | `TAIGA_ADMIN_PASSWORD` | yes | Password for that account. |
 | `TAIGA_AUTH_TOKEN` | derived | Obtained at runtime from the login call below; reused for the rest of the session. |

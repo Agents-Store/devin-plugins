@@ -132,8 +132,8 @@ Input: {
 Tool: update_order
 Input: {
   "id": 456,
-  "fullName": "John Smith",
-  "phoneNumber": "+380991234567",
+  "fullName": "John Doe",
+  "phoneNumber": "+1-555-0123",
   "email": "john@example.com",
   "comment": "Customer requested express delivery",
   "skipConfirmationCall": true

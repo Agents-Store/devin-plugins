@@ -63,7 +63,7 @@ Step 1: Get new orders
 
 Step 2: Review first order
   get_order(id=456)
-  -> Order #1234, John Smith, 3 items, $299.97
+  -> Order #1234, John Doe, 3 items, $299.97
 
 Step 3: Start processing
   update_order_status(id=456, status="processing")
@@ -83,7 +83,7 @@ Step 6: Complete
 ### Handle Returns / Cancellations
 ```
 Step 1: Find the order
-  list_orders(search="John Smith")
+  list_orders(search="John Doe")
   -> Order #1234
 
 Step 2: Get full details
@@ -136,7 +136,7 @@ Step 3: Import products
 
 Step 4: Set up webhooks
   get_webhook_events() -> available events
-  create_webhook(url="https://my-crm.com/webhooks", events=["order.created", "order.updated"])
+  create_webhook(url="https://crm.example.com/webhooks", events=["order.created", "order.updated"])
   get_webhook_secret(id=webhookId) -> save secret
   test_webhook(id=webhookId) -> verify delivery
 
@@ -193,7 +193,7 @@ Step 2: Check configuration
 
 Step 3: Configure
   set_workflow_variables(id="sync-addon", variables={
-    source_url: "https://supplier.com/feed.xml",
+    source_url: "https://supplier.example.com/feed.xml",
     sync_interval: "30",
     auto_publish: "true"
   })

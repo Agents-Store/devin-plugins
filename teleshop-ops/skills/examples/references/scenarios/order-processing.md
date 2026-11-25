@@ -15,12 +15,12 @@ A merchant processes orders daily — reviewing new orders, preparing shipments,
 
 2. Review each order:
    get_order(id=101)
-   -> Order #2001: Maria, 2x "Blue T-Shirt" + 1x "Jeans", Total: $89.97
+   -> Order #2001: Jane, 2x "Blue T-Shirt" + 1x "Jeans", Total: $89.97
       Payment: onlinePayment, isPayed: true
       Delivery: novaPoshtaCourier
 
    get_order(id=102)
-   -> Order #2002: Petro, 1x "Leather Jacket", Total: $199.99
+   -> Order #2002: Alex, 1x "Leather Jacket", Total: $199.99
       Payment: offlineCash, isPayed: false
       Delivery: selfPickup
 
@@ -136,8 +136,8 @@ Order created -> isPayed: true automatically
 
 ```
 1. Find customer:
-   list_customers(search="Maria")
-   -> Customer #789: Maria K., +380991234567
+   list_customers(search="Jane")
+   -> Customer #789: Jane D., +1-555-0123
 
 2. View all their orders:
    list_orders(customerId=789, sortBy="createdAt", sortOrder="DESC")

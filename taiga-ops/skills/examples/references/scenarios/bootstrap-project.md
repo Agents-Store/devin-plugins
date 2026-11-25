@@ -18,7 +18,7 @@ curl -s "${AUTH[@]}" "${BASE}/project-templates" | jq -r '.[] | "\(.id)\t\(.slug
 
 ```bash
 PROJECT=$(curl -s -X POST "${AUTH[@]}" \
-  -d '{"name":"Apollo","description":"Customer portal","is_private":true,"creation_template":1}' \
+  -d '{"name":"Demo Project","description":"Customer portal","is_private":true,"creation_template":1}' \
   "${BASE}/projects")
 PID=$(echo "$PROJECT" | jq -r .id)
 echo "Created project $PID ($(echo "$PROJECT" | jq -r .slug))"

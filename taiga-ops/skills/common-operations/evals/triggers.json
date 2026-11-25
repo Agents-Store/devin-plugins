@@ -1,6 +1,6 @@
 [
-  {"query": "Create a user story Export to CSV in the Apollo project on our Taiga and put it in the current sprint", "should_trigger": true},
-  {"query": "In Taiga, move story 42 of the project apollo to In Progress and assign it to maria", "should_trigger": true},
+  {"query": "Create a user story Export to CSV in the Demo Project on our Taiga and put it in the current sprint", "should_trigger": true},
+  {"query": "In Taiga, move story 42 of the project demo-project to In Progress and assign it to jane", "should_trigger": true},
   {"query": "We need to start a new two-week sprint in Taiga and pull in the five stories tagged release-2. How do I do that?", "should_trigger": true},
   {"query": "Add a comment to Taiga issue 318 saying the fix is deployed, and close the issue", "should_trigger": true},
   {"query": "Invite three people to our Taiga project with the Developer role", "should_trigger": true},

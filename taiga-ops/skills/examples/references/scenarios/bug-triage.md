@@ -5,7 +5,7 @@ File an issue with the right classifiers, assign and document it, then resolve. 
 ```bash
 BASE="${TAIGA_API_URL%/}/api/v1"
 AUTH=(-H "Authorization: Bearer ${TAIGA_AUTH_TOKEN}" -H "Content-Type: application/json")
-PID=$(curl -s "${AUTH[@]}" "${BASE}/resolver?project=apollo" | jq -r .project)
+PID=$(curl -s "${AUTH[@]}" "${BASE}/resolver?project=demo-project" | jq -r .project)
 ```
 
 ## 1. Discover this project's classifier IDs

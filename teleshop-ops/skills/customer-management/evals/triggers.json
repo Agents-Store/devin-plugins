@@ -1,5 +1,5 @@
 [
-  {"query": "Find the customer with the phone +380991234567 in my store and show their full order history", "should_trigger": true},
+  {"query": "Find the customer with the phone +1-555-0123 in my store and show their full order history", "should_trigger": true},
   {"query": "Search Teleshop customers by Telegram username and show when they registered", "should_trigger": true},
   {"query": "Show the 20 newest customers of the store sorted by registration date", "should_trigger": true},
   {"query": "Which fields does a customer profile have in Teleshop, and do I need to create customers manually?", "should_trigger": true},
