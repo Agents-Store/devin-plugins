@@ -5,7 +5,7 @@ description: Configure NocoDB webhooks (HookV3) on a table — insert, update an
 
 # Webhooks (HookV3)
 
-NocoDB webhooks fire on record events and dispatch to a notification target (URL, Email, a messaging service, or a Script). Hook APIs are available on cloud-hosted Business and above and on licensed self-hosted deployments. Hook lifecycle goes through the MCP `hooks` category on **Cloud / licensed** (called by name on `/mcp` since 2026.10.1; `listTools category: "hooks"`, then `callTool` on `/mcp-discovery` and older servers) or through the **REST API** (`curl` on Meta API v3) on Community Edition / as a fallback. See **mcp-patterns** for the contract.
+NocoDB webhooks fire on record events and dispatch to a notification target (URL, Email, a messaging service, or a Script). Hook APIs are available on cloud-hosted Business and above and on licensed self-hosted deployments. Hook lifecycle goes through the MCP hook tools (`createHook`, `updateHook`, `deleteHook`) on **Cloud / licensed** (called by name; on `/mcp-discovery`: see **mcp-patterns**) or through the **REST API** (`curl` on Meta API v3) on Community Edition / as a fallback. See **mcp-patterns** for the contract.
 
 The schema reference is `HookV3*` in `api-reference/references/nocodb-meta-openapi.json`:
 
@@ -122,11 +122,13 @@ curl -sS -X POST \
 MCP (Cloud / licensed):
 
 ```
-mcp__plugin_nocodb-dev_nocodb__listTools  category: "hooks"
-mcp__plugin_nocodb-dev_nocodb__callTool   name: "createHook"
-  arguments: { tableId: "<tableId>", title: "Slack on new bug", event: "record",
-               operation: ["insert"], notification: { type: "Slack", payload: { body: "..." } },
-               active: true }
+mcp__plugin_nocodb-dev_nocodb__createHook
+  tableId: "<tableId>"
+  title: "Slack on new bug"
+  event: "record"
+  operation: ["insert"]
+  notification: { type: "Slack", payload: { body: "..." } }
+  active: true
 ```
 
 `trigger_fields` in the MCP tool requires `operation` to include `"update"` and `event` `"record"`; any other combination is rejected.
@@ -189,7 +191,7 @@ curl -sS -X DELETE \
   "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/hooks/${HOOK_ID}"
 ```
 
-MCP: `callTool name: "deleteHook"  arguments: { hookId: "<hookId>" }`.
+MCP: `deleteHook` with `{ hookId: "<hookId>" }`.
 
 ## Testing a Hook
 

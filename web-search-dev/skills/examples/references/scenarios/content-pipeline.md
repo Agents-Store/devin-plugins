@@ -46,29 +46,38 @@ Input: { "url": [
 
 ## Step 4: Extract Structured Data
 
-Turn each article into structured data for your CMS (one scrape per URL):
+Turn the articles into structured data for your CMS. `firecrawl_scrape` has no `json` format, so run the research agent on the article URLs and poll `firecrawl_agent_status` until it completes:
 
 ```
-Tool: firecrawl_scrape
+Tool: firecrawl_agent
 Input: {
-  "url": "<article_url>",
-  "formats": ["json"],
-  "jsonOptions": {
-    "prompt": "Extract article title, author, publication date, main content, tags/categories, and featured image URL",
-    "schema": {
-      "type": "object",
-      "properties": {
-        "title": { "type": "string" },
-        "author": { "type": "string" },
-        "date": { "type": "string" },
-        "content": { "type": "string" },
-        "tags": { "type": "array", "items": { "type": "string" } },
-        "image": { "type": "string" }
+  "prompt": "For each URL extract the article title, author, publication date, main content, tags/categories, and featured image URL",
+  "urls": ["<article_url_1>", "<article_url_2>"],
+  "strictConstrainToURLs": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "articles": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "author": { "type": "string" },
+            "date": { "type": "string" },
+            "content": { "type": "string" },
+            "tags": { "type": "array", "items": { "type": "string" } },
+            "image": { "type": "string" }
+          }
+        }
       }
     }
-  }
+  },
+  "maxCredits": 200
 }
 ```
+
+The content already arrived in Step 3 (`read_url`), so for articles you only need a few fields from, parse the markdown instead and skip the agent.
 
 ## Step 5: Classify and Categorize
 
@@ -131,7 +140,7 @@ for (const article of processedArticles) {
 Discover sources (Exa)
   → Map site URLs (Firecrawl)
     → Batch read content (Jina read_url, 5 URLs per call)
-      → Extract structured data (Firecrawl scrape, json format)
+      → Extract structured data (Firecrawl agent with schema)
         → Classify (model / schema enum)
           → Deduplicate (Jina)
             → Rerank (Jina)

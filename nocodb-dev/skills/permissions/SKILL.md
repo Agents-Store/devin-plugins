@@ -7,7 +7,7 @@ description: Set NocoDB table and field permissions — who may see a table, add
 
 A base role (owner, creator, editor, commenter, viewer) decides what a person can do everywhere in a base. A **permission grant** narrows one table or one field: only tables and fields with an explicit grant appear in the list, everything else follows the base roles. Grants need Cloud-hosted **Business** and above or licensed self-hosted for `setPermission` / `dropPermission`; listing works on every plan, so a downgraded workspace can still see the grants in place. The caller needs the **Creator** or **Owner** role on the base (source: https://nocodb.com/docs/mcp/permissions, 2026-10-22; OpenAPI spec at tag 2026.10.2, tag `Permissions`).
 
-Over MCP the tools are listed on `/mcp` (2026.10.1 and later); on `/mcp-discovery` or an older server reach them with `listTools category: "permissions"` → `callTool`. Community Edition has none of them (see **mcp-patterns**).
+Over MCP the tools are listed on `/mcp` — call them by name (on `/mcp-discovery`: see **mcp-patterns**). Community Edition has none of them (see **mcp-patterns**).
 
 ## The five permission keys
 
@@ -100,4 +100,4 @@ A listed grant looks like `{id, entity, entity_id, permission, granted_type, gra
 ## See Also
 
 - **api-reference** — `references/meta-api-endpoints.md` → Table and Field Permissions; `jq '.components.schemas.PermissionSet'` on the bundled meta spec
-- **mcp-patterns** — the MCP contract and the `listTools` flow
+- **mcp-patterns** — the MCP contract: listed tools, `/mcp-discovery`, editions

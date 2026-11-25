@@ -15,7 +15,7 @@ description: |
 
 NocoDB tables can have multiple views — different lenses on the same data. The view APIs are available on cloud-hosted Enterprise and on licensed self-hosted deployments (Business plan and above); reading views works on every plan.
 
-View writes go through the MCP schema tools on **Cloud / licensed** (called by name on `/mcp` since 2026.10.1; `listTools` categories `views`, `filters`, `sorts`, `shared-views`, then `callTool` on `/mcp-discovery` and older servers) and through the **REST API** (`curl` on Meta API v3) as the fallback. See **mcp-patterns** for the contract.
+View writes go through the MCP schema tools on **Cloud / licensed** (called by name; on `/mcp-discovery`: see **mcp-patterns**) and through the **REST API** (`curl` on Meta API v3) as the fallback. See **mcp-patterns** for the contract.
 
 ## Nine View Types
 
@@ -58,9 +58,10 @@ curl -sS -X POST \
 MCP (Cloud / licensed):
 
 ```
-mcp__plugin_nocodb-dev_nocodb__listTools  category: "views"
-mcp__plugin_nocodb-dev_nocodb__callTool   name: "createView"
-  arguments: { tableId: "<tableId>", title: "All Customers", type: "grid" }
+mcp__plugin_nocodb-dev_nocodb__createView
+  tableId: "<tableId>"
+  title: "All Customers"
+  type: "grid"
 ```
 
 The MCP `createView` takes the same `title`, `type`, `lock_type`, `options` and `fields`; filters and sorts are separate tools (below). The payloads in this skill are the REST bodies — for MCP, lift the keys into `arguments` next to `tableId`.
@@ -244,7 +245,7 @@ curl -sS -X PATCH \
   "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/views/${VIEW_ID}"
 ```
 
-MCP: `callTool name: "updateView"  arguments: { viewId: "<viewId>", title: "Renamed" }`. A view keeps its type — create a new view instead of changing it.
+MCP: `updateView` with `{ viewId: "<viewId>", title: "Renamed" }`. A view keeps its type — create a new view instead of changing it.
 
 Type-specific config (e.g. Kanban's stacking field, Calendar's ranges) updates through `options`:
 
@@ -322,16 +323,17 @@ curl -sS -X DELETE \
   "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/views/${VIEW_ID}"
 ```
 
-MCP: `callTool name: "deleteView"  arguments: { viewId: "<viewId>" }`. On Cloud / licensed the deleted view goes to the base trash and can be restored (`listTrash`, `restoreFromTrash`) until the retention window ends.
+MCP: `deleteView` with `{ viewId: "<viewId>" }`. On Cloud / licensed the deleted view goes to the base trash and can be restored (`listTrash`, `restoreFromTrash`) until the retention window ends.
 
 ## Sharing a View
 
 The Meta API v3 spec has no endpoint for public share links. On Cloud / licensed, use the MCP `shared-views` category:
 
 ```
-mcp__plugin_nocodb-dev_nocodb__listTools  category: "shared-views"
-mcp__plugin_nocodb-dev_nocodb__callTool   name: "shareView"
-  arguments: { viewId: "<viewId>", password: "<optional>", allow_csv_download: false }
+mcp__plugin_nocodb-dev_nocodb__shareView
+  viewId: "<viewId>"
+  password: "<optional>"
+  allow_csv_download: false
 ```
 
 `shareView` on an already-shared view keeps the same URL and only applies the settings you pass; `unshareView { viewId }` revokes the link (a later share issues a different URL). `listSharedViews` (read tool) shows what is shared. On Community Edition, share views in the NocoDB UI.

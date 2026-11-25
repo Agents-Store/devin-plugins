@@ -46,7 +46,7 @@ nocodb_api() {
 field_id() { nocodb_api GET "/meta/bases/$BASE_ID/tables/$1" | jq -r --arg t "$2" '.fields[] | select(.title==$t) | .id'; }
 ```
 
-On Cloud / licensed every `POST …/tables` and `POST …/fields` below can instead be one MCP `callTool` (`createTable { title, fields }`, `createField { tableId, field }`) — the objects are the same.
+On Cloud / licensed every `POST …/tables` and `POST …/fields` below can instead be one MCP call (`createTable` with `{ title, fields }`, `createField` with `{ tableId, field }`) — the objects are the same.
 
 ## Step 1 — Create Customers
 

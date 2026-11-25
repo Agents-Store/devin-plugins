@@ -21,32 +21,42 @@ From the mapped URLs, select only product pages (e.g., those matching `/products
 
 ## Step 3: Extract Structured Product Data
 
-Scrape each product URL with the `json` format — prompt and schema go into `jsonOptions`. One call per URL:
+`firecrawl_scrape` has no `json` format, so let the research agent extract to your schema. Pass the selected product URLs in `urls` and keep it on them with `strictConstrainToURLs`:
 
 ```
-Tool: firecrawl_scrape
+Tool: firecrawl_agent
 Input: {
-  "url": "https://store.example.com/products/item-1",
-  "formats": ["json"],
-  "jsonOptions": {
-    "prompt": "Extract product details including name, price, description, category, and image URLs",
-    "schema": {
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "price": { "type": "number" },
-        "currency": { "type": "string" },
-        "description": { "type": "string" },
-        "category": { "type": "string" },
-        "images": { "type": "array", "items": { "type": "string" } },
-        "specs": { "type": "object" }
+  "prompt": "For each URL extract product details including name, price, description, category, and image URLs",
+  "urls": ["https://store.example.com/products/item-1", "https://store.example.com/products/item-2"],
+  "strictConstrainToURLs": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "products": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "price": { "type": "number" },
+            "currency": { "type": "string" },
+            "description": { "type": "string" },
+            "category": { "type": "string" },
+            "images": { "type": "array", "items": { "type": "string" } },
+            "specs": { "type": "object" }
+          }
+        }
       }
     }
-  }
+  },
+  "maxCredits": 200
 }
+
+Tool: firecrawl_agent_status
+Input: { "id": "<job id from the previous call>" }   # repeat every 15-30 s until completed
 ```
 
-Repeat for `item-2`, `item-3`, ... If the product URLs are not known up front, let `firecrawl_agent` find them (poll `firecrawl_agent_status` until the job completes).
+Send the URLs in batches of 10-20 per job. If the product URLs are not known up front, leave out `urls` and `strictConstrainToURLs` and let the agent find them.
 
 ## Step 4: Transform and Import
 
@@ -70,7 +80,7 @@ for (const product of extractedProducts) {
 
 ## Alternative: Read + Manual Extraction
 
-If the JSON format doesn't capture the data cleanly:
+If the agent result doesn't capture the data cleanly, or the cost is not worth it for a few fields:
 
 ```
 Tool: read_url

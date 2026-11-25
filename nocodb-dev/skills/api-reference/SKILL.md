@@ -15,7 +15,7 @@ disable-model-invocation: true
 
 # NocoDB REST API — Schema Reference
 
-Authoritative API reference for `nocodb-dev`. On Cloud / licensed self-hosted the MCP server can write schema too (`listTools(category)` → `callTool`, see **mcp-patterns**); REST is the only schema-write path on Community Edition and the fallback everywhere else.
+Authoritative API reference for `nocodb-dev`. On Cloud / licensed self-hosted the MCP server can write schema too (call the tools by name, see **mcp-patterns**); REST is the only schema-write path on Community Edition and the fallback everywhere else.
 
 Two bundled OpenAPI specs (taken from NocoDB's `swagger-v3.json`):
 

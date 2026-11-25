@@ -4,11 +4,11 @@
     {
       "id": 1,
       "prompt": "I need to collect product data from several shop websites I haven't picked yet, and then find stock photos plus design-inspiration images from the web for my app. Which MCP tools should I use for each task? Give me the specific tool names. Use the mcp-patterns skill.",
-      "expected_output": "firecrawl_agent for structured data from sites whose URLs are not known, firecrawl_scrape with formats json and jsonOptions for one known URL, Jina search_images with return_url true for web images, the Pexels REST API /v1/search for stock photos.",
+      "expected_output": "firecrawl_agent for structured data from sites whose URLs are not known, firecrawl_agent with urls, strictConstrainToURLs and a schema for one known URL (firecrawl_scrape has no json format), Jina search_images with return_url true for web images, the Pexels REST API /v1/search for stock photos.",
       "files": [],
       "expectations": [
         "The answer recommends firecrawl_agent for structured data from sites whose URLs are not known yet",
-        "The answer recommends firecrawl_scrape with formats json and jsonOptions for extracting structured data from one URL",
+        "The answer recommends firecrawl_agent with urls and strictConstrainToURLs, or firecrawl_scrape with markdown or query, for extracting data from one known URL, and not the json format",
         "The answer names search_images for the design-inspiration images from the web",
         "The answer says to pass return_url true to search_images",
         "The answer names the Pexels REST API /v1/search for stock photos"

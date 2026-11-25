@@ -47,10 +47,10 @@ Run these checks in order:
 | `SCRAPE_SSL_ERROR` | SSL certificate issue | Try with different URL scheme |
 | `SCRAPE_DNS_RESOLUTION_ERROR` | Invalid domain | Verify URL is correct |
 | Timeout | Page too large or slow | Increase `waitFor`, try `onlyMainContent: true` |
-| `DEPRECATED_TOOL` | Called a tool that no longer exists (the old extract and GitHub-search tools) | Use `firecrawl_scrape` with `formats: ["json"]` + `jsonOptions`, `firecrawl_agent`, or `firecrawl_developer_search` |
+| `DEPRECATED_TOOL` | Called a tool that no longer exists (the old extract and GitHub-search tools) | Use `firecrawl_agent` (`schema`, `urls`), `firecrawl_scrape` with `markdown` / `query`, or `firecrawl_developer_search` |
 | Free-tier rate-limit message | Keyless hosted MCP exhausted | Set `FIRECRAWL_API_TOKEN` (API key) |
 | `Alexandria requires an API key on a team with Alexandria access` | Keyless session or team without Alexandria | Use an authenticated key; otherwise fall back to `firecrawl_agent` / web search |
-| `THIRD_PARTY_DATA_TERMS_REQUIRED` | Alexandria provider terms not accepted | A human reviews the terms (`terms/show`) and explicitly accepts them — never accept on the user's behalf |
+| `THIRD_PARTY_DATA_TERMS_REQUIRED` | Alexandria provider terms not accepted | Read the terms with `alexandria_library_read` (`provider: "firecrawl"`, `capability: "terms/show"`) and show them; an organization admin accepts them in the Firecrawl dashboard — never on the user's behalf |
 | Crawl response huge | `firecrawl_crawl` returns all pages in one response | Lower `limit`, add `includePaths`, set `scrapeOptions.formats` to `["markdown"]` |
 
 ### Exa

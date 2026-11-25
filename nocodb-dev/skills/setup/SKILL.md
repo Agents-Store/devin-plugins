@@ -13,7 +13,7 @@ description: |
 
 `nocodb-dev` uses two NocoDB surfaces:
 
-- **MCP** — discovery on every edition; on Cloud / licensed self-hosted also schema writes — listed directly since 2026.10.1, through `listTools(category)` → `callTool` on `/mcp-discovery` and older servers (Community Edition has record tools only). Authenticated by an MCP token or OAuth.
+- **MCP** — discovery on every edition; on Cloud / licensed self-hosted also schema writes — listed on `/mcp` since 2026.10.1, hidden on `/mcp-discovery` and older servers — see **mcp-patterns** (Community Edition has record tools only). Authenticated by an MCP token or OAuth.
 - **REST (Meta API v3, `curl`)** — every schema write on Community Edition, and the fallback everywhere else. Authenticated by an API token.
 
 Both should work before you plan and apply schema changes.
@@ -51,7 +51,7 @@ then `/mcp` → select the server → **Authenticate**. On licensed self-hosted 
 
 #### `/mcp` or `/mcp-discovery`
 
-Some clients accept at most 100 tools and cannot fetch a tool's schema later. For them NocoDB serves `/mcp-discovery`: most read tools and the record create / update / delete / link / unlink tools are listed, the rest sit behind `listTools` and `callTool`; the access you grant is the same. Use it for **Devin Desktop** (formerly Windsurf), **GitHub Copilot** and **AntiGravity**: OAuth at `https://<host>/mcp-discovery` (Devin Desktop, GitHub Copilot), or an MCP connection at `https://<host>/mcp-discovery/<connectionId>` with a token (all three). Claude, Claude Code, ChatGPT and Cursor use the full `/mcp`. Community Edition has no `/mcp-discovery`; those clients use `https://<host>/mcp/<connectionId>` and get the record tools only. The setup screen in NocoDB fills the right URL in for each client (source: https://nocodb.com/docs/mcp and https://nocodb.com/docs/mcp/claude-code, 2026-11-05 and 2026-10-21; release 2026.10.0).
+Some clients accept at most 100 tools and cannot fetch a tool's schema later. For them NocoDB serves `/mcp-discovery`: most read tools and the record create / update / delete / link / unlink tools are listed, the rest sit behind a discovery step (see **mcp-patterns**); the access you grant is the same. Use it for **Devin Desktop** (formerly Windsurf), **GitHub Copilot** and **AntiGravity**: OAuth at `https://<host>/mcp-discovery` (Devin Desktop, GitHub Copilot), or an MCP connection at `https://<host>/mcp-discovery/<connectionId>` with a token (all three). Claude, Claude Code, ChatGPT and Cursor use the full `/mcp`. Community Edition has no `/mcp-discovery`; those clients use `https://<host>/mcp/<connectionId>` and get the record tools only. The setup screen in NocoDB fills the right URL in for each client (source: https://nocodb.com/docs/mcp and https://nocodb.com/docs/mcp/claude-code, 2026-11-05 and 2026-10-21; release 2026.10.0).
 
 ## Verification Steps
 
@@ -71,16 +71,14 @@ Pick any table ID from Step 1. Call `mcp__plugin_nocodb-dev_nocodb__getTableSche
 - **Pass:** returns fields + views.
 - **Fail:** the token may lack base-level access.
 
-### Step 3 — Which edition? (tool list, then `listTools`)
+### Step 3 — Which edition? (read the tool list)
 
-If `createTable` is already in the tool list, this is Cloud / licensed on the full endpoint: use **MCP-first** and skip the call below. Otherwise:
+Look at the tools the server lists:
 
-```
-mcp__plugin_nocodb-dev_nocodb__listTools  category: "tables"
-```
+- **Pass (Cloud / licensed):** `createTable` is listed (with `updateTable`, `deleteTable`). Use **MCP-first** for schema writes (see **mcp-patterns**).
+- **Community Edition:** `createTable` is not listed. Schema writes use REST (Steps 4-5).
 
-- **Pass (Cloud / licensed):** `createTable` is listed, or the answer names `createTable`, `updateTable`, `deleteTable`. Use **MCP-first** for schema writes (see **mcp-patterns**).
-- **Community Edition:** `createTable` is not listed, and `listTools` is absent or empty for `tables`. Schema writes use REST (Steps 4-5).
+On `/mcp-discovery` the write tools are hidden, so the list cannot tell: see **mcp-patterns**.
 
 ### Step 4 — REST: list workspaces and the base's tables
 
@@ -118,8 +116,8 @@ curl -sS -H "xc-token: ${NOCODB_TOKEN}" "${NOCODB_URL}/api/v3/data/<baseId>/<tab
 | 401 Unauthorized | REST | `NOCODB_TOKEN` invalid/expired, or deleted when the account password was changed (2026.10.1 and later) | Regenerate in NocoDB → Team & Settings → API Tokens |
 | 403 Forbidden | Either | Token lacks permission for the base | Share the base with the token's user, or use a higher-privilege token |
 | `NOCODB_TOKEN` empty in curl (`401`, `xc-token:` header blank) | REST | Variable not exported into the shell | `export NOCODB_TOKEN=…`; check with `[ -n "$NOCODB_TOKEN" ] && echo set` |
-| "Tool not found" for `mcp__plugin_nocodb-dev_nocodb__<tool>` | MCP | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the tool is a hidden schema tool (`/mcp-discovery`, or a server older than 2026.10.1) | Confirm both variables are set and restart the session; for hidden schema tools call `listTools(category)` then `callTool` |
-| `createTable` neither listed nor in the `listTools` answer | MCP | Community Edition (record tools only) | Use the REST recipes in **api-reference** |
+| "Tool not found" for `mcp__plugin_nocodb-dev_nocodb__<tool>` | MCP | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the tool is a hidden schema tool (`/mcp-discovery`, or a server older than 2026.10.1) | Confirm both variables are set and restart the session; for hidden schema tools see **mcp-patterns** |
+| `createTable` is not in the tool list | MCP | Community Edition (record tools only) | Use the REST recipes in **api-reference** |
 | Connection refused | Either | Server down or wrong host | `curl -sSI "$NOCODB_URL"` to confirm reachability |
 | Empty table list | REST | Token has no shared bases | Have an admin share at least one base with the token's user |
 
@@ -138,7 +136,7 @@ NocoDB publishes a Bash wrapper (`nocodb.sh`, needs `curl` + `jq`) as an agent s
 
 Once all steps pass:
 
-1. Read **mcp-patterns** for the Community vs Cloud/licensed contract and the `listTools` → `callTool` flow.
+1. Read **mcp-patterns** for the Community vs Cloud/licensed contract and the `/mcp-discovery` variant.
 2. Read **api-reference** when you need the REST API surface.
 3. Read **cli-reference** for `curl` recipes by resource and the optional official script.
 4. Use **table-management**, **field-management**, **view-management**, **webhooks** to make changes.

@@ -12,7 +12,7 @@ description: |
 
 # Dashboards & Widgets
 
-NocoDB v3 has a built-in dashboarding layer. A **Dashboard** is a container; **Widgets** are the individual tiles inside it (charts, KPIs, text blocks, iframes). All operations are Meta API v3 (cloud-hosted Enterprise or licensed self-hosted, Business plan and above); on Cloud / licensed the MCP `dashboards` category (`listTools`, then `callTool`) offers the same writes.
+NocoDB v3 has a built-in dashboarding layer. A **Dashboard** is a container; **Widgets** are the individual tiles inside it (charts, KPIs, text blocks, iframes). All operations are Meta API v3 (cloud-hosted Enterprise or licensed self-hosted, Business plan and above); on Cloud / licensed the MCP dashboard tools (`createDashboard`, `createWidget`, …) offer the same writes.
 
 ## Endpoints
 

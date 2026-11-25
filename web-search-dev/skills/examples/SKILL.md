@@ -11,7 +11,7 @@ End-to-end scenario walkthroughs for common development tasks. Each scenario sho
 
 | Scenario | Use Case | Services Used |
 |----------|----------|---------------|
-| [Scrape for App](references/scenarios/scrape-for-app.md) | Extract product data and import into your application | Firecrawl (map, scrape with JSON format), Jina (read) |
+| [Scrape for App](references/scenarios/scrape-for-app.md) | Extract product data and import into your application | Firecrawl (map, agent with schema), Jina (read) |
 | [Doc Search Workflow](references/scenarios/doc-search-workflow.md) | Find framework docs while coding to fix a bug | Context7, Perplexity, Firecrawl, Jina |
 | [Media for Content](references/scenarios/media-for-content.md) | Find stock photos/videos for a blog or app | Pexels REST, Unsplash REST, Jina (images) |
 | [Content Pipeline](references/scenarios/content-pipeline.md) | Multi-service data pipeline: discover, extract, transform, load | Firecrawl, Jina, Exa |
@@ -30,7 +30,7 @@ End-to-end scenario walkthroughs for common development tasks. Each scenario sho
 
 ```
 1. Map site: firecrawl_map({ url: "https://example.com" })
-2. Extract data (per URL): firecrawl_scrape({ url, formats: ["json"], jsonOptions: { prompt, schema } })
+2. Extract data: firecrawl_agent({ prompt, urls: [..urls..], strictConstrainToURLs: true, schema }) → poll firecrawl_agent_status
 3. Import: write to your database/API
 ```
 

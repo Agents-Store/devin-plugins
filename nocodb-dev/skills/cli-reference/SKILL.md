@@ -162,7 +162,7 @@ The `where` grammar `(field,operator,value)` for the Data API and for MCP `query
 
 | Situation | Use |
 |-----------|-----|
-| Cloud / licensed, interactive work in Claude | MCP `listTools` → `callTool` |
+| Cloud / licensed, interactive work in Claude | MCP schema tools, called by name |
 | One-off table or field tweak from a shell | `nocodb.sh` (names resolve for you) or `curl` |
 | Scripted multi-step migration | `curl` / the `nocodb_api` wrapper with IDs |
 | Community Edition | `curl` — the MCP server has record tools only |

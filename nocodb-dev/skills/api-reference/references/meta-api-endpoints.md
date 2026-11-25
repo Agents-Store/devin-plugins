@@ -2,7 +2,7 @@
 
 Authoritative reference for the **Meta API** at `/api/v3/meta/...` and the Documents API at `/api/v3/docs/...`. All paths are documented in `nocodb-meta-openapi.json` (bundled in this directory). The Data API (records / links / attachments) lives under `/api/v3/data/...` and is documented in `nocodb-openapi.json`.
 
-On Cloud / licensed self-hosted the MCP server exposes most of these write operations as tools (`listTools(category)` → `callTool`, see the **mcp-patterns** skill); the REST endpoints below are the path on Community Edition and the fallback elsewhere.
+On Cloud / licensed self-hosted the MCP server exposes most of these write operations as tools (called by name, see the **mcp-patterns** skill); the REST endpoints below are the path on Community Edition and the fallback elsewhere.
 
 All requests use:
 

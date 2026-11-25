@@ -11,7 +11,7 @@ description: |
 
 # NocoDB Dev — Worked Examples
 
-Practical end-to-end scenarios. Each example follows the discover → plan → apply → verify loop using MCP for discovery/verification and REST (`curl`) — or, on Cloud / licensed, the MCP `callTool` schema tools — for writes.
+Practical end-to-end scenarios. Each example follows the discover → plan → apply → verify loop using MCP for discovery/verification and REST (`curl`) — or, on Cloud / licensed, the MCP schema tools — for writes.
 
 The examples use the small `nocodb_api` wrapper from the **cli-reference** skill (`nocodb_api METHOD /path ['body']`, paths under `${NOCODB_URL}/api/v3`, token from `NOCODB_TOKEN`):
 
@@ -95,10 +95,9 @@ nocodb_api POST /meta/bases/$BASE_ID/tables/$TASKS_TABLE_ID/hooks '{
 ### The same on Cloud / licensed, over MCP
 
 ```
-mcp__plugin_nocodb-dev_nocodb__listTools  category: "fields"
-mcp__plugin_nocodb-dev_nocodb__callTool   name: "createField"
-  arguments: { tableId: "<tasksTableId>",
-               field: { title: "Priority", type: "Rating", options: { max_value: 3 } } }
+mcp__plugin_nocodb-dev_nocodb__createField
+  tableId: "<tasksTableId>"
+  field: { title: "Priority", type: "Rating", options: { max_value: 3 } }
 ```
 
 ## Full Scenario Walkthroughs

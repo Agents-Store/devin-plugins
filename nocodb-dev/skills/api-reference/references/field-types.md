@@ -1,6 +1,6 @@
 # NocoDB Field Types — Catalog and Payloads
 
-All 35 field types of the Meta API v3 (`FieldBase.type`), with the `options` schemas from `components.schemas.FieldOptions_*` in `nocodb-meta-openapi.json`. Each entry shows the minimal create payload sent to `POST /api/v3/meta/bases/{baseId}/tables/{tableId}/fields` (or, on Cloud / licensed, passed as `field` to the MCP `createField` tool via `callTool`).
+All 35 field types of the Meta API v3 (`FieldBase.type`), with the `options` schemas from `components.schemas.FieldOptions_*` in `nocodb-meta-openapi.json`. Each entry shows the minimal create payload sent to `POST /api/v3/meta/bases/{baseId}/tables/{tableId}/fields` (or, on Cloud / licensed, passed as `field` to the MCP `createField` tool).
 
 The `type` value is the NocoDB internal type name (matches the OpenAPI schema). Display labels in the NocoDB UI may differ slightly.
 

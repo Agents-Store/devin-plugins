@@ -19,7 +19,7 @@ Diagnostics for the dev surface — schema modifications, relations, formulas, v
 
 1. **Snapshot the schema.** `mcp__plugin_nocodb-dev_nocodb__getTableSchema` (or `getBaseSchema`) — confirm the field / view / hook is actually present. `listBaseAudits` / `listRecordAudits` (category `audits`, Cloud/licensed) show who changed what and when.
 2. **Check token scope.** A 403 from a Meta endpoint usually means the token lacks edit rights on the base, not a bug.
-3. **Verify NocoDB version.** Instance versions are calendar-based now (`2026.MM.N`; older builds were `0.30x.y`). Run `curl -sS "${NOCODB_URL}/api/v1/health"` and check `version`. MCP schema tools need a Cloud / licensed instance recent enough to offer them (2026.09.0 and later; listed directly on `/mcp` from 2026.10.1, through `listTools` before that).
+3. **Verify NocoDB version.** Instance versions are calendar-based now (`2026.MM.N`; older builds were `0.30x.y`). Run `curl -sS "${NOCODB_URL}/api/v1/health"` and check `version`. MCP schema tools need a Cloud / licensed instance recent enough to offer them (2026.09.0 and later; listed on `/mcp` from 2026.10.1; older servers and `/mcp-discovery`: see **mcp-patterns**).
 
 ## Auth & Permissions
 
@@ -102,7 +102,7 @@ NocoDB versions are calendar-based (`2026.MM.N`) since 2026; the table below use
 | Feature | Notes |
 |---------|-------|
 | `Links` field type, Map view, HookV3, nested filter groups (3 levels), `display_field_id`, `Geometry` | Present since v0.200 |
-| MCP schema / view / hook / workflow tools | 2026.09.0 and later, Cloud and licensed self-hosted only; listed directly on `/mcp` from 2026.10.1, behind `listTools` → `callTool` before that and on `/mcp-discovery` |
+| MCP schema / view / hook / workflow tools | 2026.09.0 and later, Cloud and licensed self-hosted only; listed on `/mcp` from 2026.10.1; hidden before that and on `/mcp-discovery` (see **mcp-patterns**) |
 | Gantt, Timeline and List views, `POST`/`DELETE …/fields/{fieldId}/options`, Docs API | Current Meta API v3 spec (bundled) |
 
 Older instances may need the legacy hook v2 schema, and may lack the newer view types or the select-options endpoints — read the `version` from `/api/v1/health` and compare with the bundled spec before assuming an endpoint exists.

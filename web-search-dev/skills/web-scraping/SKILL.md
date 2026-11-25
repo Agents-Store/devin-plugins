@@ -17,7 +17,7 @@ Practical scraping patterns for building applications — extracting content, da
 | One answer from a long page | `read_url` with `question` (Jina) | Returns only the relevant passages — cheap |
 | Entire site | `firecrawl_crawl` | Full site crawl with depth control |
 | Site URL discovery | `firecrawl_map` | Find all URLs before selective scraping |
-| Structured data, one URL | `firecrawl_scrape` with `formats: ["json"]` | Extract to a JSON schema (LLM-powered) |
+| Structured data, one URL | `firecrawl_agent` with `urls` + `strictConstrainToURLs` + `schema` | Extract to a JSON schema (LLM-powered); `firecrawl_scrape` has no `json` format |
 | Structured data, unknown URLs | `firecrawl_agent` + `firecrawl_agent_status` | Research across sites, returns JSON |
 | Interactive pages | `firecrawl_interact` | Login, click, scroll before extraction |
 | Screenshots | `capture_screenshot_url` (Jina) | Visual snapshots |
@@ -49,32 +49,31 @@ Use `waitFor` for SPAs and pages that load content dynamically.
 
 ## Pattern 2: Extract Structured Data
 
-Turn unstructured web pages into structured JSON for your app. For one known URL use `firecrawl_scrape` with the `json` format — the prompt and schema go into `jsonOptions`:
+Turn unstructured web pages into structured JSON for your app. `firecrawl_scrape` has no `json` format. For a few values, scrape with `formats: ["markdown"]` (or `["query"]` with `queryOptions.prompt`) and read the fields out yourself. When the result must follow a schema, run the research agent on the known URL(s) with `strictConstrainToURLs` — it returns only a job ID, so poll it (`firecrawl_agent_status`, every 15-30 s until `completed`):
 
 ```
-Tool: firecrawl_scrape
+Tool: firecrawl_agent
 Input: {
-  "url": "https://example.com/products/item-1",
-  "formats": ["json"],
-  "jsonOptions": {
-    "prompt": "Extract the product details",
-    "schema": {
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "price": { "type": "number" },
-        "description": { "type": "string" },
-        "specs": { "type": "object" },
-        "images": { "type": "array", "items": { "type": "string" } }
-      }
+  "prompt": "Extract the product details",
+  "urls": ["https://example.com/products/item-1"],
+  "strictConstrainToURLs": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string" },
+      "price": { "type": "number" },
+      "description": { "type": "string" },
+      "specs": { "type": "object" },
+      "images": { "type": "array", "items": { "type": "string" } }
     }
-  }
+  },
+  "maxCredits": 100
 }
 ```
 
-Use for: product catalogs, pricing pages, directory listings, event data. Run one call per URL (loop over a mapped URL list).
+Use for: product catalogs, pricing pages, directory listings, event data. `urls` takes several URLs, so one job can cover a batch from a mapped URL list.
 
-When the URLs are **not known** or the data is spread over several sites, use the research agent instead — it returns only a job ID, so poll it:
+When the URLs are **not known** or the data is spread over several sites, leave out `urls` and `strictConstrainToURLs`:
 
 ```
 Tool: firecrawl_agent
@@ -164,7 +163,7 @@ For lighter interactions (click, type, scroll before extraction), the `actions` 
 Generate a script that scrapes and imports content into your app:
 
 1. **Identify source URLs** — use `firecrawl_map` or manual list
-2. **Extract structured data** — use `firecrawl_scrape` with `formats: ["json"]` and an app-specific schema
+2. **Extract structured data** — use `firecrawl_agent` with `urls`, `strictConstrainToURLs` and an app-specific `schema` (or scrape `markdown` and parse it in the script)
 3. **Transform data** — map scraped fields to your app's data model
 4. **Upload** — use your app's API/SDK to create records
 

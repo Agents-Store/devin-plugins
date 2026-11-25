@@ -5,7 +5,7 @@ description: This skill should be used when the user asks about "web search MCP 
 
 # Web Search & Scraping MCP Tool Patterns
 
-Reference for the MCP tools of 5 bundled servers — Firecrawl (27), Jina (12), Perplexity (4), Exa (2 default + 2 opt-in), Context7 (2) — plus REST recipes for Pexels and Unsplash media search. Use the routing table below to find the right tool for your task, then see the per-service reference files for detailed parameters.
+Reference for the MCP tools of 5 bundled servers — Firecrawl (34), Jina (12), Perplexity (4), Exa (2 default + 2 opt-in), Context7 (2) — plus REST recipes for Pexels and Unsplash media search. Use the routing table below to find the right tool for your task, then see the per-service reference files for detailed parameters.
 
 ## Tool names
 
@@ -32,7 +32,7 @@ When MCP scraping/search tools from this plugin are available, they MUST be used
 
 Pick a service based on what you need:
 
-- **Need JS rendering / site crawling / structured extraction?** → **Firecrawl** (`firecrawl_scrape` with `formats: ["json"]`, `firecrawl_crawl`, `firecrawl_agent`)
+- **Need JS rendering / site crawling / structured extraction?** → **Firecrawl** (`firecrawl_scrape`, `firecrawl_crawl`, `firecrawl_agent` with a `schema`)
 - **Need fast page reading / batch operations / only the relevant passages?** → **Jina** `read_url` (up to 5 URLs, `question` for targeted passages)
 - **Need semantic search?** → **Exa**
 - **Need code examples / GitHub issues / dev docs?** → **Firecrawl** `firecrawl_developer_search`
@@ -53,9 +53,9 @@ Pick the right tool by what you need to do:
 | **Answer a question from a page** | `read_url` with `question` | `firecrawl_scrape` with `formats: ["query"]` | Jina / Firecrawl |
 | **Crawl entire site** | `firecrawl_crawl` | `firecrawl_map` + batch scrape | Firecrawl |
 | **Map site URLs** | `firecrawl_map` | — | Firecrawl |
-| **Extract structured data (one URL)** | `firecrawl_scrape` with `formats: ["json"]` + `jsonOptions` | — | Firecrawl |
+| **Extract structured data (one URL)** | `firecrawl_agent` with `urls` + `strictConstrainToURLs` + `schema` | `firecrawl_scrape` with `formats: ["query"]` or `["markdown"]` | Firecrawl |
 | **Structured data from unknown URLs / several sites** | `firecrawl_agent` + `firecrawl_agent_status` | `perplexity_research` | Firecrawl / Perplexity |
-| **Typed provider data (companies, filings, prices)** | `firecrawl_search` with `sources: ["alexandria"]` → `firecrawl_find_tools` | `firecrawl_agent` | Firecrawl |
+| **Typed provider data (companies, filings, prices)** | `firecrawl_search` with `sources: ["alexandria"]` → `alexandria_library_search` (read the contract, free) → `alexandria_library_read` (execute, billed) | `firecrawl_agent` | Firecrawl |
 | **Search code examples / GitHub issues / dev docs** | `firecrawl_developer_search` | `web_search_advanced_exa` with `includeDomains: ["github.com"]` (opt-in) | Firecrawl / Exa |
 | **AI-powered Q&A** | `perplexity_ask` | `perplexity_search` | Perplexity |
 | **Deep research** | `perplexity_research` | `firecrawl_agent` | Perplexity / Firecrawl |
@@ -80,7 +80,7 @@ Pick the right tool by what you need to do:
 
 | Service | Tools | Strengths |
 |---------|-------|-----------|
-| **Firecrawl** | 27 | JS rendering, site crawling, structured extraction, live-page interaction, file parsing, change monitors, research/developer search, autonomous agent |
+| **Firecrawl** | 34 | JS rendering, site crawling, structured extraction, live-page interaction, file parsing, change monitors, research/developer search, autonomous agent |
 | **Jina** | 12 | Fast page reading with batch (up to 5 URLs) and question mode, web/academic/image search, reranking, deduplication, PDF extraction |
 | **Perplexity** | 4 | AI-synthesized answers, deep research, reasoning with citations (`messages` input) |
 | **Exa** | 2 default (+2 opt-in) | Semantic search, page fetching, advanced filters, Exa Agent (`agent_run`) |
@@ -104,24 +104,27 @@ Input: { "url": "<best_url_from_step_1>" }
 
 ### Extract structured data from a product page
 
+`firecrawl_scrape` has no `json` format; a schema-bound result comes from the research agent constrained to the URL (poll `firecrawl_agent_status` with the returned job ID until `completed`):
+
 ```
-Tool: firecrawl_scrape
+Tool: firecrawl_agent
 Input: {
-  "url": "https://example.com/products/item-1",
-  "formats": ["json"],
-  "jsonOptions": {
-    "prompt": "Extract product name, price, and description",
-    "schema": {
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "price": { "type": "number" },
-        "description": { "type": "string" }
-      }
+  "prompt": "Extract product name, price, and description",
+  "urls": ["https://example.com/products/item-1"],
+  "strictConstrainToURLs": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string" },
+      "price": { "type": "number" },
+      "description": { "type": "string" }
     }
-  }
+  },
+  "maxCredits": 100
 }
 ```
+
+For a few values, `firecrawl_scrape` with `formats: ["markdown"]` (or `["query"]` + `queryOptions.prompt`) is cheaper than an agent run.
 
 ### Read only the relevant passages of several pages
 
@@ -144,7 +147,7 @@ curl -s -H "Authorization: ${PEXELS_API_KEY}" \
 
 For complete tool parameters and advanced usage, see the service-specific references:
 
-- `references/firecrawl-tools.md` — 27 tools: scrape, search, crawl, map, parse, agent, interact, monitors, research, developer search, Alexandria, credit usage
+- `references/firecrawl-tools.md` — 34 tools: scrape, search, crawl, map, parse, agent, interact, monitors, research, developer and government search, Alexandria, people/company/jobs, credit usage
 - `references/exa-tools.md` — 2 default tools (web_search, web_fetch) + opt-in advanced search and `agent_run`
 - `references/perplexity-tools.md` — 4 tools: search, ask, research, reason (`messages` input)
 - `references/jina-tools.md` — 12 tools: read, search, images, screenshot, rerank, deduplicate, PDF, utility

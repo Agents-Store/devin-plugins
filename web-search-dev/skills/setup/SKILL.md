@@ -80,7 +80,7 @@ After running checks, report which services are available:
 
 | Service | Status | Capabilities |
 |---------|--------|-------------|
-| Firecrawl | Connected / Not available | scrape (incl. JSON format), crawl, search, parse, agent, interact, monitors, research/developer search, Alexandria |
+| Firecrawl | Connected / Not available | scrape, crawl, search, parse, agent (schema extraction), interact, monitors, research/developer/government search, Alexandria, people/company/jobs search |
 | Exa | Connected / Not available | semantic search, page fetch (+ advanced search, `agent_run` when enabled) |
 | Perplexity | Connected / Not available | search, AI answers, research, reasoning |
 | Jina | Connected / Not available | read pages (batch + question mode), search, images, rerank, deduplicate |
@@ -94,7 +94,7 @@ Not all services need to be active — the plugin works with any subset. Here's 
 
 | Available Services | You Can Do |
 |-------------------|------------|
-| Firecrawl only | Scrape, crawl, search, structured JSON extraction, agent research, live-page interaction, parse files, monitor changes |
+| Firecrawl only | Scrape, crawl, search, schema-bound extraction (agent), agent research, live-page interaction, parse files, monitor changes |
 | Jina only | Read pages (batch + question mode), search web/papers/images, rerank, deduplicate |
 | Exa only | Semantic search, page fetch, domain-scoped search |
 | Perplexity only | AI Q&A, research, reasoning with citations |

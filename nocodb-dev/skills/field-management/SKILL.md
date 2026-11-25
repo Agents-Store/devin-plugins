@@ -5,7 +5,7 @@ description: Create, update and delete NocoDB fields across all 35 types, includ
 
 # Field Management — All 35 Types
 
-Field writes go through the MCP schema tools on **Cloud / licensed** self-hosted (called by name on `/mcp` since 2026.10.1; `listTools` category `fields`, then `callTool` on `/mcp-discovery` and older servers) and through the **REST API** (`curl` on Meta API v3) on **Community Edition** or as a fallback. Both surfaces take the same v3 keys: `title`, `type`, `description`, `default_value`, `unique`, and a type-specific `options` object. See **mcp-patterns** for the contract.
+Field writes go through the MCP schema tools on **Cloud / licensed** self-hosted (called by name; on `/mcp-discovery`: see **mcp-patterns**) and through the **REST API** (`curl` on Meta API v3) on **Community Edition** or as a fallback. Both surfaces take the same v3 keys: `title`, `type`, `description`, `default_value`, `unique`, and a type-specific `options` object. See **mcp-patterns** for the contract.
 
 For per-type payload examples, see **`api-reference/references/field-types.md`** — that file is the authoritative catalog. This skill focuses on **the workflow**: how to plan, apply, and verify a field change.
 
@@ -14,7 +14,7 @@ For per-type payload examples, see **`api-reference/references/field-types.md`**
 ```
 1. mcp__plugin_nocodb-dev_nocodb__getTableSchema  ← snapshot existing fields
 2. Plan the new field (title, type, options)
-3. callTool createField (Cloud/licensed)  OR  POST /api/v3/meta/bases/{baseId}/tables/{tableId}/fields
+3. call createField (Cloud/licensed)  OR  POST /api/v3/meta/bases/{baseId}/tables/{tableId}/fields
 4. mcp__plugin_nocodb-dev_nocodb__getTableSchema  ← confirm field appeared
 5. (optional) mcp__plugin_nocodb-dev_nocodb__queryRecords ← spot-check record render
 ```
@@ -37,9 +37,9 @@ For per-type payload examples, see **`api-reference/references/field-types.md`**
 MCP (Cloud / licensed):
 
 ```
-mcp__plugin_nocodb-dev_nocodb__listTools  category: "fields"
-mcp__plugin_nocodb-dev_nocodb__callTool   name: "createField"
-  arguments: { tableId: "<tableId>", field: { title: "Phone", type: "PhoneNumber" } }
+mcp__plugin_nocodb-dev_nocodb__createField
+  tableId: "<tableId>"
+  field: { title: "Phone", type: "PhoneNumber" }
 ```
 
 REST:
@@ -168,7 +168,7 @@ curl -sS -X PATCH \
   "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/fields/${FIELD_ID}"
 ```
 
-MCP: `callTool name: "updateField"  arguments: { fieldId: "<fieldId>", field: { title: "NewName" } }`.
+MCP: `updateField` with `{ fieldId: "<fieldId>", field: { title: "NewName" } }`.
 
 Renames are by ID, so existing Lookups / Rollups / Formulas referencing this field keep working. Formulas displayed by-name (`{Name}`) update to use the new title automatically.
 
@@ -227,7 +227,7 @@ curl -sS -X DELETE \
   "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/fields/${FIELD_ID}/options"
 ```
 
-MCP: `callTool name: "addFieldOptions"  arguments: { fieldId, choices: [{ title, color? }] }` and `name: "removeFieldOptions"  arguments: { fieldId, choices: [{ title }] }`.
+MCP: `addFieldOptions` with `{ fieldId, choices: [{ title, color? }] }` and `removeFieldOptions` with `{ fieldId, choices: [{ title }] }`.
 
 The options endpoint only adds and removes. To **rename** a choice, read the field (`getField` / `GET …/fields/{fieldId}`) and `PATCH` it with the changed `options.choices` — try it on a throwaway field first, because a title that disappears from the list is cleared from the records that held it.
 
@@ -241,7 +241,7 @@ curl -sS -X DELETE \
   "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/fields/${FIELD_ID}"
 ```
 
-MCP: `callTool name: "deleteField"  arguments: { fieldId: "<fieldId>" }`. On Cloud / licensed the deleted field lands in the base trash (`listTrash`, `restoreFromTrash`) until the retention window ends; do not count on that for external sources.
+MCP: `deleteField` with `{ fieldId: "<fieldId>" }`. On Cloud / licensed the deleted field lands in the base trash (`listTrash`, `restoreFromTrash`) until the retention window ends; do not count on that for external sources.
 
 Pre-delete audit (find dependents):
 
@@ -274,7 +274,7 @@ The classic CRM pattern: each Order has one Customer; surface customer name on t
                                 "options":{ "related_field_id":"c_orders_link", "related_table_rollup_field_id":"c_amount", "rollup_function":"sum" } }
 ```
 
-Each `createField` is one MCP `callTool` (`arguments: { tableId, field: {…} }`) or one REST `POST …/tables/{tableId}/fields` with the same object as the body.
+Each `createField` is one MCP call (`{ tableId, field: {…} }`) or one REST `POST …/tables/{tableId}/fields` with the same object as the body.
 
 ### Newer field options (2026.10.0)
 

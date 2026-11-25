@@ -5,7 +5,7 @@ description: Create, rename, duplicate and delete NocoDB tables, set the display
 
 # Table Management
 
-Table writes go through the MCP schema tools on **Cloud / licensed** self-hosted (called by name on `/mcp` since 2026.10.1; `listTools` category `tables`, then `callTool` on `/mcp-discovery` and older servers) and through the **REST API** (`curl` on Meta API v3) on **Community Edition** or as a fallback. See **mcp-patterns** for the contract and **api-reference** for the REST surface.
+Table writes go through the MCP schema tools on **Cloud / licensed** self-hosted (called by name; on `/mcp-discovery`: see **mcp-patterns**) and through the **REST API** (`curl` on Meta API v3) on **Community Edition** or as a fallback. See **mcp-patterns** for the contract and **api-reference** for the REST surface.
 
 ## Discover First
 
@@ -24,11 +24,11 @@ Avoid name collisions and unintended duplicates. NocoDB does not enforce title u
 ### MCP (Cloud / licensed)
 
 ```
-mcp__plugin_nocodb-dev_nocodb__listTools  category: "tables"      ← once per session: confirms createTable is offered
-mcp__plugin_nocodb-dev_nocodb__callTool   name: "createTable"
-  arguments: { title: "Customers", description: "Master customer list",
-               fields: [ { title: "Name",  type: "SingleLineText" },
-                         { title: "Email", type: "Email" } ] }
+mcp__plugin_nocodb-dev_nocodb__createTable
+  title: "Customers"
+  description: "Master customer list"
+  fields: [ { title: "Name",  type: "SingleLineText" },
+            { title: "Email", type: "Email" } ]
 ```
 
 ### REST
@@ -84,7 +84,7 @@ curl -sS -X PATCH \
   "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/tables/${TABLE_ID}"
 ```
 
-MCP: `callTool name: "updateTable"  arguments: { tableId: "<tableId>", title: "NewName" }`.
+MCP: `updateTable` with `{ tableId: "<tableId>", title: "NewName" }`.
 
 Renaming a table does **not** rename references in formulas, lookups, or rollups — but those references use IDs internally so they keep working. Visible names in formulas stay as the original; refresh formulas explicitly if you want them to reflect the new name.
 
@@ -110,13 +110,13 @@ curl -sS -X PATCH \
   "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/tables/${TABLE_ID}"
 ```
 
-MCP: `callTool name: "setDisplayField"  arguments: { fieldId: "<fieldId>" }` (category `fields`), or `updateTable` with `display_field_id`.
+MCP: `setDisplayField` with `{ fieldId: "<fieldId>" }`, or `updateTable` with `display_field_id`.
 
 Allowed display field types: text, number, date/time, duration, autonumber and formula fields. `LongText`, select, link and attachment fields are rejected.
 
 ## Duplicate a Table
 
-There is no single duplicate call in the REST API (on Cloud / licensed the MCP `duplicates` category may offer one — check `listTools`). To clone by hand:
+There is no single duplicate call in the REST API (on Cloud / licensed the MCP `duplicateTable` tool does it in one call). To clone by hand:
 
 1. Read the source schema:
 
@@ -146,7 +146,7 @@ curl -sS -X DELETE \
   "${NOCODB_URL}/api/v3/meta/bases/${BASE_ID}/tables/${TABLE_ID}"
 ```
 
-MCP: `callTool name: "deleteTable"  arguments: { tableId: "<tableId>" }`.
+MCP: `deleteTable` with `{ tableId: "<tableId>" }`.
 
 On Cloud / licensed the deleted table goes to the base trash: `listTrash` (read-only, lists `cleanup_due_at`) and `restoreFromTrash(trashId)` bring it back until the retention window ends. An external source deletes for good.
 
@@ -177,4 +177,4 @@ Before creating:
 | Display field not what you expected | NocoDB picked the first non-system column | Set `display_field_id` explicitly |
 | Delete returns 200 but table still visible | Schema cache | Force-refresh in NocoDB UI or wait ~30s |
 | Cannot delete table | A link field on another table points to it | Delete the link field on the other side first |
-| `createTable` is neither listed nor offered by `listTools` | Community Edition | Use the REST recipes above |
+| `createTable` is not in the tool list | Community Edition | Use the REST recipes above |
