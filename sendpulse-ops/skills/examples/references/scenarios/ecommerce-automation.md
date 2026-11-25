@@ -24,7 +24,7 @@ Tool: smtp_emails_send
 Input: {
   "email": {
     "subject": "You forgot something in your cart!",
-    "from": {"name": "Acme Store", "email": "cart@acme.com"},
+    "from": {"name": "Acme Store", "email": "cart@example.com"},
     "to": [{"email": "customer@example.com"}],
     "html": "<h2>Your cart is waiting</h2><p>Complete your purchase and save 10%...</p>"
   }
@@ -47,7 +47,7 @@ Tool: smtp_emails_send
 Input: {
   "email": {
     "subject": "Order #12345 Confirmed!",
-    "from": {"name": "Acme Store", "email": "orders@acme.com"},
+    "from": {"name": "Acme Store", "email": "orders@example.com"},
     "to": [{"email": "customer@example.com"}],
     "html": "<h1>Thank you!</h1><p>Order #12345 has been confirmed...</p>"
   }
@@ -113,7 +113,7 @@ Tool: email_campaigns_create
 Input: {
   "name": "Win-Back - Q1 2026",
   "subject": "We miss you! Here's 20% off",
-  "sender_email": "offers@acme.com",
+  "sender_email": "offers@example.com",
   "addressbook_id": "<inactive-list-id>",
   "template_id": "<winback-template>"
 }

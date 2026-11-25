@@ -10,9 +10,9 @@ Multi-channel lead nurturing patterns using Sendpulse CRM, chatbots, and email.
 ```
 Tool: crm_contacts_create
 Input: {
-  "emails": [{"value": "lead@company.com"}],
+  "emails": [{"value": "lead@example.com"}],
   "name": "New Lead",
-  "phones": [{"value": "+380501234567"}]
+  "phones": [{"value": "+1-555-0100"}]
 }
 -> {id: "contact_lead"}
 ```
@@ -22,7 +22,7 @@ Input: {
 Tool: email_addressbooks_emails_create
 Input: {
   "id": "<leads-addressbook-id>",
-  "emails": [{"email": "lead@company.com", "variables": {"name": "New Lead", "source": "chatbot", "stage": "new"}}]
+  "emails": [{"email": "lead@example.com", "variables": {"name": "New Lead", "source": "chatbot", "stage": "new"}}]
 }
 ```
 
@@ -33,7 +33,7 @@ Tool: crm_pipelines_list
 
 Tool: crm_deals_create
 Input: {
-  "name": "Lead - company.com",
+  "name": "Lead - example.com",
   "pipeline_id": "<pipeline-id>",
   "step_id": "<new-lead-step>",
   "contact_id": "contact_lead"
@@ -53,7 +53,7 @@ Tool: chatbots_contacts_tags_set
 Input: {"contact_id": "<chatbot-contact-id>", "tags": ["new-lead", "qualification"]}
 
 Tool: email_tags_emails_pin
-Input: {"tag_id": "<new-lead-tag>", "emails": ["lead@company.com"]}
+Input: {"tag_id": "<new-lead-tag>", "emails": ["lead@example.com"]}
 ```
 
 ## Scenario 2: Lead Qualification (After Chatbot Flow)
@@ -88,7 +88,7 @@ Input: {"id": "<deal-id>", "text": "Qualified via chatbot. Company 50-200 employ
 ### Step 3: Update Email Segment
 ```
 Tool: email_addressbooks_emails_variables_update
-Input: {"id": "<addressbook-id>", "email": "lead@company.com", "variables": {"stage": "qualified", "score": "high"}}
+Input: {"id": "<addressbook-id>", "email": "lead@example.com", "variables": {"stage": "qualified", "score": "high"}}
 ```
 
 ## Scenario 3: Email Nurture Sequence
@@ -101,8 +101,8 @@ Tool: smtp_emails_send
 Input: {
   "email": {
     "subject": "5 Ways to Improve Your Workflow",
-    "from": {"name": "Acme", "email": "content@acme.com"},
-    "to": [{"email": "lead@company.com"}],
+    "from": {"name": "Acme", "email": "content@example.com"},
+    "to": [{"email": "lead@example.com"}],
     "html": "<h2>Improve Your Workflow</h2><p>Here are 5 proven strategies...</p>"
   }
 }
@@ -113,10 +113,10 @@ Input: {
 Tool: smtp_emails_send
 Input: {
   "email": {
-    "subject": "How BigCorp Saved 40% with Acme",
-    "from": {"name": "Acme", "email": "content@acme.com"},
-    "to": [{"email": "lead@company.com"}],
-    "html": "<h2>Customer Success Story</h2><p>Learn how BigCorp transformed...</p>"
+    "subject": "How Example Inc Saved 40% with Acme",
+    "from": {"name": "Acme", "email": "content@example.com"},
+    "to": [{"email": "lead@example.com"}],
+    "html": "<h2>Customer Success Story</h2><p>Learn how Example Inc transformed...</p>"
   }
 }
 ```
@@ -126,15 +126,15 @@ Input: {
 Tool: chatbots_contacts_messages_t_send
 Input: {
   "contact_id": "<contact-id>",
-  "messages": [{"type": "text", "text": "Hi! Ready to explore how Acme can help your team? Book a free demo: acme.com/demo"}]
+  "messages": [{"type": "text", "text": "Hi! Ready to explore how Acme can help your team? Book a free demo: example.com/demo"}]
 }
 
 Tool: smtp_emails_send
 Input: {
   "email": {
     "subject": "Ready for a Demo?",
-    "from": {"name": "Acme Sales", "email": "sales@acme.com"},
-    "to": [{"email": "lead@company.com"}],
+    "from": {"name": "Acme Sales", "email": "sales@example.com"},
+    "to": [{"email": "lead@example.com"}],
     "html": "<h2>Let's Talk</h2><p>Book your personalized demo today...</p>"
   }
 }
@@ -154,7 +154,7 @@ Input: {"id": "<deal-id>", "pipeline_id": "<pipeline-id>", "step_id": "<proposal
 ```
 Tool: crm_tasks_create
 Input: {
-  "name": "Prepare proposal for lead@company.com",
+  "name": "Prepare proposal for lead@example.com",
   "board_id": "<sales-board>",
   "step_id": "<todo-step>",
   "due_date": "2026-03-01"

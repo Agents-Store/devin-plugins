@@ -261,7 +261,7 @@ In Flask-SQLAlchemy, `db.paginate(select_stmt, page=..., per_page=..., error_out
 from sqlalchemy.exc import IntegrityError
 
 # Create
-client = Client(name="Anna", phone="+380501234567", user_id=1)
+client = Client(name="Anna", phone="+1-555-0100", user_id=1)
 session.add(client)
 session.commit()
 

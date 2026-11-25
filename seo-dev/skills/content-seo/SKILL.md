@@ -69,7 +69,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
 | Rule | Example |
 |------|---------|
-| Be descriptive and specific | `alt="Red Nike running shoes on forest trail"` |
+| Be descriptive and specific | `alt="Red Acme running shoes on forest trail"` |
 | Under 125 characters | Concise but meaningful |
 | Include keywords naturally | Don't force irrelevant keywords |
 | No "image of" or "picture of" | Screen readers already announce "image" |
@@ -80,7 +80,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 // Good alt text
 <Image
   src="/products/red-running-shoes.webp"
-  alt="Red Nike Air Max running shoes on white background"
+  alt="Red Acme Trail running shoes on white background"
   width={800}
   height={600}
 />
@@ -94,7 +94,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 Search engines read file names. Use descriptive, hyphenated names:
 
 ```
-Good: red-nike-running-shoes.webp
+Good: red-acme-running-shoes.webp
 Bad:  IMG_4827.jpg
 Bad:  shoe_photo_final_v2.png
 ```

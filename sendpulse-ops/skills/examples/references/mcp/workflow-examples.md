@@ -64,31 +64,31 @@ Input: {"pipeline_id": "pipe_001", "name": "Closed Won", "position": 5}
 
 Step 3: Create contact
 Tool: crm_contacts_create
-Input: {"emails": [{"value": "cto@bigcorp.com"}], "name": "Jane Smith", "phones": [{"value": "+1555123456"}]}
+Input: {"emails": [{"value": "cto@example.com"}], "name": "Jane Doe", "phones": [{"value": "+1-555-0102"}]}
 -> {id: "contact_jane"}
 
 Step 4: Create deal
 Tool: crm_deals_create
 Input: {
-  "name": "BigCorp Enterprise License",
+  "name": "Example Inc Enterprise License",
   "pipeline_id": "pipe_001",
   "step_id": "step_lead",
   "amount": 50000,
   "currency": "USD",
   "contact_id": "contact_jane"
 }
--> {id: "deal_bigcorp"}
+-> {id: "deal_example"}
 
 Step 5: Add products
 Tool: crm_products_list
 -> [{id: "prod_ent", name: "Enterprise License", price: 25000}]
 
 Tool: crm_products_deals_add
-Input: {"deal_id": "deal_bigcorp", "product_id": "prod_ent", "quantity": 2, "price": 25000}
+Input: {"deal_id": "deal_example", "product_id": "prod_ent", "quantity": 2, "price": 25000}
 
 Step 6: Add initial note
 Tool: crm_deals_comments_create
-Input: {"id": "deal_bigcorp", "text": "Initial contact via LinkedIn. CTO interested in Q2 deployment."}
+Input: {"id": "deal_example", "text": "Initial contact via LinkedIn. CTO interested in Q2 deployment."}
 ```
 
 ## Example 3: Launch Email Newsletter Campaign
@@ -132,14 +132,14 @@ Tool: email_templates_list
 
 Step 7: Verify sender
 Tool: email_senders_list
--> [{email: "newsletter@acme.com", name: "Acme Newsletter", status: "active"}]
+-> [{email: "newsletter@example.com", name: "Acme Newsletter", status: "active"}]
 
 Step 8: Create campaign
 Tool: email_campaigns_create
 Input: {
   "name": "Tech Newsletter - Week 9",
   "subject": "This Week in Tech: AI, Cloud, and More",
-  "sender_email": "newsletter@acme.com",
+  "sender_email": "newsletter@example.com",
   "sender_name": "Acme Newsletter",
   "addressbook_id": "list_tech",
   "template_id": "tmpl_newsletter",
@@ -163,7 +163,7 @@ Tool: smtp_emails_send
 Input: {
   "email": {
     "subject": "Order #ORD-2026-0042 Confirmed",
-    "from": {"name": "Acme Store", "email": "orders@acme.com"},
+    "from": {"name": "Acme Store", "email": "orders@example.com"},
     "to": [{"name": "John Customer", "email": "customer@example.com"}],
     "html": "<h1>Order Confirmed!</h1><p>Thank you for your order #ORD-2026-0042.</p><ul><li>Product: Widget Pro x2 - $49.98</li><li>Shipping: Free</li><li>Total: $49.98</li></ul><p>Expected delivery: March 5, 2026</p>"
   }
@@ -183,7 +183,7 @@ Input: {"id": "smtp_msg_042"}
 ```
 Step 1: Find CRM contact
 Tool: crm_contacts_list_by_email
-Input: {"email": "vip@bigcorp.com"}
+Input: {"email": "vip@example.com"}
 -> {id: "contact_vip", name: "VIP Customer", emails: [...]}
 
 Step 2: View deals
@@ -193,7 +193,7 @@ Input: {"id": "contact_vip"}
 
 Step 3: Find chatbot contact
 Tool: chatbots_contacts_list_by_var_name
-Input: {"variable_name": "email", "variable_value": "vip@bigcorp.com", "bot_id": "bot_tg_001"}
+Input: {"variable_name": "email", "variable_value": "vip@example.com", "bot_id": "bot_tg_001"}
 -> {contact_id: "chat_contact_vip"}
 
 Step 4: Set VIP tag on chatbot contact
@@ -210,5 +210,5 @@ Input: {"id": "contact_vip", "text": "Tagged as VIP in Telegram bot. Active in n
 
 Step 7: Tag email
 Tool: email_tags_emails_pin
-Input: {"tag_id": "tag_vip", "emails": ["vip@bigcorp.com"]}
+Input: {"tag_id": "tag_vip", "emails": ["vip@example.com"]}
 ```

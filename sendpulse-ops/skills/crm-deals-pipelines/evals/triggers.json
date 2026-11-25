@@ -6,7 +6,7 @@
   {"query": "Move a deal between two different pipelines in SendPulse CRM and show the contacts attached to it", "should_trigger": true},
   {"query": "Создай в SendPulse CRM воронку продаж с этапами и добавь в неё сделку", "should_trigger": true},
   {"query": "Перенеси сделку на этап «Переговоры» в CRM SendPulse и оставь комментарий", "should_trigger": true},
-  {"query": "Create a deal for contact Anna Lee worth 1,500 USD in SendPulse CRM and put it into the first stage of the default pipeline", "should_trigger": true},
+  {"query": "Create a deal for contact Alex Example worth 1,500 USD in SendPulse CRM and put it into the first stage of the default pipeline", "should_trigger": true},
   {"query": "Create a new CRM contact with email and phone in SendPulse", "should_trigger": false},
   {"query": "Add the product 'Annual plan' to a deal and compute the deal value", "should_trigger": false},
   {"query": "Create a Kanban board with tasks for the sales team", "should_trigger": false},

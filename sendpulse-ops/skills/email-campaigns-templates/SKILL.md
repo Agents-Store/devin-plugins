@@ -41,7 +41,7 @@ Tool: email_campaigns_create
 Input: {
   "name": "March Newsletter",
   "subject": "Your monthly update from Acme Corp",
-  "sender_email": "newsletter@acme.com",
+  "sender_email": "newsletter@example.com",
   "sender_name": "Acme Corp",
   "addressbook_id": "<addressbook-id>",
   "template_id": "<template-id>",

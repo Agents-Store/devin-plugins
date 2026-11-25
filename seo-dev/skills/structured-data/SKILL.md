@@ -265,8 +265,8 @@ Combine multiple schemas in a single `<script>` tag:
 const schemas = {
   '@context': 'https://schema.org',
   '@graph': [
-    createOrganization({ name: 'Acme', logo: '/logo.png', url: 'https://acme.com' }),
-    createWebSite('https://acme.com', 'Acme'), // home page only
+    createOrganization({ name: 'Acme', logo: '/logo.png', url: 'https://example.com' }),
+    createWebSite('https://example.com', 'Acme'), // home page only
   ],
 }
 

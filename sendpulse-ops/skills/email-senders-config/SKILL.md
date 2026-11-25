@@ -67,21 +67,21 @@ Returns all verified sender email addresses.
 ```
 Step 1: Add sender
 Tool: email_senders_create
-Input: {"email": "news@acme.com", "name": "Acme News"}
+Input: {"email": "news@example.com", "name": "Acme News"}
 
 Step 2: Send verification code
 Tool: email_senders_code_send
-Input: {"email": "news@acme.com"}
+Input: {"email": "news@example.com"}
 
 Step 3: Activate with code (user provides code from email)
 Tool: email_senders_code_activate
-Input: {"email": "news@acme.com", "code": "123456"}
+Input: {"email": "news@example.com", "code": "123456"}
 ```
 
 ### Remove Sender
 ```
 Tool: email_senders_delete
-Input: {"email": "old-sender@acme.com"}
+Input: {"email": "old-sender@example.com"}
 ```
 
 ## Email Information
@@ -151,7 +151,7 @@ Input: {"tag_id": "<tag-id>", "emails": ["user1@example.com"]}
 ### Assign Tag to Phones
 ```
 Tool: email_tags_phones_pin
-Input: {"tag_id": "<tag-id>", "phones": ["+380501234567"]}
+Input: {"tag_id": "<tag-id>", "phones": ["+1-555-0100"]}
 ```
 
 ### Update/Delete Tags

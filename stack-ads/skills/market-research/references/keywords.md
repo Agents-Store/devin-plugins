@@ -81,7 +81,7 @@ jq -r '.tasks[0].result[0].items[] | [.keyword, .keyword_info.search_volume, .ke
 
 ```bash
 cat > ads/research/raw/req-paid.json <<'EOF'
-[{"target": "competitor.com", "location_code": 2840, "language_code": "en",
+[{"target": "competitor.example.com", "location_code": 2840, "language_code": "en",
   "item_types": ["paid"], "limit": 100,
   "order_by": ["keyword_data.keyword_info.search_volume,desc"]}]
 EOF

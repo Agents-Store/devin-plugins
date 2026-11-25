@@ -104,7 +104,7 @@ Minimal input of each Actor, one JSON file per run (the value under its id):
  "apify/facebook-ads-scraper": {"startUrls": [{"url": "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=DE&search_type=page&view_all_page_id=1234567890"}], "resultsLimit": 50, "activeStatus": "active"},
  "lexis-solutions/tiktok-ads-scraper": {"query": "running shoes", "country": "DE", "maxPages": 2},
  "azzouzana/tiktok-creative-center-top-ads-scraper": {"maxItems": 100, "countryCode": "US", "period": 30},
- "scrapesage/google-ads-transparency-scraper": {"queries": ["nike.com"], "region": "US", "maxAdsPerSearch": 50, "adFormat": "ALL"}}
+ "scrapesage/google-ads-transparency-scraper": {"queries": ["example.com"], "region": "US", "maxAdsPerSearch": 50, "adFormat": "ALL"}}
 ```
 
 - `igolaizola`: output `ad_archive_id`, `snapshot.body.text`, `snapshot.title`, `snapshot.cta_text`, `snapshot.link_url`, `start_date`, `end_date`; spend and reach are not available for every ad.

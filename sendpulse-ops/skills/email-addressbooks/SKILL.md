@@ -134,7 +134,7 @@ Returns total number of subscribers in the list.
 ### Update Subscriber Phone
 ```
 Tool: email_addressbooks_emails_phone_update
-Input: {"id": "<addressbook-id>", "email": "user@example.com", "phone": "+380501234567"}
+Input: {"id": "<addressbook-id>", "email": "user@example.com", "phone": "+1-555-0100"}
 ```
 
 ### Update Subscriber Variables

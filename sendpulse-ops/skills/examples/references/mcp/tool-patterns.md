@@ -75,7 +75,7 @@ Input: {"flow_id": "flow_xyz", "contact_id": "contact_123"}
 ```
 # Create
 Tool: crm_contacts_create
-Input: {"emails": [{"value": "user@example.com"}], "name": "John Doe", "phones": [{"value": "+380501234567"}]}
+Input: {"emails": [{"value": "user@example.com"}], "name": "John Doe", "phones": [{"value": "+1-555-0100"}]}
 -> Returns: {id: "contact_abc"}
 
 # Search
@@ -175,7 +175,7 @@ Tool: email_campaigns_create
 Input: {
   "name": "March Newsletter",
   "subject": "Your monthly update",
-  "sender_email": "news@acme.com",
+  "sender_email": "news@example.com",
   "sender_name": "Acme Corp",
   "addressbook_id": "list_abc",
   "template_id": "tmpl_xyz"
@@ -197,7 +197,7 @@ Tool: smtp_emails_send
 Input: {
   "email": {
     "subject": "Order #12345 Confirmed",
-    "from": {"name": "Acme Store", "email": "orders@acme.com"},
+    "from": {"name": "Acme Store", "email": "orders@example.com"},
     "to": [{"name": "Customer", "email": "customer@example.com"}],
     "html": "<h1>Order Confirmed</h1><p>Thank you for your purchase!</p>"
   }

@@ -92,8 +92,8 @@ Google uses `WebSite` `name` and `alternateName` for the site name shown in resu
   "dateModified": "2026-03-20T14:30:00Z",
   "author": {
     "@type": "Person",
-    "name": "Jane Smith",
-    "url": "https://example.com/authors/jane-smith"
+    "name": "Jane Doe",
+    "url": "https://example.com/authors/jane-doe"
   },
   "publisher": {
     "@type": "Organization",

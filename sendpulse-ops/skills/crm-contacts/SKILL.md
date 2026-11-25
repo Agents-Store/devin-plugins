@@ -53,7 +53,7 @@ Returns full contact record including custom fields, tags, and metadata.
 Tool: crm_contacts_create
 Input: {
   "emails": [{"value": "user@example.com"}],
-  "phones": [{"value": "+380501234567"}],
+  "phones": [{"value": "+1-555-0100"}],
   "name": "John Doe"
 }
 
@@ -66,7 +66,7 @@ Tool: crm_contacts_update
 Input: {
   "id": "<contact-id>",
   "name": "John Updated",
-  "phones": [{"value": "+380507654321"}]
+  "phones": [{"value": "+1-555-0101"}]
 }
 ```
 

@@ -50,7 +50,7 @@ Tool: smtp_emails_send
 Input: {
   "email": {
     "subject": "Order Confirmation #12345",
-    "from": {"name": "Acme Store", "email": "orders@acme.com"},
+    "from": {"name": "Acme Store", "email": "orders@example.com"},
     "to": [{"name": "John Doe", "email": "john@example.com"}],
     "html": "<h1>Thank you for your order!</h1><p>Order #12345 confirmed.</p>"
   }
@@ -164,7 +164,7 @@ Returns configured SMTP sender email addresses.
 ### Add SMTP Sender
 ```
 Tool: smtp_senders_create
-Input: {"email": "transactional@acme.com"}
+Input: {"email": "transactional@example.com"}
 ```
 
 ### List Sender Domains
@@ -178,7 +178,7 @@ Returns domains authorized for SMTP sending.
 ### Add Sender Domain
 ```
 Tool: smtp_senders_domains_create
-Input: {"domain": "acme.com"}
+Input: {"domain": "example.com"}
 
 Adds domain — requires DNS verification (SPF/DKIM).
 ```
