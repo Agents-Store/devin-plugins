@@ -17,6 +17,12 @@ description: Use when OpenClaw memory or its embeddings are involved — embeddi
 - **Memory commands are per agent.** `memory status`, `index` and `reset` without `--agent` run for
   every configured agent; `search` and `forget` default to the default agent only. Say which agent you
   mean: `--agent <id>` on every call.
+- **Most memory commands need the gateway stopped.** On current builds only `memory search` and
+  `memory session-backfill` (preview, apply, rollback) go through a running gateway; `status`, `index`,
+  `reset`, `forget` and the rest refuse while a gateway owns the state directory. Plan them as cold
+  steps — stop the gateway through its deployment owner, run, start — and read a live instance through
+  the gateway instead (`gateway call memory.status`, or `doctor.memory.status` with `probe: true` for the
+  live embedding provider).
 - Text is **chunked** before embedding, and the chunking parameters are part of the index's identity
   (below), not a tuning knob you can change quietly.
 - Reads may be accelerated by a separate read-only process against the same store; it is a reader,
@@ -27,10 +33,11 @@ description: Use when OpenClaw memory or its embeddings are involved — embeddi
 ## The one diagnostic idea worth carrying
 
 **An "invalid token" error on an embedding call is not an expired key. It is a session credential
-presented where an API key was required.** Subscription sign-in through a coding-CLI provider covers
-chat completions and **does not satisfy embedding requests** — this is documented behaviour, not a
-defect. The usual mechanism is that the embedding client inherits the OAuth profile configured for
-chat instead of a key of its own.
+presented where the embedding endpoint does not accept it.** A subscription sign-in covers embeddings
+only where upstream documents it — a stored Codex OAuth profile whose account grants embedding access,
+or the Copilot subscription for its own provider; the Sign in with ChatGPT token-sharing grant does not,
+and most chat-only subscriptions do not. Check what this build accepts with `memory status --deep`
+(an offline read) and `references/embedding-providers.md` before assuming either way.
 
 Consequence for triage: an authorization failure on embeddings is almost never fixed by logging in
 again. Do not re-run a login to test it — a repeated OAuth refresh burns a single-use token and logs
@@ -40,15 +47,19 @@ out another consumer. Read the embedding provider's configuration and ask a diff
 
 ## Index identity
 
-The index carries an identity derived from **provider + model + chunking + the key in use**. Change
-any one of them and the identity no longer matches what is stored:
+The index carries an identity derived from **provider + model + provider settings + sources + scope +
+chunking + tokenizer**. Change any one of them and the identity may no longer match what is stored:
 
-- vector search **pauses** with an identity warning; it does not silently return wrong hits;
-- reindexing is **explicit only** — nothing re-embeds by itself, no matter how long it waits;
-- because the key is part of the identity, **rotating an embedding key forces a reindex everywhere
-  it changed**, including instances where the key was "just replaced" with an equivalent one.
+- for most mismatches vector search **pauses** with an identity warning; it does not silently return
+  wrong hits, and nothing re-embeds by itself;
+- a **scope-only** mismatch is the exception: the next normal search requests a shadow rebuild of the
+  corpus before serving results — that re-embeds content and costs provider spend without anyone
+  running a command;
+- the credential is **not** part of the identity on current builds: rotating an embedding key to an
+  equivalent one no longer makes a compatible index stale.
 
-Plan a key change as a reindex programme, not as a config edit (`fleet.memory.index-identity-changed`).
+Plan a provider, model or chunking change as a reindex programme, not as a config edit
+(`fleet.memory.index-identity-changed`).
 Read the warning with `memory status --agent <id> --deep`, rebuild with
 `memory index --force --agent <id>` (`memory status --index --agent <id>` rebuilds an incompatible
 index too, and implies the deep probe — it is not a plain read). A full rebuild is built in a
@@ -67,10 +78,12 @@ failure into a silent one, and search quality drops with nobody watching.
 
 ## Stuck on the fallback
 
-After a provider outage, search can stay on the fallback model **even once the provider is healthy
-again**. A reload does not clear it; **only a full restart of the gateway does**. Any instance that
-sat in a provider failure for a long stretch should be assumed stuck until a restart proves
-otherwise — the "fix worked but search is still bad" report is this, nearly every time
+After a provider outage, current builds retry the configured primary on later searches (with a short
+cooldown between attempts) and resume on it once it answers and matches the stored identity — no
+restart, no rebuild. Corrected embedding settings or credentials in the config also reach memory
+search without a restart. Two cases still look "stuck": an index that was **built** with the fallback
+stays on that provider by design, and a key delivered through the container **environment** reaches the
+process only on a restart. Older builds stayed on the fallback until a full restart
 (`fleet.memory.search-stuck-fallback`).
 
 ## Giving an instance its own embedding key
@@ -84,7 +97,8 @@ otherwise — the "fix worked but search is still bad" report is this, nearly ev
    feature is silently dead while the config looks correct.
 4. Reference the secret **by name** in the config. A literal key in config is a leak the moment the
    config is backed up, diffed, or pasted.
-5. **Full restart**, not a reload — see above.
+5. **Restart** when the key arrives through the container environment — the process reads its
+   environment only at start; a change inside the config itself is picked up without one.
 6. **Reindex explicitly** (`memory index --force --agent <id>`, once per agent), one instance at a
    time, outside peak hours. Reindexing is the expensive part: it re-embeds the corpus, so it costs
    provider spend and competes with live traffic.
@@ -94,7 +108,7 @@ otherwise — the "fix worked but search is still bad" report is this, nearly ev
 The embedding cache is **bounded** — the oldest entries are pruned in batches against an existing cap,
 and a full rebuild trims it before publishing — but the database as a whole still grows with sessions,
 transcripts and the index, and nothing in memory retention removes canonical history
-(`fleet.memory.db-growth`). Start from `memory status --agent <id> --json`: database and WAL sizes,
+(`fleet.memory.db-growth`). Start from `memory status --agent <id> --json` (gateway stopped): database and WAL sizes,
 reusable (free) bytes, retained cache payload and per-source chunk payloads. These figures overlap —
 do not add them up, and a large file alone does not say which table is responsible.
 
@@ -125,7 +139,7 @@ down, the database verbs run in a one-off container over the stopped state direc
   answer every question the value could, and the value cannot be un-printed.
 - Re-running a login against an embeddings error — wrong credential class, and it burns a token.
 - Changing provider, model or chunking and expecting search to recover on its own.
-- Reloading instead of restarting after a provider is fixed.
+- Reloading instead of restarting after an environment-delivered key changed.
 - Deleting rows, or the database file, by hand when `memory reset`, `memory forget` and the compaction
   verbs exist — the file also holds the agent's canonical history.
 - Running `memory forget` without `--dry-run` first: it deletes at once, with no prompt.

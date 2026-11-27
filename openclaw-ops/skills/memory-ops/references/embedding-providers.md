@@ -23,7 +23,7 @@ that no longer exists in the installed build is a finding, not a typo to guess a
 | Dedicated embedding vendors (retrieval specialists) | API key | no | plan/quota errors are common and read as authorization failures; check quota before rotating anything |
 | Aggregators and inference marketplaces | API key issued by the aggregator | no | the aggregator's error text names the *upstream* model, which misleads you into blaming the model vendor |
 | Cloud-platform embeddings | cloud credentials plus a region, not a bare key | no | fails at signing or region resolution, not at "invalid key"; a key-shaped fix will not apply |
-| Subscription coding-assistant backends | an OAuth **session**, not a key | no | **covers chat completions only and does not satisfy embedding requests** — see below. This is the single most common cause of a fleet-wide dead index |
+| Subscription coding-assistant backends | an OAuth **session**, not a key | no | **usually covers chat only** — embeddings work only where upstream documents it for that provider and account (a Codex OAuth profile whose account grants embedding access; the Copilot subscription for its own provider), never through the Sign in with ChatGPT sharing grant. Where it does not, this is the single most common cause of a fleet-wide dead index |
 | Local runtimes (a local model server, a desktop model host, an in-process engine) | none | **yes** | connection refused, model not present, or a dimension mismatch — never an authorization error |
 | Generic compatible endpoint | whatever that endpoint requires, usually an API key | depends | inherits the failure vocabulary of whatever is behind it; identify the real backend before diagnosing |
 
@@ -58,7 +58,9 @@ Run in this order; stop at the first answer. Every step is a read.
    something changed and the reindex has not been run.
 6. **Is the last index timestamp** far behind current activity? Indexing stopped when the provider
    broke; fix the provider before reindexing, or the reindex just fails more slowly.
-7. **Was the provider recently fixed but search is still poor?** Full restart, not reload.
+7. **Was the provider recently fixed but search is still poor?** Current builds retry the primary on
+   their own; check whether the index was built with the fallback, and restart only when the key
+   arrives through the container environment.
 
 ## Choosing or changing a provider
 
@@ -68,7 +70,7 @@ Run in this order; stop at the first answer. Every step is a read.
 - Local providers remove the credential problem entirely and replace it with a capacity problem: the
   model must be present, resident, and fast enough that reindexing a corpus finishes.
 - Per-instance keys over one shared key: a shared key makes a single revocation a fleet-wide outage,
-  makes spend unattributable, and makes rotation a fleet-wide reindex instead of a local one.
+  makes spend unattributable, and couples every instance to one rotation.
 - Cost lands in two places — the one-off reindex of the whole corpus, and the per-write embedding
   after that. Only the first is visible as a spike, and it is the one that lands mid-workday if
   nobody schedules it.

@@ -13,28 +13,30 @@ Two special-purpose files that run at specific lifecycle events.
 One-time setup instructions for a fresh agent. The agent follows these on first session, then **deletes the file** — it should never run twice.
 
 ### When It Runs
-- Created during `openclaw setup` or `openclaw onboard` for brand-new workspaces
+- Seeded only into a brand-new workspace (`openclaw setup` / `openclaw onboard`), next to AGENTS.md,
+  SOUL.md, IDENTITY.md and USER.md
 - Only when BOOTSTRAP.md exists in the workspace
 - Triggered on the very first session after workspace creation
-- After completion, the agent deletes BOOTSTRAP.md
+- After completion, the agent deletes BOOTSTRAP.md; OpenClaw also removes it on its own once SOUL.md,
+  IDENTITY.md or USER.md differ from the starter templates or `memory/` exists
 
 ### Official Template Concept
 
-The template establishes a conversational discovery process:
+The current template is a short "birth sequence", and it is a ritual, **not a gate**: when the first
+message asks for real work, the agent does the work first and keeps the ritual for later.
 
-> "You just woke up. Time to figure out who you are."
+**Four beats** (no questionnaire, no long biography):
+1. **Name** — introduce yourself and ask what the user wants to call you; never pick a name yourself
+2. **Vibe and emoji** — one short vibe line the user may adjust once, plus a signature emoji
+3. **Avatar (optional)** — only when `image_generate` is available: one 2×2 choice sheet, the user picks
+   a quadrant, the agent crops it into `avatars/` (at most 2 MiB); skipped without fuss otherwise
+4. **Save the identity twice** — write IDENTITY.md (and the vibe line into SOUL.md), then run
+   `openclaw agents set-identity --agent <id> --workspace <path> --name … --theme … --emoji …
+   [--avatar …]` so channels and the UI show the same identity
 
-**Discovery flow:**
-1. Ask who you are and who they are (organic conversation, not interrogation)
-2. Discover four elements:
-   - **Name** — what they should call you
-   - **Creature** — what type of entity you are
-   - **Vibe** — communication style
-   - **Emoji** — personal signature
-3. Document: update IDENTITY.md and USER.md
-4. Collaborate on SOUL.md — what matters to them, behavioral preferences
-5. Optionally set up channels (web chat, WhatsApp, Telegram)
-6. Delete BOOTSTRAP.md — you're no longer a fresh instance
+The template then walks through the setup recommendations (`openclaw onboard recommendations`) and
+ends with deleting BOOTSTRAP.md. Read the current template with the `docs-research` skill before
+quoting it — it changes between releases.
 
 ### Custom BOOTSTRAP.md Example
 
@@ -126,7 +128,7 @@ message tool with an explicit channel and target in each call, then reply with `
 ### Key Rules for BOOT.md
 1. Keep very short — runs on every restart
 2. Focus on system recovery, not regular tasks
-3. Don't duplicate HEARTBEAT.md content
+3. Don't duplicate what the heartbeat automation's scratch already checks
 4. Requires the `boot-md` hook to be enabled (it ships disabled)
 
 ## Best Practices

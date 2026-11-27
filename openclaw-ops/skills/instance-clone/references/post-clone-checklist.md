@@ -57,7 +57,8 @@ between done and not done. **if skipped** — how the omission shows up, usually
 - **Do**: point the clone at the shared trees rather than copying assets into it, align ownership on
   the bind mount, and restart after touching plugin load paths.
 - **Why manual**: which assets a new instance should load is a decision; and the global install path
-  copies files without registering them, so it produces invisible assets
+  produces unregistered files on older builds and a state-directory copy that shadows the shared tree
+  on current ones
   (`fleet.shared.install-global-invisible`).
 - **Verify**: list the shared trees **from inside the container**; then confirm each loaded asset
   resolves to the shared path. Extra directories are the **lowest** load priority, so any local copy

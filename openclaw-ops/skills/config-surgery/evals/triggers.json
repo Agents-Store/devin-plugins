@@ -1,6 +1,6 @@
 [
   {"query": "Our OpenClaw gateway refuses to start after I edited the instance config to change the model chain - how do I find what broke and restore it?", "should_trigger": true},
-  {"query": "I changed agents.defaults.heartbeat in the config but nothing changed. Does it need a restart, or is the process ignoring the file?", "should_trigger": true},
+  {"query": "I changed agents.defaults.compaction in the config but nothing changed. Does it need a restart, or is the process ignoring the file?", "should_trigger": true},
   {"query": "There's a stray config backup and a rejected sidecar file next to the OpenClaw config. What are they and is it safe to delete them?", "should_trigger": true},
   {"query": "Split my OpenClaw config into includes: channels in one file, models in another. How do I do that safely?", "should_trigger": true},
   {"query": "Мне нужно поменять цепочку моделей в конфиге OpenClaw и подключить секрет по ссылке, не ломая остальное. Как безопасно править?", "should_trigger": true},

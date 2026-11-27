@@ -16,16 +16,18 @@ rest are never consulted for that name.
 | 2 | project agent directory | the project | project-scoped behaviour |
 | 3 | personal agent directory | the operator | one person's local variant |
 | 4 | state directory | the instance | what an install writes by default |
-| 5 | bundled | the image | defaults shipped with the runtime |
-| 6 | extra directories + plugin-provided skills | the fleet | **shared assets land here** |
+| 5 | workshop skills (`<state-dir>/agents/<id>/agent/workshop-skills`) | the runtime, per agent | procedures the agent saved through the skill workshop |
+| 6 | bundled (and the custodian agent's own shipped skills) | the image | defaults shipped with the runtime |
+| 7 | extra directories + plugin-provided skills | the fleet | **shared assets land here** |
 
 The ordering is correct as design — a local override is supposed to beat a fleet default. It is also
-exactly why sharing fails quietly: rung 6 is the bottom, so anything left at rungs 1–4 wins forever.
+exactly why sharing fails quietly: rung 7 is the bottom, so anything left at rungs 1–5 wins forever —
+including a workshop skill the agent saved under the same name.
 Promotion without de-shadowing produces a fleet that reports the shared path in its config and runs
 none of it.
 
 Plugins resolve from three places: the state directory, the agent workspace, and the load-paths
-list. Only the third is shareable, and the first two shadow it exactly the way rungs 1-4 shadow a
+list. Only the third is shareable, and the first two shadow it exactly the way rungs 1-5 shadow a
 shared skill — a plugin copy left in a state tree keeps winning after the shared path is
 registered. The list is read at process start, which is why a plugin change needs a restart while
 a skills directory does not.

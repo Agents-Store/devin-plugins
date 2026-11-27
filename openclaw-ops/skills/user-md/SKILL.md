@@ -7,15 +7,27 @@ description: Guide for building USER.md — user profiles, preferences, roles, a
 
 USER.md tells the agent WHO it's helping. It contains user profiles, preferences, communication styles, and context. Loaded into every session.
 
-## Official Template Fields
+## Official Template: a Directive List
+
+The current upstream template treats USER.md as a **user model made of directives**, not a form:
 
 ```markdown
-*Name:* (your name)
-*What to call them:* (preferred address)
-*Pronouns:* (optional)
-*Timezone:* (e.g., America/New_York)
-*Notes:* (anything relevant)
+# USER.md - User Model
+
+## Directives
+- Prefer concise progress updates during implementation work.
 ```
+
+- One directive per entry, each starting with an imperative — `Always`, `Never` or `Prefer`.
+- Only current directives: no dates or status. When a preference changes, replace the directive in place;
+  if the history matters, note it with its date in `memory/YYYY-MM-DD.md`.
+- Stable communication style, relationships and active-project context belong here; other durable facts
+  and decisions go to `MEMORY.md`.
+- The file loads every session with its own **4,000-character budget**, and everything counts —
+  comments and history included. Never leave a placeholder directive in a saved file.
+
+The extended structure below is an optional layout for a richer profile; keep it inside that budget and
+phrase entries as directives where you can.
 
 ## Extended Profile Structure
 
@@ -104,9 +116,7 @@ Cross-reference with `openclaw.json`:
 
 ## Philosophical Note
 
-The template says: "The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference."
-
-Keep USER.md focused on what helps the agent serve better. Don't collect information that isn't relevant to the agent's function.
+You are learning about a person, not building a dossier. Keep USER.md focused on what helps the agent serve better. Don't collect information that isn't relevant to the agent's function.
 
 ## Best Practices
 

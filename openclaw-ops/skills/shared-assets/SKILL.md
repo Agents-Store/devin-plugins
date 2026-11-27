@@ -27,8 +27,9 @@ whole design: `state_dir` stays private, the shared tree is a separate mount.
 
 ## Load order, and the trap in it
 
-Highest priority first: workspace → project agent → personal agent → state directory → bundled →
-**extra directories and plugin-provided skills, lowest**.
+Highest priority first: workspace → project agent → personal agent → state directory → workshop
+skills (per agent, learned by the runtime) → bundled → **extra directories and plugin-provided skills,
+lowest**.
 
 The shared tree is registered at the bottom. A per-instance copy left anywhere above it therefore
 **shadows** the shared one: the fleet looks shared while each instance still runs its old private
@@ -50,9 +51,10 @@ disqualifies a candidate from the shared tree.
 
 ## Install policy
 
-- **The global install path is never used.** It copies files and does not register them, so the asset
-  sits on disk invisible to the runtime — the most convincing kind of non-fix
-  (`fleet.shared.install-global-invisible`).
+- **The global install path is never used.** On older builds it copied files without registering them,
+  so the asset sat on disk invisible to the runtime; on current builds it writes into the instance's
+  managed `<state-dir>/skills` tier, which ranks **above** the shared tree and silently shadows it.
+  Either way the fleet stops running the shared copy (`fleet.shared.install-global-invisible`).
 - Shared assets are managed by **file layout plus config**, and by nothing else.
 - **Back up the install lock before any catalogue install, and read it.** A corrupted lock makes the
   next install remove the other assets: `fleet.shared.lock-corrupt`, red line

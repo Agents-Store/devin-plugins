@@ -92,7 +92,8 @@ Automation job (managed via `openclaw automations add|edit|remove`; `openclaw cr
   - When to trigger the agent
   - References the standing order
   - Stored in the shared state database, NOT in a file and NOT in openclaw.json
-    (only the `cron.enabled` boolean lives there)
+    (openclaw.json holds only scheduler-wide `cron.*` settings — `cron.enabled`, retention, failure
+    alerts — never the jobs themselves)
 ```
 
 The automation job triggers the agent, which reads the standing order and executes it. Manage jobs via the CLI (`openclaw automations add`, `openclaw automations edit`, `openclaw automations remove`), never by editing openclaw.json or a jobs file. Creating, editing or removing a job is an R2 change: show the job first, and put the inverse command in the plan's ROLLBACK.

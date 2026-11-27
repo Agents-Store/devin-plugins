@@ -28,11 +28,11 @@
     {
       "id": 3,
       "prompt": "Use the memory-ops skill. We fixed the embedding provider two weeks ago but memory search is still returning junk. What now? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
-      "expected_output": "Suspects the search stuck on the fallback model after the outage, which only a full restart clears, and separately checks whether the index is paused on an identity mismatch or simply never reindexed.",
+      "expected_output": "Checks whether search is still on the fallback model after the outage: current builds retry the primary on their own, so it looks at whether the index was built with the fallback or the key arrives through the environment, and separately whether the index is paused on an identity mismatch or simply never reindexed.",
       "files": [],
       "expectations": [
         "The answer mentions fleet.memory.search-stuck-fallback",
-        "The answer says a reload does not clear the fallback",
+        "The answer says to check whether the index was built with the fallback provider",
         "The answer says to check the index-identity pause",
         "The answer mentions memory status --deep"
       ]

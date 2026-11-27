@@ -50,7 +50,7 @@ it stopped.
 | container `running` / `healthy` | the process is up and its healthcheck passes | whether it does any work |
 | `/healthz` | the HTTP server is alive | anything else |
 | `/startupz` | startup finished | whether channels are healthy |
-| `/readyz` | startup finished **and** channels passed a deep check | detail requires the bearer — without it you get a bare negative with no reason list |
+| `/readyz` | startup finished **and** channels passed a deep check | the reason list reaches only local-direct or authenticated callers — the battery probes loopback inside the container, so it gets it; from outside without the bearer you get a bare negative |
 | `health --json` `ok:true` | top-level rollup | that delivery queues are clear; check them explicitly |
 | log movement, schedule fire times, session count | that work is happening | why it stopped |
 
@@ -79,7 +79,7 @@ Checks are shown as CLI intent, run through `${CLAUDE_PLUGIN_ROOT}/scripts/ocexe
 | "logged out" across several instances at once | token sink: separate credential copies of one account, each rotating a single-use refresh token | compare the account identifier **fingerprint** across credential directories | `fleet.auth.token-sink` |
 | credentials present, tokens are empty strings, expiry zero | the same sink, after it fired | structure-only read of the credential file | `fleet.auth.emptied` |
 | credential check exits non-zero | expired, expiring or missing | `models status --check` (1 expired, 2 expiring) | `fleet.auth.expired`, `fleet.auth.expiring` |
-| billing moved to metered tokens with no config change | a static-token profile shadows the CLI backend for the same provider | `models auth list`, look for a token-mode profile | `fleet.auth.shadowed` |
+| billing moved to metered tokens with no config change | a static-token profile shadows the CLI backend for the same provider | `models status --json` live (or `models auth list` with the gateway stopped), look for a token-mode profile | `fleet.auth.shadowed` |
 | config names a CLI backend, requests fail immediately | the binary is not on PATH inside the container | `command -v` for the backend binary inside the container | `fleet.auth.orphan-runtime` |
 | every request is slow before it succeeds | dead profiles still in rotation, each costing a retry and a cooldown | profile list vs which ones can still authenticate | `fleet.auth.dead-profile` |
 | unauthorized right after an upgrade | migration rewrote the primary and dropped the runtime override | current config vs pre-upgrade snapshot | `fleet.model.primary-overwritten` |
@@ -95,7 +95,7 @@ Checks are shown as CLI intent, run through `${CLAUDE_PLUGIN_ROOT}/scripts/ocexe
 | every embedding call unauthorized | a session credential presented where an API key is required — subscription OAuth covers chat, not embeddings | embedding provider config plus the delivered key name | `fleet.memory.embeddings-unauthorized` |
 | vector search paused, index-identity warning | provider, model or chunking changed, so the index identity no longer matches | `memory status` | `fleet.memory.index-identity-changed` |
 | search returns nothing useful, last index long ago | indexing stopped when the provider broke | last index time vs activity | `fleet.memory.stale-index` |
-| search still degraded after the provider was fixed | stuck on the fallback model; only a full restart clears it | compare behaviour before and after a full restart, not a reload | `fleet.memory.search-stuck-fallback` |
+| search still degraded after the provider was fixed | an index built with the fallback, an environment-delivered key not yet read, or an older build that stays on the fallback until restarted | which provider built the index; how the key is delivered; the build version | `fleet.memory.search-stuck-fallback` |
 | state database growing without bound | the per-agent database holds the index and the (bounded) embedding cache beside canonical history, and the file does not shrink by itself | `memory status --agent <id> --json`: database and WAL size, reusable bytes, cache payload | `fleet.memory.db-growth` |
 
 ### Schedules
@@ -104,7 +104,7 @@ Checks are shown as CLI intent, run through `${CLAUDE_PLUGIN_ROOT}/scripts/ocexe
 |---|---|---|---|
 | a job fires two or three times per tick | an upgrade duplicated the entries; copies stay enabled and lose their agent binding | group entries by name and schedule; look for empty agent bindings | `fleet.cron.duplicates-after-upgrade` |
 | timers stall for hours nightly, then catch up | known upstream stall; the process stays active and green throughout | history of expected versus actual fire times — only an outside observer sees it | `fleet.cron.night-stall` |
-| one timer stopped firing for good | a series of timeouts killed it | last fire time versus schedule | `fleet.cron.timer-dead-after-timeouts` |
+| one timer stopped firing for good | after repeated consecutive failures the scheduler disables the job and records why | the job's status and last error in `cron list --all --json` (a plain `list` hides disabled jobs) | `fleet.cron.timer-dead-after-timeouts` |
 | every job on an instance fails | not a scheduling problem — the model chain is dead | credential check first, schedules second | `fleet.cron.all-failing` |
 | jobs exist in the file but the runtime has none | the migration into the store never ran | file entries versus `cron list` | `fleet.cron.migration-not-applied` |
 
@@ -118,7 +118,7 @@ Checks are shown as CLI intent, run through `${CLAUDE_PLUGIN_ROOT}/scripts/ocexe
 | a token or client id sits in a backup or identity copy | it has already leaked; hiding it is not a fix | scan for token-shaped values by class, never print them | `fleet.secrets.leaked-in-backup` |
 | shared skill and plugin directories mounted, nothing loads | the shared trees are empty, or ownership on the bind mount is refused | list the shared trees from inside the container | `fleet.shared.empty-mount`, `fleet.shared.ownership-blocked` |
 | shared copy edited, behaviour unchanged | extra directories are the **lowest** load priority; a local copy shadows the shared one | which path a loaded skill actually came from | `fleet.shared.local-shadow` |
-| an installed skill is invisible | installed by copying without registering | registered list versus files on disk | `fleet.shared.install-global-invisible` |
+| an installed skill is invisible, or the shared copy stopped winning | the global install path: unregistered files on older builds, a state-directory copy that shadows the shared tree on current ones | registered list and the tier each skill resolves from versus files on disk | `fleet.shared.install-global-invisible` |
 | a plugin change did not take effect | plugin load paths require a restart | config change time versus process start time | `fleet.shared.plugins-load-no-restart` |
 | instances on different versions | drift; nobody upgrades the whole fleet at once | `--version` per instance | `fleet.version.drift` |
 | what is running is not what was reviewed | pinned to a moving tag, rebuilt on its own schedule | image reference versus its digest | `fleet.version.moving-tag-pin` |

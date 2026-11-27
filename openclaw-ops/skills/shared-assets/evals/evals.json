@@ -27,11 +27,11 @@
     {
       "id": 3,
       "prompt": "Use the shared-assets skill. Fastest way to get this skill onto all instances is the global install command, right? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
-      "expected_output": "No: the global install path copies files without registering them, so the skill stays invisible. Shared assets are managed by file layout plus config only.",
+      "expected_output": "No: the global install path does not share anything — on current builds it writes a copy into the instance's state-directory skills tier, which shadows the shared tree. Shared assets are managed by file layout plus config only.",
       "files": [],
       "expectations": [
         "The answer rejects the global install path",
-        "The answer says the global install does not register the asset",
+        "The answer says the global install puts a copy in the state directory that shadows the shared tree",
         "The answer mentions skills.load.extraDirs",
         "The answer says to list the shared tree from inside the container"
       ]

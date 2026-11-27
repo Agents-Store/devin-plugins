@@ -91,7 +91,7 @@ name. R3 (backup first): `sessions cleanup`, `memory reset`, `memory forget`, `m
 — `update cleanup` also retires the migration recovery originals for good — `secrets store
 set|rm|import`, `secrets apply`, `doctor --generate-gateway-token`, `doctor --fix` (and its alias
 `--repair`, which is normalised to it, so `doctor --lint --repair` is an R4 too), `doctor --yes` (it
-enters repair maintenance), `security audit --fix`, `fleet rm`, `migrate apply`, the root shorthand
+enters repair maintenance), `security audit --fix`, `fleet rm` (a retired command, kept for older builds), `migrate apply`, the root shorthand
 `--update`, any `triage` that is not `--json` / `--non-interactive` (it hands the installation to a
 coding agent that repairs on its own), and a top-level `reset` or `uninstall`. Plain `doctor` and
 `doctor --non-interactive` are R2: ordinary doctor can copy legacy config and migrate state even

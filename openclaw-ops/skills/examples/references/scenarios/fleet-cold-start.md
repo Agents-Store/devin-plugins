@@ -103,7 +103,7 @@ Do not restate a version from memory afterwards — quote the run, dated (`docs-
 Layer one, per instance, R0:
 
 ```
-${CLAUDE_PLUGIN_ROOT}/scripts/ocexec.py alpha --json -- security audit --deep
+${CLAUDE_PLUGIN_ROOT}/scripts/ocexec.py alpha --json -- security audit --deep --json
 ```
 
 Layer two is the one the runtime structurally cannot make: loopback publication, whether the

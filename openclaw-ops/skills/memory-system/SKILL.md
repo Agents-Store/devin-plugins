@@ -50,7 +50,6 @@ On by default. `memoryFlush` is an **object**, not a boolean; configure it in `o
       "compaction": {
         "memoryFlush": {
           "enabled": true,
-          "model": "<provider>/<model-id>",
           "softThresholdTokens": 4000
         }
       }
@@ -59,9 +58,10 @@ On by default. `memoryFlush` is an **object**, not a boolean; configure it in `o
 }
 ```
 
-`model` is optional and applies to the flush turn only (it does not inherit the session's fallback
-chain) — take the value from the instance's own model catalogue. Leave every key out to keep the
-defaults. A key the schema does not know refuses the gateway at the next restart, so change this block
+The flush runs on the active session model and its normal fallback chain. The former
+`memoryFlush.model` key is retired: Doctor's repair removes it, and a config that still carries it must
+be repaired before the gateway starts — to keep memory extraction local, choose a local session model
+and local fallbacks instead. Leave every key out to keep the defaults. A key the schema does not know refuses the gateway at the next restart, so change this block
 through the `config-surgery` procedure and check the key list with `openclaw config schema` first.
 
 ## Vector Search

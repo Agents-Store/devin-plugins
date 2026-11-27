@@ -11,13 +11,15 @@ what the host filesystem lets other people read.
 
 ## Layer one: the built-in audit
 
-Run it through the one door: `${CLAUDE_PLUGIN_ROOT}/scripts/ocexec.py <instance> --json -- security audit --deep`.
+Run it through the one door: `${CLAUDE_PLUGIN_ROOT}/scripts/ocexec.py <instance> --json -- security audit --deep --json` — the
+  first `--json` asks the door for its envelope, the second asks the CLI for its document; without the
+  second the CLI prints human text.
 
 - **The document is the evidence; the exit code is not asserted here.** Upstream documents the audit's
   severities (`critical`, `warn`, `info`) and its JSON (`summary`, `findings`, `suppressedFindings`) but
   no exit-code table, so this plugin does not read one into it — a code is "0 succeeded" and nothing
-  more until the owner confirms a contract on a test instance. Findings carry `checkId`, `severity`,
-  `message`, `path`, `fixHint`. Suppressed findings are kept under `suppressedFindings`; a configured
+  more until the owner confirms a contract on a test instance. Audit findings carry `checkId`, `severity`,
+  `title`, `detail` and an optional `remediation` — a different shape from the lint's. Suppressed findings are kept under `suppressedFindings`; a configured
   suppression also leaves an info finding saying the audit was filtered, and a filtered audit is not a
   clean one.
 - **Three more axes, each with its own documented contract** (`references/checkids.md`):
@@ -33,8 +35,10 @@ Run it through the one door: `${CLAUDE_PLUGIN_ROOT}/scripts/ocexec.py <instance>
   upstream made bulk-approval flags unable to grant consent on purpose. Propose it as a plan; never
   chain it onto the audit in the same turn.
 - **A clean audit is not a secure instance.** It is one process reporting on itself.
-- **`--fix` also rewrites file modes** on the state tree, config, credential files and the per-agent
-  database. It is still the narrow, R4 repair described above; it does not rotate anything.
+- **`--fix` also rewrites config and file modes**: it flips open group policies to allowlists (seeding
+  a WhatsApp group allowlist from the stored one) and tightens permissions on the state tree, config
+  and its includes, credential files and the per-agent database. It is still the narrow, R4 repair
+  described above; it does not rotate anything.
 
 ## Layer two: the deployment class
 

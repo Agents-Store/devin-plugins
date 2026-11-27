@@ -99,7 +99,7 @@ the same sequence — snapshot, validate, verify from the runtime.
 | plugin load paths | restart: the loader walks those paths at startup only |
 | a secret whose **value** changed in the store | restart the process — injected env is read once, at start |
 | embedding provider, model or chunking | applies, then pauses vector search with an index-identity warning until an explicit reindex |
-| anything while search is stuck on a fallback model | full restart, not a reload — a reload does not clear it |
+| an embedding key delivered through the container environment | full restart — the process reads its environment only at start (corrected embedding settings in the config itself apply without one) |
 
 The reload mode is itself configurable (`off` or `hybrid`; the older `hot` and `restart` values are
 retired), so what a given instance does on change is one `config get` away. Never assume a default.

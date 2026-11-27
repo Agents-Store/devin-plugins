@@ -130,7 +130,7 @@ See `references/jq-queries.md` for the complete jq command reference.
 - High-cost heartbeat cycles → simplify the heartbeat scratch, isolate the session
 - Expensive sessions → identify token-heavy patterns
 
-### Active hours → heartbeat `activeHours` / USER.md
+### Active hours → heartbeat job active hours / USER.md
 - Peak usage times → optimize heartbeat schedule
 - Off hours → define quiet hours
 - Timezone patterns → update USER.md timezone

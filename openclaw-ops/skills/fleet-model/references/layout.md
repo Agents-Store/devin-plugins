@@ -113,10 +113,12 @@ directory is a credential artefact either way.
 A legacy instance is a migration project, not a maintenance target — red line
 `legacy-instance-mutation`. Say that out loud rather than "fixing" it in place.
 
-**Fleet cells are `alien` on purpose.** The runtime's experimental multi-tenant `fleet` command runs
-each tenant as its own container, named after the tenant, **not** as a compose project. Discovery
-therefore lists them as inventory rows and refuses every mutation — a deliberate outcome, not a gap:
-this plugin manages compose-project gateways, and a cell has its own lifecycle (`openclaw fleet …`).
+**Fleet cells are `alien` on purpose.** The runtime's experimental multi-tenant `fleet` command ran
+each tenant as its own container, named after the tenant, **not** as a compose project. Upstream has
+since removed that command: updating the CLI leaves existing tenant containers, networks and data
+untouched and no longer updates their images, so their lifecycle, image updates and backups belong to
+the operator's own Docker or Podman tooling. Discovery lists them as inventory rows and refuses every
+mutation — a deliberate outcome, not a gap: this plugin manages compose-project gateways only.
 Its state and legacy-key directories sit under per-tenant host paths and carry the same plaintext
 OAuth material, so a copy of one is a credential artefact too.
 

@@ -7,7 +7,9 @@ description: Use when an OpenClaw instance or fleet is being upgraded, or when t
 
 An upgrade is R4 on every instance, every time. The state schema migrates **in place**. Doctor does
 save verified copies of the databases beside the originals before it advances a schema
-(`<database>.pre-startup-migration-<id>.bak`, one group per run), and a package update keeps its
+(`<database>.pre-startup-migration-<id>.bak`, one group per run — or, for fully declared table
+migrations, partial `….scoped.bak` archives that are **not** whole databases and are restored only with
+`openclaw database restore-migration-backup`, writers stopped, never by replacing the file), and a package update keeps its
 pre-migration snapshots until activation is verified — but **a package rollback cannot undo migrated
 state**, an older release cannot open a newer schema, and full-state recovery needs a backup you took
 yourself. Re-running a failed migration does not undo it either. Everything below follows from that.
@@ -84,7 +86,7 @@ the bridge version are its two version constants, copied from the upstream updat
 |---|---|---|
 | Config snapshot outside the `.bak` ring | the human's own last-known-good, which four automatic edits would evict | `gate.snapshot`; the ring is a courtesy to people, not a plugin mechanism |
 | The runtime's own backup, **verified** — `backup create --verify` | a WAL-aware archive of state, config, credentials and agent databases, validated right after it is written | an upgrade proposed without a backup that **passed** verification is rejected, not warned about (`fleet.upgrade.no-verified-backup`). Never copy only the main `.sqlite` of a live database: committed data can still sit in its `-wal`. `backup verify <archive>` re-checks one later; `backup sqlite create` / `list` / `verify` cover a single database |
-| Stop the gateway, then archive the state directory **together with the `.bak` group** | **the only real rollback** | the order is deliberate: stopping is what quiesces the writers, so the archive is consistent. Archiving a live state directory produces a copy of a torn moment. Keep the `<database>.pre-startup-migration-<id>.bak` copies Doctor saved with it — a rollback restores matching state as well as the old image |
+| Stop the gateway, then archive the state directory **together with the `.bak` group** | **the only real rollback** | the order is deliberate: stopping is what quiesces the writers, so the archive is consistent. Archiving a live state directory produces a copy of a torn moment. Keep the `<database>.pre-startup-migration-<id>.bak` (and `.scoped.bak`) copies Doctor saved with it — a rollback restores matching state as well as the old image. Archive them **before** the next restart: a container restart still retires older Doctor copies on its own, without anyone running `update cleanup` |
 
 Every one of these is a **credential artefact**, not a scratch file: current OAuth tokens sit in the
 state database in plaintext, so an archive, a snapshot or a tar of the state directory carries working

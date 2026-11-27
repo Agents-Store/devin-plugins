@@ -58,7 +58,8 @@ clean state directory, start the pinned digest. And it carries the cost out loud
 gap in the title:
 
 - the schema migration is in place: Doctor keeps verified pre-migration copies beside the databases
-  (`<database>.pre-startup-migration-<id>.bak`) and a package update keeps snapshots until activation
+  (`<database>.pre-startup-migration-<id>.bak`, or partial `.scoped.bak` archives restored only with
+  `database restore-migration-backup`) and a package update keeps snapshots until activation
   is verified, but a package rollback cannot undo migrated state and an older release cannot open a
   newer schema — only a backup you took yourself restores the full state;
 - restore works into a **clean** target, not over a half-migrated one;

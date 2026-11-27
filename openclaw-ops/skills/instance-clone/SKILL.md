@@ -58,8 +58,8 @@ Publish on loopback: images publish outward by default, and a clone is the easie
 - Credential directories for the clone are created **empty**. If the fleet deliberately shares one
   owner credential directory by mount, the clone mounts the same directory — sharing by mount is a
   decision with one owner; sharing by copy is two owners and a race.
-- The embedding key is **per instance**. Sharing one hides which instance burns the quota, and changing
-  a key later changes the index identity and forces a full reindex everywhere it was used.
+- The embedding key is **per instance**. Sharing one hides which instance burns the quota, and one
+  revocation takes every instance that shares it down at once.
 - Secret references travel; secret values do not. The patched config carries the same references and
   resolves none of them.
 

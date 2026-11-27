@@ -6,8 +6,10 @@ memory.
 
 ## The finding record
 
-The audit and the lint share one finding shape. Consumers of this plugin depend on all six fields
-surviving intact.
+This is the **lint** finding shape. Consumers of this plugin depend on all six fields surviving
+intact. The security audit uses its own: `{checkId, severity, title, detail, remediation?}` inside a
+report `{ts, summary{critical, warn, info}, findings, suppressedFindings?, deep?}` — `title` and
+`detail` play the part of `message`, `remediation` that of `fixHint`, and there is no path field.
 
 | Field | Meaning | How it is used here |
 |---|---|---|
@@ -96,8 +98,10 @@ fix, verification and risk class.
   upstream design: consent is the one thing automation is not allowed to grant. Print the consent line
   for a human (`fleet.security.capability-consent-pending`).
 - It does not touch the host: no firewall rules, no port publication, no ownership of a bind mount, no
-  token rotation. What it does change is file modes: it tightens permissions on the state tree, the
-  config and its includes, the credential files, the per-agent database and legacy session artefacts.
+  token rotation. What it does change is config and file modes: it flips open group policies to
+  allowlists (for WhatsApp it seeds the group allowlist from the stored one), and it tightens
+  permissions on the state tree, the config and its includes, the credential files, the per-agent
+  database and legacy session artefacts.
 - It is R4 in this plugin. A repair that rewrites files the operator did not enumerate needs an
   eight-block plan, a snapshot outside the CLI's own backup ring, and a typed confirmation.
 

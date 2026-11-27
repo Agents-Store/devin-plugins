@@ -49,7 +49,7 @@ Every CLI call goes through `${CLAUDE_PLUGIN_ROOT}/scripts/ocexec.py <instance> 
 | `ok` | running, config present, log moving, CLI answers | everything |
 | `degraded` | up and green but a subsystem is dead: auth check non-zero, empty config, silent log, mute CLI | reads, targeted repair; batch mutations need confirmation |
 | `down` | no container, not running, or restart loop | host side only: files, compose logs, cold container |
-| `alien` | failed the layout fingerprint, or `manage:false` — and, on purpose, every `fleet`-command tenant cell, which is a separate container named for its tenant and not a compose project | inventory row; every mutation refused |
+| `alien` | failed the layout fingerprint, or `manage:false` — and, on purpose, every tenant cell left by the retired `fleet` command, which is a separate container named for its tenant and not a compose project | inventory row; every mutation refused |
 
 A deep battery downgrades `ok` to `degraded` and never the reverse. Nothing is hidden: an object that looks like an instance and fails the fingerprint is still listed.
 

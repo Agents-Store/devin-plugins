@@ -75,7 +75,7 @@
     {
       "id": 7,
       "prompt": "Use the provider-auth skill. Chat works everywhere but every embedding call is unauthorized. Same account, so rotate the login? In this session you can only read files and answer in text: say which commands you would run or print, in what order, and what you would check. Answer in at most 250 words, then end with a line starting 'Rules from the skill:' that lists, comma-separated, the finding ids, flags, commands and refusals from the skill that you relied on.",
-      "expected_output": "Separates the lanes: a subscription session covers chat completions and does not satisfy embedding requests, so this is a credential class problem, not an expiry. Routes to the memory skill for the per-instance embedding key and the reindex it forces.",
+      "expected_output": "Separates the lanes: a subscription session covers chat completions and does not satisfy embedding requests, so this is a credential class problem, not an expiry. Routes to the memory skill for the per-instance embedding key.",
       "files": [],
       "expectations": [
         "The answer refuses to rotate or re-login as the fix",

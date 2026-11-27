@@ -84,7 +84,10 @@ Notes the table cannot hold:
   removes the provider's existing profiles (for the shared main agent, the shared credentials and the
   main agent's local overrides including their order and health state) before logging in again, and
   `models auth activate <profile-id>` tests a saved sign-in and selects it. Only the login itself is a
-  human's job; the rest is read with `models auth list --json` first.
+  human's job; the rest is read first — live through `models status --json`, because on current builds
+  `models auth list` and `order get` (like every `models auth` verb except `login`,
+  `login-github-copilot` and `paste-api-key`) need the gateway stopped. The online login refuses
+  `--force`, `--profile-id` and `--set-default`; those run only offline.
 - **Two families of accounts, not one.** `models auth …` manages **system / agent** credentials on the
   machine running the gateway; `models accounts …` manages **personal** accounts owned by a signed-in
   person on that gateway. Do not use one to diagnose the other.

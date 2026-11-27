@@ -42,7 +42,7 @@ Paths are written in dotted form as `config get` accepts them.
 | `agents.defaults.model` | string or object | the chain: a bare ref, or `{primary, fallbacks[]}` |
 | `agents.defaults.models["<provider>/<model-id>"].agentRuntime.id` | string | which local runtime serves that model — the canonical place for a CLI backend |
 | `agents.defaults.imageModel` | string or object | model used for image analysis |
-| `agents.defaults.heartbeat` | object | `every`, `target`, `model`, `lightContext`, `isolatedSession`, `prompt` |
+| `agents.defaults.heartbeat` | — | **retired**: a config that still has it is invalid; Doctor's repair turns it into an automation job (see the `heartbeat-md` skill) |
 | `agents.defaults.compaction` | object | when and how context is compacted |
 | `agents.defaults.sandbox` | object | `mode` (off / non-main / all), `scope` (session / agent / shared) |
 | `agents.defaults.bootstrapMaxChars`, `…TotalMaxChars` | number | per-file and total limits on workspace files loaded at bootstrap |
@@ -112,8 +112,8 @@ with the runtime, not by reading the three keys and reasoning about them.
 Traps: extra directories lose to every other source, so a leftover local copy shadows the shared one
 and sharing only looks done (`fleet.shared.local-shadow`). A bind mount whose ownership the runtime
 distrusts is refused as a candidate with the mount present and populated
-(`fleet.shared.ownership-blocked`). Installing by copying files does not register anything
-(`fleet.shared.install-global-invisible`).
+(`fleet.shared.ownership-blocked`). The global install path either leaves files unregistered (older builds) or writes a state-directory copy
+that shadows the shared one (`fleet.shared.install-global-invisible`).
 
 ## session
 
@@ -127,7 +127,7 @@ than the operator resets at a different real time than the one written down.
 ## gateway
 
 `gateway.port` (the container-side port is fixed at 18789; the host port is a publish mapping, not
-this key) · `gateway.host` · `gateway.auth.token` · `gateway.reload.mode` (`off` or `hybrid`; `hybrid` is
+this key) · `gateway.bind` (a mode such as `auto`, `loopback` or `lan`, not a host address) · `gateway.auth.token` · `gateway.reload.mode` (`off` or `hybrid`; `hybrid` is
 the default).
 
 Traps: `hot` and `restart` are **retired** values of the reload mode — `doctor --fix` maps both to
@@ -157,7 +157,9 @@ works, not evidence that nothing is configured.
 
 ## cron
 
-`cron.enabled` only. The jobs themselves live in the state store and are managed through the CLI —
+Scheduler-wide settings only — `cron.enabled` (false stops every scheduled run), plus retention,
+failure alerts, triggers and similar keys; check the current list with `config schema`. The jobs
+themselves, heartbeat jobs included, live in the state store and are managed through the CLI —
 which is why a file full of jobs and a runtime that lists none is a migration that never ran
 (`fleet.cron.migration-not-applied`), and why an upgrade can duplicate entries without the config
 changing at all (`fleet.cron.duplicates-after-upgrade`).
@@ -189,6 +191,8 @@ before writing any of them.
 | `session.maintenance.pruneDays` | `session.maintenance.pruneAfter` |
 | `session.resetByType.dm` | `session.resetByType.direct` |
 | `cron.failureDestination` | destination fields on `cron.failureAlert` |
+| `agents.defaults.heartbeat`, `agents.entries.*.heartbeat` | an ordinary automation job per agent (interactive `doctor --fix`; see `heartbeat-md`) |
+| `agents.defaults.compaction.memoryFlush.model` | removed — the flush uses the session model and its fallbacks |
 | whole-agent runtime keys | model- or provider-scoped `agentRuntime` (see `agents`) |
 
 Instances older than the cut-off `versions.py` reports cannot be migrated in one step: they cross the
