@@ -70,6 +70,8 @@ jq -r '.tasks[0].result[0].items[] | [.keyword, .keyword_info.search_volume, .ke
 ```
 
 - Do not set `include_clickstream_data`: it doubles the price.
+- In two live calls (Ukraine, 2026-11-27) `keywords_for_keywords` returned only the seed keywords with their volumes and bids, and no new ideas. For ideas use Labs `keyword_ideas`.
+- Add a `filters` condition on the product's core word, for example `["keyword", "like", "%running%"]`: sorted by volume, the 300 ideas of the same live run were generic shop queries with one relevant phrase.
 - `filters` takes at most 8 conditions, for example `["keyword_info.search_volume", ">", 100]`.
 - Labs data refreshes every 30 to 90 days; search volume from Google Ads data is fresher. Re-check the shortlist with the search volume call above.
 - A domain's keywords: `dataforseo_labs/google/keywords_for_site/live` with `target`, `include_subdomains`, `limit`. Use it instead of the Google Ads variant of the same name: a help article calls that one deprecated.

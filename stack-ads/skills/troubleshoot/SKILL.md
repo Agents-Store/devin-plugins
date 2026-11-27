@@ -54,6 +54,7 @@ If `ads/tools/ads.py` is missing or older than the plugin, run `init-project` st
 | 402, "insufficient credit", "billing" | the prepaid balance of a research or generation service is empty | the user tops up; nothing else helps |
 | "model not found", a model that worked last month | the provider retired it | `python3 ads/tools/ads.py models --pick` |
 | A generation refused for safety or policy | the prompt asks for something the provider does not make | change what is being asked for; do not reword the same request to get past the filter |
+| Approved and switched on, but no impressions | review pending, a schedule that has not started, a paused parent, a spend cap or payment problem, or a platform that is still preparing the ad | `python3 ads/tools/ads.py launch diagnose --file ads/launch/NAME.json`: it reads every level and says which check fails and what to do next; do not recreate anything before it has run |
 | An ad is disapproved or "with issues" | the creative, the text or the landing page breaks a policy | read the stated reason, fix that, create a new ad; resubmitting the same content fails again. An appeal or a policy exemption is the account owner's decision: propose it, do not file it |
 
 The reference has the full tables per service, including the less common codes and a list of dated shutdowns for the coming months: when something that worked stops on a specific day, look there first.

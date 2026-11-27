@@ -12,10 +12,16 @@ AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 ADS_ROOT = "https://googleads.googleapis.com"
 GSC_ROOT = "https://www.googleapis.com/webmasters/v3"
+DM_HOST = "datamanager.googleapis.com"
+DM_ROOT = "https://" + DM_HOST + "/v1"
 SCOPES = {
     "ads": "https://www.googleapis.com/auth/adwords",
     "gsc": "https://www.googleapis.com/auth/webmasters.readonly",
+    # conversion uploads: the Google Ads API keeps them for existing users only, new ones go through the Data Manager API
+    "datamanager": "https://www.googleapis.com/auth/datamanager",
 }
+UPLOADABLE = ("UPLOAD_CLICKS", "WEBPAGE")
+EVENT_SOURCES = ("WEB", "APP", "IN_STORE", "PHONE", "MESSAGE", "OTHER")
 _TOKENS = {}
 
 
@@ -29,7 +35,7 @@ def login_url(ctx, port=8080, scopes="ads,gsc"):
     names = [s.strip() for s in scopes.split(",") if s.strip()]
     unknown = [s for s in names if s not in SCOPES]
     if unknown:
-        raise Refused("unknown scope %s; use ads, gsc or both" % ", ".join(unknown))
+        raise Refused("unknown scope %s; use ads, gsc, datamanager or a comma list of them" % ", ".join(unknown))
     query = {
         "client_id": ctx.key("GOOGLE_ADS_CLIENT_ID"),
         "redirect_uri": redirect_uri(port),
@@ -181,6 +187,8 @@ def _ads_call(ctx, method, url, body=None):
                     "the account at ads.google.com (it need not be the login that owns the Cloud project)")
         elif "explorer access" in text.lower():
             hint = "this method needs Basic access: apply for it on the Google Ads API overview page (keys guide, step 2)"
+        elif "CUSTOMER_NOT_ALLOWLISTED_FOR_THIS_FEATURE" in text and "conversion" in text.lower():
+            hint = "new integrations upload conversions through the Data Manager API: use google upload-conversions"
         raise AdsError("Google Ads refused the request:\n  " + "\n  ".join(lines), hint)
 
 
@@ -304,6 +312,73 @@ def call(ctx, method, path, body=None, yes=False):
     if kind == "write" and not yes:
         return {"dry_run": True, "would_send": {"method": method, "path": path, "body": body}}
     return _ads_call(ctx, method, ads_url(ctx, path), body)
+
+
+# ── Data Manager API: conversion uploads ─────────────────────────────────
+
+def _dm_call(ctx, method, url, body=None):
+    try:
+        return request(method, url, headers={"Authorization": "Bearer " + access_token(ctx)}, json_body=body, timeout=120).json()
+    except HttpError as exc:
+        payload = exc.json()
+        error = payload.get("error", {}) if isinstance(payload, dict) else {}
+        lines = ["%s: %s (%s)" % (v.get("field", "request"), v.get("description", ""), v.get("reason", ""))
+                 for detail in error.get("details", []) for v in detail.get("fieldViolations", [])]
+        text = json.dumps(payload) if payload is not None else exc.body
+        hint = ""
+        if "ACCESS_TOKEN_SCOPE_INSUFFICIENT" in text or "insufficient authentication scopes" in text.lower():
+            hint = ("the Google login lacks the Data Manager scope: run google login --scopes ads,gsc,datamanager and "
+                    "approve all three (keys guide, conversion uploads)")
+        elif "SERVICE_DISABLED" in text:
+            hint = "enable the Data Manager API (datamanager.googleapis.com) in the Cloud project of the OAuth client, then retry"
+        raise AdsError("the Data Manager API refused the request: %s" % (error.get("message") or exc.message)
+                       + "".join("\n  " + line for line in lines), hint)
+
+
+def conversion_action_type(ctx, action, customer=None):
+    rows = search(ctx, "SELECT conversion_action.id, conversion_action.type, conversion_action.status FROM conversion_action "
+                       "WHERE conversion_action.id = %d" % int(action), customer)
+    if not rows:
+        raise Refused("conversion action %s is not in the account" % action,
+                      "list them: google search --query \"SELECT conversion_action.id, conversion_action.name, "
+                      "conversion_action.type FROM conversion_action\"")
+    return rows[0].get("conversionAction", {}).get("type", "")
+
+
+def upload_conversions(ctx, rows, action, source="WEB", customer=None, yes=False):
+    """Click conversions through the Data Manager API (events:ingest).
+
+    Without yes Google validates the request and records nothing, as google mutate does without --yes.
+    The destination is the conversion action's numeric id in the account that owns it.
+    """
+    action = str(action).strip()
+    if not action.isdigit():
+        raise Refused("the conversion action is its numeric id, got %r" % action)
+    if source not in EVENT_SOURCES:
+        raise Refused("event source %r is not one of %s" % (source, ", ".join(EVENT_SOURCES)))
+    events = guards.conversion_rows(rows, guards.for_platform(ctx.config, "google").get("project", {}).get("currency"))
+    kind = conversion_action_type(ctx, action, customer)
+    if kind not in UPLOADABLE:
+        raise Refused("conversion action %s is of type %s; uploads go to UPLOAD_CLICKS (import from clicks) or WEBPAGE actions"
+                      % (action, kind or "unknown"))
+    missing = [n for n, event in enumerate(events, 1) if kind == "WEBPAGE" and not event.get("transactionId")]
+    if missing:
+        raise Refused("a WEBPAGE action needs an order_id on every row; rows without one: %s" % ", ".join(map(str, missing[:10])))
+    account = customer_id(ctx, customer)
+    destination = {"operatingAccount": {"accountType": "GOOGLE_ADS", "accountId": account}, "productDestinationId": action}
+    login = ctx.key("GOOGLE_ADS_LOGIN_CUSTOMER_ID", required=False).replace("-", "")
+    if login and login != account:
+        destination["loginAccount"] = {"accountType": "GOOGLE_ADS", "accountId": login}
+    body = {"destinations": [destination], "events": [dict(event, eventSource=source) for event in events], "validateOnly": not yes}
+    out = _dm_call(ctx, "POST", DM_ROOT + "/events:ingest", body)
+    out = dict(out, validated_only=not yes, events=len(events), action_type=kind)
+    if yes:
+        out["next"] = "processing is asynchronous: google upload-status --request-id %s in 30 minutes" % out.get("requestId", "<id>")
+    return out
+
+
+def conversion_status(ctx, request_id):
+    return _dm_call(ctx, "GET", DM_ROOT + "/requestStatus:retrieve?" + urllib.parse.urlencode({"requestId": request_id}))
 
 
 def enable_campaigns(ctx, resource_names, customer=None, yes=False):

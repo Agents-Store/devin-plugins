@@ -172,6 +172,14 @@ python3 ads/tools/ads.py launch activate --file ads/launch/de_meta_trial_202612.
 
 It enables parents first: the campaigns on Google; campaign, ad sets and ads on Meta; campaign, ad groups and ads on TikTok. It is refused while a step of the plan is not applied, and when the budget of the plan no longer passes because the ceiling or the currency changed. Ads deliver only after the platform's review, which takes from minutes to a few days. Check the review state after an hour and the next day with the calls of the platform reference; for TikTok the documentation does not say when a disabled ad is reviewed, so poll and do not assume. Report a disapproval with its reason instead of retrying the same creative.
 
+After activation run `launch diagnose` the next day, or at once when the user asks why nothing shows:
+
+```bash
+python3 ads/tools/ads.py launch diagnose --file ads/launch/de_meta_trial_202612.json
+```
+
+It only reads. It checks status and review per object, the schedule, the account (state, payment, spend cap) and the impressions since activation, and names what to do next. Approved, on, and still 0 impressions after 6 hours is reported as a failure with suspects; sooner it says "too early". Do not recreate or edit objects on the strength of an early reading: Meta can stay in its own "preparing" state for a day or two.
+
 Tell the user what to expect: the learning phase needs days, numbers move a lot in the first week, and the first report is due after about seven days (`performance-report`).
 
 ## Step 7: Pause or remove

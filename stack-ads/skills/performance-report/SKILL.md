@@ -67,7 +67,7 @@ Find where the path breaks before proposing a cure:
 
 | Symptom | Usual causes | Check |
 |---|---|---|
-| Not spending | ad in review or disapproved, payment problem, audience too small, bid or budget below the floor | status and review state with the read-back calls of the platform's launch reference (`launch-campaign`); a rejection or a billing block goes to `troubleshoot` |
+| Not spending | ad in review or disapproved, payment problem, audience too small, bid or budget below the floor | for a campaign the toolkit launched, `python3 ads/tools/ads.py launch diagnose --file ads/launch/NAME.json` (read-only: status, review, schedule, account and impressions since activation); otherwise the read-back calls of the platform's launch reference (`launch-campaign`); a rejection or a billing block goes to `troubleshoot` |
 | Impressions, few clicks | the angle or the audience does not fit; in search, the ad does not answer the query | results by ad, keyword and search term |
 | Clicks, no conversions | landing page, broken tracking, wrong intent | the site's own analytics for the same UTM campaign; does the event still fire |
 | Cost per result above target, with volume | waste in search terms or placements, weak ads diluting good ones | search terms with cost and no conversions; breakdown by placement and by ad |

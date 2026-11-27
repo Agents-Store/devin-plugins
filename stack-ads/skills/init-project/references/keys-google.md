@@ -13,6 +13,7 @@ How to get access to the Google Ads API and the Search Console API with one Goog
 - Step 6: customer id
 - Step 7: Search Console property
 - Step 8 (optional): official google-ads MCP server
+- Step 9 (optional): conversion uploads
 - Verify
 - Errors
 
@@ -192,6 +193,8 @@ Google ships one MCP server, `google-ads-mcp` (Python, PyPI). It is pre-1.0: pin
 | `GOOGLE_APPLICATION_CREDENTIALS` | the full path of the ADC file; `google export-adc` stores it for you. By hand, write the path in full: whether `~` is expanded in the MCP environment is unverified |
 | `GOOGLE_ADS_LOGIN_CUSTOMER_ID` | only for a manager account; the same variable as in Step 6 |
 
+Without `pipx`, `uvx --from google-ads-mcp==0.0.6 google-ads-mcp` started the server (live on 2026-11-27); it reported serverInfo version 4.2.6. Its tools were `customers_list_accessible_customers`, `search_search`, `assets_create_asset`, `assets_upload_video_asset`, `metadata_get_resource_metadata`, `labels_manage_labels` and `labels_manage_label_associations`. `search_search` takes `customer_id`, `resource`, `fields`, `conditions`, `orderings` and `limit`, not a GAQL string. Two reads worked with the ADC file written by `google export-adc`.
+
 What it can do: list accessible accounts, run structured GAQL reads, return resource metadata, create assets (text, image, YouTube video, sitelink, callout, structured snippet), upload video, manage labels. Every write runs `validateOnly` first and needs a confirm step with a checksum.
 
 What it cannot do: create, change, pause or enable campaigns, ad groups, ads, budgets, bids or keywords; link assets to campaigns or asset groups; keyword planning. Use the toolkit (`google mutate`, `google keyword-ideas`) for those. The server needs no developer token.
@@ -206,6 +209,26 @@ python3 ads/tools/ads.py env sync-claude
 `google export-adc` writes `ads/.google-adc.json` (ignored by git, readable by the owner only) with the client id, the client secret and the refresh token, and stores its full path as `GOOGLE_APPLICATION_CREDENTIALS` in `ads/.env`. Set `GOOGLE_CLOUD_PROJECT` in `ads/.env` before the sync. The file is a credential: never commit or share it. If the server answers with a scope error, repeat the login through route (b), which adds the `cloud-platform` scope, run `google import-adc`, then `google export-adc` again.
 
 Docs: `https://developers.google.com/google-ads/api/docs/developer-toolkit/mcp-server`
+
+## Step 9 (optional): conversion uploads
+
+Sales or leads that happen outside the site (a CRM, a phone call) reach Google as click conversions. The Google Ads API keeps that upload for integrations that already used it; a new one is refused with `CUSTOMER_NOT_ALLOWLISTED_FOR_THIS_FEATURE` (seen on 2026-11-27) and goes through the Data Manager API. It needs no access level and no developer token.
+
+1. In the Cloud project of the OAuth client: `https://console.cloud.google.com/apis/library/datamanager.googleapis.com` > **Enable**. Without it the upload answers `SERVICE_DISABLED`.
+2. **Google Auth platform** > **Data Access** > **Add or remove scopes** > **Manually add scopes**: `https://www.googleapis.com/auth/datamanager` > **Add to table** > **Update** > **Save**. It is a sensitive scope: the "unverified app" warning of Step 3 applies.
+3. Log in again with all three scopes, with the login that has Admin or Standard access to the Google Ads account; the new refresh token replaces the old one in `ads/.env`:
+
+```bash
+python3 ads/tools/ads.py google login --scopes ads,gsc,datamanager
+```
+
+4. The conversion action must be of type `UPLOAD_CLICKS` (a Google Ads conversion action that imports conversions from clicks, made under **Goals** > **Conversions** with the **Import** source) or `WEBPAGE`; a `WEBPAGE` action needs an order id on every row. Find the id:
+
+```bash
+python3 ads/tools/ads.py google search --query "SELECT conversion_action.id, conversion_action.name, conversion_action.type FROM conversion_action WHERE conversion_action.status = 'ENABLED'"
+```
+
+Then `google upload-conversions` (toolkit reference). Docs: `https://developers.google.com/data-manager/api/devguides/events/google-ads/offline`
 
 ## Verify
 
@@ -222,7 +245,9 @@ One read-only call per service. A missing key prints where to get it. Exit code 
 | `invalid_grant` | consent screen still in Testing (7-day expiry), token revoked, or 6 months unused | Step 3: set In production, then redo Step 5 |
 | "Access blocked" at sign-in | status Testing and the user is not under Test users | Publish to production (Step 3), or add the user under **Audience** > **Test users** |
 | `admin_policy_enforced` | a Workspace admin restricted third-party apps | the admin allows the OAuth client, or the user signs in with a personal Google account |
-| `ACCESS_TOKEN_SCOPE_INSUFFICIENT` | token lacks the `adwords` scope | redo Step 5 |
+| `ACCESS_TOKEN_SCOPE_INSUFFICIENT` | token lacks the `adwords` scope, or the `datamanager` scope for a conversion upload | redo Step 5; for uploads with `--scopes ads,gsc,datamanager` (Step 9) |
+| `SERVICE_DISABLED` on a conversion upload | the Data Manager API is not enabled in the Cloud project | Step 9, item 1 |
+| `CUSTOMER_NOT_ALLOWLISTED_FOR_THIS_FEATURE` on `uploadClickConversions` | the Google Ads API keeps conversion uploads for existing integrations | `google upload-conversions` (Step 9) |
 | `NOT_ADS_USER` | the Google login that gave the consent has no Google Ads account; often it is the login that owns the Cloud project | repeat Step 5 and pick the login that opens `ads.google.com`, or add this login to the account (Admin > Access and security) |
 | `CLOUD_PROJECT_NOT_APPROVED_FOR_PRODUCTION` | project has Test access and the account is production | apply for Explorer on the project that owns the OAuth client (Step 2); right after the approval repeat the call once |
 | `AUTHORIZATION_ERROR` on production just after an upgrade | known issue for projects that used a Test token before 2026-09-09 | wait, or new Cloud project and apply for Explorer there |

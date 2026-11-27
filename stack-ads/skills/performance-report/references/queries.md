@@ -87,6 +87,11 @@ Date syntax:
 | Predefined | `segments.date DURING LAST_30_DAYS` | Only: `TODAY`, `YESTERDAY`, `LAST_7_DAYS`, `LAST_14_DAYS`, `LAST_30_DAYS`, `LAST_BUSINESS_WEEK`, `LAST_MONTH`, `LAST_WEEK_MON_SUN`, `LAST_WEEK_SUN_SAT`, `THIS_MONTH`, `THIS_WEEK_MON_TODAY`, `THIS_WEEK_SUN_TODAY` |
 | Period start | `segments.month = "2026-11-01"` | `segments.week/month/quarter` filter with `=` and the first day of the period |
 
+Two facts from live reads on 2026-11-26 and 2026-11-27:
+
+- `DURING LAST_7_DAYS` excludes today. A same-day check needs `DURING TODAY` or explicit dates: a morning check with the preset reported 0 impressions while the day already had 7,879.
+- On Demand Gen, Gmail `clicks` are ad opens. Clicks to the site are `metrics.gmail_secondary_clicks` (live: 68 Gmail clicks, 0 secondary clicks).
+
 GAQL rules:
 
 - Only `AND` between conditions, no `OR`: run two queries or use `IN (...)`.

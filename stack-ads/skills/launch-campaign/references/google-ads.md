@@ -179,6 +179,8 @@ An image asset carries its file through the toolkit: `{"@base64": "ads/creatives
 
 An `imageAsset` needs a `name` beside its `resourceName`; a `textAsset` and a `youtubeVideoAsset` do not. Without it Google answers `NAME_REQUIRED_FOR_ASSET_TYPE` and, in the same reply, fails whatever leans on an asset of the request: `RESOURCE_NOT_FOUND`, `REQUIRED_LOGO_ASSET_NOT_LINKED`, even `NOT_ENOUGH_HEADLINE_ASSET` with all headlines in place. Add the name, run the dry run again, and only then read what is left. Give every image its own name: Google documents `DUPLICATE_ASSET_NAME`, although its validation let a repeated name pass (a real create with one was not tried).
 
+Uploading an image whose bytes already exist in the account returns the existing asset and silently drops the new name (seen live on 2026-11-25: the second plan of a pair got the asset ids of the first test back). Do not rely on the name to tell two plans' assets apart. A rollback leaves such shared assets alone in any case.
+
 An asset cannot be deleted: the API has `create` and `update` for it and no `remove`. After `launch rollback --remove` the campaign and its budget are `REMOVED` and the assets stay in the account's library, unused and free of charge.
 
 ```jsonc
@@ -273,6 +275,8 @@ The multi-asset image ad, in the shape that ran live: channels that show images,
 ```
 
 Audience targeting needs `audienceSetting.useAudienceGrouped: true` on the ad group (immutable) and an `adGroupCriterionOperation` with `audience` set to an audience resource name (unverified in a live run). The campaign stays PAUSED until activation, even though the ad is created ENABLED. The EU declaration in the samples is a placeholder for the user's answer, as in section 2.
+
+Seen live on 2026-11-26 on a Demand Gen campaign with the image ad above: Google added an ad of its own to the image ad group, type `DEMAND_GEN_VIDEO_RESPONSIVE_AD`, named "(<ad name>) auto-generated video ad". It was approved, did not appear in the change history, and went away with the campaign. Treat an extra ad in the group as normal. On the same campaign `startDateTime` and `endDateTime` (for example "2026-11-26 00:00:00", in the account time zone) and `targetSpend` (Maximize clicks) were accepted.
 
 ## 6. Look-ups
 

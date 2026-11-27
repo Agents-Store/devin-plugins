@@ -24,7 +24,7 @@ How to get every Meta variable of `ads/.env` for a user who has never used the M
 | App id | `META_APP_ID` | App Dashboard of the app you create |
 | App secret | `META_APP_SECRET` | App Dashboard > App Settings > Basic |
 | Pixel (dataset) id, optional | `META_PIXEL_ID` | `meta get {account}/adspixels` |
-| Instagram account id, optional | `META_INSTAGRAM_USER_ID` | `meta get {account}/instagram_accounts` |
+| Instagram account id, optional | `META_INSTAGRAM_USER_ID` | `meta get {account}/connected_instagram_accounts` |
 
 Pixel is needed only for conversion campaigns; the Instagram id only for Instagram placements.
 
@@ -79,7 +79,7 @@ python3 ads/tools/ads.py meta get me/adaccounts -p fields=id,name,account_status
 python3 ads/tools/ads.py meta get me/accounts -p fields=id,name,tasks
 python3 ads/tools/ads.py meta get {account}/promote_pages -p fields=id,name
 python3 ads/tools/ads.py meta get {account}/adspixels -p fields=id,name,last_fired_time
-python3 ads/tools/ads.py meta get {account}/instagram_accounts
+python3 ads/tools/ads.py meta get {account}/connected_instagram_accounts
 ```
 
 | Command | Result | Notes |
@@ -88,9 +88,11 @@ python3 ads/tools/ads.py meta get {account}/instagram_accounts
 | `meta get me/accounts -p fields=id,name,tasks` | Page `id` for `META_PAGE_ID`: a Page whose `tasks` hold `ADVERTISE` | The Pages assigned to the system user in step 7. An empty list: the Page was not assigned |
 | `meta get {account}/promote_pages` | Pages this ad account has already advertised for | Empty for an account that never ran an ad: use `me/accounts` |
 | `meta get {account}/adspixels` | pixel `id` for `META_PIXEL_ID` | `last_fired_time` empty means the pixel never received an event |
-| `meta get {account}/instagram_accounts` | Instagram id for `META_INSTAGRAM_USER_ID` | The `connected_instagram_accounts` edge also exists. The creative field is `instagram_user_id`; never send it together with `instagram_actor_id` (error 2446149) |
+| `meta get {account}/connected_instagram_accounts` | Instagram id for `META_INSTAGRAM_USER_ID` | Live on 2026-11-27 this edge listed the linked account while `{account}/instagram_accounts` stayed empty for the same ad account. The creative field is `instagram_user_id`; never send it together with `instagram_actor_id` (error 2446149) |
 
-A Page or Instagram account that does not appear is not assigned to the ad account or system user: repeat step 7. No pixel exists: create one with `meta post {account}/adspixels -p name=Pixel`: it prints what it would send, and after the user's yes add `--yes`. Errors 6200 and 6202 mean one already exists or more than one.
+A Page or Instagram account that does not appear is not assigned to the ad account or system user: repeat step 7. After an Instagram account was linked in Business settings (2026-11-27) it took a few minutes before the token could read it.
+
+Without a linked Instagram account, Meta rendered the Instagram feed, story and reels previews under the Page's own name. That is a page-backed Instagram id, read with `meta get {page}?fields=page_backed_instagram_accounts`, which needs a Page access token. Delivery with it was not verified. No pixel exists: create one with `meta post {account}/adspixels -p name=Pixel`: it prints what it would send, and after the user's yes add `--yes`. Errors 6200 and 6202 mean one already exists or more than one.
 
 ## Access tiers
 

@@ -73,6 +73,56 @@ def amount(value, where):
     return number
 
 
+CONVERSION_LIMIT = 2000                       # events per Data Manager ingest request
+CLICK_IDS = ("gclid", "gbraid", "wbraid")
+STAMP = re.compile(r"^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2}(?:\.\d+)?)(Z|[+-]\d{2}:?\d{2})$")
+
+
+def conversion_rows(rows, currency=None):
+    """Data Manager events from upload rows: gclid, gbraid or wbraid, time, value, currency, order_id.
+
+    Checked before any key is read or anything is sent. A time needs its offset, because the same
+    wall clock means another hour in another zone; it goes out in RFC 3339, the form the API reads.
+    """
+    if not isinstance(rows, list) or not rows:
+        raise Refused("no conversions to upload", "give a CSV or a JSON list with gclid, time, value, currency, order_id")
+    if len(rows) > CONVERSION_LIMIT:
+        raise Refused("%d conversions in one upload; the Data Manager API takes at most %d per request" % (len(rows), CONVERSION_LIMIT),
+                      "split the file")
+    events = []
+    for number, row in enumerate(rows, 1):
+        if not isinstance(row, dict):
+            raise Refused("row %d is not an object" % number)
+        ids = {key: str(row[key]).strip() for key in CLICK_IDS if str(row.get(key) or "").strip()}
+        if not ids:
+            raise Refused("row %d has no gclid, gbraid or wbraid" % number)
+        found = STAMP.match(str(row.get("time") or "").strip())
+        if not found:
+            raise Refused("row %d: time %r needs a date, a time and an offset, like 2026-11-26 12:00:00+00:00" % (number, row.get("time")))
+        offset = found.group(3)
+        if offset != "Z" and ":" not in offset:
+            offset = offset[:3] + ":" + offset[3:]
+        event = {"eventTimestamp": "%sT%s%s" % (found.group(1), found.group(2), offset), "adIdentifiers": ids}
+        if str(row.get("value") if row.get("value") is not None else "").strip():
+            try:
+                value = float(row["value"])
+            except (TypeError, ValueError):
+                raise Refused("row %d: value %r is not a number" % (number, row["value"]))
+            if not math.isfinite(value) or value < 0:
+                raise Refused("row %d: value %r must be zero or more, in currency units, not micros" % (number, row["value"]))
+            code = str(row.get("currency") or currency or "").strip().upper()
+            if not re.fullmatch(r"[A-Z]{3}", code):
+                raise Refused("row %d: currency %r is not a three-letter ISO code" % (number, row.get("currency") or currency))
+            event["conversionValue"], event["currency"] = value, code
+        elif str(row.get("currency") or "").strip() and not re.fullmatch(r"[A-Za-z]{3}", str(row["currency"]).strip()):
+            raise Refused("row %d: currency %r is not a three-letter ISO code" % (number, row["currency"]))
+        order = str(row.get("order_id") or "").strip()
+        if order:
+            event["transactionId"] = order
+        events.append(event)
+    return events
+
+
 def for_platform(config, platform):
     """The configuration as one platform reads it: its currency and its ceilings.
 
