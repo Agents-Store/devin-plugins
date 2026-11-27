@@ -43,7 +43,7 @@ Input: {
 }
 ```
 
-Works without an API key at a low rate limit (reader 20 RPM); with a key 500 RPM.
+Works without an API key at a low rate limit (reader 20 RPM); with a key 500 RPM. Without a key `question` cannot rank passages: the full page comes back with a `note`.
 
 **Response size guard.** Claude Code and similar clients reject MCP tool responses above ~25k tokens, so the server truncates `read_url` output to fit and appends a `[jina-mcp] ...` note when it cut something. Prefer `question` for long pages, or raise the budget with `?max_tokens=50000` on the endpoint URL (`max_tokens=0` disables truncation).
 
@@ -66,7 +66,7 @@ Search the web. Returns titles, URLs and engine snippets; read the chosen pages 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `query` | string or string[] | Yes | One query, or up to 5 queries run concurrently |
-| `num` | integer | No | Results (1-100, default 30) |
+| `num` | integer | No | Results (1-10, default 10) |
 | `gl` / `hl` | string | No | Country code / language code (e.g. `de`, `zh-cn`) |
 | `location` | string | No | Geographic location |
 | `tbs` | string | No | Age limit: `qdr:h`, `qdr:d`, `qdr:w`, `qdr:m`, `qdr:y` |
@@ -85,7 +85,7 @@ Search the web for images. **Returns base64 JPEGs by default — always pass `"r
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `query` | string | Yes | Image search query (one at a time) |
-| `num` | integer | No | Results (1-30, default 10) |
+| `num` | integer | No | Results (1-10, default 10) |
 | `return_url` | boolean | No | Return URLs and metadata instead of base64 (default `false`) |
 | `gl` / `hl` / `location` / `tbs` | string | No | Same as `search_web` |
 
@@ -97,7 +97,7 @@ Input: { "query": "modern dashboard UI design", "num": 10, "return_url": true }
 ### search_arxiv / search_ssrn / search_jina_blog
 `search_arxiv` — arXiv preprints (physics, maths, CS, quantitative biology and finance). `search_ssrn` — SSRN working papers (social science, economics, law, finance, management). `search_jina_blog` — Jina AI news and blog posts (product announcements, model releases).
 
-Each takes `query` (string or up to 5 strings), `num` (1-100, default 30) and `tbs`.
+Each takes `query` (string or up to 5 strings), `num` and `tbs`; `num` is 1-10 (default 10) for `search_arxiv` / `search_ssrn` and 1-100 (default 30) for `search_jina_blog`.
 
 ## Utility
 
@@ -117,7 +117,7 @@ Extract figures, tables and equations from a PDF as images, by arXiv id or URL.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `id` | string | one of `id`/`url` | arXiv id, e.g. `2301.12345` |
-| `url` | string | one of `id`/`url` | PDF URL |
+| `url` | string | one of `id`/`url` | PDF URL on arxiv.org, ssrn.com, openreview.net or aclanthology.org — other hosts are refused |
 | `type` | string | No | Comma-separated: `figure`, `table`, `equation` (default all) |
 | `max_edge` | number | No | Longest image edge in px (default 1024) |
 

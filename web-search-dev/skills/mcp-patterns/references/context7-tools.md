@@ -15,7 +15,7 @@ Tool: resolve-library-id
 Input: { "query": "server actions with form validation", "libraryName": "Next.js" }
 ```
 
-Returns candidates (library ID, description, snippet count, source reputation, benchmark score, available versions); pick by name match, reputation and snippet coverage. A library ID such as `/vercel/next.js` goes to `query-docs`; for a specific version use `/org/project/version` from the returned version list. Do not call this tool more than 3 times per question — if nothing fits, use the best result you have. Never put secrets or proprietary code in `query` — it is sent to the Context7 API.
+Returns candidates (library ID, description, snippet count, source reputation, benchmark score, available versions); pick by name match, reputation and snippet coverage. A library ID such as `/vercel/next.js` goes to `query-docs`; for a specific version pass `version` to `query-docs` instead of appending it to the library ID. Do not call this tool more than 3 times per question — if nothing fits, use the best result you have. Never put secrets or proprietary code in `query` — it is sent to the Context7 API.
 
 ## query-docs
 Query documentation for a specific library. Returns relevant documentation sections. (Replaces the older `get-library-docs` tool.) Keep each query to one concept — make a separate call per concept — and do not call it more than 3 times per question.
@@ -24,6 +24,8 @@ Query documentation for a specific library. Returns relevant documentation secti
 |-----------|------|----------|-------------|
 | `libraryId` | string | Yes | Library ID from resolve step (format: `/org/project`) |
 | `query` | string | Yes | Natural-language question scoped to one concept (specific: "React useEffect cleanup examples", not "hooks") |
+| `version` | string | No | Version the project uses, as written there (`15.4.3`, `^15.4.3`, `14`); omit for the latest docs |
+| `language` | string | No | Programming language of the user's code (`TypeScript`, `Python`); ranks examples in it first |
 
 ```
 Tool: query-docs

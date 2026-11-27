@@ -1,4 +1,4 @@
-# Exa MCP Tools (2 default + 2 opt-in)
+# Exa MCP Tools (3 default + 1 opt-in)
 
 Exa excels at **semantic search** — finding pages by meaning, not just keywords. Best for documentation discovery and category-specific searches.
 
@@ -7,7 +7,7 @@ Exa excels at **semantic search** — finding pages by meaning, not just keyword
 | `web_search_exa` | Default |
 | `web_fetch_exa` | Default |
 | `web_search_advanced_exa` | Opt-in (filters, dates, summaries, subpages) |
-| `agent_run` | Needs an API key or OAuth; default on the **hosted** MCP once authenticated, opt-in on the bundled **npx** server |
+| `agent_run` | Default once a key is set (`EXA_API_KEY` on the bundled **npx** server, OAuth or `x-api-key` on the **hosted** MCP) |
 
 ## web_search_exa
 General web search with semantic understanding. The schema is strict (`additionalProperties: false`) — it accepts **only** `query` and `numResults`. Any other key is rejected.
@@ -55,9 +55,9 @@ Input: {
 
 **Code/dev search:** Exa has no code-search MCP tool. Use `firecrawl_developer_search` (Firecrawl MCP) or `web_search_advanced_exa` with `includeDomains: ["github.com"]` (opt-in, see below). Exa's code vertical is available via the REST API only.
 
-## Enabling the opt-in tools
+## Enabling the opt-in tool
 
-An explicit tool list **replaces** the defaults, so always list every tool you want.
+`web_search_advanced_exa` is the only opt-in tool. An explicit tool list **replaces** the defaults, so always list every tool you want — leaving `agent_run` out of the list turns it off.
 
 - **Bundled stdio server (this plugin's `.mcp.json`, `npx exa-mcp-server`)** — set the `ENABLED_TOOLS` environment variable (`TOOLS` also works) in the shell that launches Claude Code:
 
@@ -65,7 +65,7 @@ An explicit tool list **replaces** the defaults, so always list every tool you w
   ENABLED_TOOLS=web_search_exa,web_fetch_exa,web_search_advanced_exa,agent_run
   ```
 
-  `agent_run` additionally requires `EXA_API_KEY` to be set.
+  `agent_run` is listed only when `EXA_API_KEY` is set (`exa-mcp-server` 3.5.x lists it by default with a key).
 - **Hosted MCP** (`https://mcp.exa.ai/mcp`) — use the `tools` query parameter:
 
   ```
@@ -75,29 +75,29 @@ An explicit tool list **replaces** the defaults, so always list every tool you w
   Authenticate with OAuth (`https://mcp.exa.ai/mcp?login`) or an `x-api-key` header. On the hosted server `agent_run` is enabled by default as soon as you authenticate, without a `tools` parameter; only advanced search needs the opt-in.
 
 ## web_search_advanced_exa
-Advanced search with full filter control. This is the only MCP tool that accepts domain, date and category filters, and it combines search with content extraction in one call. Field names below are taken from `exa-mcp-server` 3.4.x; if a client reports a different schema, trust the client.
+Advanced search with full filter control. This is the only MCP tool that accepts domain, date and category filters, and it combines search with content extraction in one call. Field names below are taken from `exa-mcp-server` 3.5.x; if a client reports a different schema, trust the client.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `query` | string | Search query (required) |
 | `numResults` | number | 1-100 (default 10) |
-| `type` | string | `auto` (default, high quality), `fast`, `instant` |
+| `type` | string | `auto` (default, high quality), `lite` (low cost and latency, fewer parameters), `fast` / `instant` (legacy — use `lite`) |
 | `category` | string | `company`, `publication`, `news`, `pdf`, `github`, `personal site`, `people`, `financial report` |
 | `includeDomains` / `excludeDomains` | string[] | Domain allow / deny lists |
 | `startPublishedDate` / `endPublishedDate` | string | `YYYY-MM-DD` publish-date window |
-| `startCrawlDate` / `endCrawlDate` | string | `YYYY-MM-DD` crawl-date window |
+| `startCrawlDate` / `endCrawlDate` | string | Deprecated — the API ignores them and returns an `IGNORED_FIELD` warning |
 | `includeText` / `excludeText` | string[] | Text must contain ALL / must not contain ANY (deprecated in the REST API) |
 | `userLocation` | string | ISO country code for geo-targeting |
 | `moderation` | boolean | Filter unsafe content |
 | `additionalQueries` | string[] | Query variations to widen coverage |
 | `textMaxCharacters` | number | Max characters of text per result |
-| `contextMaxCharacters` | number | Max characters of the combined context string (off by default) |
+| `contextMaxCharacters` | number | Max characters of the combined context string (off by default; `contents.context` is deprecated in the REST API) |
 | `enableSummary` / `summaryQuery` | boolean / string | Summaries, optionally focused by a query |
 | `enableHighlights` | boolean | Highlights extraction |
 | `highlightsMaxCharacters` / `highlightsQuery` | number / string | Highlight budget and relevance query |
 | `maxAgeHours` | number | Max age of cached content; `0` always fetches fresh |
 | `livecrawlTimeout` | number | Timeout (ms) for a live fetch |
-| `subpages` / `subpageTarget` | number / string[] | Crawl 1-10 subpages per result, steered by keywords |
+| `subpages` / `subpageTarget` | number / string[] | Crawl 1-10 subpages per result, steered by keywords (deprecated on REST `/search`; `/contents` keeps them) |
 
 `highlightsNumSentences` and `highlightsPerUrl` are deprecated — use `highlightsMaxCharacters`.
 
@@ -112,7 +112,7 @@ Input: {
 }
 ```
 
-**Important:** `category: "company"` and `category: "people"` disable date, text and `excludeDomains` filters — combining them causes a 400 error.
+**Important:** `category: "company"` and `category: "people"` do not support the published-date filters, and `people` also rejects `excludeDomains` — combining them causes a 400 error.
 
 The `deep-lite` / `deep` / `deep-reasoning` search types belong to the REST API only.
 
@@ -130,7 +130,8 @@ Provide **exactly one** of `query` (start a run) or `runId` (resume); a resume c
 | `outputSchema` | object | JSON Schema for the answer (prefer a top-level object with bounded arrays and source fields) |
 | `input.data` / `input.exclusion` | object[] | Rows to enrich / entities to skip |
 | `dataSources` | `{provider}[]` | Up to 5 Exa Connect providers |
-| `effort` | string | `minimal`, `low` (MCP default), `medium`, `high`, `xhigh`, `auto` |
+| `effort` | string | `minimal`, `low` (MCP default), `medium`, `high`, `xhigh`, `ultra`, `auto` |
+| `budget` | object | `{ maxCostDollars, maxDurationSeconds }` for the metered `auto` / `ultra` efforts: spend $1-100 (defaults $5 auto, $20 ultra); soft time limit 300-10800 s, `ultra` only |
 
 ```
 Tool: agent_run

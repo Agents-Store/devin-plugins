@@ -59,7 +59,7 @@ curl -s -X POST https://api.exa.ai/search \
   }' | jq .
 ```
 
-**Warning:** `category: "company"` and `category: "people"` disable date, text, and excludeDomains filters.
+**Warning:** `category: "company"` and `category: "people"` reject `startPublishedDate` / `endPublishedDate`, and `people` also rejects `excludeDomains` (HTTP 400).
 
 ## Date-Filtered Search
 
@@ -87,7 +87,7 @@ curl -s -X POST https://api.exa.ai/search \
   }' | jq .
 ```
 
-Types: `auto` (default), `fast`, `instant`, `deep-lite`, `deep`, `deep-reasoning`.
+Types: `auto` (default), `lite` (low cost and latency; accepts only a few parameters), `deep-lite`, `deep`; legacy: `fast` and `instant` (use `lite`), `deep-reasoning` (use `deep`).
 
 Search extras: `outputSchema` (`{ "type": "object" }` or `{ "type": "text" }` output modes), `systemPrompt`, and `additionalQueries` (deep types only).
 
@@ -151,7 +151,7 @@ curl -s -X POST https://api.exa.ai/agent/runs \
 
 Effort tiers: `minimal`, `low`, `medium`, `high`, `xhigh`, `auto`, `ultra` (default `auto`; `ultra` is the highest-effort tier). Supports `outputSchema` for structured results, `systemPrompt`, `previousRunId` for follow-ups, and a `budget` (maximum spend and, for `ultra`, a soft time limit) for the metered `auto` and `ultra` efforts. Agent runs are usage-billed.
 
-Poll a run (also `GET /agent/runs/{id}/events`, `POST /agent/runs/{id}/cancel`, and `/stop` for `ultra` runs):
+Poll a run (also `GET /agent/runs/{id}/events`, `POST /agent/runs/{id}/cancel`, and `/stop` for `high`, `xhigh` and `ultra` runs — it ends the run early with what it has):
 
 ```bash
 curl -s https://api.exa.ai/agent/runs/${RUN_ID} \
@@ -171,7 +171,6 @@ curl -s https://api.exa.ai/agent/runs/${RUN_ID} \
       "title": "Page Title",
       "url": "https://example.com/page",
       "publishedDate": "2025-03-01",
-      "score": 0.95,
       "text": "Full page content...",
       "highlights": ["Key excerpt..."],
       "summary": "AI-generated summary..."
@@ -186,5 +185,5 @@ curl -s https://api.exa.ai/agent/runs/${RUN_ID} \
 - `useAutoprompt` is DEPRECATED — do not use
 - `text`, `highlights`, `summary` must be nested inside `contents`
 - `livecrawl: "always"` is deprecated — use `contents.maxAgeHours: 0`
-- `numSentences`, `highlightsPerUrl`, `tokensNum` do not exist
+- `numSentences` is deprecated and `highlightsPerUrl` is ignored — use `highlights.maxCharacters`; `tokensNum` does not exist
 - Looking up pages similar to a URL has no replacement endpoint — describe the source page in a normal `/search` query

@@ -5,7 +5,7 @@ description: This skill should be used when the user asks about "firecrawl CLI",
 
 # Web Search CLI Recipes
 
-CLI commands for Firecrawl and Jina — the two services with official CLIs.
+CLI commands for Firecrawl and Jina. Context7 also has an official CLI, `ctx7` (`npx ctx7 setup` configures its MCP server; see `mcp-patterns/references/context7-tools.md`).
 
 ## Firecrawl CLI
 
@@ -254,7 +254,7 @@ jina classify --local "text" --labels positive,negative
 ```bash
 # Use Firecrawl to find URLs, Jina to process
 firecrawl map https://docs.example.com --json | \
-  jq -r '.urls[]' | \
+  jq -r '.data.links[].url' | \
   head -10 | \
   while read url; do jina read "$url"; done > all_docs.md
 ```

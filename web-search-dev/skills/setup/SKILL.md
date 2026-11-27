@@ -27,7 +27,7 @@ Tool: web_search_exa
 Input: { "query": "test", "numResults": 1 }
 ```
 
-**Expected:** Returns results with URLs. If error, check `EXA_API_KEY`. `agent_run` and `web_search_advanced_exa` are opt-in on the bundled server (`ENABLED_TOOLS` environment variable) — their absence is not an error.
+**Expected:** Returns results with URLs. If error, check `EXA_API_KEY`. `agent_run` is listed once `EXA_API_KEY` is set; `web_search_advanced_exa` is opt-in on the bundled server (`ENABLED_TOOLS` environment variable) — its absence is not an error.
 
 ### 3. Perplexity
 
@@ -50,7 +50,7 @@ Tool: read_url
 Input: { "url": "https://example.com", "question": "What is this page about?" }
 ```
 
-**Expected:** Returns the passage(s) answering the question (omit `question` for the full page). `read_url` works without an API key (rate-limited); search tools need a key. The server exposes 12 tools.
+**Expected:** Returns the passage(s) answering the question (omit `question` for the full page). `read_url` works without an API key (rate-limited), but then `question` returns the full page with a note instead of ranked passages; `search_web`, `search_arxiv`, `search_ssrn` and `search_images` need a key (`search_jina_blog` does not). The server exposes 12 tools.
 
 ### 5. Context7
 
@@ -81,7 +81,7 @@ After running checks, report which services are available:
 | Service | Status | Capabilities |
 |---------|--------|-------------|
 | Firecrawl | Connected / Not available | scrape, crawl, search, parse, agent (schema extraction), interact, monitors, research/developer/government search, Alexandria, people/company/jobs search |
-| Exa | Connected / Not available | semantic search, page fetch (+ advanced search, `agent_run` when enabled) |
+| Exa | Connected / Not available | semantic search, page fetch (+ `agent_run` with a key, advanced search when enabled) |
 | Perplexity | Connected / Not available | search, AI answers, research, reasoning |
 | Jina | Connected / Not available | read pages (batch + question mode), search, images, rerank, deduplicate |
 | Context7 | Connected / Not available | framework documentation search |

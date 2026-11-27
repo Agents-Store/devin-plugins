@@ -5,7 +5,7 @@ description: This skill should be used when the user asks about "web search MCP 
 
 # Web Search & Scraping MCP Tool Patterns
 
-Reference for the MCP tools of 5 bundled servers — Firecrawl (34), Jina (12), Perplexity (4), Exa (2 default + 2 opt-in), Context7 (2) — plus REST recipes for Pexels and Unsplash media search. Use the routing table below to find the right tool for your task, then see the per-service reference files for detailed parameters.
+Reference for the MCP tools of 5 bundled servers — Firecrawl (34), Jina (12), Perplexity (5), Exa (3 default + 1 opt-in), Context7 (2) — plus REST recipes for Pexels and Unsplash media search. Use the routing table below to find the right tool for your task, then see the per-service reference files for detailed parameters.
 
 ## Tool names
 
@@ -82,8 +82,8 @@ Pick the right tool by what you need to do:
 |---------|-------|-----------|
 | **Firecrawl** | 34 | JS rendering, site crawling, structured extraction, live-page interaction, file parsing, change monitors, research/developer search, autonomous agent |
 | **Jina** | 12 | Fast page reading with batch (up to 5 URLs) and question mode, web/academic/image search, reranking, deduplication, PDF extraction |
-| **Perplexity** | 4 | AI-synthesized answers, deep research, reasoning with citations (`messages` input) |
-| **Exa** | 2 default (+2 opt-in) | Semantic search, page fetching, advanced filters, Exa Agent (`agent_run`) |
+| **Perplexity** | 5 | AI-synthesized answers, deep research, reasoning with citations (`messages` input), page fetching (`perplexity_context`) |
+| **Exa** | 3 default (+1 opt-in) | Semantic search, page fetching, advanced filters, Exa Agent (`agent_run`) |
 | **Context7** | 2 | Up-to-date framework/library documentation |
 | **Pexels** | REST | Stock photos and videos with licensing |
 | **Unsplash** | REST | High-quality stock photos (API guidelines apply) |
@@ -148,8 +148,8 @@ curl -s -H "Authorization: ${PEXELS_API_KEY}" \
 For complete tool parameters and advanced usage, see the service-specific references:
 
 - `references/firecrawl-tools.md` — 34 tools: scrape, search, crawl, map, parse, agent, interact, monitors, research, developer and government search, Alexandria, people/company/jobs, credit usage
-- `references/exa-tools.md` — 2 default tools (web_search, web_fetch) + opt-in advanced search and `agent_run`
-- `references/perplexity-tools.md` — 4 tools: search, ask, research, reason (`messages` input)
+- `references/exa-tools.md` — 3 default tools (web_search, web_fetch, `agent_run` with a key) + opt-in advanced search
+- `references/perplexity-tools.md` — 5 tools: search, ask, research, reason (`messages` input), context (fetch known URLs)
 - `references/jina-tools.md` — 12 tools: read, search, images, screenshot, rerank, deduplicate, PDF, utility
 - `references/media-tools.md` — Pexels and Unsplash REST (curl), rate limits, Unsplash API checklist
 - `references/context7-tools.md` — 2 tools: `resolve-library-id` (needs `query` + `libraryName`), `query-docs`

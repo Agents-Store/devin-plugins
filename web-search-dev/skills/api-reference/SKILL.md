@@ -64,11 +64,11 @@ See `references/exa-api.md` for curl examples.
 
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/v1/agent` | Agent API (presets or models + web search) — the primary path |
+| POST | `/v1/agent` | Agent API (`effort` levels or models + web search) — the primary path |
 | POST | `/search` | Web search (no `/v1` prefix) |
 | POST | `/v1/sonar` | Legacy Sonar chat completion (support ended 2026-09-27; requests are being rerouted to the Agent API — migrate) |
 | POST | `/v1/embeddings` | Text embeddings (`pplx-embed-v1-0.6b`/`4b`; contextualized variants via the contextualized embeddings endpoint) |
-| POST | `/router/v1/chat/completions` | Gateway API (OpenAI-compatible) |
+| POST | `/orchestrator/v1/chat/completions` | Orchestrator API (OpenAI-compatible; also `/orchestrator/v1/responses` and Anthropic-format `/orchestrator/v1/messages`) |
 
 See `references/perplexity-api.md` for curl examples.
 

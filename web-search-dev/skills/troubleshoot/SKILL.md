@@ -1,6 +1,6 @@
 ---
 name: troubleshoot
-description: This skill should be used when the user encounters "search not working", "scrape failing", "firecrawl error", "exa error", "jina error", "perplexity error", "rate limit", "401 unauthorized", "MCP connection failed", or needs to diagnose and fix problems with any web search or scraping service.
+description: Diagnose and fix errors from Firecrawl, Exa, Jina, Perplexity, Context7, Pexels or Unsplash — 401 auth failures, 400 or 422 validation errors from wrong parameters, 429 rate limits, empty results, failed MCP connections and "tool not found" after an upstream change. Use when a call to one of these services or their MCP tools fails. Not for choosing a tool (mcp-patterns), first-time connection checks (setup) or writing SDK code (sdk-patterns).
 ---
 
 # Web Search Services Troubleshooting
@@ -58,11 +58,11 @@ Run these checks in order:
 | Error | Cause | Fix |
 |-------|-------|-----|
 | 401 Invalid API key | Wrong `EXA_API_KEY` | Regenerate at https://dashboard.exa.ai/api-keys |
-| 400 Bad Request | Invalid params | Check: `category: "company"` disables date/text filters |
+| 400 Bad Request | Invalid params | Check: `category: "company"` / `"people"` reject published-date filters; `"people"` also rejects `excludeDomains` |
 | 422 Validation Error | Wrong param format | Check param names (camelCase for API, snake_case for Python SDK) |
 | 429 Rate Limited | Exceeded rate limit | Add API key for higher limits or wait |
 | Empty results | Query too specific | Broaden query, remove filters, try `type: "deep"` |
-| `agent_run` missing from the tool list | Opt-in on the bundled npx server; needs a key | Set `ENABLED_TOOLS=web_search_exa,web_fetch_exa,web_search_advanced_exa,agent_run` and `EXA_API_KEY`, restart Claude Code |
+| `agent_run` missing from the tool list | No `EXA_API_KEY`, or an `ENABLED_TOOLS` list that leaves it out | Set `EXA_API_KEY` (and add `agent_run` if you set `ENABLED_TOOLS`), restart Claude Code |
 
 ### Perplexity
 
@@ -70,9 +70,9 @@ Run these checks in order:
 |-------|-------|-----|
 | 401 Unauthorized | Invalid `PERPLEXITY_API_KEY` | Regenerate at https://console.perplexity.ai |
 | `'messages' must be an array` | Called `perplexity_ask` / `perplexity_reason` / `perplexity_research` with `query` | Send `messages: [{ "role": "user", "content": "..." }]` (`perplexity_search` still takes `query`) |
-| Model not available | Invalid or retired model ID (some `openai/gpt-5.x` IDs are retired on 2026-10-24) | Use `provider/model` format with a current ID (e.g., `anthropic/claude-sonnet-5-5`, `openai/gpt-6-sol`) |
-| Preset not found | Old preset name (`fast-search`/`pro-search`/`deep-research`) | Use `fast` / `low` / `medium` / `high` / `xhigh` |
-| Empty response | Query too vague | Be more specific, try different preset |
+| Model not available | Invalid or retired model ID (some `openai/gpt-5.x` IDs were retired on 2026-10-24) | Use `provider/model` format with a current ID (e.g., `anthropic/claude-sonnet-5-5`, `openai/gpt-6-sol`) |
+| Preset not found | Old preset name (`fast-search`/`pro-search`/`deep-research`) | Send `effort` (it replaced `preset`) with `fast` / `low` / `medium` / `high` / `xhigh` / `ultra` |
+| Empty response | Query too vague | Be more specific, try a different effort level |
 | MCP server not starting | `npx` or Node issue | Run `npx -y @perplexity-ai/mcp-server` manually |
 
 ### Jina
@@ -179,9 +179,9 @@ When hitting rate limits:
 
 ### API Key Not Working After Plugin Setup
 
-Sensitive `userConfig` values (API keys) are stored in the system keychain and only available in MCP configs and hooks — not in skill/agent content. If a direct API call from a skill needs the key:
+The plugin has no `userConfig`: `.mcp.json` passes keys to the MCP servers from environment variables (`FIRECRAWL_API_TOKEN`, `EXA_API_KEY`, `PERPLEXITY_API_KEY`, `JINA_API_KEY`, `CONTEXT7_API_KEY`) set in the environment that launches Claude Code. If a direct API call from a skill needs the key:
 1. Use the MCP tool instead (it has the key via .mcp.json)
-2. Or reference `process.env.CLAUDE_PLUGIN_OPTION_FIRECRAWL_API_KEY` in scripts
+2. Or read the same environment variable in the script (`${FIRECRAWL_API_TOKEN}` for Firecrawl REST calls); restart Claude Code after changing it
 
 ## When to Escalate
 

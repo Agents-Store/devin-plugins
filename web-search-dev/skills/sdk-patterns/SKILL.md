@@ -184,12 +184,12 @@ const client = new Perplexity({ apiKey: process.env.PERPLEXITY_API_KEY });
 
 // Agent API (recommended) — client.responses namespace
 const response = await client.responses.create({
-  preset: 'low',
+  effort: 'low', // replaced the deprecated `preset`
   input: 'Compare tRPC vs GraphQL for Next.js',
 });
 
 // Sonar chat completions are legacy (support ended 2026-09-27) — use the Agent API above:
-// sonar / sonar-pro -> preset 'fast', sonar-reasoning-pro -> 'low', sonar-deep-research -> 'high'
+// sonar / sonar-pro -> effort 'fast', sonar-reasoning-pro -> 'low', sonar-deep-research -> 'high'
 
 // Search API — ranked results, no AI answer
 const searchResults = await client.search.create({
@@ -207,11 +207,11 @@ client = Perplexity()  # auto-reads PERPLEXITY_API_KEY env var
 
 # Agent API
 response = client.responses.create(
-    preset="low",
+    effort="low",  # replaced the deprecated `preset`
     input="Compare tRPC vs GraphQL for Next.js"
 )
 
-# Sonar chat completions are legacy (support ended 2026-09-27): use client.responses with a preset
+# Sonar chat completions are legacy (support ended 2026-09-27): use client.responses with an `effort` level
 
 # Search API
 search_results = client.search.create(query="React 19 new features", max_results=5)
