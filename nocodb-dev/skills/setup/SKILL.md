@@ -112,8 +112,8 @@ curl -sS -H "xc-token: ${NOCODB_TOKEN}" "${NOCODB_URL}/api/v3/data/<baseId>/<tab
 | Symptom | Surface | Likely cause | Fix |
 |---------|---------|--------------|-----|
 | "Protected resource does not match" | MCP | `NOCODB_MCP_URL` does not match the endpoint the server expects | Cloud/licensed: `https://<host>/mcp`. Community Edition: use the full `/mcp/<ncId>` URL from the MCP settings |
-| 401 Unauthorized | MCP | `NOCODB_MCP_TOKEN` invalid/expired | Regenerate the connection token (see MCP connection options) |
-| 401 Unauthorized | REST | `NOCODB_TOKEN` invalid/expired, or deleted when the account password was changed (2026.10.1 and later) | Regenerate in NocoDB → Team & Settings → API Tokens |
+| 401 Unauthorized | MCP | `NOCODB_MCP_TOKEN` invalid/expired, or deleted by a password change made with *Also disconnect apps* ticked (2026.11.0) | Regenerate the connection token (see MCP connection options) |
+| 401 Unauthorized | REST | `NOCODB_TOKEN` invalid/expired, or deleted by a password change made with *Also disconnect apps* ticked (2026.11.0; ticked by default on an email-link reset — without it tokens keep working) | Regenerate in NocoDB → Team & Settings → API Tokens |
 | 403 Forbidden | Either | Token lacks permission for the base | Share the base with the token's user, or use a higher-privilege token |
 | `NOCODB_TOKEN` empty in curl (`401`, `xc-token:` header blank) | REST | Variable not exported into the shell | `export NOCODB_TOKEN=…`; check with `[ -n "$NOCODB_TOKEN" ] && echo set` |
 | "Tool not found" for `mcp__plugin_nocodb-dev_nocodb__<tool>` | MCP | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the tool is a hidden schema tool (`/mcp-discovery`, or a server older than 2026.10.1) | Confirm both variables are set and restart the session; for hidden schema tools see **mcp-patterns** |

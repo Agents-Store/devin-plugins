@@ -25,7 +25,7 @@ Diagnostics for the dev surface — schema modifications, relations, formulas, v
 
 | Code | Symptom | Fix |
 |------|---------|-----|
-| 401 | Token invalid, or deleted by a password change (2026.10.1 and later) | Regenerate at NocoDB → Team & Settings → API Tokens |
+| 401 | Token invalid, or deleted by a password change made with *Also disconnect apps* ticked (2026.11.0; ticked by default on an email-link reset) | Regenerate at NocoDB → Team & Settings → API Tokens |
 | 403 on POST `.../fields` | Token has read-only role on this base | Switch to a token with editor/creator role |
 | 403 on PATCH `/tables/{id}` | Token can edit data but not schema | Use a higher-privilege token |
 | Token works in nocodb-ops but not nocodb-dev | Wrong env var | Confirm `NOCODB_TOKEN` (REST) is set, not just `NOCODB_MCP_TOKEN` |
