@@ -144,6 +144,8 @@ To export records from a NocoDB table:
 | CSV text inline | `exportCsv` -- shaped by a view (its fields, filters, sorts), capped by `maxRows` (default 1000, max 10000); narrow with a filtered view instead of raising the cap |
 | A spreadsheet to hand to a person | `exportExcel` (Cloud / licensed) -- returns a download link signed for 3 hours; the bytes are not returned |
 
+Since 2026.11.0 a table's *Download Data* permission (Cloud Plus+, self-hosted Business+) can limit exports to chosen roles or people; it covers `exportCsv` and `exportExcel` over MCP too, while reading with `queryRecords` stays allowed.
+
 ### Export All Records
 
 Use pagination to fetch every record:

@@ -32,7 +32,7 @@ Verify these are set correctly before debugging further:
 Run these checks first to isolate the problem:
 
 1. **Test MCP connection** -- call `mcp__plugin_nocodb-ops_nocodb__getTablesList` with no parameters. If it returns tables, the connection is healthy.
-2. **Test authentication** -- a 401 response from MCP means `NOCODB_MCP_TOKEN` is wrong, **revoked**, or the connection was restricted (its Tools & Permissions allowlist) — recreate or re-open the connection where it was created (see **setup**). A 401 from the REST API means `NOCODB_TOKEN` is invalid (regenerate in NocoDB → Team & Settings → API Tokens).
+2. **Test authentication** -- a 401 response from MCP means `NOCODB_MCP_TOKEN` is wrong, **revoked**, or the connection was restricted (its Tools & Permissions allowlist). On NocoDB Cloud a password change with *Also disconnect apps* deletes the account's API and MCP tokens and disconnects signed-in apps (2026.11.0) — recreate or re-open the connection where it was created (see **setup**). A 401 from the REST API means `NOCODB_TOKEN` is invalid (regenerate in NocoDB → Team & Settings → API Tokens).
 3. **Ask the server who you are** -- `whoami` names the user, the pinned base and the permissions of the credential (Cloud / licensed). A 403 is usually the intersection of that grant with the user's role, not a bug.
 4. **Check the edition** -- `whoami` or `upsertRecords` in the tool list means Cloud / licensed; if they are absent the server is Community Edition and offers the record tools only (`aggregate_single`, no `aggregate`). View, filter and sort management through MCP exists only on Cloud / licensed (see **nocodb-dev**).
 
@@ -81,6 +81,8 @@ Run these checks first to isolate the problem:
 |---------|-------|-----|
 | "Tool not found" for `mcp__plugin_nocodb-ops_nocodb__<tool>` | The plugin's MCP server did not start (missing `NOCODB_MCP_URL` / `NOCODB_MCP_TOKEN`), or the instance does not offer the tool (Community Edition, or the connection's Tools & Permissions leave it out) | Set both variables in the shell that launched Claude Code and restart; on a `/mcp-discovery` URL reach `upsertRecords`, `importCsv`, `listTrash`, … with `listTools(category)` then `callTool` |
 | MCP call refused with a wait time | The per-account MCP rate limit (2026.10.1) | Wait the time the server names, batch the calls, then retry |
+| `exportCsv` / `exportExcel` refused while `queryRecords` works | The table's *Download Data* permission leaves your role out (2026.11.0; Cloud Plus+, self-hosted Business+) -- it applies to UI, API and MCP exports | Ask a table owner to widen *Download Data*, or page through `queryRecords` if reading is enough |
+| "The query took too long and was cancelled" | Self-hosted on PostgreSQL: counts, group-bys and aggregations stop after 30 seconds (2026.11.0, `NC_DATA_QUERY_TIMEOUT_MS`) | Narrow the filter or grouping; the server admin can raise the limit |
 | Input validation error on `records` | More than 100 records in one write call | Split into batches of 100 or fewer; the whole call was rejected, nothing was written |
 | `Expected object, received string at sort[0]` | `sort` sent as strings (`"-Date"`, `["Name"]`) | `sort: [{ "field": "Date", "direction": "desc" }]` |
 | `'<date>' is not supported` | Bare date after the operator in a `where` string | `(Date,gte,exactDate,2026-06-01)`; structured: `sub_operator: "exactDate"` |

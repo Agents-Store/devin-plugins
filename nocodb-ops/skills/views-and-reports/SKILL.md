@@ -138,7 +138,7 @@ Present the results as a formatted table with columns for Region, Total Sales, A
 
 ### Monthly Active Records
 
-Use date filters in filter groups to segment by time period. Date fields always carry a sub-operator; `isWithin` windows are relative to today (`pastWeek` = the last 7 days, `pastMonth` = the last 30 days -- there is no `thisMonth`), and a specific calendar month is two `exactDate` bounds:
+Use date filters in filter groups to segment by time period. Date fields always carry a sub-operator. `pastWeek` / `pastMonth` are rolling windows relative to today (the last 7 / 30 days). Since 2026.11.0 `isWithin` also takes calendar periods (`thisCalendarMonth`, `lastCalendarMonth`, `thisCalendarYear`, …; weeks start Monday) and `dateRange` with a `from,to` value, both days included -- there is still no plain `thisMonth`. Two `exactDate` bounds keep working on older servers:
 
 ```
 mcp__plugin_nocodb-ops_nocodb__aggregate
@@ -150,6 +150,7 @@ mcp__plugin_nocodb-ops_nocodb__aggregate
     { "alias": "October 2026", "filter": { "group_operator": "AND", "filters": [
         { "field": "CreatedAt", "operator": "gte", "sub_operator": "exactDate", "value": "2026-10-01" },
         { "field": "CreatedAt", "operator": "lte", "sub_operator": "exactDate", "value": "2026-10-31" } ] } },
+    { "alias": "This calendar month", "where": "(CreatedAt,isWithin,thisCalendarMonth)" },
     { "alias": "Past 30 days", "where": "(CreatedAt,isWithin,pastMonth)" },
     { "alias": "Past Week", "where": "(CreatedAt,isWithin,pastWeek)" }
   ]

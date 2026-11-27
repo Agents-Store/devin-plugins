@@ -166,6 +166,18 @@ Find records within a relative time window:
 (CreatedAt,isWithin,nextNumberOfDays,14)
 ```
 
+Calendar periods and explicit ranges (NocoDB 2026.11.0 and later; weeks start on Monday):
+
+```
+(DueDate,isWithin,thisCalendarWeek)
+(DueDate,isWithin,thisCalendarMonth)
+(DueDate,isWithin,lastCalendarMonth)
+(DueDate,isWithin,nextCalendarYear)
+(DueDate,isWithin,dateRange,2026-06-01,2026-06-30)
+```
+
+The `past…` / `next…` windows roll from today (`pastMonth` = the last 30 days); the `…Calendar…` ones cover whole weeks, months or years (`this`, `last`, `next`). `dateRange` takes two dates, both days included. On an older server use two `exactDate` bounds instead.
+
 ### Relative Date Comparisons
 
 Compare a date field to a relative reference point:
@@ -215,6 +227,7 @@ Date fields without a value (`blank`, `notblank`) take no sub-operator: `(DueDat
 | Created in last 30 days | `(CreatedAt,isWithin,pastNumberOfDays,30)` |
 | Due before the end of 2025 | `(DueDate,lte,exactDate,2025-12-31)` |
 | Due in 2025 | `(DueDate,gte,exactDate,2025-01-01)~and(DueDate,lte,exactDate,2025-12-31)` |
+| Due this calendar month (2026.11.0+) | `(DueDate,isWithin,thisCalendarMonth)` |
 | Updated in the past 7 days | `(UpdatedAt,gt,daysAgo,7)` |
 
 ## Logical Operators (Combining Filters)

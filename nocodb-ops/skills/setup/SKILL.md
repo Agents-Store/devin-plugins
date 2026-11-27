@@ -94,7 +94,7 @@ Look at the tool list the server gave this session (or call `whoami`).
 |---------|-------------|-----|
 | "Protected resource does not match" | `NOCODB_MCP_URL` does not match the endpoint the server expects | Cloud / licensed: `https://<host>/mcp`. Community Edition: use the full `/mcp/<ncId>` URL from the base's MCP settings |
 | Connection refused | Server down or wrong URL | Check `NOCODB_MCP_URL`, then `curl -sSI "$NOCODB_URL"` to confirm the host answers; restart the session |
-| 401 Unauthorized | `NOCODB_MCP_TOKEN` is wrong, **revoked**, or the connection was restricted (its Tools & Permissions allowlist) | Recreate or re-open the connection where it was created (see "MCP connection options") and update `NOCODB_MCP_TOKEN` |
+| 401 Unauthorized | `NOCODB_MCP_TOKEN` is wrong, **revoked** (on Cloud also by a password change with *Also disconnect apps*), or the connection was restricted (its Tools & Permissions allowlist) | Recreate or re-open the connection where it was created (see "MCP connection options") and update `NOCODB_MCP_TOKEN` |
 | 403 Forbidden | The connection's user lacks permission for this base | Share the base with the user, or use a connection with a higher role |
 | Timeout | Network issue or server overloaded | Check server status, try again |
 | Empty table list | No tables in the base, or wrong base | Ask `whoami` which base the connection is pinned to |

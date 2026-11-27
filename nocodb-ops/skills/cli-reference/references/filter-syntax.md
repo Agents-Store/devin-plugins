@@ -1,6 +1,6 @@
 # Where Filter Syntax
 
-Complete `where` clause syntax for REST and MCP record queries, aligned with the live NocoDB MCP server (2026.09). The official `nocodb.sh` script prints its own copy with `where:help`.
+Complete `where` clause syntax for REST and MCP record queries, aligned with the NocoDB MCP server (2026.11.0). The official `nocodb.sh` script prints its own copy with `where:help`.
 
 The MCP record tools also take a **structured `filter`** (preferred over `where`; pass only one of the two): a single condition `{ "field", "operator", "value", "sub_operator"? }` or a group `{ "group_operator": "AND" | "OR", "filters": [...] }`. Names and values are quoted for you. Everything below -- operators, date sub-operators, the two-bound range rule -- applies to both forms. REST has only the `where` query parameter.
 
@@ -79,12 +79,17 @@ Date fields require a sub-operator on **every** comparison. In the structured `f
 
 Sub-operators (no value): pastWeek, pastMonth, pastYear, nextWeek, nextMonth, nextYear
 Sub-operators (value = days): pastNumberOfDays, nextNumberOfDays
+Calendar periods (no value, weeks start Monday; 2026.11.0+): thisCalendarWeek, thisCalendarMonth, thisCalendarYear,
+  lastCalendarWeek, lastCalendarMonth, lastCalendarYear, nextCalendarWeek, nextCalendarMonth, nextCalendarYear
+Date range (value = from,to; both days included; 2026.11.0+): dateRange
 
 ```bash
 (created_at,isWithin,pastWeek)                        # Last 7 days
 (created_at,isWithin,pastMonth)                       # Last 30 days
 (due_date,isWithin,pastNumberOfDays,14)               # Last 14 days
 (due_date,isWithin,nextNumberOfDays,30)               # Next 30 days
+(due_date,isWithin,thisCalendarMonth)                 # 1st to last day of this month
+(due_date,isWithin,dateRange,2026-06-01,2026-06-30)   # June 2026
 ```
 
 ### eq, neq, gt, lt, gte, lte — date comparisons
@@ -153,7 +158,7 @@ Lowercase only: `~AND` / `~OR` error. **Never put whitespace after `~and` / `~or
 ## Special Values
 
 ```
-NULL value:         (field,eq,null)
+NULL value:         (field,eq,null)    # where string only; structured filter: operator blank or null
 Empty string:       (field,eq,'') or (field,eq,"")
 Value with comma:   (field,eq,"hello, world")
 Value with quotes:  (field,eq,"it's here") or (field,eq,'say "hello"')
