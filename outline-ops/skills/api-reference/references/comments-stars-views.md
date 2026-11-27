@@ -10,7 +10,7 @@ A comment is attached to a document — either to the document as a whole, to a 
 |--------|----------------------|
 | `comments.create` | Add a comment or reply. `{"documentId"(required)}` + either `{"text"}` (markdown, ≤10000 chars) or `{"data"}` (editor JSON). Optional `{"id","parentCommentId"(reply),"anchorText","anchorPrefix","anchorSuffix"}`. `anchorText` pins the comment to the first matching substring; `anchorPrefix`/`anchorSuffix` disambiguate multiple occurrences. |
 | `comments.info` | Retrieve a comment. `{"id","includeAnchorText"?}`. |
-| `comments.update` | Edit a comment's body. `{"id"}` + **either** `{"text"}` (markdown, ≤10000 chars) **or** `{"data"}` (editor JSON) — one of the two is required, same as `comments.create`. |
+| `comments.update` | Edit a comment's body. `{"id"}` + **either** `{"text"}` (markdown, ≤10000 chars) **or** `{"data"}` (editor JSON) — one of the two is required, same as `comments.create`. `text` here needs Outline v1.11.0+. |
 | `comments.delete` | Delete a comment. `{"id"}`. Deleting a top-level comment removes its replies too. |
 | `comments.list` | List comments. Pagination + sorting + `{"documentId"?,"collectionId"?,"includeAnchorText"?}`. |
 | `comments.resolve` | Mark a comment thread resolved (hidden from the document by default). `{"id"}` → the comment. |
@@ -86,7 +86,7 @@ A view is a compressed record of a user's views of a document (first, last, and 
 
 | Method | Purpose & key fields |
 |--------|----------------------|
-| `views.list` | List who viewed a document and the total count. `{"documentId"(required),"includeSuspended"?}`. |
+| `views.list` | List who viewed a document and the total count. `{"documentId"(required),"includeSuspended"?}` + pagination (Outline v1.13.0+, default `limit` **100** — page with `offset` for widely read documents). |
 
 ## Notes
 

@@ -27,7 +27,7 @@ H_AUTH="Authorization: Bearer ${OUTLINE_API_KEY}"
 1. **Everything is `POST ${OUT}/<method>` with a JSON body.** No GETs, no path params. An action with no inputs still needs `-d '{}'`.
 2. **Read `.data`.** The useful payload is always under `.data` in the response envelope.
 3. **Resolve titles to ids once.** Users say "the Welcome doc"; the API wants a UUID or `urlId`. Resolve with `documents.search` / `documents.search_titles` / `collections.list` and keep the id.
-4. **Confirm before destructive actions.** `documents.delete` (trash), `permanent: true`, `documents.empty_trash`, `collections.delete`, `users.delete/suspend`, `shares.revoke`, `revisions.delete`, `apiKeys.delete`, `webhookSubscriptions.delete`, and `auth.delete` (sign out — ends the user's sessions and tokens) are high-impact — show the user what will change first.
+4. **Confirm before destructive actions.** `documents.delete` (trash), `permanent: true`, `documents.empty_trash`, `collections.delete`, `users.delete/suspend`, `shares.revoke`, `revisions.delete`, `webhookSubscriptions.delete`, and `auth.delete` (sign out — ends the user's sessions and tokens) are high-impact — show the user what will change first.
 
 ## Workflow: find a document by title
 
@@ -105,7 +105,7 @@ Revoke with `shares.revoke` `{"id"}`. (→ `sharing-access.md`)
 
 - **Pull an image into a document** without the two-step upload: `attachments.createFromUrl` `{"url","documentId"?}` — Outline fetches it; embed the returned attachment `url`. (→ `attachments-fileops.md`)
 - **Webhook** (workspace admin): `webhookSubscriptions.create` `{"name","url","events":["documents.publish"],"secret"?}` (`["*"]` = all events; cloud needs `https`). List/update/delete with the sibling methods. (→ `sharing-access.md`)
-- **API key**: `apiKeys.create` `{"name","expiresAt"?,"scope"?}` — the full key is returned **once**; store it without printing it. Revoke with `apiKeys.delete`. (→ `oauth-data-attributes.md`)
+- **API key**: create and revoke keys under **Settings → API & Access** — `apiKeys.create`/`apiKeys.delete` reject API keys. `apiKeys.list` shows existing keys (`name`, `last4`, `expiresAt`). (→ `oauth-data-attributes.md`)
 - **Name a revision** `revisions.update` `{"id","name"}`; **export one** with `revisions.export` `{"id"}` and download via `fileOperations.redirect`. (→ `revisions-templates-events.md`)
 
 ## Workflow: report & audit

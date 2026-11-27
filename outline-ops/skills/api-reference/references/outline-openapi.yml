@@ -1158,6 +1158,15 @@ paths:
                   type: boolean
                   description: Whether public sharing of documents is allowed
                   example: false
+                ownerIds:
+                  type: array
+                  maxItems: 5
+                  description: Identifiers of up to 5 users who own the collection.
+                    Owners are responsible for the collection and can manage its
+                    access, and also own every document in the collection.
+                  items:
+                    type: string
+                    format: uuid
               required:
                 - name
       responses:
@@ -1282,6 +1291,16 @@ paths:
                   nullable: true
                   description: The reason the collection was archived. Can only be
                     updated on an archived collection.
+                ownerIds:
+                  type: array
+                  maxItems: 5
+                  description: Identifiers of up to 5 users who own the collection.
+                    Owners are responsible for the collection and can manage its
+                    access, and also own every document in the collection. Replaces
+                    the existing set of owners.
+                  items:
+                    type: string
+                    format: uuid
               required:
                 - id
       responses:
@@ -1332,6 +1351,11 @@ paths:
                   format: uuid
                 permission:
                   "$ref": "#/components/schemas/Permission"
+                owner:
+                  type: boolean
+                  description: Whether the user is an owner of the collection.
+                    Owners are responsible for the collection and can manage its
+                    access. An owner must be granted the manage permission.
               required:
                 - id
                 - userId
@@ -2736,9 +2760,11 @@ paths:
                     textbundle/textpack bundles are supported.
                 collectionId:
                   type: string
-                  format: uuid
                   nullable: true
-                  description: Identifier for the collection to import into. One of collectionId or parentDocumentId is required.
+                  description: Identifier for the collection to import into. One of
+                    collectionId or parentDocumentId is required. Pass the literal
+                    string `personal` to import into the authenticated user's
+                    personal collection.
                 parentDocumentId:
                   type: string
                   format: uuid
@@ -3013,7 +3039,23 @@ paths:
             schema:
               allOf:
                 - "$ref": "#/components/schemas/Pagination"
-                - "$ref": "#/components/schemas/Sorting"
+                - type: object
+                  properties:
+                    sort:
+                      type: string
+                      description: The field to sort by. Note that sorting is by a
+                        column of the view record, not the document itself.
+                      default: updatedAt
+                      enum:
+                        - updatedAt
+                        - createdAt
+                    direction:
+                      type: string
+                      example: DESC
+                      default: DESC
+                      enum:
+                        - ASC
+                        - DESC
       responses:
         "200":
           description: OK
@@ -3414,9 +3456,11 @@ paths:
                   description: Color for the document icon (hex format)
                 collectionId:
                   type: string
-                  format: uuid
                   nullable: true
-                  description: Identifier for the collection. Required to publish unless parentDocumentId is provided
+                  description: Identifier for the collection. Required to publish
+                    unless parentDocumentId is provided. Pass the literal string
+                    `personal` to create the document in the authenticated user's
+                    personal collection.
                 parentDocumentId:
                   type: string
                   format: uuid
@@ -3475,6 +3519,15 @@ paths:
                     required:
                       - dataAttributeId
                       - value
+                ownerIds:
+                  type: array
+                  maxItems: 5
+                  description: Identifiers of up to 5 users who own the document.
+                    Owners are responsible for the document and can manage its
+                    access.
+                  items:
+                    type: string
+                    format: uuid
 
       responses:
         "200":
@@ -3613,6 +3666,15 @@ paths:
                   nullable: true
                   description: The reason the document was archived or deleted. Can
                     only be updated on an archived or deleted document.
+                ownerIds:
+                  type: array
+                  maxItems: 5
+                  description: Identifiers of up to 5 users who own the document.
+                    Owners are responsible for the document and can manage its
+                    access. Replaces the existing set of owners.
+                  items:
+                    type: string
+                    format: uuid
               required:
                 - id
       responses:
@@ -4101,6 +4163,11 @@ paths:
                   format: uuid
                 permission:
                   "$ref": "#/components/schemas/Permission"
+                owner:
+                  type: boolean
+                  description: Whether the user is an owner of the document. Owners
+                    are responsible for the document and can manage its access. An
+                    owner must be granted the manage permission.
               required:
                 - id
                 - userId
@@ -4913,6 +4980,15 @@ paths:
                   nullable: true
                   maxLength: 2000
                   description: A short description of the group.
+                icon:
+                  type: string
+                  nullable: true
+                  description: An icon or emoji to use as the group icon.
+                color:
+                  type: string
+                  nullable: true
+                  description: The color of the group icon in hex format.
+                  pattern: "^#[0-9A-Fa-f]{6}$"
               required:
                 - name
       responses:
@@ -4957,6 +5033,15 @@ paths:
                   type: string
                   maxLength: 255
                   example: Designers
+                icon:
+                  type: string
+                  nullable: true
+                  description: An icon or emoji to use as the group icon.
+                color:
+                  type: string
+                  nullable: true
+                  description: The color of the group icon in hex format.
+                  pattern: "^#[0-9A-Fa-f]{6}$"
               required:
                 - id
                 - name
@@ -5100,6 +5185,14 @@ paths:
                   type: string
                   description: Identifier for the user to add to the group
                   format: uuid
+                permission:
+                  type: string
+                  description: The permission level for the user within the group.
+                    When omitted for a new membership this defaults to `member`,
+                    and an existing membership's permission is left unchanged.
+                  enum:
+                    - member
+                    - admin
               required:
                 - id
                 - userId
@@ -5487,7 +5580,11 @@ paths:
                   format: uuid
                 clientId:
                   type: string
-                  description: Public identifier for the OAuth client.
+                  maxLength: 1024
+                  description: >-
+                    Public identifier for the OAuth client. This may also be the
+                    URL of a client ID metadata document, in which case the
+                    client's details are resolved from that document.
                   example: 2bquf8avrpdv31par42a
       responses:
         "200":
@@ -5591,8 +5688,13 @@ paths:
                   items:
                     type: string
                     maxLength: 1024
-                  description: List of redirect URIs for the OAuth client.
-                  example: ["https://example.com/callback"]
+                  description: >-
+                    List of redirect URIs for the OAuth client. Each entry must
+                    be an absolute URL that includes a scheme, for example
+                    `https://example.com/callback`. Private-use URI schemes for
+                    native applications are also accepted, for example
+                    `com.example.app:/oauth2redirect` (see RFC 8252).
+                  example: ["https://example.com/callback", "com.example.app:/oauth2redirect"]
                 published:
                   type: boolean
                   description: Whether the OAuth client is available to other workspaces.
@@ -5667,8 +5769,13 @@ paths:
                   items:
                     type: string
                     maxLength: 1024
-                  description: List of redirect URIs for the OAuth client.
-                  example: ["https://example.com/callback"]
+                  description: >-
+                    List of redirect URIs for the OAuth client. Each entry must
+                    be an absolute URL that includes a scheme, for example
+                    `https://example.com/callback`. Private-use URI schemes for
+                    native applications are also accepted, for example
+                    `com.example.app:/oauth2redirect` (see RFC 8252).
+                  example: ["https://example.com/callback", "com.example.app:/oauth2redirect"]
                 published:
                   type: boolean
                   description: Whether the OAuth client is available to other workspaces.
@@ -6365,6 +6472,11 @@ paths:
                   type: string
                   format: uuid
                   description: Identifier for the collection to share. Mutually exclusive with `documentId`.
+                expiresAt:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: An optional date and time when the share link should expire and no longer be usable. When omitted the workspace default share expiry is applied, if one is configured.
               oneOf:
                 - required:
                     - documentId
@@ -6427,6 +6539,11 @@ paths:
                   description:
                     URL of an icon to display on the publicly shared page,
                     overriding the workspace branding.
+                expiresAt:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: Date and time when the share link should expire and no longer be usable. Set to `null` to remove an existing expiry.
               required:
                 - id
                 - published
@@ -7708,50 +7825,6 @@ paths:
         "429":
           "$ref": "#/components/responses/RateLimited"
       operationId: usersDelete
-  "/users.updateEmail":
-    post:
-      tags:
-        - Users
-      summary: Update a user's email
-      description: Begin the process of changing a user's email address. For security the email is not changed immediately; a confirmation link is sent to the new address and the change only takes effect once that link is followed.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  description: The new email address to change to.
-                id:
-                  type: string
-                  format: uuid
-                  description: The user to update. Defaults to the authenticated user. Changing another user's email requires admin permission.
-              required:
-                - email
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-        "400":
-          "$ref": "#/components/responses/Validation"
-        "401":
-          "$ref": "#/components/responses/Unauthenticated"
-        "403":
-          "$ref": "#/components/responses/Unauthorized"
-        "404":
-          "$ref": "#/components/responses/NotFound"
-        "429":
-          "$ref": "#/components/responses/RateLimited"
-      operationId: usersUpdateEmail
   "/users.resendInvite":
     post:
       tags:
@@ -7909,18 +7982,20 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                documentId:
-                  type: string
-                  format: uuid
-                  description: The document ID to retrieve views for
-                includeSuspended:
-                  type: boolean
-                  description: Whether to include views from suspended users
-                  default: false
-              required:
-                - documentId
+              allOf:
+                - "$ref": "#/components/schemas/Pagination"
+                - type: object
+                  properties:
+                    documentId:
+                      type: string
+                      format: uuid
+                      description: The document ID to retrieve views for
+                    includeSuspended:
+                      type: boolean
+                      description: Whether to include views from suspended users
+                      default: false
+                  required:
+                    - documentId
       responses:
         "200":
           description: OK
@@ -7933,6 +8008,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/View"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
         "401":
           "$ref": "#/components/responses/Unauthenticated"
         "403":
@@ -8282,15 +8359,18 @@ components:
                 - title
                 - templateId
                 - collectionId
+                - createdById
                 - userId
+                - ownerIds
                 - documentId
                 - parentDocumentId
             operator:
               type: string
               description:
                 Comparison operator to apply. Note that some fields only
-                accept a subset of operators – for example `userId` and
-                `documentId` only support `eq` and `in`.
+                accept a subset of operators – for example `createdById`,
+                `userId`, `ownerIds` and `documentId` only support `eq` and
+                `in`.
               enum:
                 - eq
                 - neq
@@ -8610,6 +8690,22 @@ components:
           type: string
           nullable: true
           description: A string that represents an icon in the outline-icons package or an emoji
+        ownerId:
+          type: string
+          nullable: true
+          description: The identifier of the user who owns this collection when it
+            is a personal collection. This is `null` for regular shared collections.
+          readOnly: true
+          format: uuid
+        ownerIds:
+          type: array
+          description: Identifiers of the users who own the collection. Owners are
+            responsible for the collection and can manage its access. Collection
+            owners also own every document in the collection. A collection can have
+            at most 5 owners.
+          items:
+            type: string
+            format: uuid
         permission:
           "$ref": "#/components/schemas/Permission"
         templateManagement:
@@ -8858,6 +8954,11 @@ components:
             in place of text when requested.
         url:
           type: string
+          description: A URL path to access the document. Deprecated – prefer the `path` field.
+          readOnly: true
+          deprecated: true
+        path:
+          type: string
           description: A URL path to access the document.
           readOnly: true
         urlId:
@@ -8868,6 +8969,14 @@ components:
         collaboratorIds:
           type: array
           description: Identifiers of users who have edited the document.
+          items:
+            type: string
+            format: uuid
+        ownerIds:
+          type: array
+          description: Identifiers of the users who own the document. Owners are
+            responsible for the document and can manage its access. A document can
+            have at most 5 owners.
           items:
             type: string
             format: uuid
@@ -9171,6 +9280,15 @@ components:
           type: string
           nullable: true
           description: A short description of this group.
+        icon:
+          type: string
+          nullable: true
+          description: An icon or emoji to use as the group icon.
+        color:
+          type: string
+          nullable: true
+          description: The color of the group icon in hex format.
+          pattern: "^#[0-9A-Fa-f]{6}$"
         externalId:
           type: string
           nullable: true
@@ -9503,6 +9621,11 @@ components:
         showTOC:
           type: boolean
           description: Whether to show a table of contents on the shared page.
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Date and time when the share link expires and can no longer be used to access the document. When `null` the share does not expire.
         views:
           type: number
           description: The number of times the shared page has been viewed.
@@ -9660,6 +9783,19 @@ components:
           type: string
           nullable: true
           description: Guidance text provided to MCP integrations.
+        plan:
+          allOf:
+            - "$ref": "#/components/schemas/Plan"
+          description: The plan that this workspace is currently on.
+          readOnly: true
+        entitlements:
+          type: array
+          description:
+            The set of plan-based features that this workspace is entitled
+            to use, derived from its current plan.
+          readOnly: true
+          items:
+            "$ref": "#/components/schemas/PlanFeature"
     User:
       type: object
       properties:
@@ -9750,6 +9886,29 @@ components:
         - member
         - viewer
         - guest
+    Plan:
+      type: string
+      description: The subscription plan that a workspace is on.
+      enum:
+        - community
+        - standard
+        - business
+        - enterprise
+        - legacy
+    PlanFeature:
+      type: string
+      description: A feature that may be entitled to a workspace based on its plan.
+      enum:
+        - auditLog
+        - advancedSecurity
+        - guests
+        - groupSync
+        - premiumIntegrations
+        - apiKeyManagement
+        - contentManagement
+        - aiAnswers
+        - customDomain
+        - saml
     CollectionStatus:
       type: string
       enum:
@@ -9877,6 +10036,19 @@ components:
           nullable: true
         permission:
           "$ref": "#/components/schemas/Permission"
+        createdById:
+          type: string
+          description: Identifier for the user who created this membership.
+          readOnly: true
+          format: uuid
+          nullable: true
+        createdBy:
+          "$ref": "#/components/schemas/User"
+        createdAt:
+          type: string
+          description: The date and time that this membership was created.
+          readOnly: true
+          format: date-time
         sourceId:
           type: string
           description: Identifier for the membership this one was inherited from, if any.
@@ -9924,6 +10096,11 @@ components:
           readOnly: true
           format: uuid
         url:
+          type: string
+          description: A URL path to access the template. Deprecated – prefer the `path` field.
+          readOnly: true
+          deprecated: true
+        path:
           type: string
           description: A URL path to access the template.
           readOnly: true
@@ -10225,6 +10402,13 @@ components:
           format: uuid
           nullable: true
           description: Identifier for the associated revision, if any.
+        fileOperationId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Identifier for the associated file operation, such as an export, if any.
+        fileOperation:
+          "$ref": "#/components/schemas/FileOperation"
         viewedAt:
           type: string
           format: date-time

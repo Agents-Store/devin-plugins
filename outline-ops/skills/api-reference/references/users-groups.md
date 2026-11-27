@@ -12,7 +12,6 @@ People in the workspace and the groups that bundle them for permissions. Every e
 | `users.info` | Retrieve a user. `{"id"}`. |
 | `users.list` | List/filter users. Pagination + sorting + `{"query"?,"filters"?}` (structured filter, see **Filters** below). The older `{"emails"?[],"filter":"all"|"invited"|"active"|"suspended","role"?}` still work but are **deprecated** and cannot be combined with `filters`. |
 | `users.update` | Update name/avatar/language/preferences. `{"name"?(≤255),"avatarUrl"?,"language"?,"preferences"?}` (no `id` → updates the current user). `preferences` is merged — only the fields you send change (currently `sidebarSectionOrder`: ordering of `starred`/`shared`/`collections`). |
-| `users.updateEmail` | Start an email change. `{"email"(required),"id"?}` (`id` omitted → the current user; changing someone else's email needs admin). The address is **not** changed immediately: a confirmation link goes to the new address and the change applies only once it is followed. |
 | `users.resendInvite` | Re-send the invitation email to a user still in the *invited* state (never signed in). `{"id"}`. |
 | `users.update_role` | Change a user's role (admin only). `{"id","role":"admin"|"member"|"viewer"|"guest"}`. |
 | `users.suspend` | Prevent sign-in (reversible; suspended users don't count toward hosted billing). `{"id"}`. **Confirm first.** |

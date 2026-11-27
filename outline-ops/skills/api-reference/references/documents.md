@@ -10,7 +10,7 @@ The core of Outline. A document is a single Markdown page; the API always return
 | `documents.list` | List published + own drafts. Pagination + sorting + `{"filters"?}` (structured filter, see **Filters** below) + `{"backlinkDocumentId"?}`. The older `{"collectionId"?,"userId"?,"parentDocumentId"?,"statusFilter":["draft"|"archived"|"published"]}` still work but are **deprecated** and cannot be combined with `filters`. |
 | `documents.documents` | The nested child tree of a document. `{"id"}` → `NavigationNode`. |
 | `documents.drafts` | List the current user's drafts. Pagination + sorting + `{"collectionId"?,"dateFilter":"day"|"week"|"month"|"year"}`. |
-| `documents.viewed` | List documents recently viewed by the current user. Pagination + sorting. |
+| `documents.viewed` | List documents recently viewed by the current user. Pagination + `{"sort":"updatedAt"|"createdAt"(default `updatedAt`; columns of the view record, not the document),"direction"?}`. |
 | `documents.archived` | List archived documents. Pagination + sorting + `{"collectionId"?}`. |
 | `documents.deleted` | List trashed documents. Pagination + sorting + `{"filters"?}` limited to `deletedAt` (date) and `deletedById` (user UUID; `eq`/`in`). |
 
@@ -36,7 +36,7 @@ The core of Outline. A document is a single Markdown page; the API always return
 | Method | Purpose & key fields |
 |--------|----------------------|
 | `documents.update` | Modify a document. `{"id"}` + any of `{"title","text","icon","color","fullWidth","collectionId","templateId","insightsEnabled","publish","dataAttributes","preferences","lastRevision","deprecatedReason"}`. **`editMode`** controls how `text` is applied: `append`, `prepend`, `replace` (default), or `patch`. For `patch`, also pass `findText` (the existing text to replace with `text`). **`lastRevision`** (int) turns on optimistic concurrency: if the document's current revision number (the `revision` field of `documents.info`) differs, the update is rejected with **`409`** — re-read the document (`documents.info`), merge, retry. **`preferences`** is merged field-by-field (`null` clears all of them). **`deprecatedReason`** (≤2000, nullable) can only be edited on an archived or deleted document. Note: `dataAttributes` sent here **replaces** the set — attributes you omit are removed. |
-| `documents.unpublish` | Move a published doc back to draft. `{"id","detach"?}`. |
+| `documents.unpublish` | Move a published doc back to draft. `{"id","detach"?}`. Before Outline v1.12.0 an existing public share kept serving the unpublished doc — revoke its shares first on older servers. |
 | `documents.move` | Relocate. `{"id","collectionId"?,"parentDocumentId"?,"index"?}` (no parent → collection root). Returns affected `{documents, collections}`. |
 
 ## Lifecycle (archive / trash)

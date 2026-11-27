@@ -12,7 +12,7 @@ A share authorizes viewing a document (or collection) without being a workspace 
 | `shares.list` | List all shares in the workspace. Pagination + sorting + `{"query"?}`. |
 | `shares.create` | Create a share. Exactly one of `{"documentId"}` or `{"collectionId"}`. Returns a `Share` (unpublished by default). |
 | `shares.update` | Change publish state / branding. `{"id","published"(required)}` + optional `{"title","iconUrl"}` to override the public page. Publishing removes authentication — anyone with the link can view. |
-| `shares.revoke` | Deactivate the link so it can no longer be used. `{"id"}`. **Confirm first.** |
+| `shares.revoke` | Deactivate the link so it can no longer be used. `{"id"}`. **Confirm first.** On servers before Outline v1.12.0 this returns `404` while the document is unpublished, yet the link keeps working — revoke before unpublishing. |
 
 ## Access requests
 

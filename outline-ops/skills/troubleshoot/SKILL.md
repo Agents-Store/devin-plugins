@@ -12,7 +12,7 @@ Match the symptom, apply the fix. Most Outline API failures come from a bad base
 **Cause:** the key is missing, wrong, revoked, or not sent as a Bearer token.
 
 - Confirm the header is exactly `Authorization: Bearer ${OUTLINE_API_KEY}` and the key begins with `ol_api_`.
-- Verify the key still exists under **Settings → API & Apps** (revoked keys always `401`; `apiKeys.list` shows the key's name, `last4` and `expiresAt` — an expired key no longer authenticates).
+- Verify the key still exists under **Settings → API & Access** (revoked keys always `401`; `apiKeys.list` shows the key's name, `last4` and `expiresAt` — an expired key no longer authenticates).
 - Did anything call `auth.delete` (sign out)? It rotates the user's token secret, which ends that user's browser sessions and session tokens (JWTs). Personal `ol_api_` keys are separate records, so it most likely does **not** revoke one — but if keys stopped working right after a sign-out, check `apiKeys.list` before assuming.
 - Confirm `OUTLINE_API_KEY` is actually set in the environment: `[ -n "$OUTLINE_API_KEY" ] && echo set || echo MISSING`.
 - Re-run the `setup` check: `POST /auth.info`. A `200` there means the key is fine and the problem is elsewhere.
@@ -24,6 +24,7 @@ Match the symptom, apply the fix. Most Outline API failures come from a bad base
 - Most responses carry a `policies` array; it describes what the key may do. A `403` is a real boundary — don't try to route around it.
 - Admin-only actions (`users.update_role`, `users.suspend/activate/delete`, `documents.empty_trash`, `dataAttributes.*`) need an admin key.
 - If a call that used to work now `403`s, the key may be scoped (e.g. `documents:read` only). Mint a key with the needed scope (`write`, `documents.*`, etc.). After upgrading to Outline v1.10.1+ re-check scoped keys: scopes are validated more strictly at the model layer.
+- `apiKeys.create`, `apiKeys.delete` and account email changes return `403` for every API key: they need a signed-in browser session. Do them under **Settings → API & Access**.
 - `webhookSubscriptions.*` are admin-only; `apiKeys.list` with `userId` (other users' keys) is admin-only.
 - Gated features: `documents.answerQuestion` and `dataAttributes.*` require a Business/Enterprise plan and, for AI answers, the workspace setting enabled.
 
@@ -41,7 +42,7 @@ Match the symptom, apply the fix. Most Outline API failures come from a bad base
 
 - Send `-H "Content-Type: application/json"` and a valid JSON body. Even no-arg calls need `-d '{}'`.
 - Check required fields per method (see the reference file). E.g. publishing a document needs `collectionId` **or** `parentDocumentId`; `shares.create` needs exactly one of `documentId`/`collectionId`; `documents.update` with `editMode:"patch"` also needs `findText`.
-- `collections.create`/`collections.update` reject a body that has **both** `description` and `data` (Outline v1.9.0+) — send one. `comments.create`/`comments.update` need `text` **or** `data`. `webhookSubscriptions.create` needs `name`, `url` and `events`, and a cloud workspace requires an `https` URL. Text limits: document `title` ≤100, `text` ≤1,536,000 chars, comment `text` ≤10000 chars.
+- `collections.create`/`collections.update` reject a body that has **both** `description` and `data` (Outline v1.9.0+) — send one. `comments.create`/`comments.update` need `text` **or** `data` (`text` on `comments.update` needs Outline v1.11.0+). `documents.viewed` sorts only by `updatedAt` or `createdAt`. `webhookSubscriptions.create` needs `name`, `url` and `events`, and a cloud workspace requires an `https` URL. Text limits: document `title` ≤100, `text` ≤1,536,000 chars, comment `text` ≤10000 chars.
 - `views.create` is gone from the published spec (and may be rejected on newer servers, which tightened its authentication) — don't call it.
 - Escape newlines in JSON string values (`\n`). Building the body with `jq -n` avoids quoting mistakes:
   ```bash

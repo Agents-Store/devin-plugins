@@ -18,7 +18,7 @@ The user sets these in their shell or repo `.env`. Read them — never hardcode 
 
 If `OUTLINE_API_URL` is missing, ask the user for it. Normalize the trailing slash with `${OUTLINE_API_URL%/}` and build every endpoint as `${OUTLINE_API_URL%/}/<method>`. The URL already ends in `/api` — do **not** append `/api` yourself, and do not pass a URL that ends in a method name.
 
-A user mints a key under **Settings → API & Apps** (or programmatically with `apiKeys.create` — see `api-reference` → `oauth-data-attributes.md`; the full key is shown only once). Keys grant full access to the user's data (or are scoped — see Scopes below), so treat them like passwords and never commit them.
+A user mints a key under **Settings → API & Access**; the full key is shown only once. `apiKeys.create` and `apiKeys.delete` accept only a signed-in browser session, so an API key cannot mint or revoke keys. Keys grant full access to the user's data (or are scoped — see Scopes below), so treat them like passwords and never commit them. Prefer a scoped key with an expiry, and keep a self-hosted server on v1.12.0 or newer: older releases let a write-capable API key start an account email change and served unpublished documents through existing share links.
 
 ## Step 1 — Verify access
 

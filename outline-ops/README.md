@@ -1,6 +1,6 @@
 # outline-ops (Devin plugin)
 
-Outline knowledge-base ops plugin. Drive the full Outline REST API by curl — documents (create, search, move, archive, trash, import/export, AI answers, memberships), collections (CRUD, archive, duplicate, import, user/group permissions, export), comments & reactions, pins, subscriptions, notifications, stars, views, shares & access requests, webhook subscriptions, users & groups, attachments & file operations, revisions, templates, events (audit log), API keys, OAuth clients, and data attributes (154 operations). Also points to Outline's built-in MCP server. Authenticates with a Bearer OUTLINE_API_KEY against OUTLINE_API_URL.
+Outline knowledge-base ops plugin. Drive the full Outline REST API by curl — documents (create, search, move, archive, trash, import/export, AI answers, memberships), collections (CRUD, archive, duplicate, import, user/group permissions, export), comments & reactions, pins, subscriptions, notifications, stars, views, shares & access requests, webhook subscriptions, users & groups, attachments & file operations, revisions, templates, events (audit log), API keys, OAuth clients, and data attributes (153 operations). Also points to Outline's built-in MCP server. Authenticates with a Bearer OUTLINE_API_KEY against OUTLINE_API_URL.
 
 ## Install
 
