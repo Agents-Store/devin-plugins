@@ -28,7 +28,7 @@ Chain through n8n as a lightweight dispatcher.
 [NocoDB Webhook] → [n8n: Webhook] → [Split Out: body.data.rows] → [n8n: HTTP Request → Trigger.dev API] → [Trigger.dev: Process]
 ```
 
-NocoDB sends the changed records as an array (`body.data.rows`, see `nocodb-ops:webhooks`); split it so each record becomes one task run. Use an **HTTP Request** node for the call — not a Code node. In n8n 2.x Code nodes run in task runners and cannot read `process.env` or `$env` (blocked by default), and an `Authorization` header belongs in a credential anyway:
+NocoDB sends the changed records as an array (`body.data.rows`, see `nocodb-ops:webhooks`) and only to a receiver it may reach — a private-network n8n address is refused by default (`nocodb-to-n8n`, Pattern 1); split it so each record becomes one task run. Use an **HTTP Request** node for the call — not a Code node. In n8n 2.x Code nodes run in task runners and cannot read `process.env` or `$env` (blocked by default), and an `Authorization` header belongs in a credential anyway:
 
 ```
 Method:         POST
@@ -71,7 +71,7 @@ Input: {
 
 ### Pattern 3: Batch Processing
 
-Process many NocoDB records as background tasks: one parent task takes the table id and a list of record ids, fans out one child run per record (`batchTriggerAndWait` under a queue with a concurrency limit), and each child reads its record from NocoDB, processes it and writes its status back. Task code: see `trigger-dev:task-development` (`references/record-driven-tasks.md`, *Many records*).
+Process many NocoDB records as background tasks: one parent task takes the table id and a list of record ids, fans out one child run per record (`batchTriggerAndWait`, with the child task's `concurrency` option capping how many run at once), and each child reads its record from NocoDB, processes it and writes its status back. Task code: see `trigger-dev:task-development` (`references/record-driven-tasks.md`, *Many records*).
 
 ### Pattern 4: AI Processing Pipeline
 
@@ -106,6 +106,6 @@ Input: { "limit": 10 }
 - Use descriptive task IDs: `process-order-payment`, `generate-ai-summary`
 - Include the NocoDB record ID and table ID in every task payload
 - Update the NocoDB record status before and after processing
-- Use Trigger.dev queues for rate-limited operations
+- Cap rate-limited operations with the task's `concurrency` option, or a shared `concurrencyLimit()` when several tasks call the same API (`queue: { concurrencyLimit }` is deprecated)
 - Set appropriate machine presets for CPU/memory-intensive tasks
 - Use an `idempotencyKey` based on the record ID to prevent duplicate processing

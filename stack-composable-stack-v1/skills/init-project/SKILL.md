@@ -199,6 +199,8 @@ These provide tool-specific knowledge. The stack plugin provides the architectur
 | 401 on NocoDB | Invalid MCP token | Regenerate the MCP token in NocoDB and update `NOCODB_MCP_TOKEN` |
 | 401 on n8n | Expired API key | Create new API key in n8n settings |
 | Trigger.dev timeout | Wrong `TRIGGER_API_URL` | Verify the self-hosted instance URL |
-| n8n native MCP 403 | Wrong MCP token | Generate new MCP token in n8n → Settings → API |
+| 401 on Trigger.dev (MCP or the n8n HTTP node) | Expired token — dashboard Personal Access Tokens and API keys now carry an expiry date | Create a new token, update `TRIGGER_ACCESS_TOKEN` / `TRIGGER_SECRET_KEY` and the n8n credential |
+| n8n native MCP 401 | Wrong or rotated MCP token | n8n → Settings → Instance-level MCP → Connect, **API key** tab; the token is shown once and a new one revokes the old |
+| n8n native MCP 403 | MCP access off for the instance, or the workflow is not **Available in MCP** | Enable instance-level MCP; switch on **Available in MCP** for the workflow — see `n8n-dev:n8n-native-mcp` |
 | 401 on PostgreSQL MCP | Invalid MCP token | Regenerate bearer token in MCP server settings |
 | 401 on PostgREST | Invalid API token | Check PostgREST JWT secret and regenerate token |

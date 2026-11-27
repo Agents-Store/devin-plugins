@@ -19,6 +19,8 @@ Trigger an n8n workflow when NocoDB records change.
 2. Copy the Webhook node's **production** URL
 3. Create a NocoDB webhook pointing to that URL — events, UI steps, conditions, testing and the Button trigger: see `nocodb-ops:webhooks`
 
+NocoDB now refuses webhook receivers on private-network addresses (localhost, RFC 1918 ranges) by default, so an n8n reached by a Docker service name or an internal IP gets no events. Give NocoDB n8n's public HTTPS webhook URL; only on a self-hosted NocoDB whose n8n sits on the same private network, set `NC_WEBHOOK_ALLOW_PRIVATE_NETWORK=true` on NocoDB (it replaces `NC_ALLOW_LOCAL_HOOKS`, and widens what any webhook author can reach).
+
 **n8n workflow structure:**
 
 ```

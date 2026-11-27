@@ -21,7 +21,7 @@ How background processing is divided between Trigger.dev (durable tasks) and n8n
 
 ## Where the Patterns Live
 
-- Trigger.dev tasks — basic task, queues with `queue()`, cron schedules, fan-out with `batchTriggerAndWait`, record-driven tasks: see `trigger-dev:task-development` (and its `references/record-driven-tasks.md`)
+- Trigger.dev tasks — basic task, concurrency limits (`concurrency`, `concurrencyLimit()`), cron schedules, fan-out with `batchTriggerAndWait`, record-driven tasks: see `trigger-dev:task-development` (and its `references/record-driven-tasks.md`)
 - Start and watch a task from the agent (`trigger_task`, `get_run_details`, `list_runs`): see `trigger-dev:mcp-patterns`; in this stack the tools are named `mcp__plugin_stack-composable-stack-v1_trigger-dev__<tool>`, and `trigger_task` runs in `dev` unless you pass `environment`
 - n8n workflow shapes — scheduled sync, webhook-triggered processing, error recovery: see `n8n-dev:examples` (`references/background-processing-patterns.md`)
 - Run a workflow from the agent: the n8n native MCP (`mcp__plugin_stack-composable-stack-v1_n8n-native-mcp__execute_workflow`, which needs `executionMode`) or the workflow's webhook — see `n8n-dev:n8n-native-mcp`
@@ -43,4 +43,4 @@ How background processing is divided between Trigger.dev (durable tasks) and n8n
 - Use idempotency keys to prevent duplicate processing
 - Log all background job results to a NocoDB table for auditability
 - Set appropriate machine presets in Trigger.dev for resource-intensive tasks
-- Use Trigger.dev queues with concurrency limits for rate-sensitive operations
+- Cap rate-sensitive operations with the task's `concurrency` option (or a shared `concurrencyLimit()`); `queue: { concurrencyLimit }` is deprecated
