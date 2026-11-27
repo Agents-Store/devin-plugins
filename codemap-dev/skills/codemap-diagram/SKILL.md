@@ -30,9 +30,9 @@ If the project has no source code at all, say so in the same message: do not pro
 
 Generate all diagrams as native mxGraph XML. Save as `.drawio` files and render via drawio-mcp `create_diagram` tool.
 
-Available drawio-mcp tools: `create_diagram` (render XML), `search_shapes` (find shapes, optional — use it only for diagrams that need cloud, vendor or pictorial icons; flowcharts, ERDs and C4 boxes use basic shapes).
+Available drawio-mcp tools: `create_diagram` (render XML), `get_drawio_reference` (the server's XML style and layout reference — call it once with `format: "xml"` before the first diagram of a conversation, as the server asks), `search_shapes` (find shapes, optional — use it only for diagrams that need cloud, vendor or pictorial icons; flowcharts, ERDs and C4 boxes use basic shapes). The server's `create_semantic_diagram` (its fast mode, where the server places the shapes) is not used here: this skill writes the XML itself and saves it as the `.drawio` file.
 
-The plugin declares the `drawio` server itself, so the full tool names are `mcp__plugin_codemap-dev_drawio__create_diagram` and `mcp__plugin_codemap-dev_drawio__search_shapes`. This document uses the short names.
+The plugin declares the `drawio` server itself, so the full tool names are `mcp__plugin_codemap-dev_drawio__create_diagram`, `mcp__plugin_codemap-dev_drawio__get_drawio_reference` and `mcp__plugin_codemap-dev_drawio__search_shapes`. This document uses the short names.
 
 ## Diagram Type Selection
 
@@ -72,12 +72,12 @@ For every diagram, follow these steps:
 
 ### Step 4: Render via drawio-mcp
 - Call the `create_diagram` MCP tool with the generated XML
-- The inline interactive preview appears only if the client supports MCP Apps; otherwise the tool returns the XML as text and no URL — the saved `.drawio` file is the deliverable. Do not promise a preview URL
+- The inline interactive preview appears only if the client supports MCP Apps; otherwise the tool returns the XML plus a link that opens the diagram in the draw.io editor — pass that link on. The saved `.drawio` file stays the deliverable; do not promise a link before the tool has returned one
 - If drawio-mcp is unavailable, report the error — do NOT fall back to Mermaid or text diagrams
 
 ### Step 5: Report to User
 - Show the file path where `.drawio` was saved
-- Mention the interactive preview only if `create_diagram` actually rendered one (MCP Apps clients); otherwise point to the `.drawio` file
+- Mention the interactive preview only if `create_diagram` actually rendered one (MCP Apps clients); otherwise give the editor link it returned, if any, next to the `.drawio` file
 - Brief description of what the diagram shows
 
 ## mxGraph XML Rules
